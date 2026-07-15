@@ -1,0 +1,397 @@
+/**
+ * Product page tabs & reviews — loads after WooCommerce so overrides win.
+ */
+
+/* --------------------------------------------------------------------------
+   Tab shell
+   -------------------------------------------------------------------------- */
+.woocommerce div.product.sft-pdp .sft-pdp-tabs,
+.woocommerce div.product.sft-pdp .woocommerce-tabs.sft-pdp-tabs {
+  margin: 0 0 40px;
+  padding: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+  clear: both;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-tabs::before,
+.woocommerce div.product.sft-pdp .sft-pdp-tabs::after,
+.woocommerce div.product.sft-pdp .sft-pdp-tabs ul.tabs::before,
+.woocommerce div.product.sft-pdp .sft-pdp-tabs ul.tabs::after,
+.woocommerce div.product.sft-pdp .sft-pdp-tabs ul.tabs li::before,
+.woocommerce div.product.sft-pdp .sft-pdp-tabs ul.tabs li::after {
+  display: none !important;
+  content: none !important;
+  box-shadow: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   Pill tab navigation
+   -------------------------------------------------------------------------- */
+.woocommerce div.product.sft-pdp .sft-pdp-tabs ul.tabs,
+.woocommerce div.product.sft-pdp .sft-pdp-tabs ul.tabs.wc-tabs,
+.woocommerce div.product.sft-pdp .sft-pdp-tabs__list {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px !important;
+  margin: 0 !important;
+  padding: 16px 20px !important;
+  list-style: none !important;
+  background: #f1f5f9;
+  border-bottom: 1px solid #e2e8f0;
+  overflow: visible !important;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-tabs ul.tabs li,
+.woocommerce div.product.sft-pdp .sft-pdp-tabs__item {
+  display: block !important;
+  float: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  position: static !important;
+  z-index: auto !important;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-tabs ul.tabs li a,
+.woocommerce div.product.sft-pdp .sft-pdp-tabs__link {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 20px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+  color: #475569 !important;
+  text-decoration: none !important;
+  white-space: nowrap;
+  background: #e2e8f0 !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 999px !important;
+  box-shadow: none !important;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-tabs ul.tabs li a:hover,
+.woocommerce div.product.sft-pdp .sft-pdp-tabs__link:hover {
+  color: #0f172a !important;
+  background: #f8fafc !important;
+  border-color: #94a3b8 !important;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-tabs ul.tabs li.active a,
+.woocommerce div.product.sft-pdp .sft-pdp-tabs__item.active .sft-pdp-tabs__link {
+  color: #b91c1c !important;
+  background: #ffffff !important;
+  border-color: #dc2626 !important;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.18) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Tab panels
+   -------------------------------------------------------------------------- */
+.woocommerce div.product.sft-pdp .sft-pdp-tabs .sft-pdp-tabs__panel,
+.woocommerce div.product.sft-pdp .sft-pdp-tabs .woocommerce-Tabs-panel,
+.woocommerce div.product.sft-pdp .sft-pdp-tabs .panel {
+  padding: 32px 32px 36px !important;
+  margin: 0 !important;
+  font-size: 16px;
+  line-height: 1.75;
+  color: #334155;
+  border: 0 !important;
+  background: #ffffff !important;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-tabs__panel--description {
+  max-width: none;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-tabs__panel--description > :first-child {
+  margin-top: 0;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-tabs__panel--description p {
+  margin: 0 0 1.1em;
+  max-width: 72ch;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-tabs__panel--description strong,
+.woocommerce div.product.sft-pdp .sft-pdp-tabs__panel--description b {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-tabs__panel--description h2 {
+  margin: 1.5em 0 0.5em;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #0f172a;
+  max-width: 72ch;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-tabs__panel--description h3 {
+  margin: 1.25em 0 0.45em;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  max-width: 72ch;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-tabs__panel--description ul,
+.woocommerce div.product.sft-pdp .sft-pdp-tabs__panel--description ol {
+  margin: 0 0 1.2em;
+  padding-left: 1.35em;
+  max-width: 72ch;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-tabs__panel--description li + li {
+  margin-top: 0.35em;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-tabs__panel--description img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   Reviews tab
+   -------------------------------------------------------------------------- */
+.woocommerce div.product.sft-pdp .sft-pdp-reviews {
+  width: 100%;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews__empty {
+  margin: 0 0 20px;
+  padding: 0;
+  font-size: 15px;
+  color: #64748b;
+  background: transparent;
+  border: 0;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews__form-wrap {
+  margin: 0;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews__form {
+  width: 100%;
+  max-width: 100%;
+  padding: 28px 30px 30px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-sizing: border-box;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews__form-title,
+.woocommerce div.product.sft-pdp .sft-pdp-reviews #reply-title {
+  margin: 0 0 22px;
+  padding: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.35;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews #review_form #respond {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews #commentform {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin: 0;
+  max-width: 640px;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews #commentform .comment-form-author,
+.woocommerce div.product.sft-pdp .sft-pdp-reviews #commentform .comment-form-email {
+  margin: 0 !important;
+}
+
+@media (min-width: 600px) {
+  .woocommerce div.product.sft-pdp .sft-pdp-reviews #commentform:has(.comment-form-author):has(.comment-form-email) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 20px;
+    row-gap: 18px;
+    max-width: none;
+  }
+
+  .woocommerce div.product.sft-pdp .sft-pdp-reviews #commentform:has(.comment-form-author) .comment-form-rating,
+  .woocommerce div.product.sft-pdp .sft-pdp-reviews #commentform:has(.comment-form-author) .comment-form-comment,
+  .woocommerce div.product.sft-pdp .sft-pdp-reviews #commentform:has(.comment-form-author) .form-submit,
+  .woocommerce div.product.sft-pdp .sft-pdp-reviews #commentform:has(.comment-form-author) .must-log-in {
+    grid-column: 1 / -1;
+  }
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews__field,
+.woocommerce div.product.sft-pdp .sft-pdp-reviews .comment-form-rating,
+.woocommerce div.product.sft-pdp .sft-pdp-reviews #review_form #respond p {
+  margin: 0 0 18px !important;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews__field label,
+.woocommerce div.product.sft-pdp .sft-pdp-reviews .comment-form-rating label {
+  display: block;
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews .required {
+  color: #dc2626;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews input[type="text"],
+.woocommerce div.product.sft-pdp .sft-pdp-reviews input[type="email"],
+.woocommerce div.product.sft-pdp .sft-pdp-reviews textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  font-size: 15px;
+  color: #0f172a;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews input:focus,
+.woocommerce div.product.sft-pdp .sft-pdp-reviews textarea:focus {
+  outline: none;
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews select#rating {
+  position: absolute;
+  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(50%);
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews p.stars {
+  margin: 0;
+  line-height: 1;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews p.stars a {
+  font-size: 30px !important;
+  width: 1.2em !important;
+  height: 1.2em !important;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews p.stars a::before {
+  color: #cbd5e1 !important;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews p.stars:hover a::before,
+.woocommerce div.product.sft-pdp .sft-pdp-reviews p.stars.selected a.active::before,
+.woocommerce div.product.sft-pdp .sft-pdp-reviews p.stars.selected a:not(.active)::before {
+  color: #ea580c !important;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews p.stars.selected a.active ~ a::before {
+  color: #cbd5e1 !important;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews .form-submit {
+  margin: 4px 0 0 !important;
+  padding: 0;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews #respond input#submit,
+.woocommerce div.product.sft-pdp .sft-pdp-reviews .form-submit input[type="submit"],
+.woocommerce div.product.sft-pdp .sft-pdp-reviews .sft-pdp-reviews__submit {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px !important;
+  padding: 12px 32px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  color: #ffffff !important;
+  background: #0f172a !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews #respond input#submit:hover,
+.woocommerce div.product.sft-pdp .sft-pdp-reviews .sft-pdp-reviews__submit:hover {
+  color: #ffffff !important;
+  background: #dc2626 !important;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews__list {
+  list-style: none;
+  margin: 0 0 24px;
+  padding: 0;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews__list > li {
+  padding: 18px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.woocommerce div.product.sft-pdp .sft-pdp-reviews__verify {
+  padding: 14px 18px;
+  font-size: 14px;
+  color: #64748b;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 12px;
+}
+
+@media (max-width: 640px) {
+  .woocommerce div.product.sft-pdp .sft-pdp-tabs ul.tabs,
+  .woocommerce div.product.sft-pdp .sft-pdp-tabs__list {
+    padding: 12px 14px !important;
+    gap: 8px !important;
+  }
+
+  .woocommerce div.product.sft-pdp .sft-pdp-tabs ul.tabs li a,
+  .woocommerce div.product.sft-pdp .sft-pdp-tabs__link {
+    padding: 9px 14px !important;
+    font-size: 13px !important;
+  }
+
+  .woocommerce div.product.sft-pdp .sft-pdp-tabs .sft-pdp-tabs__panel,
+  .woocommerce div.product.sft-pdp .sft-pdp-tabs .woocommerce-Tabs-panel {
+    padding: 22px 18px 26px !important;
+  }
+
+  .woocommerce div.product.sft-pdp .sft-pdp-reviews__form {
+    padding: 20px 16px 22px;
+  }
+}
