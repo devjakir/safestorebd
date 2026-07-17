@@ -73,6 +73,9 @@
 	}
 
 	function isOnline() {
+		if (config.alwaysOnline) {
+			return true;
+		}
 		var now = businessNow();
 		var closedDays = Array.isArray(config.closedDays) ? config.closedDays : [];
 		if (now.day < 0 || closedDays.indexOf(now.day) !== -1) {
