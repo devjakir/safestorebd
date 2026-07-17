@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * WhatsApp chat widget — floating button, chat panel, admin settings
+ * (Settings → WhatsApp Chat).
+ */
+require get_template_directory() . '/inc/whatsapp-chat.php';
+
 function safestore_minimal_enqueue_assets() {
     $version = wp_get_theme()->get('Version');
 
