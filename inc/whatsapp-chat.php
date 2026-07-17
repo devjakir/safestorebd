@@ -37,6 +37,7 @@ function safestore_wa_defaults() {
         'offline_note' => __('We are offline right now — send a message and we will reply as soon as we are back.', 'safestore-minimal'),
         'position'     => 'right',
         'mode'         => 'panel',
+        'status_mode'  => 'always', // 'always' = always show Online; 'hours' = follow business hours.
         'pdp_number'   => 1,
     );
 }
@@ -173,10 +174,11 @@ function safestore_wa_render_widget() {
     $timezone = apply_filters('safestore_wa_timezone', $timezone);
 
     $config = array(
-        'timezone'   => $timezone,
-        'openTime'   => $o['open_time'],
-        'closeTime'  => $o['close_time'],
-        'closedDays' => array_values(array_map('intval', (array) $o['closed_days'])),
+        'timezone'     => $timezone,
+        'openTime'     => $o['open_time'],
+        'closeTime'    => $o['close_time'],
+        'closedDays'   => array_values(array_map('intval', (array) $o['closed_days'])),
+        'alwaysOnline' => ('hours' !== $o['status_mode']),
     );
     ?>
     <div class="sft-wa"
@@ -272,8 +274,9 @@ function safestore_wa_sanitize_settings($input) {
         $out[$key] = isset($input[$key]) ? sanitize_text_field((string) $input[$key]) : $d[$key];
     }
 
-    $out['position'] = (isset($input['position']) && 'left' === $input['position']) ? 'left' : 'right';
-    $out['mode']     = (isset($input['mode']) && 'direct' === $input['mode']) ? 'direct' : 'panel';
+    $out['position']    = (isset($input['position']) && 'left' === $input['position']) ? 'left' : 'right';
+    $out['mode']        = (isset($input['mode']) && 'direct' === $input['mode']) ? 'direct' : 'panel';
+    $out['status_mode'] = (isset($input['status_mode']) && 'hours' === $input['status_mode']) ? 'hours' : 'always';
 
     foreach (array('open_time', 'close_time') as $key) {
         $val = isset($input[$key]) ? trim((string) $input[$key]) : $d[$key];
@@ -367,6 +370,13 @@ function safestore_wa_settings_page() {
                 <tr>
                     <th scope="row"><label for="sft-wa-hours-text"><?php esc_html_e('Business hours label', 'safestore-minimal'); ?></label></th>
                     <td><input id="sft-wa-hours-text" type="text" class="regular-text" name="safestore_whatsapp_chat[hours_text]" value="<?php echo esc_attr($o['hours_text']); ?>"></td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php esc_html_e('Availability badge', 'safestore-minimal'); ?></th>
+                    <td>
+                        <label style="display:block; margin-bottom:6px;"><input type="radio" name="safestore_whatsapp_chat[status_mode]" value="always" <?php checked($o['status_mode'] !== 'hours'); ?>> <?php esc_html_e('Always show as Online', 'safestore-minimal'); ?></label>
+                        <label><input type="radio" name="safestore_whatsapp_chat[status_mode]" value="hours" <?php checked($o['status_mode'] === 'hours'); ?>> <?php esc_html_e('Follow the business hours below (Online/Offline switches automatically)', 'safestore-minimal'); ?></label>
+                    </td>
                 </tr>
                 <tr>
                     <th scope="row"><?php esc_html_e('Business hours (status)', 'safestore-minimal'); ?></th>
