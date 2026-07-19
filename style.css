@@ -310,7 +310,7 @@ button, input, textarea, select { font: inherit; }
   min-width: 0;
 }
 
-.sft-header-search-input::placeholder { color: #9ca3af; }
+.sft-header-search-input::placeholder { color: #6b7280; }
 
 .sft-header-search-btn {
   width: 60px;
@@ -563,7 +563,7 @@ button, input, textarea, select { font: inherit; }
 .sft-about-trust li {
   font-size: 13px;
   font-weight: 500;
-  color: #94a3b8;
+  color: #64748b;
   padding-left: 14px;
   position: relative;
 }
@@ -795,7 +795,7 @@ button, input, textarea, select { font: inherit; }
   margin: 0;
   font-size: 15px;
   line-height: 1.55;
-  color: #94a3b8;
+  color: #64748b;
 }
 
 .sft-about-cta-actions {
@@ -966,8 +966,8 @@ button, input, textarea, select { font: inherit; }
   flex-shrink: 0;
   width: 10px;
   height: 10px;
-  border-right: 2px solid #9ca3af;
-  border-bottom: 2px solid #9ca3af;
+  border-right: 2px solid #6b7280;
+  border-bottom: 2px solid #6b7280;
   transform: rotate(45deg);
   transition: transform 0.2s ease, border-color 0.2s ease;
   margin-top: -4px;
@@ -1120,7 +1120,7 @@ button, input, textarea, select { font: inherit; }
   padding: 0 0 0 1.1em;
   font-size: 14px;
   line-height: 1.55;
-  color: #94a3b8;
+  color: #64748b;
 }
 
 .sft-ship-page-footer-tips li {
@@ -1156,7 +1156,7 @@ button, input, textarea, select { font: inherit; }
   margin: 0;
   font-size: 13px;
   line-height: 1.5;
-  color: #94a3b8;
+  color: #64748b;
 }
 
 .sft-ship-page-footer-cta {
@@ -1178,7 +1178,7 @@ button, input, textarea, select { font: inherit; }
   margin: 0;
   font-size: 14px;
   line-height: 1.55;
-  color: #94a3b8;
+  color: #64748b;
   max-width: 480px;
 }
 
@@ -1348,7 +1348,7 @@ button, input, textarea, select { font: inherit; }
   padding: 0 0 0 1.1em;
   font-size: 14px;
   line-height: 1.55;
-  color: #94a3b8;
+  color: #64748b;
 }
 
 .sft-careers-page-footer-tips li {
@@ -1378,7 +1378,7 @@ button, input, textarea, select { font: inherit; }
   margin: 0;
   font-size: 14px;
   line-height: 1.55;
-  color: #94a3b8;
+  color: #64748b;
   max-width: 480px;
 }
 
@@ -1594,7 +1594,7 @@ button, input, textarea, select { font: inherit; }
   padding: 0 0 0 1.1em;
   font-size: 14px;
   line-height: 1.55;
-  color: #94a3b8;
+  color: #64748b;
 }
 
 .sft-track-page-footer-tips li {
@@ -1624,7 +1624,7 @@ button, input, textarea, select { font: inherit; }
   margin: 0;
   font-size: 14px;
   line-height: 1.55;
-  color: #94a3b8;
+  color: #64748b;
   max-width: 480px;
 }
 
@@ -1729,7 +1729,7 @@ button, input, textarea, select { font: inherit; }
 }
 
 .sft-contact-form .fluentform .ff-el-form-control::placeholder {
-  color: #9ca3af;
+  color: #6b7280;
   opacity: 1;
 }
 
@@ -1822,7 +1822,7 @@ button, input, textarea, select { font: inherit; }
 .sft-privacy-updated {
   margin: 0;
   font-size: 13px;
-  color: #94a3b8;
+  color: #64748b;
 }
 
 .sft-privacy-body {
@@ -1858,7 +1858,7 @@ button, input, textarea, select { font: inherit; }
 .sft-terms-updated {
   margin: 0;
   font-size: 13px;
-  color: #94a3b8;
+  color: #64748b;
 }
 
 .sft-terms-body {
@@ -1937,7 +1937,7 @@ button, input, textarea, select { font: inherit; }
   padding: 0 0 0 1.1em;
   font-size: 14px;
   line-height: 1.55;
-  color: #94a3b8;
+  color: #64748b;
 }
 
 .sft-terms-page-footer-tips li {
@@ -1967,7 +1967,7 @@ button, input, textarea, select { font: inherit; }
   margin: 0;
   font-size: 14px;
   line-height: 1.55;
-  color: #94a3b8;
+  color: #64748b;
   max-width: 480px;
 }
 
@@ -2008,7 +2008,7 @@ button, input, textarea, select { font: inherit; }
 .sft-legal-page-updated {
   margin: 0;
   font-size: 13px;
-  color: #94a3b8;
+  color: #64748b;
 }
 
 .sft-legal-page-body,
@@ -2167,7 +2167,7 @@ button, input, textarea, select { font: inherit; }
   padding: 0 0 0 1.1em;
   font-size: 14px;
   line-height: 1.55;
-  color: #94a3b8;
+  color: #64748b;
 }
 
 .sft-legal-page-footer-tips li,
@@ -2202,7 +2202,7 @@ button, input, textarea, select { font: inherit; }
   margin: 0;
   font-size: 14px;
   line-height: 1.55;
-  color: #94a3b8;
+  color: #64748b;
   max-width: 480px;
 }
 
@@ -2299,7 +2299,7 @@ button, input, textarea, select { font: inherit; }
   padding: 0 0 0 1.1em;
   font-size: 14px;
   line-height: 1.55;
-  color: #94a3b8;
+  color: #64748b;
 }
 
 .sft-privacy-page-footer-tips li {
@@ -2329,7 +2329,7 @@ button, input, textarea, select { font: inherit; }
   margin: 0;
   font-size: 14px;
   line-height: 1.55;
-  color: #94a3b8;
+  color: #64748b;
   max-width: 520px;
 }
 
@@ -4201,7 +4201,7 @@ button, input, textarea, select { font: inherit; }
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #9ca3af;
+  color: #6b7280;
 }
 
 .sft-product-card__price {
@@ -4224,7 +4224,7 @@ button, input, textarea, select { font: inherit; }
 
 .sft-product-card__price del,
 .sft-product-card__price del .woocommerce-Price-amount {
-  color: #9ca3af;
+  color: #6b7280;
   font-weight: 500;
   text-decoration: line-through;
   font-size: 13px;
@@ -4292,7 +4292,7 @@ button, input, textarea, select { font: inherit; }
 .sft-rating-count {
   font-size: 12px;
   font-weight: 500;
-  color: #9ca3af;
+  color: #6b7280;
 }
 
 /* ----- Pagination (after product grid) ----- */
@@ -4601,7 +4601,7 @@ button, input, textarea, select { font: inherit; }
 }
 
 .sft-pdp p.price del {
-  color: #94a3b8;
+  color: #64748b;
   font-size: 1.05rem;
   font-weight: 500;
   margin-right: 8px;
@@ -4871,7 +4871,7 @@ button, input, textarea, select { font: inherit; }
 
 .sft-pdp form.cart .quantity input.qty:focus {
   outline: none;
-  border-color: #94a3b8;
+  border-color: #64748b;
   box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.06);
 }
 
@@ -5370,7 +5370,10 @@ body.woocommerce-cart{
 /* Product */
 
 .product-thumbnail img{
-    width:100px;
+    width:80px;
+    min-width:80px;
+    height:80px;
+    object-fit:cover;
     border-radius:10px;
     transition:.3s;
 }
@@ -5481,6 +5484,14 @@ input.button:hover{
     border-radius:10px;
     font-size:18px;
     font-weight:700;
+    background:#dc2626 !important;
+    color:#fff !important;
+    transition:background .2s ease;
+}
+
+.wc-proceed-to-checkout .checkout-button:hover{
+    background:#b91c1c !important;
+    color:#fff !important;
 }
 
 /* Empty Cart */

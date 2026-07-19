@@ -67,37 +67,11 @@
 			<div class="sft-payment-group">
 				<span class="sft-row-label">We Accept</span>
 				<ul class="sft-payment-pills">
+					<?php /* bKash/Nagad/Rocket/Upay badges removed until an online payment gateway is connected — restore from git history when ready. */ ?>
 
-					<li class="sft-pay sft-pay--bkash" title="bKash">
-						<svg class="sft-pay-logo" viewBox="0 0 78 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="bKash">
-							<text x="0" y="19" fill="#E2136E" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="900" font-size="22" letter-spacing="-1.2">bKash</text>
-							<circle cx="71" cy="6" r="2.6" fill="#E2136E"/>
-						</svg>
-					</li>
 
-					<li class="sft-pay sft-pay--nagad" title="Nagad">
-						<svg class="sft-pay-logo" viewBox="0 0 80 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Nagad">
-							<text x="0" y="19" fill="#F5821F" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="900" font-size="22" font-style="italic" letter-spacing="-0.6">Nagad</text>
-						</svg>
-					</li>
 
-					<li class="sft-pay sft-pay--rocket" title="Rocket">
-						<svg class="sft-pay-logo" viewBox="0 0 88 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Rocket">
-							<g transform="translate(0,2)">
-								<path d="M3.5 11 L9 5 L13 6.2 L13 15.8 L9 17 Z" fill="#8A2BD5"/>
-								<path d="M9 5 L13 6.2 L13 15.8 L9 17 Z" fill="#6A1FB0"/>
-								<circle cx="10.5" cy="11" r="1.4" fill="#fff"/>
-								<path d="M3.5 11 L0.5 8.5 L0.5 13.5 Z" fill="#F47216"/>
-							</g>
-							<text x="18" y="19" fill="#8A2BD5" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="900" font-size="20" letter-spacing="-0.6">rocket</text>
-						</svg>
-					</li>
 
-					<li class="sft-pay sft-pay--upay" title="Upay">
-						<svg class="sft-pay-logo" viewBox="0 0 70 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Upay">
-							<text x="0" y="19" fill="#F47216" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="900" font-size="22" letter-spacing="-0.6">upay</text>
-						</svg>
-					</li>
 
 					<li class="sft-pay sft-pay--cod" title="Cash on Delivery">
 						<svg class="sft-pay-logo sft-pay-logo--cod" viewBox="0 0 132 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cash on Delivery">
@@ -115,7 +89,7 @@
 			<div class="sft-cert-group">
 				<span class="sft-row-label">Sourcing</span>
 				<ul class="sft-cert-pills">
-					<li class="sft-cert">Products from China</li>
+					<li class="sft-cert">100% Genuine Imported Stock</li>
 				</ul>
 			</div>
 		</div>
