@@ -4370,8 +4370,8 @@ button, input, textarea, select { font: inherit; }
   .sft-shop { padding: 22px 14px 40px; }
   .sft-shop .woocommerce ul.products,
   .sft-shop ul.products {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px 12px;
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
   .sft-product-card__media { border-radius: 10px; }
   .sft-product-card__badge { top: 8px; left: 8px; }
@@ -4394,6 +4394,28 @@ button, input, textarea, select { font: inherit; }
   .sft-product-card__cart-icon {
     width: 16px;
     height: 16px;
+  }
+}
+
+/* Phones (<=640px): one product card per row for shop, archives, related
+   products, and the homepage featured grid. Tablet (641-820px) keeps 2
+   columns; desktop unchanged. */
+@media (max-width: 640px) {
+  .sft-shop .woocommerce ul.products,
+  .sft-shop ul.products,
+  .woocommerce.sft-shop-main ul.products {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  /* Homepage featured products (WooCommerce default float layout) */
+  .home .woocommerce ul.products li.product,
+  .home ul.products li.product,
+  .home ul.products li.sft-product-card {
+    width: 100% !important;
+    float: none !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
   }
 }
 
