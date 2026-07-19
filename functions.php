@@ -1659,3 +1659,10 @@ function sft_custom_theme_cart_fragments( $fragments ) {
     return $fragments;
 }
 // ACR Dynamically update cart count and price via WooCommerce AJAX End
+
+/**
+ * Prevent duplicate category description on shop archives.
+ * The theme's woocommerce.php header already outputs term_description(),
+ * so remove WooCommerce's default archive description output.
+ */
+remove_action( 'woocommerce_archive_description', 'woocommerce_taxonomy_archive_description', 10 );
