@@ -6210,3 +6210,31 @@ input.button:hover{
 .mobile-menu-trigger.is-open .hamburger-bar:nth-child(1) { transform: translateY(6.75px) rotate(45deg); }
 .mobile-menu-trigger.is-open .hamburger-bar:nth-child(2) { opacity: 0; }
 .mobile-menu-trigger.is-open .hamburger-bar:nth-child(3) { transform: translateY(-6.75px) rotate(-45deg); }
+
+/* Clearance so the floating WhatsApp button never covers footer legal links */
+.sft-site-footer .sft-bottom-row {
+  padding-right: 96px;
+}
+@media (max-width: 720px) {
+  .sft-site-footer .sft-bottom-row {
+    padding-right: 0;
+    padding-bottom: 84px;
+  }
+}
+
+/* Breadcrumb on shop & category archives (matches PDP breadcrumb) */
+.sft-shop-breadcrumb {
+  margin: 0 0 18px;
+  padding: 0;
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.5;
+}
+.sft-shop-breadcrumb a {
+  color: #4b5563;
+  text-decoration: none;
+}
+.sft-shop-breadcrumb a:hover {
+  color: #0f172a;
+  text-decoration: underline;
+}
