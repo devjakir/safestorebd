@@ -3,7 +3,7 @@
 
 .sft-wa {
   position: fixed;
-  bottom: max(20px, env(safe-area-inset-bottom, 0px));
+  bottom: max(24px, calc(env(safe-area-inset-bottom, 0px) + 12px));
   z-index: 99000;
   display: flex;
   flex-direction: column;
@@ -217,7 +217,7 @@
 
 /* Mobile */
 @media (max-width: 640px) {
-  .sft-wa { bottom: max(16px, env(safe-area-inset-bottom, 0px)); gap: 10px; }
+  .sft-wa { bottom: max(20px, calc(env(safe-area-inset-bottom, 0px) + 10px)); gap: 10px; }
   .sft-wa[data-position="right"] { right: 16px; }
   .sft-wa[data-position="left"]  { left: 16px; }
   .sft-wa__fab { width: 54px; height: 54px; }
