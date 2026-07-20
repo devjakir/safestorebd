@@ -2665,12 +2665,13 @@ button, input, textarea, select { font: inherit; }
 }
 
 .home .hero-dot {
-  width: 14px;
-  height: 5px;
+  width: 34px;
+  height: 25px;
   padding: 0;
   border-radius: 999px;
-  border: 0;
+  border: 10px solid transparent;
   background: rgba(255, 255, 255, 0.28);
+  background-clip: padding-box;
   cursor: pointer;
   pointer-events: auto;
   transition: width 0.25s ease, background 0.25s ease;
@@ -2679,8 +2680,9 @@ button, input, textarea, select { font: inherit; }
 .home .hero-dot:hover { background: rgba(255, 255, 255, 0.5); }
 
 .home .hero-dot.is-active {
-  width: 32px;
+  width: 52px;
   background: #ffffff;
+  background-clip: padding-box;
 }
 
 @media (max-width: 900px) {
