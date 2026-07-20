@@ -3488,8 +3488,8 @@ button, input, textarea, select { font: inherit; }
 
 .sft-footer-grid {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
-  gap: 40px;
+  grid-template-columns: 1.4fr 0.9fr 0.9fr 1fr 1.2fr;
+  gap: 36px;
   padding-bottom: 44px;
 }
 
@@ -5686,22 +5686,34 @@ input.button:hover{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 43px;
-    height: 41px;
-    background: none;
-    border: 1px solid #333333;
-    border-radius: 100%;
+    width: 44px;
+    height: 42px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
     cursor: pointer;
-    padding: 12px;
+    padding: 13px 11px;
     margin: -50px 0px 20px 20px;
     z-index: 100;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mobile-menu-trigger:active {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
   }
   .hamburger-bar {
     width: 100%;
     height: 2.5px;
-    background-color: #333333;
+    background-color: #0f172a;
     border-radius: 2px;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+    transform-origin: center;
   }
+  .mobile-menu-trigger.is-open .hamburger-bar:nth-child(1) { transform: translateY(6.75px) rotate(45deg); }
+  .mobile-menu-trigger.is-open .hamburger-bar:nth-child(2) { opacity: 0; }
+  .mobile-menu-trigger.is-open .hamburger-bar:nth-child(3) { transform: translateY(-6.75px) rotate(-45deg); }
   /* Compact Left Sliding Drawer for Phone Displays */
   #offcanvas-menu {
     display: flex;
@@ -5728,11 +5740,13 @@ input.button:hover{
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(15, 23, 42, 0.45);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
     z-index: 999998;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.25s ease, visibility 0.25s ease;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
   }
   .menu-overlay.is-active {
     opacity: 1;
@@ -6185,3 +6199,12 @@ input.button:hover{
     background-color: #fff5f3 !important;
   }
 /* ACR Menu Custom CSS End */
+
+/* Hamburger -> X morph (applies at every breakpoint where the trigger is visible) */
+.mobile-menu-trigger .hamburger-bar {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+  transform-origin: center;
+}
+.mobile-menu-trigger.is-open .hamburger-bar:nth-child(1) { transform: translateY(6.75px) rotate(45deg); }
+.mobile-menu-trigger.is-open .hamburger-bar:nth-child(2) { opacity: 0; }
+.mobile-menu-trigger.is-open .hamburger-bar:nth-child(3) { transform: translateY(-6.75px) rotate(-45deg); }

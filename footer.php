@@ -31,6 +31,18 @@
 			</div>
 
 			<div class="sft-footer-col">
+				<h5 class="sft-footer-heading">Shop</h5>
+				<ul class="sft-footer-links">
+					<li><a href="<?php echo esc_url( function_exists('wc_get_page_permalink') ? wc_get_page_permalink('shop') : home_url('/shop/') ); ?>">All Products</a></li>
+					<li><a href="<?php echo esc_url(home_url('/product-category/safety-shoes/')); ?>">Safety Shoes</a></li>
+					<li><a href="<?php echo esc_url(home_url('/product-category/protective-helmets/')); ?>">Safety Helmets</a></li>
+					<li><a href="<?php echo esc_url(home_url('/product-category/safety-gloves/')); ?>">Safety Gloves</a></li>
+					<li><a href="<?php echo esc_url(home_url('/product-category/safety-vests/')); ?>">Safety Vests</a></li>
+					<li><a href="<?php echo esc_url(home_url('/product-category/safety-goggles/')); ?>">Safety Goggles</a></li>
+				</ul>
+			</div>
+
+			<div class="sft-footer-col">
 				<h5 class="sft-footer-heading">Company</h5>
 				<ul class="sft-footer-links">
 					<li><a href="<?php echo esc_url(home_url('/about/')); ?>">About Us</a></li>
