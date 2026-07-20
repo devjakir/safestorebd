@@ -95,25 +95,13 @@ $categories = array(
 		<?php endforeach; ?>
 	</div>
 </section>
-<section class="featured-categories">
+<section class="featured-categories" aria-label="Best selling products">
 	<div class="featured-categories-head">
 		<div>
-			<h2>Featured Products</h2>
+			<h2>Best Sellers</h2>
+			<p>The safety gear teams across Bangladesh order most.</p>
 		</div>
 		<a class="featured-categories-view-all" href="<?php echo esc_url( $shop_url ); ?>">View all <span aria-hidden="true">&rarr;</span></a>
 	</div>
-
-    <?php echo do_shortcode('[products limit="8" columns="4"]'); ?>
+	<?php echo do_shortcode( '[products limit="8" columns="4" orderby="popularity"]' ); ?>
 </section>
-
-<section class="featured-categories">
-	<div class="featured-categories-head">
-		<div>
-			<h2>Popular Products</h2>
-		</div>
-		<a class="featured-categories-view-all" href="/shop/?orderby=popularity">View all <span aria-hidden="true">&rarr;</span></a>
-	</div>
-    <?php echo do_shortcode('[products limit="8" columns="4" orderby="date" order="DESC"]'); ?>
-</section>
-
-
