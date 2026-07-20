@@ -53,5 +53,22 @@
 		if (document.hidden) stop(); else start();
 	});
 
-	start();
+	// Keyboard navigation on the dot tablist (WAI-ARIA carousel pattern)
+	const dotList = slider.querySelector('.hero-slider-dots');
+	if (dotList) {
+		dotList.addEventListener('keydown', function (e) {
+			if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+				e.preventDefault();
+				go(current + (e.key === 'ArrowRight' ? 1 : -1));
+				const activeDot = dots[current];
+				if (activeDot) activeDot.focus();
+			}
+		});
+	}
+
+	// Respect the user's reduced-motion preference: no autoplay, manual nav still works
+	const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	if (!prefersReducedMotion) {
+		start();
+	}
 })();
