@@ -131,16 +131,27 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleMenuToggle() {
     const isCurrentlyOpen = slidePanel.classList.toggle('is-active');
     screenOverlay.classList.toggle('is-active');
+    triggerBtn.classList.toggle('is-open', isCurrentlyOpen);
     triggerBtn.setAttribute('aria-expanded', isCurrentlyOpen);
-    
+
     // Prevent the background page from scrolling behind the menu overlay
     document.body.style.overflow = isCurrentlyOpen ? 'hidden' : '';
+
+    // Return focus to the trigger when closing (a11y)
+    if (!isCurrentlyOpen) triggerBtn.focus({ preventScroll: true });
   }
 
   if (triggerBtn && closeBtn && screenOverlay && slidePanel) {
     triggerBtn.addEventListener('click', handleMenuToggle);
     closeBtn.addEventListener('click', handleMenuToggle);
     screenOverlay.addEventListener('click', handleMenuToggle);
+
+    // Close the drawer with the Escape key (a11y / desktop-class UX)
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && slidePanel.classList.contains('is-active')) {
+        handleMenuToggle();
+      }
+    });
   }
 
   // --- Scoped Multi-Level Mobile Accordion Engine ---
