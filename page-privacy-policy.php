@@ -12,7 +12,7 @@ $terms_url    = home_url( '/terms-of-service/' );
 $returns_url  = home_url( '/return-refund-policy/' );
 $email        = 'bdsafestore@gmail.com';
 $privacy_mail = 'mailto:' . $email . '?subject=' . rawurlencode( 'Privacy request — SafeStoreBD' );
-$wa_href      = 'https://wa.me/8801761699627';
+$wa_href      = 'https://wa.me/8801880307446';
 $sections     = safestore_minimal_get_privacy_sections();
 $updated      = apply_filters( 'safestore_minimal_privacy_policy_updated', 'May 2026' );
 

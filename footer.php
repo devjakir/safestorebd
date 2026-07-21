@@ -64,12 +64,12 @@
 			<div class="sft-footer-col sft-footer-contact-col">
 				<h5 class="sft-footer-heading">Contact</h5>
 				<ul class="sft-footer-contact-list">
-					<li><a class="sft-contact-strong" href="tel:+8801761699627">+880 176 1699 627</a></li>
+					<li><a class="sft-contact-strong" href="tel:+8801880307446">+880 1880-307446</a></li>
 					<li><a href="mailto:bdsafestore@gmail.com">bdsafestore@gmail.com</a></li>
 					<li class="sft-contact-muted"><?php echo esc_html( function_exists( 'safestore_minimal_get_pickup_address' ) ? safestore_minimal_get_pickup_address() : 'Floor 2B, Dream 36 Tower, Bepari Market, Pallabi New Thana, Dhaka-1221' ); ?></li>
 					<li class="sft-contact-muted">Sat–Thu, 9am–8pm — full week only</li>
 					<li class="sft-contact-muted">Office: 9am–10pm</li>
-					<li><a class="sft-contact-strong" href="https://wa.me/8801761699627">WhatsApp Chat <span aria-hidden="true">&rarr;</span></a></li>
+					<li><a class="sft-contact-strong" href="https://wa.me/8801880307446">WhatsApp Chat <span aria-hidden="true">&rarr;</span></a></li>
 				</ul>
 			</div>
 

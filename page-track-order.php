@@ -13,9 +13,9 @@ $shipping_url = home_url( '/shipping-delivery/' );
 $faq_url      = home_url( '/faqs/' );
 $returns_url  = home_url( '/return-refund-policy/' );
 $contact_url  = home_url( '/contact/' );
-$phone_href   = 'tel:+8801761699627';
-$phone        = '+880 176 1699 627';
-$wa_href      = 'https://wa.me/8801761699627';
+$phone_href   = 'tel:+8801880307446';
+$phone        = '+880 1880-307446';
+$wa_href      = 'https://wa.me/8801880307446';
 $email        = 'bdsafestore@gmail.com';
 $steps        = safestore_minimal_get_track_steps();
 

@@ -249,7 +249,7 @@ function safestore_minimal_pdp_promo_strip() {
 function safestore_minimal_pdp_contact_row() {
     $wa = apply_filters('safestore_minimal_whatsapp_e164', '');
     $wa = preg_replace('/[^0-9]/', '', (string) $wa);
-    $tel_raw = apply_filters('safestore_minimal_phone_tel', '+8801761699627');
+    $tel_raw = apply_filters('safestore_minimal_phone_tel', '+8801880307446');
     $tel_digits = preg_replace('/[^\d+]/', '', (string) $tel_raw);
 
     if ($wa === '' && $tel_digits === '') {
@@ -597,7 +597,7 @@ function safestore_minimal_get_faq_sections() {
 				),
 				array(
 					'q' => __( 'How do I contact support?', 'safestore-minimal' ),
-					'a' => __( 'WhatsApp <strong>+880 176 1699 627</strong> or call/email on this site. Open <strong>Sat–Thu, 9am–8pm</strong>; closed Fridays.', 'safestore-minimal' ),
+					'a' => __( 'WhatsApp <strong>+880 1880-307446</strong> or call/email on this site. Open <strong>Sat–Thu, 9am–8pm</strong>; closed Fridays.', 'safestore-minimal' ),
 				),
 			),
 		),
@@ -1374,7 +1374,7 @@ function safestore_minimal_get_legal_sections() {
 					__( 'SafeStoreBD operates as an e-commerce seller of industrial safety products and PPE in <strong>Bangladesh</strong>. Goods are <strong>imported from suppliers in China</strong>, checked and stocked at our Pallabi, Dhaka office, then sold to customers and businesses nationwide.', 'safestore-minimal' ),
 				),
 				'list'       => array(
-					__( 'Registered contact: bdsafestore@gmail.com · +880 176 1699 627', 'safestore-minimal' ),
+					__( 'Registered contact: bdsafestore@gmail.com · +880 1880-307446', 'safestore-minimal' ),
 					sprintf(
 						/* translators: %s: office address */
 						__( 'Office: %s', 'safestore-minimal' ),

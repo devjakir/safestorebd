@@ -12,7 +12,7 @@ get_header();
 $faq_url      = home_url( '/faqs/' );
 $track_url    = home_url( '/track-order/' );
 $shipping_url = home_url( '/shipping-delivery/' );
-$wa_href      = 'https://wa.me/8801761699627';
+$wa_href      = 'https://wa.me/8801880307446';
 
 while ( have_posts() ) :
 	the_post();
