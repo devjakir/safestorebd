@@ -9,9 +9,9 @@ get_header();
 $shop_url   = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
 $contact    = home_url( '/contact/' );
 $bulk_url   = home_url( '/bulk-orders/' );
-$phone_href = 'tel:+8801761699627';
-$phone      = '+880 176 1699 627';
-$wa_href    = 'https://wa.me/8801761699627';
+$phone_href = 'tel:+8801880307446';
+$phone      = '+880 1880-307446';
+$wa_href    = 'https://wa.me/8801880307446';
 $email      = 'bdsafestore@gmail.com';
 
 while ( have_posts() ) :

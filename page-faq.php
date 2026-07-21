@@ -9,7 +9,7 @@ get_header();
 
 $contact_url  = home_url( '/contact/' );
 $returns_url  = home_url( '/return-refund-policy/' );
-$wa_href      = 'https://wa.me/8801761699627';
+$wa_href      = 'https://wa.me/8801880307446';
 $faq_sections = safestore_minimal_get_faq_sections();
 
 while ( have_posts() ) :

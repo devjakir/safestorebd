@@ -9,7 +9,7 @@ get_header();
 
 $contact_url  = home_url( '/contact/' );
 $sitemap_url  = home_url( '/sitemap/' );
-$wa_href      = 'https://wa.me/8801761699627';
+$wa_href      = 'https://wa.me/8801880307446';
 $sections     = safestore_minimal_get_legal_sections();
 $documents    = safestore_minimal_get_legal_documents();
 $updated      = apply_filters( 'safestore_minimal_legal_updated', 'May 2026' );

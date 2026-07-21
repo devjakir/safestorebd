@@ -9,7 +9,7 @@ get_header();
 
 $legal_url    = home_url( '/legal/' );
 $contact_url  = home_url( '/contact/' );
-$wa_href      = 'https://wa.me/8801761699627';
+$wa_href      = 'https://wa.me/8801880307446';
 $groups       = safestore_minimal_get_sitemap_groups();
 
 while ( have_posts() ) :
