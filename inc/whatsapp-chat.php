@@ -149,6 +149,32 @@ function safestore_wa_icon_svg($class) {
 }
 
 /**
+ * Render an icon + phone-number WhatsApp CTA link, used in place of a bare
+ * "WhatsApp" text label wherever the theme links out to wa.me.
+ *
+ * @param string $href       WhatsApp deep link (wa.me URL).
+ * @param string $phone      Display phone number, e.g. "+880 1880-307446".
+ * @param string $class      Extra classes for the anchor (space-separated).
+ * @return string
+ */
+function safestore_wa_cta_link($href, $phone, $class = '') {
+    $label = sprintf(
+        /* translators: %s: phone number */
+        __('Chat on WhatsApp: %s', 'safestore-minimal'),
+        $phone
+    );
+
+    return sprintf(
+        '<a class="%1$s" href="%2$s" target="_blank" rel="noopener noreferrer" aria-label="%3$s">%4$s<span aria-hidden="true">%5$s</span></a>',
+        esc_attr(trim('sft-wa-cta ' . $class)),
+        esc_url($href),
+        esc_attr($label),
+        safestore_wa_icon_svg('sft-wa-cta-icon'),
+        esc_html($phone)
+    );
+}
+
+/**
  * Render the widget in the footer.
  */
 function safestore_wa_render_widget() {

@@ -761,6 +761,18 @@ button, input, textarea, select { font: inherit; }
   color: #166534;
 }
 
+.sft-wa-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.sft-wa-cta-icon {
+  width: 1.05em;
+  height: 1.05em;
+  flex: none;
+}
+
 .sft-about-contact-shop {
   width: 100%;
 }

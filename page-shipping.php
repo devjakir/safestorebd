@@ -36,7 +36,7 @@ while ( have_posts() ) :
 				</p>
 				<div class="sft-about-hero-cta">
 					<a class="sft-about-btn sft-about-btn--primary" href="<?php echo esc_url( $track_url ); ?>"><?php esc_html_e( 'Track order', 'safestore-minimal' ); ?></a>
-					<a class="sft-about-btn sft-about-btn--ghost" href="<?php echo esc_url( $wa_href ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'WhatsApp', 'safestore-minimal' ); ?></a>
+					<?php echo safestore_wa_cta_link( $wa_href, $phone, 'sft-about-btn sft-about-btn--ghost' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 				</div>
 			</div>
 		</section>
@@ -94,7 +94,7 @@ while ( have_posts() ) :
 						<li><a href="<?php echo esc_url( $phone_href ); ?>"><?php echo esc_html( $phone ); ?></a></li>
 						<li><a href="<?php echo esc_url( 'mailto:' . $email ); ?>"><?php echo esc_html( $email ); ?></a></li>
 						<li>
-							<a class="sft-about-contact-wa" href="<?php echo esc_url( $wa_href ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'WhatsApp', 'safestore-minimal' ); ?></a>
+							<?php echo safestore_wa_cta_link( $wa_href, $phone, 'sft-about-contact-wa' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 						</li>
 					</ul>
 					<a class="sft-about-btn sft-about-btn--primary sft-about-contact-shop" href="<?php echo esc_url( $track_url ); ?>"><?php esc_html_e( 'Track order', 'safestore-minimal' ); ?></a>
@@ -138,7 +138,7 @@ while ( have_posts() ) :
 						<p><?php esc_html_e( 'Message us with your order number for tracking or delivery changes.', 'safestore-minimal' ); ?></p>
 					</div>
 					<div class="sft-ship-page-footer-cta-actions">
-						<a class="sft-about-btn sft-about-btn--primary sft-about-btn--light" href="<?php echo esc_url( $wa_href ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'WhatsApp', 'safestore-minimal' ); ?></a>
+						<?php echo safestore_wa_cta_link( $wa_href, $phone, 'sft-about-btn sft-about-btn--primary sft-about-btn--light' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 						<a class="sft-about-btn sft-about-btn--ghost sft-about-btn--light" href="<?php echo esc_url( $contact_url ); ?>"><?php esc_html_e( 'Contact', 'safestore-minimal' ); ?></a>
 					</div>
 				</div>

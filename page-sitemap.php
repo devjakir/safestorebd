@@ -10,6 +10,7 @@ get_header();
 $legal_url    = home_url( '/legal/' );
 $contact_url  = home_url( '/contact/' );
 $wa_href      = 'https://wa.me/8801880307446';
+$phone        = '+880 1880-307446';
 $groups       = safestore_minimal_get_sitemap_groups();
 
 while ( have_posts() ) :
@@ -92,7 +93,7 @@ while ( have_posts() ) :
 					</div>
 					<div class="sft-sitemap-page-footer-cta-actions">
 						<a class="sft-about-btn sft-about-btn--primary sft-about-btn--light" href="<?php echo esc_url( $contact_url ); ?>"><?php esc_html_e( 'Contact', 'safestore-minimal' ); ?></a>
-						<a class="sft-about-btn sft-about-btn--ghost sft-about-btn--light" href="<?php echo esc_url( $wa_href ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'WhatsApp', 'safestore-minimal' ); ?></a>
+						<?php echo safestore_wa_cta_link( $wa_href, $phone, 'sft-about-btn sft-about-btn--ghost sft-about-btn--light' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 					</div>
 				</div>
 			</div>

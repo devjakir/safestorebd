@@ -703,7 +703,7 @@ add_filter(
 function safestore_minimal_get_pickup_address() {
 	return apply_filters(
 		'safestore_minimal_pdp_pickup_address',
-		__( 'Floor 2B, Dream 36 Tower, Bepari Market, Pallabi New Thana, Dhaka-1221', 'safestore-minimal' )
+		__( '17/5/1 Alabdirtek, Pallabi, Dhaka 1207, Bangladesh', 'safestore-minimal' )
 	);
 }
 
@@ -927,9 +927,9 @@ add_action(
 					'@type'   => 'Place',
 					'address' => array(
 						'@type'           => 'PostalAddress',
-						'streetAddress'   => safestore_minimal_get_pickup_address(),
+						'streetAddress'   => '17/5/1 Alabdirtek, Pallabi',
 						'addressLocality' => 'Dhaka',
-						'postalCode'      => '1221',
+						'postalCode'      => '1207',
 						'addressCountry'  => 'BD',
 					),
 				),

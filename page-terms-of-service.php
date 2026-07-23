@@ -13,6 +13,7 @@ $shipping_url = home_url( '/shipping-delivery/' );
 $contact_url  = home_url( '/contact/' );
 $email        = 'bdsafestore@gmail.com';
 $wa_href      = 'https://wa.me/8801880307446';
+$phone        = '+880 1880-307446';
 $sections     = safestore_minimal_get_terms_sections();
 $updated      = apply_filters( 'safestore_minimal_terms_updated', 'May 2026' );
 
@@ -72,7 +73,7 @@ while ( have_posts() ) :
 					<ul class="sft-about-contact-list">
 						<li><a href="<?php echo esc_url( 'mailto:' . $email ); ?>"><?php echo esc_html( $email ); ?></a></li>
 						<li>
-							<a class="sft-about-contact-wa" href="<?php echo esc_url( $wa_href ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'WhatsApp', 'safestore-minimal' ); ?></a>
+							<?php echo safestore_wa_cta_link( $wa_href, $phone, 'sft-about-contact-wa' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 						</li>
 					</ul>
 					<a class="sft-about-btn sft-about-btn--primary sft-about-contact-shop" href="<?php echo esc_url( $contact_url ); ?>"><?php esc_html_e( 'Contact us', 'safestore-minimal' ); ?></a>
@@ -115,7 +116,7 @@ while ( have_posts() ) :
 						<p><?php esc_html_e( 'WhatsApp or email us before placing a bulk or corporate order.', 'safestore-minimal' ); ?></p>
 					</div>
 					<div class="sft-terms-page-footer-cta-actions">
-						<a class="sft-about-btn sft-about-btn--primary sft-about-btn--light" href="<?php echo esc_url( $wa_href ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'WhatsApp', 'safestore-minimal' ); ?></a>
+						<?php echo safestore_wa_cta_link( $wa_href, $phone, 'sft-about-btn sft-about-btn--primary sft-about-btn--light' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 						<a class="sft-about-btn sft-about-btn--ghost sft-about-btn--light" href="<?php echo esc_url( $contact_url ); ?>"><?php esc_html_e( 'Contact', 'safestore-minimal' ); ?></a>
 					</div>
 				</div>
