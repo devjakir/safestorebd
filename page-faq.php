@@ -10,6 +10,7 @@ get_header();
 $contact_url  = home_url( '/contact/' );
 $returns_url  = home_url( '/return-refund-policy/' );
 $wa_href      = 'https://wa.me/8801880307446';
+$phone        = '+880 1880-307446';
 $faq_sections = safestore_minimal_get_faq_sections();
 
 while ( have_posts() ) :
@@ -25,7 +26,7 @@ while ( have_posts() ) :
 					<?php esc_html_e( 'Payment, delivery, and returns for orders in Bangladesh.', 'safestore-minimal' ); ?>
 				</p>
 				<div class="sft-about-hero-cta">
-					<a class="sft-about-btn sft-about-btn--primary" href="<?php echo esc_url( $wa_href ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'WhatsApp', 'safestore-minimal' ); ?></a>
+					<?php echo safestore_wa_cta_link( $wa_href, $phone, 'sft-about-btn sft-about-btn--primary' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 				</div>
 			</div>
 		</section>
@@ -70,7 +71,7 @@ while ( have_posts() ) :
 					<p><?php esc_html_e( 'WhatsApp us with your order number, or see our return policy.', 'safestore-minimal' ); ?></p>
 				</div>
 				<div class="sft-about-cta-actions">
-					<a class="sft-about-btn sft-about-btn--primary sft-about-btn--light" href="<?php echo esc_url( $wa_href ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'WhatsApp', 'safestore-minimal' ); ?></a>
+					<?php echo safestore_wa_cta_link( $wa_href, $phone, 'sft-about-btn sft-about-btn--primary sft-about-btn--light' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 					<a class="sft-about-btn sft-about-btn--ghost sft-about-btn--light" href="<?php echo esc_url( $returns_url ); ?>"><?php esc_html_e( 'Return policy', 'safestore-minimal' ); ?></a>
 					<a class="sft-about-btn sft-about-btn--ghost sft-about-btn--light" href="<?php echo esc_url( $contact_url ); ?>"><?php esc_html_e( 'Contact', 'safestore-minimal' ); ?></a>
 				</div>

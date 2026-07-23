@@ -15,7 +15,7 @@ $support_items = array(
 	array(
 		'tone'     => 'whatsapp',
 		'eyebrow'  => 'WhatsApp',
-		'value'    => 'Chat on WhatsApp',
+		'value'    => '+880 1880-307446',
 		'detail'   => 'Avg reply ~5 min',
 		'href'     => 'https://wa.me/8801880307446',
 		'external' => true,
