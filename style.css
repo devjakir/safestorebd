@@ -3904,6 +3904,16 @@ a.sft-contact-item:focus-visible {
   background: #ffffff;
 }
 
+/* Shop + product archives sit on a soft grey so the product grid reads as a
+   clean, modern catalog. Single product, cart, and checkout keep the white
+   background above. */
+.woocommerce-shop .sft-shop-main,
+.post-type-archive-product .sft-shop-main,
+.tax-product_cat .sft-shop-main,
+.tax-product_tag .sft-shop-main {
+  background: #f2f4f8;
+}
+
 .sft-shop {
   max-width: 1320px;
   margin: 0 auto;
@@ -3952,8 +3962,8 @@ a.sft-contact-item:focus-visible {
 .sft-shop ul.products,
 .woocommerce.sft-shop-main ul.products {
   display: grid !important;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 32px 28px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 32px 24px;
   margin: 0;
   padding: 0;
   list-style: none;

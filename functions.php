@@ -161,9 +161,9 @@ function safestore_minimal_loop_add_to_cart_link($link, $product, $args) {
 add_filter('woocommerce_loop_add_to_cart_link', 'safestore_minimal_loop_add_to_cart_link', 10, 3);
 
 /**
- * Shop loop: 3 columns, 12 products per page.
+ * Shop loop: 4 columns, 12 products per page (grid scales 4→3→2→1 in CSS).
  */
-add_filter('loop_shop_columns', function () { return 3; }, 99);
+add_filter('loop_shop_columns', function () { return 4; }, 99);
 add_filter('loop_shop_per_page', function () { return 12; }, 99);
 
 /**
