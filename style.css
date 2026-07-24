@@ -4201,6 +4201,7 @@ a.sft-contact-item:focus-visible {
 }
 
 .sft-shop-header {
+  text-align: center;
   margin-bottom: 28px;
 }
 
@@ -4216,7 +4217,6 @@ a.sft-contact-item:focus-visible {
   color: #6b7280;
   font-size: 14px;
   line-height: 1.6;
-  max-width: 640px;
 }
 
 /* Catalog sorting (result count removed — pagination is after the grid) */
