@@ -77,6 +77,21 @@ function safestore_minimal_enqueue_assets() {
             true
         );
     }
+
+    // Product-card enhancements (category "Show more / less"). Loaded wherever
+    // product cards can render (shop, archives, single-product related, home).
+    if (class_exists('WooCommerce')) {
+        $shop_cards_path = get_template_directory() . '/js/shop-cards.js';
+        if (file_exists($shop_cards_path)) {
+            wp_enqueue_script(
+                'safestore-minimal-shop-cards',
+                get_template_directory_uri() . '/js/shop-cards.js',
+                array(),
+                (string) filemtime($shop_cards_path),
+                true
+            );
+        }
+    }
 }
 add_action('wp_enqueue_scripts', 'safestore_minimal_enqueue_assets');
 
@@ -151,7 +166,15 @@ function safestore_minimal_loop_add_to_cart_link($link, $product, $args) {
         return $link;
     }
 
-    $icon = '<svg class="sft-product-card__cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/><path d="M3 4h2l2.4 11.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.5L21 8H6"/></svg>';
+    // Match the icon to the CTA: a cart for a direct "Add to cart" (simple,
+    // purchasable, in-stock products carry WooCommerce's ajax_add_to_cart class),
+    // and an options/sliders glyph for "Select options" (variable products that
+    // need a choice on the product page first).
+    if (false !== strpos($link, 'ajax_add_to_cart')) {
+        $icon = '<svg class="sft-product-card__cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/><path d="M3 4h2l2.4 11.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.5L21 8H6"/></svg>';
+    } else {
+        $icon = '<svg class="sft-product-card__cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><circle cx="10" cy="9" r="2.4"/><circle cx="15" cy="15" r="2.4"/></svg>';
+    }
     $label = '<span class="sft-product-card__cart-label">' . esc_html($product->add_to_cart_text()) . '</span>';
 
     $count    = 0;
