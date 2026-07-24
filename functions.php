@@ -6,6 +6,12 @@
  */
 require get_template_directory() . '/inc/whatsapp-chat.php';
 
+/**
+ * Add to Cart success toast — branded confirmation, header cart sync, AJAX
+ * single-product add. See inc/cart-toast.php.
+ */
+require get_template_directory() . '/inc/cart-toast.php';
+
 function safestore_minimal_enqueue_assets() {
     $version = wp_get_theme()->get('Version');
 
@@ -698,13 +704,43 @@ add_filter(
 );
 
 /**
- * Office / pickup address (shared site-wide).
+ * Structured office / pickup address — single source of truth.
+ *
+ * Both the human-readable address string and the PostalAddress structured
+ * data derive from these parts, so the footer copy and the schema can never
+ * drift apart when the address changes. Filter individual parts via
+ * `safestore_minimal_address_parts`.
+ *
+ * @return array{street:string, locality:string, postal_code:string, country:string, country_name:string}
+ */
+function safestore_minimal_get_address_parts() {
+	return apply_filters(
+		'safestore_minimal_address_parts',
+		array(
+			'street'       => __( '17/5/1 Alabdirtek, Pallabi', 'safestore-minimal' ),
+			'locality'     => __( 'Dhaka', 'safestore-minimal' ),
+			'postal_code'  => '1207',
+			'country'      => 'BD',
+			'country_name' => __( 'Bangladesh', 'safestore-minimal' ),
+		)
+	);
+}
+
+/**
+ * Office / pickup address as a single display string (shared site-wide).
  */
 function safestore_minimal_get_pickup_address() {
-	return apply_filters(
-		'safestore_minimal_pdp_pickup_address',
-		__( '17/5/1 Alabdirtek, Pallabi, Dhaka 1207, Bangladesh', 'safestore-minimal' )
+	$parts   = safestore_minimal_get_address_parts();
+	$address = sprintf(
+		/* translators: 1: street address, 2: city/locality, 3: postal code, 4: country name */
+		_x( '%1$s, %2$s %3$s, %4$s', 'office postal address', 'safestore-minimal' ),
+		$parts['street'],
+		$parts['locality'],
+		$parts['postal_code'],
+		$parts['country_name']
 	);
+
+	return apply_filters( 'safestore_minimal_pdp_pickup_address', $address );
 }
 
 /**
@@ -714,6 +750,173 @@ function safestore_minimal_get_office_location_short() {
 	return apply_filters(
 		'safestore_minimal_office_location_short',
 		__( 'Pallabi, Dhaka', 'safestore-minimal' )
+	);
+}
+
+/* -------------------------------------------------------------------------
+ * Reusable contact component
+ *
+ * A single icon-left / detail-right contact row used everywhere contact
+ * information appears (footer, homepage support section, …) so the icon,
+ * spacing, alignment, and typography stay identical site-wide. All icons
+ * inherit `currentColor`, so the brand colour is applied purely in CSS via
+ * the `--sft-contact-accent` custom property.
+ * ---------------------------------------------------------------------- */
+
+/**
+ * Inline SVG glyph for a contact method. Returns trusted, self-authored
+ * markup (no user input), safe to echo without escaping.
+ *
+ * @param string $type phone|whatsapp|email|location|clock|help.
+ * @return string SVG markup, or '' for an unknown type.
+ */
+function safestore_contact_icon_svg( $type ) {
+	if ( 'whatsapp' === $type && function_exists( 'safestore_wa_icon_svg' ) ) {
+		return safestore_wa_icon_svg( 'sft-contact-item__glyph' );
+	}
+
+	$icons = array(
+		'phone'    => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
+		'email'    => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
+		'location' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+		'clock'    => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+		'help'     => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h4"/></svg>',
+	);
+
+	return isset( $icons[ $type ] ) ? $icons[ $type ] : '';
+}
+
+/**
+ * Inner markup shared by the clickable and static contact rows.
+ *
+ * @param string $icon   Trusted SVG markup for the icon chip.
+ * @param string $label  Method label; rendered but visually hidden (CSS), so it
+ *                       stays available to screen readers (optional).
+ * @param string $value  Primary contact value.
+ * @param string $detail Small line below the value (optional).
+ * @return string
+ */
+function safestore_contact_item_markup( $icon, $label, $value, $detail ) {
+	$body = '';
+	if ( '' !== (string) $label ) {
+		$body .= '<span class="sft-contact-item__label">' . esc_html( $label ) . '</span>';
+	}
+	$body .= '<span class="sft-contact-item__value">' . esc_html( $value ) . '</span>';
+	if ( '' !== (string) $detail ) {
+		$body .= '<span class="sft-contact-item__detail">' . esc_html( $detail ) . '</span>';
+	}
+
+	return '<span class="sft-contact-item__icon" aria-hidden="true">' . $icon . '</span>'
+		. '<span class="sft-contact-item__body">' . $body . '</span>';
+}
+
+/**
+ * Render a clickable contact item — brand icon on the left, contact detail
+ * on the right. Returns markup; callers echo it (contains trusted SVG).
+ *
+ * @param array $args {
+ *     @type string $type   phone|whatsapp|email (selects icon + auto-builds href). Default 'phone'.
+ *     @type string $value  Display value, e.g. "+880 1880-307446". Required.
+ *     @type string $href   Link target. Auto-built from $type + $value when omitted.
+ *     @type string $label  Method label, e.g. "Call us" — not shown; used as the aria-label + tooltip.
+ *     @type string $detail Small line below the value.
+ *     @type string $icon   Custom trusted SVG (overrides the type icon).
+ *     @type bool   $external Open in a new tab. Defaults to true for WhatsApp.
+ *     @type string $class  Extra classes on the root anchor.
+ * }
+ * @return string
+ */
+function safestore_contact_item( $args = array() ) {
+	$args = wp_parse_args(
+		$args,
+		array(
+			'type'     => 'phone',
+			'value'    => '',
+			'href'     => '',
+			'label'    => '',
+			'detail'   => '',
+			'icon'     => '',
+			'external' => null,
+			'class'    => '',
+		)
+	);
+
+	$type  = (string) $args['type'];
+	$value = (string) $args['value'];
+	$href  = (string) $args['href'];
+
+	if ( '' === $href && '' !== $value ) {
+		if ( 'email' === $type ) {
+			$href = 'mailto:' . $value;
+		} elseif ( 'phone' === $type ) {
+			$href = 'tel:' . preg_replace( '/[^\d+]/', '', $value );
+		} elseif ( 'whatsapp' === $type ) {
+			$href = 'https://wa.me/' . preg_replace( '/\D/', '', $value );
+		}
+	}
+
+	if ( '' === $value || '' === $href ) {
+		return '';
+	}
+
+	$icon     = '' !== $args['icon'] ? $args['icon'] : safestore_contact_icon_svg( $type );
+	$external = is_null( $args['external'] ) ? ( 'whatsapp' === $type ) : (bool) $args['external'];
+
+	$names  = array(
+		'phone'    => __( 'Phone', 'safestore-minimal' ),
+		'whatsapp' => __( 'WhatsApp', 'safestore-minimal' ),
+		'email'    => __( 'Email', 'safestore-minimal' ),
+	);
+	$method = '' !== $args['label'] ? $args['label'] : ( isset( $names[ $type ] ) ? $names[ $type ] : ucfirst( $type ) );
+
+	// The label is not shown; it is preserved as the aria-label (accessible
+	// name) and as a hover tooltip so the row stays clear without the clutter.
+	return sprintf(
+		'<a class="%1$s" href="%2$s"%3$s aria-label="%4$s" title="%5$s">%6$s</a>',
+		esc_attr( trim( 'sft-contact-item sft-contact-item--' . $type . ' ' . $args['class'] ) ),
+		esc_url( $href ),
+		$external ? ' target="_blank" rel="noopener noreferrer"' : '',
+		esc_attr( trim( wp_strip_all_tags( $method . ': ' . $value ) ) ),
+		esc_attr( $method ),
+		safestore_contact_item_markup( $icon, $args['label'], $value, $args['detail'] )
+	);
+}
+
+/**
+ * Render a static (non-clickable) contact line — same layout as
+ * safestore_contact_item(), used for address, opening hours, etc.
+ *
+ * @param array $args type, value (required), label, detail, icon, class.
+ * @return string
+ */
+function safestore_contact_line( $args = array() ) {
+	$args = wp_parse_args(
+		$args,
+		array(
+			'type'   => 'info',
+			'value'  => '',
+			'label'  => '',
+			'detail' => '',
+			'icon'   => '',
+			'class'  => '',
+		)
+	);
+
+	if ( '' === (string) $args['value'] ) {
+		return '';
+	}
+
+	$icon = '' !== $args['icon'] ? $args['icon'] : safestore_contact_icon_svg( $args['type'] );
+
+	// The label is kept as a screen-reader-only span (via the markup helper) and
+	// as a hover tooltip, but is not shown inline.
+	$title = '' !== (string) $args['label'] ? ' title="' . esc_attr( $args['label'] ) . '"' : '';
+
+	return sprintf(
+		'<div class="%1$s"%2$s>%3$s</div>',
+		esc_attr( trim( 'sft-contact-item sft-contact-item--static sft-contact-item--' . $args['type'] . ' ' . $args['class'] ) ),
+		$title,
+		safestore_contact_item_markup( $icon, $args['label'], $args['value'], $args['detail'] )
 	);
 }
 
@@ -911,7 +1114,8 @@ add_action(
 		printf( '<meta name="description" content="%s" />' . "\n", esc_attr( $desc ) );
 		printf( '<link rel="canonical" href="%s" />' . "\n", esc_url( get_permalink() ) );
 
-		$jobs = array();
+		$jobs          = array();
+		$address_parts = safestore_minimal_get_address_parts();
 		foreach ( safestore_minimal_get_career_openings() as $job ) {
 			$jobs[] = array(
 				'@type'    => 'JobPosting',
@@ -927,10 +1131,10 @@ add_action(
 					'@type'   => 'Place',
 					'address' => array(
 						'@type'           => 'PostalAddress',
-						'streetAddress'   => '17/5/1 Alabdirtek, Pallabi',
-						'addressLocality' => 'Dhaka',
-						'postalCode'      => '1207',
-						'addressCountry'  => 'BD',
+						'streetAddress'   => $address_parts['street'],
+						'addressLocality' => $address_parts['locality'],
+						'postalCode'      => $address_parts['postal_code'],
+						'addressCountry'  => $address_parts['country'],
 					),
 				),
 			);

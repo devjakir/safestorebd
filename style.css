@@ -3070,121 +3070,21 @@ button, input, textarea, select { font: inherit; }
   border-top: 1px solid #eef0f3;
 }
 
-.home .support-item {
-  padding: 26px 18px 28px;
-  text-align: center;
-  text-decoration: none;
-  color: inherit;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
+/* Homepage support cells reuse the shared .sft-contact-item component,
+   laid out as four divided cells inside the support card. */
+.home .support-bar-grid .sft-contact-item {
+  padding: 24px 22px;
+  gap: 14px;
   border-left: 1px solid #eef0f3;
-  transition: background 0.2s ease;
+  border-radius: 0;
 }
 
-.home .support-item:first-child { border-left: 0; }
-
-.home .support-item:hover {
-  text-decoration: none;
+.home .support-bar-grid .sft-contact-item:first-child {
+  border-left: 0;
 }
 
-.home .support-icon {
-  width: 46px;
-  height: 46px;
-  border-radius: 10px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 6px;
-}
-
-.home .support-icon svg {
-  width: 22px;
-  height: 22px;
-  display: block;
-}
-
-.home .support-icon--red    { background: rgba(255, 255, 255, 0.22); color: #ffffff; }
-.home .support-icon--green  { background: #ecfdf5; color: #16a34a; }
-.home .support-icon--blue   { background: rgba(255, 255, 255, 0.22); color: #ffffff; }
-.home .support-icon--amber  { background: rgba(255, 255, 255, 0.22); color: #ffffff; }
-.home .support-icon--whatsapp {
-  background: rgba(255, 255, 255, 0.22);
-  color: #ffffff;
-}
-
-/* Support grid tiles — solid brand backgrounds, white copy (WhatsApp-style) */
-.home .support-item:has(.support-icon--red) {
-  background: #dc2626;
-  border-left-color: rgba(255, 255, 255, 0.22);
-}
-.home .support-item:has(.support-icon--red):hover {
-  background: #b91c1c;
-}
-
-.home .support-item:has(.support-icon--whatsapp) {
-  background: #25d366;
-  border-left-color: rgba(255, 255, 255, 0.22);
-}
-.home .support-item:has(.support-icon--whatsapp):hover {
-  background: #20bd5a;
-}
-
-.home .support-item:has(.support-icon--blue) {
-  background: #2563eb;
-  border-left-color: rgba(255, 255, 255, 0.22);
-}
-.home .support-item:has(.support-icon--blue):hover {
-  background: #1d4ed8;
-}
-
-.home .support-item:has(.support-icon--amber) {
-  background: #ea580c;
-  border-left-color: rgba(255, 255, 255, 0.22);
-}
-.home .support-item:has(.support-icon--amber):hover {
-  background: #c2410c;
-}
-
-.home .support-item:has(.support-icon--red) .support-eyebrow,
-.home .support-item:has(.support-icon--whatsapp) .support-eyebrow,
-.home .support-item:has(.support-icon--blue) .support-eyebrow,
-.home .support-item:has(.support-icon--amber) .support-eyebrow {
-  color: rgba(255, 255, 255, 0.88);
-}
-.home .support-item:has(.support-icon--red) .support-value,
-.home .support-item:has(.support-icon--whatsapp) .support-value,
-.home .support-item:has(.support-icon--blue) .support-value,
-.home .support-item:has(.support-icon--amber) .support-value {
-  color: #ffffff;
-}
-.home .support-item:has(.support-icon--red) .support-detail,
-.home .support-item:has(.support-icon--whatsapp) .support-detail,
-.home .support-item:has(.support-icon--blue) .support-detail,
-.home .support-item:has(.support-icon--amber) .support-detail {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.home .support-eyebrow {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #6b7280;
-}
-
-.home .support-value {
-  font-size: 16px;
-  font-weight: 600;
-  color: #0f172a;
-  line-height: 1.25;
-}
-
-.home .support-detail {
-  font-size: 12px;
-  color: #6b7280;
-  line-height: 1.4;
+.home .support-bar-grid a.sft-contact-item:hover {
+  background: #fafbfc;
 }
 
 @media (max-width: 900px) {
@@ -3193,15 +3093,18 @@ button, input, textarea, select { font: inherit; }
   .home .support-bar-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .home .support-item:nth-child(3) { border-left: 0; }
-  .home .support-item:nth-child(3),
-  .home .support-item:nth-child(4) { border-top: 1px solid rgba(255, 255, 255, 0.22); }
+  .home .support-bar-grid .sft-contact-item:nth-child(3) { border-left: 0; }
+  .home .support-bar-grid .sft-contact-item:nth-child(3),
+  .home .support-bar-grid .sft-contact-item:nth-child(4) { border-top: 1px solid #eef0f3; }
 }
 
 @media (max-width: 480px) {
   .home .support-bar-grid { grid-template-columns: 1fr; }
-  .home .support-item { border-left: 0; border-top: 1px solid rgba(255, 255, 255, 0.22); }
-  .home .support-item:first-child { border-top: 0; }
+  .home .support-bar-grid .sft-contact-item {
+    border-left: 0;
+    border-top: 1px solid #eef0f3;
+  }
+  .home .support-bar-grid .sft-contact-item:first-child { border-top: 0; }
 }
 
 /* Keep hero aligned with site max width and page padding */
@@ -3657,28 +3560,160 @@ button, input, textarea, select { font: inherit; }
   gap: 12px;
 }
 
-.sft-footer-links a,
-.sft-footer-contact-list a {
+.sft-footer-links a {
   color: #374151;
   text-decoration: none;
   font-size: 15px;
   transition: color 0.2s ease;
 }
 
-.sft-footer-links a:hover,
-.sft-footer-contact-list a:hover {
+.sft-footer-links a:hover {
   color: #dc2626;
   text-decoration: none;
 }
 
-.sft-contact-strong {
-  font-weight: 600;
-  color: #0f172a !important;
+/* Footer contact column is built from the shared .sft-contact-item component. */
+.sft-footer-contact-list {
+  gap: 16px;
 }
 
-.sft-contact-muted {
+/* ============================================================
+   Reusable contact item — brand icon (left) + detail (right)
+   Shared by the footer contact column and the homepage support
+   section so icon size, spacing, alignment, and typography stay
+   identical site-wide. The icon colour is driven by the
+   --sft-contact-accent custom property: the base value below is the
+   default/fallback, and each method overrides it further down
+   (phone / whatsapp / email / help) with its own brand colour.
+   ============================================================ */
+.sft-contact-item {
+  --sft-contact-accent: #dc2626;      /* default accent — overridden per method below */
+  --sft-contact-accent-ink: #ffffff;
+  --sft-contact-accent-soft: #fef2f2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 12px;
+}
+
+.sft-contact-item__icon {
+  flex: none;
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: var(--sft-contact-accent-soft);
+  color: var(--sft-contact-accent);
+  transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.sft-contact-item__icon svg,
+.sft-contact-item__glyph {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.sft-contact-item__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+/* The method label (Call us / WhatsApp / Email / …) is intentionally hidden
+   from view to keep the contact rows clean — the icon already communicates the
+   method. It stays in the DOM as the screen-reader name for the static rows
+   (address / hours); clickable rows also carry an aria-label, and every row
+   exposes the label as a hover tooltip (title=""). */
+.sft-contact-item__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.sft-contact-item__value {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.sft-contact-item__detail {
+  font-size: 12px;
   color: #6b7280;
-  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Clickable variant — hover & keyboard-focus states */
+a.sft-contact-item {
+  transition: color 0.18s ease, background-color 0.18s ease;
+}
+
+a.sft-contact-item:hover,
+a.sft-contact-item:focus-visible {
+  text-decoration: none;
+}
+
+a.sft-contact-item:hover .sft-contact-item__value {
+  color: var(--sft-contact-accent);
+}
+
+a.sft-contact-item:hover .sft-contact-item__icon {
+  background: var(--sft-contact-accent);
+  color: var(--sft-contact-accent-ink);
+  transform: translateY(-1px);
+}
+
+a.sft-contact-item:focus-visible {
+  outline: 2px solid var(--sft-contact-accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sft-contact-item__icon,
+  a.sft-contact-item { transition: none; }
+  a.sft-contact-item:hover .sft-contact-item__icon { transform: none; }
+}
+
+/* Static (non-clickable) variant — address, opening hours */
+.sft-contact-item--static .sft-contact-item__icon {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+/* Per-method brand / semantic icon colours.
+   Each method re-points --sft-contact-accent (glyph + hover fill) and its
+   soft chip tint; the shared layout, sizing, and hover/focus logic above are
+   untouched, so all icons stay visually consistent while carrying their own
+   identity. The label beside every icon conveys the method in text, so the
+   icon is never the sole indicator (WCAG 1.4.11). */
+.sft-contact-item--phone {
+  --sft-contact-accent: #dc2626;        /* primary theme colour — call / action */
+  --sft-contact-accent-soft: #fef2f2;
+}
+.sft-contact-item--whatsapp {
+  --sft-contact-accent: #25d366;        /* official WhatsApp green */
+  --sft-contact-accent-soft: #e8faf0;
+}
+.sft-contact-item--email {
+  --sft-contact-accent: #2563eb;        /* professional blue accent (in the design system) */
+  --sft-contact-accent-soft: #eef4ff;
+}
+.sft-contact-item--help {
+  --sft-contact-accent: #ea580c;        /* brand orange (logo accent) — help / guides */
+  --sft-contact-accent-soft: #fff4ec;
 }
 
 /* Payment + cert row */
