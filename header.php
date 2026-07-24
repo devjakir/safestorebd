@@ -109,7 +109,7 @@ $cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/
                 </span>
                 <span class="sft-header-action-text">
                     <span class="sft-header-action-eyebrow">Cart</span>
-                    <span class="sft-header-action-label"><?php echo WC()->cart->get_cart_total(); ?></span>
+                    <span class="sft-header-action-label sft-header-cart-total"><?php echo WC()->cart->get_cart_total(); ?></span>
                 </span>
             </a>
         </div>

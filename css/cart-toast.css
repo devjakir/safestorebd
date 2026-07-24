@@ -1,0 +1,247 @@
+/**
+ * SafeStoreBD — Add to Cart success toast.
+ *
+ * Branded, accessible confirmation toast. Colours, radius, shadows, and type
+ * follow the theme's design system. Recolour via the custom properties below.
+ */
+
+.sft-cart-toast {
+  --sft-toast-bg: #ffffff;
+  --sft-toast-ink: #0f172a;
+  --sft-toast-muted: #6b7280;
+  --sft-toast-line: #e7eaef;
+  --sft-toast-primary: #dc2626;
+  --sft-toast-primary-hover: #b91c1c;
+  --sft-toast-success: #16a34a;
+  --sft-toast-success-soft: #ecfdf5;
+  --sft-toast-radius: 14px;
+  --sft-toast-duration: 5000ms;
+
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 99990;
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  padding: 16px 16px 15px;
+  background: var(--sft-toast-bg);
+  border: 1px solid var(--sft-toast-line);
+  border-radius: var(--sft-toast-radius);
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.18), 0 4px 12px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-14px) scale(0.98);
+  transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+  font-family: inherit;
+  color: var(--sft-toast-ink);
+}
+
+.sft-cart-toast[hidden] {
+  display: none;
+}
+
+.sft-cart-toast.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.sft-cart-toast__close {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #94a3b8;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.sft-cart-toast__close svg {
+  width: 16px;
+  height: 16px;
+}
+
+.sft-cart-toast__close:hover {
+  background: #f1f5f9;
+  color: var(--sft-toast-ink);
+}
+
+.sft-cart-toast__close:focus-visible {
+  outline: 2px solid var(--sft-toast-primary);
+  outline-offset: 2px;
+}
+
+.sft-cart-toast__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-right: 24px;
+}
+
+.sft-cart-toast__icon {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--sft-toast-success-soft);
+  color: var(--sft-toast-success);
+}
+
+.sft-cart-toast__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.sft-cart-toast__copy {
+  min-width: 0;
+}
+
+.sft-cart-toast__title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--sft-toast-ink);
+}
+
+.sft-cart-toast__name {
+  margin: 2px 0 0;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--sft-toast-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.sft-cart-toast__name:empty {
+  display: none;
+}
+
+.sft-cart-toast__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.sft-cart-toast__btn {
+  flex: 1 1 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.1;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+.sft-cart-toast__btn--ghost {
+  background: #ffffff;
+  border-color: var(--sft-toast-line);
+  color: var(--sft-toast-ink);
+}
+
+.sft-cart-toast__btn--ghost:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: var(--sft-toast-ink);
+}
+
+.sft-cart-toast__btn--primary {
+  background: var(--sft-toast-primary);
+  color: #ffffff;
+}
+
+.sft-cart-toast__btn--primary:hover {
+  background: var(--sft-toast-primary-hover);
+  color: #ffffff;
+}
+
+.sft-cart-toast__btn:active {
+  transform: translateY(1px);
+}
+
+.sft-cart-toast__btn:focus-visible {
+  outline: 2px solid var(--sft-toast-primary);
+  outline-offset: 2px;
+}
+
+/* Auto-dismiss progress bar (paused on hover/focus by the script). */
+.sft-cart-toast__progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--sft-toast-primary);
+  opacity: 0.85;
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+.sft-cart-toast__progress.is-counting {
+  animation: sft-cart-toast-bar var(--sft-toast-duration) linear forwards;
+}
+
+@keyframes sft-cart-toast-bar {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+/* WooCommerce appends its own "View cart" link to archive buttons after an
+   AJAX add — redundant now that the toast confirms the action. */
+.sft-product-card a.added_to_cart.wc-forward {
+  display: none !important;
+}
+
+/* Subtle loading state for the single-product button while our AJAX runs
+   (WooCommerce core also styles .loading with a spinner). */
+.single_add_to_cart_button.loading {
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+@media (max-width: 600px) {
+  .sft-cart-toast {
+    top: 12px;
+    right: 12px;
+    left: 12px;
+    width: auto;
+    max-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sft-cart-toast {
+    transition: opacity 0.001ms linear;
+    transform: none;
+  }
+  .sft-cart-toast.is-visible {
+    transform: none;
+  }
+  .sft-cart-toast__progress {
+    display: none;
+  }
+  .sft-cart-toast__btn:active {
+    transform: none;
+  }
+}

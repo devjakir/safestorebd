@@ -64,12 +64,35 @@
 			<div class="sft-footer-col sft-footer-contact-col">
 				<h5 class="sft-footer-heading">Contact</h5>
 				<ul class="sft-footer-contact-list">
-					<li><a class="sft-contact-strong" href="tel:+8801880307446">+880 1880-307446</a></li>
-					<li><a href="mailto:bdsafestore@gmail.com">bdsafestore@gmail.com</a></li>
-					<li class="sft-contact-muted"><?php echo esc_html( function_exists( 'safestore_minimal_get_pickup_address' ) ? safestore_minimal_get_pickup_address() : '17/5/1 Alabdirtek, Pallabi, Dhaka 1207, Bangladesh' ); ?></li>
-					<li class="sft-contact-muted">Sat–Thu, 9am–8pm — full week only</li>
-					<li class="sft-contact-muted">Office: 9am–10pm</li>
-					<li><?php echo safestore_wa_cta_link( 'https://wa.me/8801880307446', '+880 1880-307446', 'sft-contact-strong' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></li>
+					<li><?php echo safestore_contact_item( array(
+						'type'  => 'phone',
+						'label' => __( 'Call us', 'safestore-minimal' ),
+						'value' => '+880 1880-307446',
+						'href'  => 'tel:+8801880307446',
+					) ); // phpcs:ignore WordPress.Security.EscapeOutput ?></li>
+					<li><?php echo safestore_contact_item( array(
+						'type'  => 'whatsapp',
+						'label' => __( 'WhatsApp', 'safestore-minimal' ),
+						'value' => '+880 1880-307446',
+						'href'  => 'https://wa.me/8801880307446',
+					) ); // phpcs:ignore WordPress.Security.EscapeOutput ?></li>
+					<li><?php echo safestore_contact_item( array(
+						'type'  => 'email',
+						'label' => __( 'Email', 'safestore-minimal' ),
+						'value' => 'bdsafestore@gmail.com',
+						'href'  => 'mailto:bdsafestore@gmail.com',
+					) ); // phpcs:ignore WordPress.Security.EscapeOutput ?></li>
+					<li><?php echo safestore_contact_line( array(
+						'type'  => 'location',
+						'label' => __( 'Visit us', 'safestore-minimal' ),
+						'value' => function_exists( 'safestore_minimal_get_pickup_address' ) ? safestore_minimal_get_pickup_address() : '17/5/1 Alabdirtek, Pallabi, Dhaka 1207, Bangladesh',
+					) ); // phpcs:ignore WordPress.Security.EscapeOutput ?></li>
+					<li><?php echo safestore_contact_line( array(
+						'type'   => 'clock',
+						'label'  => __( 'Hours', 'safestore-minimal' ),
+						'value'  => __( 'Sat–Thu, 9am–8pm — full week only', 'safestore-minimal' ),
+						'detail' => __( 'Office: 9am–10pm', 'safestore-minimal' ),
+					) ); // phpcs:ignore WordPress.Security.EscapeOutput ?></li>
 				</ul>
 			</div>
 
