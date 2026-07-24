@@ -12,6 +12,13 @@ require get_template_directory() . '/inc/whatsapp-chat.php';
  */
 require get_template_directory() . '/inc/cart-toast.php';
 
+/**
+ * Hostinger SMTP enforcement (WP Mail SMTP / phpmailer).
+ * Password comes from WPMS_SMTP_PASS in wp-config or inc/smtp-secret.php.
+ * See deploy/wp-config-smtp-snippet.php.
+ */
+require get_template_directory() . '/inc/smtp.php';
+
 function safestore_minimal_enqueue_assets() {
     $version = wp_get_theme()->get('Version');
 
