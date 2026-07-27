@@ -1,0 +1,183 @@
+/* SafeStoreBD — Copy to clipboard button
+   Shared by the contact component (footer, homepage support bar) and by the
+   inline buttons auto-attached to tel: / mailto: / wa.me links in page
+   content. Scoped under .sft-copy-* — no global selectors. */
+
+.sft-copy-btn {
+  flex: none;
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #64748b;
+  cursor: pointer;
+  line-height: 0;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.18s ease, border-color 0.18s ease, background-color 0.18s ease, transform 0.18s ease;
+}
+
+.sft-copy-btn:hover {
+  color: var(--sft-contact-accent, #dc2626);
+  border-color: var(--sft-contact-accent, #dc2626);
+  background: var(--sft-contact-accent-soft, #fef2f2);
+}
+
+.sft-copy-btn:active {
+  transform: scale(0.94);
+}
+
+.sft-copy-btn:focus-visible {
+  outline: 2px solid var(--sft-contact-accent, #dc2626);
+  outline-offset: 2px;
+}
+
+.sft-copy-btn__icon {
+  display: inline-flex;
+}
+
+.sft-copy-btn__icon svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+/* Copy glyph and check glyph occupy the same slot; only one is ever shown. */
+.sft-copy-btn__icon--done {
+  display: none;
+}
+
+.sft-copy-btn.is-copied .sft-copy-btn__icon--copy,
+.sft-copy-btn.is-copy-failed .sft-copy-btn__icon--copy {
+  display: none;
+}
+
+.sft-copy-btn.is-copied .sft-copy-btn__icon--done {
+  display: inline-flex;
+}
+
+.sft-copy-btn.is-copied {
+  color: #15803d;
+  border-color: #86efac;
+  background: #f0fdf4;
+}
+
+.sft-copy-btn.is-copy-failed {
+  color: #b91c1c;
+  border-color: #fca5a5;
+  background: #fef2f2;
+}
+
+/* Failed state falls back to the copy glyph, so re-show it. */
+.sft-copy-btn.is-copy-failed .sft-copy-btn__icon--copy {
+  display: inline-flex;
+}
+
+/* Transient "Copied" bubble above the button. Purely decorative — the same
+   wording is announced through the shared live region. */
+.sft-copy-btn__flash {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translate(-50%, 4px);
+  padding: 4px 9px;
+  border-radius: 7px;
+  background: #0f172a;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.sft-copy-btn.is-copied .sft-copy-btn__flash,
+.sft-copy-btn.is-copy-failed .sft-copy-btn__flash {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* Inline variant — sits next to a link inside a paragraph or list item. */
+.sft-copy-btn--inline {
+  width: 24px;
+  height: 24px;
+  margin-inline-start: 6px;
+  border-radius: 7px;
+  vertical-align: middle;
+  background: transparent;
+  border-color: transparent;
+  color: #94a3b8;
+}
+
+.sft-copy-btn--inline .sft-copy-btn__icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.sft-copy-btn--inline:hover {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+  color: #0f172a;
+}
+
+/* Keep the contact-component button unobtrusive until the row is engaged.
+   Always visible on touch/coarse pointers, where there is no hover. */
+@media (hover: hover) and (pointer: fine) {
+
+  .sft-contact-item .sft-copy-btn {
+    opacity: 0;
+    transition: opacity 0.18s ease, color 0.18s ease, border-color 0.18s ease, background-color 0.18s ease, transform 0.18s ease;
+  }
+
+  .sft-contact-item:hover .sft-copy-btn,
+  .sft-contact-item:focus-within .sft-copy-btn,
+  .sft-contact-item .sft-copy-btn.is-copied,
+  .sft-contact-item .sft-copy-btn.is-copy-failed {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .sft-copy-btn,
+  .sft-copy-btn__flash,
+  .sft-contact-item .sft-copy-btn {
+    transition: none;
+  }
+
+  .sft-copy-btn:active {
+    transform: none;
+  }
+
+  .sft-copy-btn__flash {
+    transform: translate(-50%, 0);
+  }
+}
+
+/* Screen-reader-only announcement region (one per page, in the footer). */
+.sft-copy-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media print {
+
+  .sft-copy-btn {
+    display: none;
+  }
+}

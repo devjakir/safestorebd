@@ -3278,7 +3278,8 @@ select {
   border-left: 0;
 }
 
-.home .support-bar-grid a.sft-contact-item:hover {
+.home .support-bar-grid a.sft-contact-item:hover,
+.home .support-bar-grid .sft-contact-item--copyable:hover {
   background: #fafbfc;
 }
 
@@ -3829,6 +3830,41 @@ select {
   border-radius: 12px;
 }
 
+/* Copyable rows (phone / WhatsApp / email / address) carry a copy button. A
+   button cannot be nested inside an anchor, so the clickable rows become a
+   wrapper holding the link and the button side by side. The wrapper keeps every
+   .sft-contact-item class, so support-bar cell borders, padding, and the
+   per-method accent colours below are all unchanged. */
+.sft-contact-item--copyable {
+  position: relative;
+}
+
+.sft-contact-item__main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  /* Matches the wrapper's icon-to-text gap, including the support-bar override. */
+  gap: inherit;
+  color: inherit;
+  text-decoration: none;
+  border-radius: inherit;
+}
+
+/* Stretch the link over the whole row so the click target stays as large as it
+   was before the wrapper existed. The copy button is lifted above it in
+   css/copy-to-clipboard.css. */
+.sft-contact-item__main::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.sft-contact-item--copyable .sft-contact-item__body {
+  flex: 1 1 auto;
+}
+
 .sft-contact-item__icon {
   flex: none;
   width: 42px;
@@ -3887,27 +3923,34 @@ select {
   line-height: 1.4;
 }
 
-/* Clickable variant — hover & keyboard-focus states */
-a.sft-contact-item {
+/* Clickable variant — hover & keyboard-focus states. Each rule covers both the
+   plain anchor row and the inner link of a copyable row. */
+a.sft-contact-item,
+.sft-contact-item__main {
   transition: color 0.18s ease, background-color 0.18s ease;
 }
 
 a.sft-contact-item:hover,
-a.sft-contact-item:focus-visible {
+a.sft-contact-item:focus-visible,
+.sft-contact-item__main:hover,
+.sft-contact-item__main:focus-visible {
   text-decoration: none;
 }
 
-a.sft-contact-item:hover .sft-contact-item__value {
+a.sft-contact-item:hover .sft-contact-item__value,
+.sft-contact-item__main:hover .sft-contact-item__value {
   color: var(--sft-contact-accent);
 }
 
-a.sft-contact-item:hover .sft-contact-item__icon {
+a.sft-contact-item:hover .sft-contact-item__icon,
+.sft-contact-item__main:hover .sft-contact-item__icon {
   background: var(--sft-contact-accent);
   color: var(--sft-contact-accent-ink);
   transform: translateY(-1px);
 }
 
-a.sft-contact-item:focus-visible {
+a.sft-contact-item:focus-visible,
+.sft-contact-item__main:focus-visible {
   outline: 2px solid var(--sft-contact-accent);
   outline-offset: 3px;
 }
@@ -3915,11 +3958,13 @@ a.sft-contact-item:focus-visible {
 @media (prefers-reduced-motion: reduce) {
 
   .sft-contact-item__icon,
-  a.sft-contact-item {
+  a.sft-contact-item,
+  .sft-contact-item__main {
     transition: none;
   }
 
-  a.sft-contact-item:hover .sft-contact-item__icon {
+  a.sft-contact-item:hover .sft-contact-item__icon,
+  .sft-contact-item__main:hover .sft-contact-item__icon {
     transform: none;
   }
 }

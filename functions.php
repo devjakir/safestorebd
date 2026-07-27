@@ -13,6 +13,13 @@ require get_template_directory() . '/inc/whatsapp-chat.php';
 require get_template_directory() . '/inc/cart-toast.php';
 
 /**
+ * Site-wide copy to clipboard — copy buttons on contact details everywhere
+ * they appear, plus automatic buttons on plain tel:/mailto:/wa.me links in
+ * page content. See inc/copy-to-clipboard.php.
+ */
+require get_template_directory() . '/inc/copy-to-clipboard.php';
+
+/**
  * Hostinger SMTP enforcement (WP Mail SMTP / phpmailer).
  * Password comes from WPMS_SMTP_PASS in wp-config or inc/smtp-secret.php.
  * See deploy/wp-config-smtp-snippet.php.
@@ -899,16 +906,44 @@ function safestore_contact_item( $args = array() ) {
 	);
 	$method = '' !== $args['label'] ? $args['label'] : ( isset( $names[ $type ] ) ? $names[ $type ] : ucfirst( $type ) );
 
+	$root_class = trim( preg_replace( '/\s+/', ' ', 'sft-contact-item sft-contact-item--' . $type . ' ' . $args['class'] ) );
+
+	// Copyable methods (phone / WhatsApp / email) get a button beside the value.
+	// Everything else — the Help Center link, for instance — stays a plain row.
+	$copy        = safestore_copy_contact_value( $type, $value );
+	$copy_button = '' !== $copy['value']
+		? safestore_copy_button(
+			array(
+				'value' => $copy['value'],
+				'noun'  => $copy['noun'],
+			)
+		)
+		: '';
+
 	// The label is not shown; it is preserved as the aria-label (accessible
 	// name) and as a hover tooltip so the row stays clear without the clutter.
-	return sprintf(
+	$link = sprintf(
 		'<a class="%1$s" href="%2$s"%3$s aria-label="%4$s" title="%5$s">%6$s</a>',
-		esc_attr( trim( 'sft-contact-item sft-contact-item--' . $type . ' ' . $args['class'] ) ),
+		esc_attr( '' !== $copy_button ? 'sft-contact-item__main' : $root_class ),
 		esc_url( $href ),
 		$external ? ' target="_blank" rel="noopener noreferrer"' : '',
 		esc_attr( trim( wp_strip_all_tags( $method . ': ' . $value ) ) ),
 		esc_attr( $method ),
 		safestore_contact_item_markup( $icon, $args['label'], $value, $args['detail'] )
+	);
+
+	if ( '' === $copy_button ) {
+		return $link;
+	}
+
+	// A button may not live inside an anchor, so the row becomes a wrapper that
+	// keeps every existing .sft-contact-item class (layout, per-method accent,
+	// support-bar cell borders) and holds the link and the button side by side.
+	return sprintf(
+		'<div class="%1$s">%2$s%3$s</div>',
+		esc_attr( $root_class . ' sft-contact-item--copyable' ),
+		$link,
+		$copy_button
 	);
 }
 
@@ -916,7 +951,9 @@ function safestore_contact_item( $args = array() ) {
  * Render a static (non-clickable) contact line — same layout as
  * safestore_contact_item(), used for address, opening hours, etc.
  *
- * @param array $args type, value (required), label, detail, icon, class.
+ * @param array $args type, value (required), label, detail, icon, class, copy.
+ *                    `copy` is null (auto — on for the address row), or a bool
+ *                    to force the copy button on/off for this row.
  * @return string
  */
 function safestore_contact_line( $args = array() ) {
@@ -929,6 +966,7 @@ function safestore_contact_line( $args = array() ) {
 			'detail' => '',
 			'icon'   => '',
 			'class'  => '',
+			'copy'   => null,
 		)
 	);
 
@@ -942,11 +980,32 @@ function safestore_contact_line( $args = array() ) {
 	// as a hover tooltip, but is not shown inline.
 	$title = '' !== (string) $args['label'] ? ' title="' . esc_attr( $args['label'] ) . '"' : '';
 
+	// Copy is on by default only where the value is worth pasting elsewhere —
+	// the address. Opening hours and similar prose rows stay plain.
+	$copy        = safestore_copy_contact_value( $args['type'], $args['value'] );
+	$wants_copy  = is_null( $args['copy'] ) ? ( '' !== $copy['value'] ) : (bool) $args['copy'];
+	$copy_button = '';
+
+	if ( $wants_copy ) {
+		$copy_button = safestore_copy_button(
+			array(
+				'value' => '' !== $copy['value'] ? $copy['value'] : (string) $args['value'],
+				'noun'  => '' !== $copy['noun'] ? $copy['noun'] : __( 'Value', 'safestore-minimal' ),
+			)
+		);
+	}
+
+	$classes = 'sft-contact-item sft-contact-item--static sft-contact-item--' . $args['type'] . ' ' . $args['class'];
+	if ( '' !== $copy_button ) {
+		$classes .= ' sft-contact-item--copyable';
+	}
+
 	return sprintf(
-		'<div class="%1$s"%2$s>%3$s</div>',
-		esc_attr( trim( 'sft-contact-item sft-contact-item--static sft-contact-item--' . $args['type'] . ' ' . $args['class'] ) ),
+		'<div class="%1$s"%2$s>%3$s%4$s</div>',
+		esc_attr( trim( preg_replace( '/\s+/', ' ', $classes ) ) ),
 		$title,
-		safestore_contact_item_markup( $icon, $args['label'], $args['value'], $args['detail'] )
+		safestore_contact_item_markup( $icon, $args['label'], $args['value'], $args['detail'] ),
+		$copy_button
 	);
 }
 
