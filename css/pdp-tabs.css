@@ -10,7 +10,7 @@
   margin: 0 0 40px;
   padding: 0;
   border: 1px solid #e2e8f0;
-  border-radius: 16px;
+  border-radius: 5px;
   overflow: hidden;
   background: #ffffff;
   box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
@@ -161,7 +161,7 @@
 .woocommerce div.product.sft-pdp .sft-pdp-tabs__panel--description img {
   max-width: 100%;
   height: auto;
-  border-radius: 12px;
+  border-radius: 5px;
 }
 
 /* --------------------------------------------------------------------------
@@ -190,7 +190,7 @@
   padding: 28px 30px 30px;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
-  border-radius: 14px;
+  border-radius: 5px;
   box-sizing: border-box;
 }
 
@@ -270,7 +270,7 @@
   color: #0f172a;
   background: #ffffff;
   border: 1px solid #cbd5e1;
-  border-radius: 10px;
+  border-radius: 5px;
 }
 
 .woocommerce div.product.sft-pdp .sft-pdp-reviews textarea {
@@ -341,7 +341,7 @@
   background: #0f172a !important;
   background-image: none !important;
   border: 0 !important;
-  border-radius: 10px !important;
+  border-radius: 5px !important;
   box-shadow: none !important;
   cursor: pointer;
   transition: background 0.15s ease, transform 0.1s ease;
@@ -370,7 +370,7 @@
   color: #64748b;
   background: #fff7ed;
   border: 1px solid #fed7aa;
-  border-radius: 12px;
+  border-radius: 5px;
 }
 
 @media (max-width: 640px) {

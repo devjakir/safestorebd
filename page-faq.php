@@ -9,8 +9,8 @@ get_header();
 
 $contact_url  = home_url( '/contact/' );
 $returns_url  = home_url( '/return-refund-policy/' );
-$wa_href      = 'https://wa.me/8801880307446';
-$phone        = '+880 1880-307446';
+$wa_href      = 'https://wa.me/8801811892291';
+$phone        = '+880 1811-892291';
 $faq_sections = safestore_minimal_get_faq_sections();
 
 while ( have_posts() ) :

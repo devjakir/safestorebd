@@ -13,9 +13,9 @@ $about_url    = home_url( '/about/' );
 $contact_url  = home_url( '/contact/' );
 $email        = 'bdsafestore@gmail.com';
 $mailto       = 'mailto:' . $email . '?subject=' . rawurlencode( 'Job application — SafeStoreBD' );
-$phone_href   = 'tel:+8801880307446';
-$phone        = '+880 1880-307446';
-$wa_href      = 'https://wa.me/8801880307446';
+$phone_href   = 'tel:+8801811892291';
+$phone        = '+880 1811-892291';
+$wa_href      = 'https://wa.me/8801811892291';
 $openings     = safestore_minimal_get_career_openings();
 $location     = safestore_minimal_get_pickup_address();
 

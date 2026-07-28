@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -sS -m 20 http://safestorebd.local/return-refund-policy/ -o refund.html)",
+      "Bash(curl -sS -m 20 http://safestorebd.local/contact/ -o contact.html)",
+      "Read(//Users/maham/.cache/**)",
+      "Bash(command -v npx node)",
+      "Bash(node -e \"try{require\\('jsdom'\\);console.log\\('jsdom available'\\)}catch\\(e\\){console.log\\('no jsdom'\\)}\")"
+    ]
+  }
+}

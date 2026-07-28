@@ -14,7 +14,7 @@
   height: 32px;
   padding: 0;
   border: 1px solid #e2e8f0;
-  border-radius: 9px;
+  border-radius: 5px;
   background: #ffffff;
   color: #64748b;
   cursor: pointer;
@@ -87,7 +87,7 @@
   left: 50%;
   transform: translate(-50%, 4px);
   padding: 4px 9px;
-  border-radius: 7px;
+  border-radius: 5px;
   background: #0f172a;
   color: #ffffff;
   font-size: 11px;
@@ -110,7 +110,7 @@
   width: 24px;
   height: 24px;
   margin-inline-start: 6px;
-  border-radius: 7px;
+  border-radius: 5px;
   vertical-align: middle;
   background: transparent;
   border-color: transparent;

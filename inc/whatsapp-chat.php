@@ -25,7 +25,7 @@ if (!defined('ABSPATH')) {
 function safestore_wa_defaults() {
     return array(
         'enabled'      => 1,
-        'number'       => '8801880307446',
+        'number'       => '8801811892291',
         'prefill'      => __("Hello SafeStoreBD! I'm visiting your website and would like some help with a product.", 'safestore-minimal'),
         'title'        => __('SafeStoreBD', 'safestore-minimal'),
         'subtitle'     => __('Typically replies within minutes', 'safestore-minimal'),
@@ -153,7 +153,7 @@ function safestore_wa_icon_svg($class) {
  * "WhatsApp" text label wherever the theme links out to wa.me.
  *
  * @param string $href       WhatsApp deep link (wa.me URL).
- * @param string $phone      Display phone number, e.g. "+880 1880-307446".
+ * @param string $phone      Display phone number, e.g. "+880 1811-892291".
  * @param string $class      Extra classes for the anchor (space-separated).
  * @return string
  */
@@ -370,7 +370,7 @@ function safestore_wa_settings_page() {
                 <tr>
                     <th scope="row"><label for="sft-wa-number"><?php esc_html_e('WhatsApp number', 'safestore-minimal'); ?></label></th>
                     <td>
-                        <input id="sft-wa-number" type="text" class="regular-text" name="safestore_whatsapp_chat[number]" value="<?php echo esc_attr($o['number']); ?>" placeholder="8801880307446">
+                        <input id="sft-wa-number" type="text" class="regular-text" name="safestore_whatsapp_chat[number]" value="<?php echo esc_attr($o['number']); ?>" placeholder="8801811892291">
                         <p class="description"><?php esc_html_e('International format, digits only (country code + number, no + sign or spaces).', 'safestore-minimal'); ?></p>
                     </td>
                 </tr>

@@ -10,16 +10,16 @@ $support_items = array(
 	array(
 		'type'   => 'phone',
 		'label'  => __( 'Call Us', 'safestore-minimal' ),
-		'value'  => '+880 1880-307446',
+		'value'  => '+880 1811-892291',
 		'detail' => __( 'Sat–Thu, 9am–8pm', 'safestore-minimal' ),
-		'href'   => 'tel:+8801880307446',
+		'href'   => 'tel:+8801811892291',
 	),
 	array(
 		'type'   => 'whatsapp',
 		'label'  => __( 'WhatsApp', 'safestore-minimal' ),
-		'value'  => '+880 1880-307446',
+		'value'  => '+880 1811-892291',
 		'detail' => __( 'Avg reply ~5 min', 'safestore-minimal' ),
-		'href'   => 'https://wa.me/8801880307446',
+		'href'   => 'https://wa.me/8801811892291',
 	),
 	array(
 		'type'   => 'email',

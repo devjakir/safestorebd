@@ -67,14 +67,14 @@
 					<li><?php echo safestore_contact_item( array(
 						'type'  => 'phone',
 						'label' => __( 'Call us', 'safestore-minimal' ),
-						'value' => '+880 1880-307446',
-						'href'  => 'tel:+8801880307446',
+						'value' => '+880 1811-892291',
+						'href'  => 'tel:+8801811892291',
 					) ); // phpcs:ignore WordPress.Security.EscapeOutput ?></li>
 					<li><?php echo safestore_contact_item( array(
 						'type'  => 'whatsapp',
 						'label' => __( 'WhatsApp', 'safestore-minimal' ),
-						'value' => '+880 1880-307446',
-						'href'  => 'https://wa.me/8801880307446',
+						'value' => '+880 1811-892291',
+						'href'  => 'https://wa.me/8801811892291',
 					) ); // phpcs:ignore WordPress.Security.EscapeOutput ?></li>
 					<li><?php echo safestore_contact_item( array(
 						'type'  => 'email',

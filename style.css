@@ -130,7 +130,7 @@ select {
 .sft-header-brand-mark {
   width: 40px;
   height: 40px;
-  border-radius: 10px;
+  border-radius: 5px;
   background: #0f172a;
   color: #ffffff;
   display: inline-flex;
@@ -259,7 +259,7 @@ select {
   padding: 8px;
   background: #ffffff;
   border: 1px solid #e8ecf2;
-  border-radius: 14px;
+  border-radius: 5px;
   box-shadow:
     0 18px 48px rgba(15, 23, 42, 0.14),
     0 6px 16px rgba(15, 23, 42, 0.08);
@@ -294,7 +294,7 @@ select {
   margin: 0;
   padding: 13px 16px;
   border: 0;
-  border-radius: 10px;
+  border-radius: 5px;
   background: transparent;
   cursor: pointer;
   font: inherit;
@@ -677,7 +677,7 @@ select {
   align-items: center;
   justify-content: center;
   padding: 11px 20px;
-  border-radius: 10px;
+  border-radius: 5px;
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
@@ -745,7 +745,7 @@ select {
   margin: 0 auto;
   background: #ffffff;
   border: 1px solid #e7eaef;
-  border-radius: 14px;
+  border-radius: 5px;
   padding: clamp(22px, 3vw, 36px);
 }
 
@@ -810,7 +810,7 @@ select {
 .sft-about-contact-card {
   background: #f8fafc;
   border: 1px solid #e7eaef;
-  border-radius: 14px;
+  border-radius: 5px;
   padding: 24px 22px;
   box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
 }
@@ -874,7 +874,7 @@ select {
 .sft-about-cta {
   margin: clamp(20px, 3vw, 32px) auto 0;
   padding: clamp(28px, 4vw, 40px) clamp(22px, 3vw, 36px);
-  border-radius: 14px;
+  border-radius: 5px;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   color: #e2e8f0;
   width: min(960px, calc(100% - 32px));
@@ -952,7 +952,7 @@ select {
   padding: 14px 16px;
   background: #f8fafc;
   border-left: 3px solid #fb923c;
-  border-radius: 0 8px 8px 0;
+  border-radius: 0 5px 5px 0;
   font-size: 14px;
 }
 
@@ -1037,7 +1037,7 @@ select {
 
 .sft-faq-item {
   border: 1px solid #e7eaef;
-  border-radius: 12px;
+  border-radius: 5px;
   background: #ffffff;
   overflow: hidden;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -1124,7 +1124,7 @@ select {
   margin: 0 0 20px;
   overflow-x: auto;
   border: 1px solid #e7eaef;
-  border-radius: 12px;
+  border-radius: 5px;
   background: #f8fafc;
 }
 
@@ -1344,7 +1344,7 @@ select {
 
 .sft-careers-card {
   border: 1px solid #e7eaef;
-  border-radius: 12px;
+  border-radius: 5px;
   padding: 18px 20px;
   background: #ffffff;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -1537,7 +1537,7 @@ select {
   margin-bottom: 28px;
   padding: 22px 20px;
   border: 1px solid #e7eaef;
-  border-radius: 12px;
+  border-radius: 5px;
   background: #f8fafc;
 }
 
@@ -1565,7 +1565,7 @@ select {
   max-width: 100%;
   padding: 10px 12px;
   border: 1px solid #d1d5db;
-  border-radius: 8px;
+  border-radius: 5px;
   font-size: 15px;
   background: #ffffff;
   box-sizing: border-box;
@@ -1584,7 +1584,7 @@ select {
   justify-content: center;
   padding: 11px 24px;
   border: 0;
-  border-radius: 10px;
+  border-radius: 5px;
   background: #dc2626;
   color: #ffffff !important;
   font-size: 14px;
@@ -1607,7 +1607,7 @@ select {
 .sft-track-notices .woocommerce-error {
   margin-bottom: 10px;
   padding: 12px 14px;
-  border-radius: 8px;
+  border-radius: 5px;
   font-size: 14px;
   list-style: none;
 }
@@ -1634,7 +1634,7 @@ select {
   gap: 4px 14px;
   padding: 14px 16px;
   border: 1px solid #e7eaef;
-  border-radius: 10px;
+  border-radius: 5px;
   background: #ffffff;
   font-size: 14px;
   line-height: 1.5;
@@ -1800,7 +1800,7 @@ select {
 .sft-contact-form {
   padding: clamp(22px, 3vw, 28px);
   border: 1px solid #e7eaef;
-  border-radius: 14px;
+  border-radius: 5px;
   background: #f8fafc;
   box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
 }
@@ -1834,7 +1834,7 @@ select {
   max-width: 100%;
   padding: 11px 13px;
   border: 1px solid #d1d5db;
-  border-radius: 8px;
+  border-radius: 5px;
   font-size: 15px;
   line-height: 1.45;
   color: #111827;
@@ -1874,7 +1874,7 @@ select {
   min-width: 160px;
   padding: 12px 24px;
   border: none;
-  border-radius: 10px;
+  border-radius: 5px;
   font-size: 14px;
   font-weight: 600;
   color: #ffffff;
@@ -1894,7 +1894,7 @@ select {
 .sft-contact-form .fluentform .ff-message-success {
   margin-top: 16px;
   padding: 12px 14px;
-  border-radius: 8px;
+  border-radius: 5px;
   font-size: 14px;
   background: #ecfdf5;
   border: 1px solid #a7f3d0;
@@ -1909,7 +1909,7 @@ select {
   color: #6b7280;
   background: #f8fafc;
   border: 1px dashed #d1d5db;
-  border-radius: 12px;
+  border-radius: 5px;
 }
 
 .sft-contact-cta {
@@ -2142,7 +2142,7 @@ select {
 
 .sft-legal-doc-list li {
   border: 1px solid #e7eaef;
-  border-radius: 10px;
+  border-radius: 5px;
   padding: 14px 16px;
   background: #f8fafc;
 }
@@ -2184,7 +2184,7 @@ select {
 
 .sft-sitemap-group {
   border: 1px solid #e7eaef;
-  border-radius: 12px;
+  border-radius: 5px;
   padding: 20px 22px;
   background: #ffffff;
 }
@@ -2485,7 +2485,7 @@ select {
 .home .hero-slider-viewport {
   position: relative;
   overflow: hidden;
-  border-radius: 18px;
+  border-radius: 5px;
   background: #0a0d14;
   isolation: isolate;
   height: 520px;
@@ -2567,7 +2567,7 @@ select {
   display: inline-flex;
   align-items: center;
   padding: 8px 14px;
-  border-radius: 10px;
+  border-radius: 5px;
   background: rgba(20, 24, 33, 0.72);
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: #f1f5f9;
@@ -2700,7 +2700,7 @@ select {
   display: inline-flex;
   align-items: center;
   padding: 5px 11px;
-  border-radius: 6px;
+  border-radius: 5px;
   background: #dc2626;
   color: #fff;
   font-size: 13px;
@@ -2721,7 +2721,7 @@ select {
   align-items: center;
   gap: 10px;
   padding: 14px 24px;
-  border-radius: 10px;
+  border-radius: 5px;
   font-weight: 600;
   font-size: 15px;
   letter-spacing: 0.01em;
@@ -2809,7 +2809,7 @@ select {
   }
 
   .home .hero-slider-viewport {
-    border-radius: 14px;
+    border-radius: 5px;
     /* Fixed height so slide changes don’t resize the banner */
     height: clamp(620px, 92vh, 720px);
     min-height: clamp(620px, 92vh, 720px);
@@ -2872,7 +2872,7 @@ select {
   padding: 18px 22px;
   background: #ffffff;
   border: 1px solid #e7eaef;
-  border-radius: 14px;
+  border-radius: 5px;
   box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
 }
 
@@ -2887,7 +2887,7 @@ select {
   flex-shrink: 0;
   width: 44px;
   height: 44px;
-  border-radius: 10px;
+  border-radius: 5px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -3014,7 +3014,7 @@ select {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-radius: 16px;
+  border-radius: 5px;
   text-decoration: none;
   color: #fff;
   background: #f3f4f6;
@@ -3208,7 +3208,7 @@ select {
 .home .support-bar-card {
   background: #ffffff;
   border: 1px solid #e7eaef;
-  border-radius: 18px;
+  border-radius: 5px;
   box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
   overflow: hidden;
 }
@@ -3558,7 +3558,7 @@ select {
 .home .industry-icon {
   width: 56px;
   height: 56px;
-  border-radius: 4px;
+  border-radius: 5px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -3589,7 +3589,7 @@ select {
   padding: 20px;
   background: #fff;
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  border-radius: 5px;
 }
 
 .home .item h4 {
@@ -3654,7 +3654,7 @@ select {
 .sft-brand-mark {
   width: 36px;
   height: 36px;
-  border-radius: 9px;
+  border-radius: 5px;
   background: #0f172a;
   color: #ffffff;
   display: inline-flex;
@@ -3696,7 +3696,7 @@ select {
 .sft-social {
   width: 38px;
   height: 38px;
-  border-radius: 9px;
+  border-radius: 5px;
   border: 1px solid #e5e7eb;
   background: #ffffff;
   color: #0f172a;
@@ -3827,7 +3827,7 @@ select {
   gap: 12px;
   color: inherit;
   text-decoration: none;
-  border-radius: 12px;
+  border-radius: 5px;
 }
 
 /* Copyable rows (phone / WhatsApp / email / address) carry a copy button. A
@@ -3872,7 +3872,7 @@ select {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+  border-radius: 5px;
   background: var(--sft-contact-accent-soft);
   color: var(--sft-contact-accent);
   transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
@@ -4049,7 +4049,7 @@ a.sft-contact-item:focus-visible,
   justify-content: center;
   height: 34px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 5px;
   background: #ffffff;
   border: 1px solid #e5e7eb;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
@@ -4096,7 +4096,7 @@ a.sft-contact-item:focus-visible,
   display: inline-flex;
   align-items: center;
   padding: 7px 14px;
-  border-radius: 8px;
+  border-radius: 5px;
   background: #f3f4f6;
   color: #374151;
   font-size: 13px;
@@ -4275,7 +4275,7 @@ a.sft-contact-item:focus-visible,
 .woocommerce .woocommerce-ordering select {
   padding: 8px 12px;
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  border-radius: 5px;
   background: #ffffff;
   color: #0f172a;
   font-size: 13px;
@@ -4327,8 +4327,8 @@ a.sft-contact-item:focus-visible,
   gap: 0;
   background: #ffffff;
   border: 1px solid #e6ebf2;
-  border-radius: 16px;
-  padding: 14px 14px 18px;
+  border-radius: 5px;
+  padding: 14px 14px 20px;
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
   transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
 }
@@ -4384,7 +4384,7 @@ a.sft-contact-item:focus-visible,
   align-items: center;
   max-width: calc(100% - 24px);
   padding: 5px 11px;
-  border-radius: 8px;
+  border-radius: 5px;
   background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
   color: #ffffff;
   font-size: 11.5px;
@@ -4399,8 +4399,12 @@ a.sft-contact-item:focus-visible,
 
 .sft-product-card__footer {
   margin-top: auto;
-  padding-top: 12px;
+  padding-top: 0;
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 10px;
 }
 
 .sft-product-card__footer .screen-reader-text {
@@ -4423,11 +4427,11 @@ a.sft-contact-item:focus-visible,
   align-items: center;
   justify-content: center;
   gap: 9px;
-  min-height: 46px;
-  width: 100%;
+  min-height: 36px;
+  /* width: 100%; */
   min-width: 0;
-  max-width: 100%;
-  padding: 13px 18px;
+  /* max-width: 100%; */
+  padding: 9px 15px;
   line-height: 1.1;
   font-family: inherit;
   font-size: 12.5px;
@@ -4437,14 +4441,14 @@ a.sft-contact-item:focus-visible,
   text-decoration: none !important;
   color: #ffffff !important;
   border: none !important;
-  border-radius: 12px !important;
+  border-radius: 5px !important;
   cursor: pointer;
   -webkit-appearance: none;
   appearance: none;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
-  background: #dc2626 !important;
-  background-color: #dc2626 !important;
+  background: #ef4a23 !important;
+  background-color: #ef4a23 !important;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
   opacity: 1;
   transition:
@@ -4488,15 +4492,15 @@ a.sft-contact-item:focus-visible,
 .woocommerce ul.products li.product.sft-product-card .sft-product-card__footer a.button.sft-product-card__cart-btn:hover,
 .sft-product-card__footer a.button.sft-product-card__cart-btn:hover {
   color: #ffffff !important;
-  background: #b91c1c !important;
+  background: #cd3f1e !important;
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px -6px rgba(220, 38, 38, 0.45);
+  box-shadow: 0 10px 20px -6px rgba(239, 74, 35, 0.45);
 }
 
 .woocommerce ul.products li.product.sft-product-card .sft-product-card__footer a.button.sft-product-card__cart-btn:active,
 .sft-product-card__footer a.button.sft-product-card__cart-btn:active {
   transform: translateY(0);
-  background: #a81b1b !important;
+  background: #b5381a !important;
 }
 
 .sft-product-card__footer a.button.sft-product-card__cart-btn:focus-visible {
@@ -4563,7 +4567,7 @@ a.sft-contact-item:focus-visible,
   flex-direction: column;
   flex: 1;
   gap: 9px;
-  padding: 15px 6px 0;
+  padding: 15px 10px 5px;
 }
 
 /* ----- Category (max 2 lines, ellipsis, Show more / less) ----- */
@@ -4619,7 +4623,7 @@ a.sft-contact-item:focus-visible,
 .sft-product-card__cat-toggle:focus-visible {
   outline: 2px solid #dc2626;
   outline-offset: 2px;
-  border-radius: 3px;
+  border-radius: 5px;
 }
 
 /* ----- Price (a primary visual element) ----- */
@@ -4766,7 +4770,7 @@ a.sft-contact-item:focus-visible,
   height: 36px;
   padding: 0 10px;
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  border-radius: 5px;
   background: #ffffff;
   color: #374151;
   font-size: 13px;
@@ -4825,12 +4829,12 @@ a.sft-contact-item:focus-visible,
   }
 
   .sft-product-card {
-    padding: 10px 10px 14px;
-    border-radius: 14px;
+    padding: 10px 10px 16px;
+    border-radius: 5px;
   }
 
   .sft-product-card__media {
-    border-radius: 10px;
+    border-radius: 5px;
   }
 
   .sft-product-card__badge {
@@ -4947,7 +4951,7 @@ a.sft-contact-item:focus-visible,
 
 .sft-pdp__col--media .woocommerce-product-gallery {
   width: 100%;
-  border-radius: 14px;
+  border-radius: 5px;
   overflow: hidden;
   background: #f1f5f9;
   border: 1px solid var(--sft-pdp-border);
@@ -4990,7 +4994,7 @@ a.sft-contact-item:focus-visible,
   right: 14px;
   width: 40px;
   height: 40px;
-  border-radius: 10px;
+  border-radius: 5px;
   background: rgba(255, 255, 255, 0.96);
   border: 1px solid var(--sft-pdp-border);
   color: var(--sft-pdp-ink);
@@ -5027,7 +5031,7 @@ a.sft-contact-item:focus-visible,
 }
 
 .sft-pdp .flex-control-thumbs img {
-  border-radius: 8px;
+  border-radius: 5px;
   border: 2px solid transparent;
   opacity: 0.75;
   transition: opacity 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
@@ -5046,7 +5050,7 @@ a.sft-contact-item:focus-visible,
   right: auto !important;
   min-height: 0;
   padding: 6px 12px;
-  border-radius: 6px;
+  border-radius: 5px;
   line-height: 1;
   font-size: 12px;
   font-weight: 700;
@@ -5130,7 +5134,7 @@ a.sft-contact-item:focus-visible,
 .sft-pdp .product_meta {
   margin: 0 0 20px;
   padding: 12px 14px;
-  border-radius: 10px;
+  border-radius: 5px;
   background: #f8fafc;
   border: 1px solid var(--sft-pdp-border);
   font-size: 13px;
@@ -5171,7 +5175,7 @@ a.sft-contact-item:focus-visible,
   gap: 14px;
   margin: 0 0 16px;
   padding: 14px 16px;
-  border-radius: 10px;
+  border-radius: 5px;
   background: var(--sft-pdp-surface);
   border: 1px solid var(--sft-pdp-border);
   border-left: 3px solid var(--sft-pdp-accent);
@@ -5196,7 +5200,7 @@ a.sft-contact-item:focus-visible,
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  border-radius: 8px;
+  border-radius: 5px;
   background: #f8fafc;
   border: 1px solid var(--sft-pdp-border);
 }
@@ -5239,7 +5243,7 @@ a.sft-contact-item:focus-visible,
   justify-content: center;
   gap: 8px;
   padding: 9px 16px;
-  border-radius: 8px;
+  border-radius: 5px;
   font-size: 13px;
   font-weight: 600;
   text-decoration: none;
@@ -5264,7 +5268,7 @@ a.sft-contact-item:focus-visible,
 .sft-pdp-trust {
   margin: 0;
   padding: 12px 16px;
-  border-radius: 12px 12px 0 0;
+  border-radius: 5px 5px 0 0;
   background: var(--sft-pdp-surface);
   border: 1px solid var(--sft-pdp-border);
   border-bottom: 0;
@@ -5277,7 +5281,7 @@ a.sft-contact-item:focus-visible,
   display: inline-block;
   margin-bottom: 12px;
   padding: 6px 10px;
-  border-radius: 8px;
+  border-radius: 5px;
   font-size: 13px;
   font-weight: 600;
 }
@@ -5300,7 +5304,7 @@ a.sft-contact-item:focus-visible,
 
 .sft-pdp-trust+.variations_form {
   padding: 16px;
-  border-radius: 0 0 12px 12px;
+  border-radius: 0 0 5px 5px;
   background: var(--sft-pdp-surface);
   border: 1px solid var(--sft-pdp-border);
   border-top: 0;
@@ -5322,7 +5326,7 @@ a.sft-contact-item:focus-visible,
   gap: 10px;
   margin: 0 0 24px;
   padding: 16px;
-  border-radius: 0 0 12px 12px;
+  border-radius: 0 0 5px 5px;
   background: var(--sft-pdp-surface);
   border: 1px solid var(--sft-pdp-border);
   border-top: 0;
@@ -5330,7 +5334,7 @@ a.sft-contact-item:focus-visible,
 }
 
 .sft-pdp:not(:has(.sft-pdp-trust)) form.cart {
-  border-radius: 12px;
+  border-radius: 5px;
   border-top: 1px solid var(--sft-pdp-border);
 }
 
@@ -5341,7 +5345,7 @@ a.sft-contact-item:focus-visible,
 .sft-pdp form.cart .quantity input.qty {
   height: 48px;
   width: 64px;
-  border-radius: 8px;
+  border-radius: 5px;
   border: 1px solid var(--sft-pdp-border);
   text-align: center;
   font-weight: 600;
@@ -5359,7 +5363,7 @@ a.sft-contact-item:focus-visible,
   flex: 1 1 200px;
   min-height: 48px;
   padding: 0 24px;
-  border-radius: 8px;
+  border-radius: 5px;
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -5387,7 +5391,7 @@ a.sft-contact-item:focus-visible,
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+  border-radius: 5px;
   font-size: 14px;
   font-weight: 600;
   background: var(--sft-pdp-surface);
@@ -5418,7 +5422,7 @@ a.sft-contact-item:focus-visible,
 .sft-pdp-fulfill {
   margin: 0 0 40px;
   padding: 24px 22px;
-  border-radius: 16px;
+  border-radius: 5px;
   background: #ffffff;
   border: 1px solid #e5e7eb;
   box-shadow: 0 8px 30px rgba(15, 23, 42, 0.04);
@@ -5459,7 +5463,7 @@ a.sft-contact-item:focus-visible,
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
+  border-radius: 5px;
   background: #f8fafc;
   color: #0f172a;
   border: 1px solid #e5e7eb;
@@ -5504,7 +5508,7 @@ a.sft-contact-item:focus-visible,
   width: 100%;
   border-collapse: collapse;
   border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  border-radius: 5px;
   overflow: hidden;
 }
 
@@ -5631,7 +5635,7 @@ h3#order_review_heading {
 #order_review {
   background: #fff;
   border: 1px solid #ececec;
-  border-radius: 12px;
+  border-radius: 5px;
   padding: 30px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, .05);
   margin-bottom: 25px;
@@ -5661,7 +5665,7 @@ h3#order_review_heading {
 .select2-container--default .select2-selection--single {
   height: 50px;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 5px;
   background: #fff;
   padding: 0 15px;
   font-size: 15px;
@@ -5670,7 +5674,7 @@ h3#order_review_heading {
 .woocommerce form .form-row .input-text,
 .woocommerce form .form-row select {
   padding: 0.7em;
-  border-radius: 10px;
+  border-radius: 5px;
 }
 
 .woocommerce form .form-row .input-text:focus,
@@ -5686,7 +5690,7 @@ h3#order_review_heading {
 
 .woocommerce textarea {
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 5px;
   padding: 15px;
   min-height: 120px;
 }
@@ -5730,7 +5734,7 @@ h3#order_review_heading {
 
 #payment .payment_box {
   background: #f8f8f8;
-  border-radius: 8px;
+  border-radius: 5px;
 }
 
 .woocommerce-terms-and-conditions-wrapper .woocommerce-privacy-policy-text p {
@@ -5745,7 +5749,7 @@ h3#order_review_heading {
   color: #fff;
   font-size: 18px;
   font-weight: 700;
-  border-radius: 8px;
+  border-radius: 5px;
   border: none;
   transition: .3s;
 }
@@ -5757,7 +5761,7 @@ h3#order_review_heading {
 /* Coupon */
 .checkout_coupon {
   border: 1px solid #eee;
-  border-radius: 10px;
+  border-radius: 5px;
   padding: 20px;
 }
 
@@ -5793,7 +5797,7 @@ body.woocommerce-cart {
 .woocommerce-checkout h1 {
   background: #fff;
   padding: 0px 20px;
-  border-radius: 10px;
+  border-radius: 5px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, .05);
   border: 1px solid #ececec;
   margin: -30px 0px 30px 0px;
@@ -5825,7 +5829,7 @@ body.woocommerce-cart {
 .woocommerce-cart-form,
 .cart_totals {
   background: #fff;
-  border-radius: 14px;
+  border-radius: 5px;
   padding: 30px;
   border: 1px solid #ececec;
   box-shadow: 0 10px 30px rgba(0, 0, 0, .05);
@@ -5861,7 +5865,7 @@ body.woocommerce-cart {
   min-width: 80px;
   height: 80px;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 5px;
   transition: .3s;
 }
 
@@ -5894,7 +5898,7 @@ body.woocommerce-cart {
 .quantity .qty {
   width: 5em !important;
   height: 48px;
-  border-radius: 8px;
+  border-radius: 5px;
   border: 1px solid #ddd;
   text-align: center;
 }
@@ -5920,7 +5924,7 @@ body.woocommerce-cart {
 
 .coupon input {
   height: 50px;
-  border-radius: 8px;
+  border-radius: 5px;
   border: 1px solid #ddd;
   padding: 0 15px;
 }
@@ -5968,7 +5972,7 @@ input.button:hover {
 .wc-proceed-to-checkout .checkout-button {
   width: 100%;
   padding: 18px !important;
-  border-radius: 10px;
+  border-radius: 5px;
   font-size: 18px;
   font-weight: 700;
   background: #dc2626 !important;
@@ -5991,7 +5995,7 @@ input.button:hover {
 .woocommerce-info {
   border-left: 4px solid #d6001c;
   background: #fff;
-  border-radius: 10px;
+  border-radius: 5px;
   padding: 18px 20px;
 }
 
@@ -6120,7 +6124,7 @@ input.button:hover {
     display: block;
     margin-bottom: 20px;
     border: 1px solid #eee;
-    border-radius: 10px;
+    border-radius: 5px;
     overflow: hidden;
   }
 
@@ -6170,7 +6174,7 @@ input.button:hover {
     height: 42px;
     background: #ffffff;
     border: 1px solid #e2e8f0;
-    border-radius: 12px;
+    border-radius: 5px;
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
     cursor: pointer;
     padding: 13px 11px;
@@ -6571,7 +6575,7 @@ input.button:hover {
     background-color: #e52e04;
     color: #ffffff !important;
     text-decoration: none;
-    border-radius: 6px;
+    border-radius: 5px;
     font-weight: 600;
     font-size: 15px;
   }
@@ -6663,7 +6667,7 @@ input.button:hover {
     min-width: 210px !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
     border: 1px solid #eaeaea !important;
-    border-radius: 4px !important;
+    border-radius: 5px !important;
     padding: 8px 0 !important;
     margin: 0 !important;
     list-style: none !important;
@@ -6727,7 +6731,7 @@ input.button:hover {
     text-decoration: none !important;
     font-weight: 600 !important;
     font-size: 14px !important;
-    border-radius: 4px !important;
+    border-radius: 5px !important;
     margin: 0 !important;
     box-shadow: none !important;
     transition: background-color 0.2s ease !important;

@@ -14,7 +14,7 @@
   --sft-toast-primary-hover: #b91c1c;
   --sft-toast-success: #16a34a;
   --sft-toast-success-soft: #ecfdf5;
-  --sft-toast-radius: 14px;
+  --sft-toast-radius: 5px;
   --sft-toast-duration: 5000ms;
 
   position: fixed;
@@ -59,7 +59,7 @@
   border: 0;
   background: transparent;
   color: #94a3b8;
-  border-radius: 8px;
+  border-radius: 5px;
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
 }
@@ -144,7 +144,7 @@
   justify-content: center;
   gap: 6px;
   padding: 10px 14px;
-  border-radius: 10px;
+  border-radius: 5px;
   border: 1px solid transparent;
   font-size: 13.5px;
   font-weight: 600;

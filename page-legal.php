@@ -9,8 +9,8 @@ get_header();
 
 $contact_url  = home_url( '/contact/' );
 $sitemap_url  = home_url( '/sitemap/' );
-$wa_href      = 'https://wa.me/8801880307446';
-$phone        = '+880 1880-307446';
+$wa_href      = 'https://wa.me/8801811892291';
+$phone        = '+880 1811-892291';
 $sections     = safestore_minimal_get_legal_sections();
 $documents    = safestore_minimal_get_legal_documents();
 $updated      = apply_filters( 'safestore_minimal_legal_updated', 'May 2026' );

@@ -169,7 +169,7 @@ function safestore_copy_button( $args = array() ) {
 /**
  * The clipboard value and wording for a contact method.
  *
- * Phone and WhatsApp are copied in dial-ready E.164 form (+8801880307446)
+ * Phone and WhatsApp are copied in dial-ready E.164 form (+8801811892291)
  * rather than the spaced display form, so the value pastes cleanly into a
  * dialer or messaging app. Email and address are copied exactly as shown.
  *
