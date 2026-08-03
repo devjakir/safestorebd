@@ -14,7 +14,7 @@
 					<a href="<?php echo esc_url( 'https://www.facebook.com/safestorebd' ); ?>" class="sft-social sft-social--facebook" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
 						<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 8.5V6.8c0-.8.5-.9.8-.9h2.1V2.5h-2.9C10.5 2.5 9 4.8 9 8v.5H6.8v3.6H9v9.4h4.5v-9.4h2.8l.4-3.6h-3.2z"/></svg>
 					</a>
-					<a href="#" class="sft-social sft-social--x" aria-label="X">
+					<a href="<?php echo esc_url( 'https://x.com/safestorebd' ); ?>" class="sft-social sft-social--x" aria-label="X" target="_blank" rel="noopener noreferrer">
 						<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.9 3h2.9l-6.3 7.2L23 21h-5.9l-4.6-6-5.3 6H4.3l6.8-7.8L1 3h6l4.2 5.5L18.9 3zm-1 16.3h1.6L6.1 4.6H4.4z"/></svg>
 					</a>
 					<a href="<?php echo esc_url( 'https://www.instagram.com/safestorebd/' ); ?>" class="sft-social sft-social--instagram" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
