@@ -848,6 +848,88 @@ function safestore_contact_item_markup( $icon, $label, $value, $detail ) {
 }
 
 /**
+ * The site's public contact email addresses, in display order (primary first).
+ * Single source of truth — filter `safestore_contact_emails` to change them.
+ *
+ * @return string[]
+ */
+function safestore_contact_email_addresses() {
+	$emails = apply_filters(
+		'safestore_contact_emails',
+		array(
+			'contact@safestorebd.com',
+			'bdsafestore@gmail.com',
+		)
+	);
+
+	return array_values( array_filter( array_map( 'trim', (array) $emails ) ) );
+}
+
+/**
+ * Inline "email | email" mailto links kept on a single line (the
+ * .sft-contact-emails CSS prevents wrapping). Reusable anywhere the contact
+ * email is shown. Returns trusted markup.
+ *
+ * @param array $args { @type string $class Root span class. }
+ * @return string
+ */
+function safestore_contact_email_links( $args = array() ) {
+	$args   = wp_parse_args( $args, array( 'class' => 'sft-contact-emails' ) );
+	$emails = safestore_contact_email_addresses();
+	if ( empty( $emails ) ) {
+		return '';
+	}
+
+	$links = array();
+	foreach ( $emails as $email ) {
+		$links[] = '<a class="sft-contact-emails__link" href="' . esc_url( 'mailto:' . $email ) . '">' . esc_html( $email ) . '</a>';
+	}
+
+	return '<span class="' . esc_attr( $args['class'] ) . '">'
+		. implode( '<span class="sft-contact-emails__sep" aria-hidden="true">|</span>', $links )
+		. '</span>';
+}
+
+/**
+ * Full contact row for the email addresses — brand icon on the left, both
+ * emails on a single line on the right. Mirrors safestore_contact_item()'s
+ * layout so it drops into the footer and homepage support section unchanged.
+ *
+ * @param array $args { @type string $label, @type string $detail, @type string $class }
+ * @return string
+ */
+function safestore_contact_emails_row( $args = array() ) {
+	$args  = wp_parse_args(
+		$args,
+		array(
+			'label'  => __( 'Email', 'safestore-minimal' ),
+			'detail' => '',
+			'class'  => '',
+		)
+	);
+	$links = safestore_contact_email_links();
+	if ( '' === $links ) {
+		return '';
+	}
+
+	$body = '';
+	if ( '' !== (string) $args['label'] ) {
+		$body .= '<span class="sft-contact-item__label">' . esc_html( $args['label'] ) . '</span>';
+	}
+	$body .= '<span class="sft-contact-item__value">' . $links . '</span>';
+	if ( '' !== (string) $args['detail'] ) {
+		$body .= '<span class="sft-contact-item__detail">' . esc_html( $args['detail'] ) . '</span>';
+	}
+
+	return sprintf(
+		'<div class="%1$s"><span class="sft-contact-item__icon" aria-hidden="true">%2$s</span><span class="sft-contact-item__body">%3$s</span></div>',
+		esc_attr( trim( 'sft-contact-item sft-contact-item--email sft-contact-item--emails ' . $args['class'] ) ),
+		safestore_contact_icon_svg( 'email' ),
+		$body
+	);
+}
+
+/**
  * Render a clickable contact item — brand icon on the left, contact detail
  * on the right. Returns markup; callers echo it (contains trusted SVG).
  *
@@ -1392,10 +1474,9 @@ function safestore_minimal_get_privacy_sections() {
 				'title'      => __( 'Your rights', 'safestore-minimal' ),
 				'paragraphs' => array(
 					sprintf(
-						/* translators: 1: mailto, 2: email, 3: contact URL */
-						__( 'Ask us to access or correct your data at <a href="%1$s">%2$s</a> or our <a href="%3$s">contact page</a>. Your rights under Bangladesh consumer protection law still apply. We may update this policy — see the date above.', 'safestore-minimal' ),
-						esc_url( 'mailto:bdsafestore@gmail.com' ),
-						'bdsafestore@gmail.com',
+						/* translators: 1: email links, 2: contact URL */
+						__( 'Ask us to access or correct your data at %1$s or our <a href="%2$s">contact page</a>. Your rights under Bangladesh consumer protection law still apply. We may update this policy — see the date above.', 'safestore-minimal' ),
+						safestore_contact_email_links(),
 						esc_url( $contact_url )
 					),
 				),
@@ -1536,7 +1617,7 @@ function safestore_minimal_get_terms_sections() {
 					__( 'To the extent permitted by law, SafeStoreBD is not liable for indirect loss or delays caused by couriers, payment networks, or events outside our control. Our total liability for a claim is limited to the amount you paid for the affected order.', 'safestore-minimal' ),
 					sprintf(
 						/* translators: %s: contact page URL */
-						__( 'These terms are governed by the laws of Bangladesh. Disputes should first be raised with us at bdsafestore@gmail.com or via our <a href="%s">contact page</a>. We may update these terms — continued use of the site means you accept the current version.', 'safestore-minimal' ),
+						__( 'These terms are governed by the laws of Bangladesh. Disputes should first be raised with us at contact@safestorebd.com or bdsafestore@gmail.com, or via our <a href="%s">contact page</a>. We may update these terms — continued use of the site means you accept the current version.', 'safestore-minimal' ),
 						esc_url( $contact_url )
 					),
 				),
@@ -1667,7 +1748,7 @@ function safestore_minimal_get_legal_sections() {
 					__( 'SafeStoreBD operates as an e-commerce seller of industrial safety products and PPE in <strong>Bangladesh</strong>. Goods are <strong>imported from suppliers in China</strong>, checked and stocked at our Pallabi, Dhaka office, then sold to customers and businesses nationwide.', 'safestore-minimal' ),
 				),
 				'list'       => array(
-					__( 'Registered contact: bdsafestore@gmail.com · +880 1811-892291', 'safestore-minimal' ),
+					__( 'Registered contact: contact@safestorebd.com | bdsafestore@gmail.com · +880 1811-892291', 'safestore-minimal' ),
 					sprintf(
 						/* translators: %s: office address */
 						__( 'Office: %s', 'safestore-minimal' ),

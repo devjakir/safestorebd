@@ -16,7 +16,7 @@ $contact_url  = home_url( '/contact/' );
 $phone_href   = 'tel:+8801811892291';
 $phone        = '+880 1811-892291';
 $wa_href      = 'https://wa.me/8801811892291';
-$email        = 'bdsafestore@gmail.com';
+$email        = 'contact@safestorebd.com';
 $steps        = safestore_minimal_get_track_steps();
 
 while ( have_posts() ) :
@@ -85,7 +85,7 @@ while ( have_posts() ) :
 					</p>
 					<ul class="sft-about-contact-list">
 						<li><a href="<?php echo esc_url( $phone_href ); ?>"><?php echo esc_html( $phone ); ?></a></li>
-						<li><a href="<?php echo esc_url( 'mailto:' . $email ); ?>"><?php echo esc_html( $email ); ?></a></li>
+						<li><?php echo safestore_contact_email_links(); ?></li>
 						<li>
 							<?php echo safestore_wa_cta_link( $wa_href, $phone, 'sft-about-contact-wa' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 						</li>

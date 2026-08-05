@@ -12,7 +12,7 @@ $bulk_url   = home_url( '/bulk-orders/' );
 $phone_href = 'tel:+8801811892291';
 $phone      = '+880 1811-892291';
 $wa_href    = 'https://wa.me/8801811892291';
-$email      = 'bdsafestore@gmail.com';
+$email      = 'contact@safestorebd.com';
 
 while ( have_posts() ) :
 	the_post();
@@ -65,7 +65,7 @@ while ( have_posts() ) :
 					<p class="sft-about-contact-lead"><?php esc_html_e( 'Questions about specs, bulk pricing, or delivery — reach us directly.', 'safestore-minimal' ); ?></p>
 					<ul class="sft-about-contact-list">
 						<li><a href="<?php echo esc_url( $phone_href ); ?>"><?php echo esc_html( $phone ); ?></a></li>
-						<li><a href="<?php echo esc_url( 'mailto:' . $email ); ?>"><?php echo esc_html( $email ); ?></a></li>
+						<li><?php echo safestore_contact_email_links(); ?></li>
 						<li>
 							<?php echo safestore_wa_cta_link( $wa_href, $phone, 'sft-about-contact-wa' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 						</li>

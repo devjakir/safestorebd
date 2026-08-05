@@ -11,7 +11,7 @@ get_header();
 
 $about_url    = home_url( '/about/' );
 $contact_url  = home_url( '/contact/' );
-$email        = 'bdsafestore@gmail.com';
+$email        = 'contact@safestorebd.com';
 $mailto       = 'mailto:' . $email . '?subject=' . rawurlencode( 'Job application — SafeStoreBD' );
 $phone_href   = 'tel:+8801811892291';
 $phone        = '+880 1811-892291';
@@ -81,7 +81,7 @@ while ( have_posts() ) :
 						<?php esc_html_e( 'Email your CV (PDF) with the role in the subject line, or message us on WhatsApp with a short intro.', 'safestore-minimal' ); ?>
 					</p>
 					<ul class="sft-about-contact-list">
-						<li><a href="<?php echo esc_url( $mailto ); ?>"><?php echo esc_html( $email ); ?></a></li>
+						<li><?php echo safestore_contact_email_links(); ?></li>
 						<li><a href="<?php echo esc_url( $phone_href ); ?>"><?php echo esc_html( $phone ); ?></a></li>
 						<li>
 							<?php echo safestore_wa_cta_link( $wa_href, $phone, 'sft-about-contact-wa' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>

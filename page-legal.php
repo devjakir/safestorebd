@@ -83,7 +83,7 @@ while ( have_posts() ) :
 						<?php esc_html_e( 'For policy or compliance questions — email us. Sat–Thu, 9am–8pm.', 'safestore-minimal' ); ?>
 					</p>
 					<ul class="sft-about-contact-list">
-						<li><a href="<?php echo esc_url( 'mailto:bdsafestore@gmail.com' ); ?>">bdsafestore@gmail.com</a></li>
+						<li><?php echo safestore_contact_email_links(); // phpcs:ignore WordPress.Security.EscapeOutput ?></li>
 						<li>
 							<?php echo safestore_wa_cta_link( $wa_href, $phone, 'sft-about-contact-wa' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 						</li>

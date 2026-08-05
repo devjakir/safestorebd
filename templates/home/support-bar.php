@@ -22,11 +22,11 @@ $support_items = array(
 		'href'   => 'https://wa.me/8801811892291',
 	),
 	array(
+		// Rendered via safestore_contact_emails_row() in the loop below — both
+		// email addresses on one line.
 		'type'   => 'email',
 		'label'  => __( 'Email', 'safestore-minimal' ),
-		'value'  => 'bdsafestore@gmail.com',
 		'detail' => __( 'Reply within 4 hours', 'safestore-minimal' ),
-		'href'   => 'mailto:bdsafestore@gmail.com',
 	),
 	array(
 		'type'   => 'help',
@@ -53,7 +53,15 @@ $support_items = array(
 		<div class="support-bar-grid">
 			<?php
 			foreach ( $support_items as $sft_support_item ) {
-				echo safestore_contact_item( $sft_support_item ); // phpcs:ignore WordPress.Security.EscapeOutput
+				if ( 'email' === ( $sft_support_item['type'] ?? '' ) ) {
+					// The email cell lists both addresses on one line.
+					echo safestore_contact_emails_row( array(
+						'label'  => $sft_support_item['label'],
+						'detail' => $sft_support_item['detail'],
+					) ); // phpcs:ignore WordPress.Security.EscapeOutput
+				} else {
+					echo safestore_contact_item( $sft_support_item ); // phpcs:ignore WordPress.Security.EscapeOutput
+				}
 			}
 			?>
 		</div>

@@ -10,7 +10,7 @@ get_header();
 $contact_url  = home_url( '/contact/' );
 $terms_url    = home_url( '/terms-of-service/' );
 $returns_url  = home_url( '/return-refund-policy/' );
-$email        = 'bdsafestore@gmail.com';
+$email        = 'contact@safestorebd.com';
 $privacy_mail = 'mailto:' . $email . '?subject=' . rawurlencode( 'Privacy request — SafeStoreBD' );
 $wa_href      = 'https://wa.me/8801811892291';
 $phone        = '+880 1811-892291';
@@ -71,7 +71,7 @@ while ( have_posts() ) :
 						<?php esc_html_e( 'Email or WhatsApp for data requests. Sat–Thu, 9am–8pm.', 'safestore-minimal' ); ?>
 					</p>
 					<ul class="sft-about-contact-list">
-						<li><a href="<?php echo esc_url( $privacy_mail ); ?>"><?php echo esc_html( $email ); ?></a></li>
+						<li><?php echo safestore_contact_email_links(); ?></li>
 						<li>
 							<?php echo safestore_wa_cta_link( $wa_href, $phone, 'sft-about-contact-wa' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 						</li>

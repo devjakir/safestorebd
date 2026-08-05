@@ -76,11 +76,8 @@
 						'value' => '+880 1811-892291',
 						'href'  => 'https://wa.me/8801811892291',
 					) ); // phpcs:ignore WordPress.Security.EscapeOutput ?></li>
-					<li><?php echo safestore_contact_item( array(
-						'type'  => 'email',
+					<li><?php echo safestore_contact_emails_row( array(
 						'label' => __( 'Email', 'safestore-minimal' ),
-						'value' => 'bdsafestore@gmail.com',
-						'href'  => 'mailto:bdsafestore@gmail.com',
 					) ); // phpcs:ignore WordPress.Security.EscapeOutput ?></li>
 					<li><?php echo safestore_contact_line( array(
 						'type'  => 'location',
