@@ -866,34 +866,75 @@ function safestore_contact_email_addresses() {
 }
 
 /**
- * Inline "email | email" mailto links kept on a single line (the
- * .sft-contact-emails CSS prevents wrapping). Reusable anywhere the contact
- * email is shown. Returns trusted markup.
+ * Stacked mailto links for the site contact emails (one address per line;
+ * .sft-contact-emails CSS keeps each address from wrapping mid-string).
+ * When copy-to-clipboard is enabled, each address gets its own copy button.
+ * Reusable anywhere the contact email is shown. Returns trusted markup.
  *
- * @param array $args { @type string $class Root span class. }
+ * @param array $args {
+ *     @type string $class      Root span class.
+ *     @type bool   $copy       Whether to render a per-email copy button. Default true.
+ *     @type string $copy_class Extra classes on each copy button.
+ * }
  * @return string
  */
 function safestore_contact_email_links( $args = array() ) {
-	$args   = wp_parse_args( $args, array( 'class' => 'sft-contact-emails' ) );
+	$args   = wp_parse_args(
+		$args,
+		array(
+			'class'      => 'sft-contact-emails',
+			'copy'       => true,
+			'copy_class' => 'sft-copy-btn--inline',
+		)
+	);
 	$emails = safestore_contact_email_addresses();
 	if ( empty( $emails ) ) {
 		return '';
 	}
 
-	$links = array();
+	$wants_copy = (bool) $args['copy'] && function_exists( 'safestore_copy_button' );
+
+	$items = array();
 	foreach ( $emails as $email ) {
-		$links[] = '<a class="sft-contact-emails__link" href="' . esc_url( 'mailto:' . $email ) . '">' . esc_html( $email ) . '</a>';
+		$copy_button = '';
+		if ( $wants_copy ) {
+			$copy = function_exists( 'safestore_copy_contact_value' )
+				? safestore_copy_contact_value( 'email', $email )
+				: array(
+					'value' => $email,
+					'noun'  => __( 'Email address', 'safestore-minimal' ),
+				);
+			if ( '' !== $copy['value'] ) {
+				// Noun is the address itself so each button has a unique name
+				// ("Copy contact@…") when two emails share a row.
+				$copy_button = safestore_copy_button(
+					array(
+						'value' => $copy['value'],
+						'noun'  => $copy['value'],
+						'class' => $args['copy_class'],
+					)
+				);
+			}
+		}
+
+		// data-sft-copy-init tells the auto-enhancer this mailto already has a
+		// server-rendered copy control, so it must not append a second button.
+		$init_attr = '' !== $copy_button ? ' data-sft-copy-init="1"' : '';
+		$link      = '<a class="sft-contact-emails__link" href="' . esc_url( 'mailto:' . $email ) . '"' . $init_attr . '>' . esc_html( $email ) . '</a>';
+
+		$items[] = '<span class="sft-contact-emails__item">' . $link . $copy_button . '</span>';
 	}
 
 	return '<span class="' . esc_attr( $args['class'] ) . '">'
-		. implode( '<span class="sft-contact-emails__sep" aria-hidden="true">|</span>', $links )
+		. implode( '', $items )
 		. '</span>';
 }
 
 /**
  * Full contact row for the email addresses — brand icon on the left, both
- * emails on a single line on the right. Mirrors safestore_contact_item()'s
- * layout so it drops into the footer and homepage support section unchanged.
+ * emails stacked on the right (each with its own copy button). Mirrors
+ * safestore_contact_item()'s layout so it drops into the footer and homepage
+ * support section unchanged.
  *
  * @param array $args { @type string $label, @type string $detail, @type string $class }
  * @return string
@@ -921,9 +962,14 @@ function safestore_contact_emails_row( $args = array() ) {
 		$body .= '<span class="sft-contact-item__detail">' . esc_html( $args['detail'] ) . '</span>';
 	}
 
+	$classes = 'sft-contact-item sft-contact-item--email sft-contact-item--emails';
+	if ( function_exists( 'safestore_copy_to_clipboard_enabled' ) && safestore_copy_to_clipboard_enabled() ) {
+		$classes .= ' sft-contact-item--copyable';
+	}
+
 	return sprintf(
 		'<div class="%1$s"><span class="sft-contact-item__icon" aria-hidden="true">%2$s</span><span class="sft-contact-item__body">%3$s</span></div>',
-		esc_attr( trim( 'sft-contact-item sft-contact-item--email sft-contact-item--emails ' . $args['class'] ) ),
+		esc_attr( trim( $classes . ' ' . $args['class'] ) ),
 		safestore_contact_icon_svg( 'email' ),
 		$body
 	);
