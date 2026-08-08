@@ -3690,26 +3690,33 @@ select {
 
 .sft-socials {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .sft-social {
-  width: 38px;
-  height: 38px;
-  border-radius: 5px;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
   border: 1px solid #e5e7eb;
   background: #ffffff;
   color: #0f172a;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.04);
+  transition:
+    border-color 0.22s ease,
+    color 0.22s ease,
+    background 0.22s ease,
+    box-shadow 0.22s ease,
+    transform 0.22s ease;
 }
 
 .sft-social svg {
-  width: 16px;
-  height: 16px;
+  width: 17px;
+  height: 17px;
   display: block;
 }
 
@@ -3718,58 +3725,87 @@ select {
   background: #0f172a;
   color: #ffffff;
   text-decoration: none;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.14);
 }
 
-/* Footer social — brand-tinted “soft” tiles + stronger brand on hover */
+.sft-social:focus-visible {
+  outline: 2px solid #dc2626;
+  outline-offset: 2px;
+}
+
+/* Footer social — brand-tinted soft tiles + stronger brand on hover */
 .sft-social--facebook {
   border-color: rgba(24, 119, 242, 0.28);
-  background: rgba(24, 119, 242, 0.1);
+  background: linear-gradient(160deg, rgba(24, 119, 242, 0.16), rgba(24, 119, 242, 0.08));
   color: #1877f2;
+  box-shadow: 0 1px 2px rgba(24, 119, 242, 0.08), 0 4px 12px rgba(24, 119, 242, 0.08);
 }
 
 .sft-social--facebook:hover {
   border-color: #1877f2;
-  background: #1877f2;
+  background: linear-gradient(160deg, #3b8ef5, #1877f2);
   color: #ffffff;
+  box-shadow: 0 8px 18px rgba(24, 119, 242, 0.32);
 }
 
 .sft-social--x {
   border-color: rgba(15, 20, 25, 0.18);
-  background: rgba(15, 20, 25, 0.06);
+  background: linear-gradient(160deg, rgba(15, 20, 25, 0.1), rgba(15, 20, 25, 0.04));
   color: #0f1419;
+  box-shadow: 0 1px 2px rgba(15, 20, 25, 0.06), 0 4px 12px rgba(15, 20, 25, 0.06);
 }
 
 .sft-social--x:hover {
   border-color: #0f1419;
-  background: #0f1419;
+  background: linear-gradient(160deg, #2a2f35, #0f1419);
   color: #ffffff;
+  box-shadow: 0 8px 18px rgba(15, 20, 25, 0.28);
 }
 
 .sft-social--instagram {
   border-color: rgba(225, 48, 108, 0.28);
   background: linear-gradient(135deg,
-      rgba(240, 148, 51, 0.14),
-      rgba(225, 48, 108, 0.12),
-      rgba(188, 24, 136, 0.14));
+      rgba(240, 148, 51, 0.16),
+      rgba(225, 48, 108, 0.14),
+      rgba(188, 24, 136, 0.16));
   color: #e1306c;
+  box-shadow: 0 1px 2px rgba(225, 48, 108, 0.08), 0 4px 12px rgba(188, 24, 136, 0.08);
 }
 
 .sft-social--instagram:hover {
   border-color: transparent;
   background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
   color: #ffffff;
+  box-shadow: 0 8px 18px rgba(188, 24, 136, 0.32);
 }
 
 .sft-social--linkedin {
   border-color: rgba(10, 102, 194, 0.28);
-  background: rgba(10, 102, 194, 0.1);
+  background: linear-gradient(160deg, rgba(10, 102, 194, 0.16), rgba(10, 102, 194, 0.08));
   color: #0a66c2;
+  box-shadow: 0 1px 2px rgba(10, 102, 194, 0.08), 0 4px 12px rgba(10, 102, 194, 0.08);
 }
 
 .sft-social--linkedin:hover {
   border-color: #0a66c2;
-  background: #0a66c2;
+  background: linear-gradient(160deg, #1a7ad4, #0a66c2);
   color: #ffffff;
+  box-shadow: 0 8px 18px rgba(10, 102, 194, 0.32);
+}
+
+.sft-social--youtube {
+  border-color: rgba(255, 0, 0, 0.28);
+  background: linear-gradient(160deg, rgba(255, 0, 0, 0.14), rgba(204, 0, 0, 0.08));
+  color: #ff0000;
+  box-shadow: 0 1px 2px rgba(255, 0, 0, 0.08), 0 4px 12px rgba(204, 0, 0, 0.08);
+}
+
+.sft-social--youtube:hover {
+  border-color: #cc0000;
+  background: linear-gradient(160deg, #ff1a1a, #cc0000);
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(204, 0, 0, 0.32);
 }
 
 /* Link columns */
@@ -5290,7 +5326,7 @@ a.sft-contact-item:focus-visible,
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 9px 16px;
+  padding: 5px 10px;
   border-radius: 5px;
   font-size: 13px;
   font-weight: 600;
