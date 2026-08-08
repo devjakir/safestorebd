@@ -117,12 +117,6 @@
   height: 14px;
 }
 
-.sft-copy-btn--inline:hover {
-  background: #f1f5f9;
-  border-color: #e2e8f0;
-  color: #0f172a;
-}
-
 /* Keep the contact-component button unobtrusive until the row is engaged.
    Always visible on touch/coarse pointers, where there is no hover. */
 @media (hover: hover) and (pointer: fine) {
