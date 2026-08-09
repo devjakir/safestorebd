@@ -5344,6 +5344,9 @@ a.sft-contact-item:focus-visible,
   border-radius: 5px;
   font-size: 13px;
   font-weight: 600;
+  font-family: inherit;
+  line-height: 1.3;
+  cursor: pointer;
   text-decoration: none;
   background: var(--sft-pdp-surface);
   border: 1px solid var(--sft-pdp-border);
@@ -5351,8 +5354,7 @@ a.sft-contact-item:focus-visible,
   transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
-.sft-pdp-contact__btn--wa:hover,
-.sft-pdp-contact__btn--call:hover {
+.sft-pdp-contact__btn:hover {
   background: #f8fafc;
   border-color: #cbd5e1;
   color: var(--sft-pdp-ink);
@@ -5361,6 +5363,158 @@ a.sft-contact-item:focus-visible,
 
 .sft-pdp-contact__btn--wa svg {
   color: #16a34a;
+}
+
+.sft-pdp-contact__btn--messenger svg {
+  color: #0084ff;
+}
+
+.sft-pdp-contact__btn--telegram svg {
+  color: #229ed9;
+}
+
+/* PDP action bar — Compare / Wishlist | Share */
+.sft-pdp-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 16px 0 0;
+  padding: 14px 0 0;
+  border-top: 1px solid var(--sft-pdp-border);
+}
+
+.sft-pdp-actions__left {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 20px;
+  min-width: 0;
+}
+
+.sft-pdp-actions__right {
+  position: relative;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.sft-pdp-actions__link,
+.sft-pdp-actions__share-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 4px;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  color: #475569;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.sft-pdp-actions__link:hover,
+.sft-pdp-actions__share-trigger:hover,
+.sft-pdp-actions__link:focus-visible,
+.sft-pdp-actions__share-trigger:focus-visible {
+  color: var(--sft-pdp-ink);
+  outline: none;
+}
+
+.sft-pdp-actions__link:focus-visible,
+.sft-pdp-actions__share-trigger:focus-visible {
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #94a3b8;
+  border-radius: 4px;
+}
+
+.sft-pdp-actions__icon {
+  flex-shrink: 0;
+  display: block;
+}
+
+.sft-pdp-actions__share-trigger {
+  justify-content: center;
+  width: 44px;
+  padding: 8px;
+}
+
+.sft-pdp-actions__link.is-active {
+  color: var(--sft-pdp-accent);
+}
+
+.sft-pdp-actions__link.is-active .sft-pdp-actions__icon {
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+.sft-pdp-actions__link[data-sft-wishlist].is-active .sft-pdp-actions__icon {
+  fill: currentColor;
+}
+
+.sft-pdp-actions__share-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 30;
+  min-width: 180px;
+  padding: 6px;
+  border: 1px solid var(--sft-pdp-border);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+}
+
+.sft-pdp-actions__share-panel[hidden] {
+  display: none;
+}
+
+.sft-pdp-actions__share-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--sft-pdp-ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.sft-pdp-actions__share-item:hover,
+.sft-pdp-actions__share-item:focus-visible {
+  background: #f8fafc;
+  color: var(--sft-pdp-ink);
+  text-decoration: none;
+  outline: none;
+}
+
+.sft-pdp-actions__share-item.is-copied {
+  background: #f0fdf4;
+}
+
+.sft-pdp-actions__live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .sft-pdp-trust {
@@ -5441,13 +5595,15 @@ a.sft-contact-item:focus-visible,
 }
 
 .sft-pdp form.cart .quantity input.qty {
-  height: 48px;
+  height: 36px;
+  min-height: 36px;
   width: 64px;
   border-radius: 5px;
   border: 1px solid var(--sft-pdp-border);
   text-align: center;
-  font-weight: 600;
-  font-size: 15px;
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
   color: var(--sft-pdp-ink);
 }
 
@@ -5461,23 +5617,23 @@ a.sft-contact-item:focus-visible,
 .sft-pdp form.cart .sft-pdp-buy-now {
   box-sizing: border-box;
   flex: 1 1 0;
-  height: 48px;
-  min-height: 48px;
-  max-height: 48px;
-  padding: 0 24px;
+  height: 36px;
+  min-height: 36px;
+  max-height: 36px;
+  padding: 0 15px;
   margin: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: 5px;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  line-height: 1;
-  text-transform: none;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.1;
+  text-transform: uppercase;
   text-decoration: none;
-  box-shadow: none;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
 }
 
 .sft-pdp form.cart .single_add_to_cart_button {
@@ -5680,11 +5836,28 @@ a.sft-contact-item:focus-visible,
   }
 
   .sft-pdp-contact {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 
   .sft-pdp-contact__btn {
     width: 100%;
+  }
+
+  .sft-pdp-actions {
+    gap: 12px;
+  }
+
+  .sft-pdp-actions__left {
+    gap: 4px 12px;
+  }
+
+  .sft-pdp-actions__link {
+    font-size: 13px;
+  }
+
+  .sft-pdp-actions__label {
+    max-width: 11ch;
   }
 
   .sft-pdp form.cart {
@@ -6264,14 +6437,14 @@ input.button:hover {
     padding: 40px 20px;
   }
 
-  /* Single Products */
+  /* Single Products — keep 36px to match shop cards */
   .sft-pdp form.cart .single_add_to_cart_button,
   .sft-pdp form.cart .sft-pdp-buy-now {
     flex: 1 1 0;
-    height: 40px;
-    min-height: 40px;
-    max-height: 40px;
-    padding: 0 16px;
+    height: 36px;
+    min-height: 36px;
+    max-height: 36px;
+    padding: 0 15px;
   }
 }
 
