@@ -2,9 +2,9 @@
 /**
  * Variable product add to cart — SafeStore override.
  *
- * Footwear (Safety Shoes): dedicated EU size 39–44 panel wired to
- * variation stock / SKU / price. Non-footwear keeps the standard table
- * and never surfaces Size.
+ * Footwear: native Size dropdown stays in the DOM (hidden); JS builds
+ * clickable size swatches above Add to Cart. Non-footwear: standard UI,
+ * no Size attribute.
  *
  * @package SafeStore_Minimal
  * @version 10.9.0
@@ -19,7 +19,6 @@ $attribute_keys  = array_keys( $attributes );
 $variations_json = wp_json_encode( $available_variations );
 $variations_attr = function_exists( 'wc_esc_json' ) ? wc_esc_json( $variations_json ) : _wp_specialchars( $variations_json, ENT_QUOTES, 'UTF-8', true );
 
-// Non-footwear: never show Size on the PDP even if the attribute exists.
 if ( ! $is_footwear && isset( $attributes['pa_size'] ) ) {
 	unset( $attributes['pa_size'] );
 	$attribute_keys = array_keys( $attributes );
@@ -38,108 +37,44 @@ do_action( 'woocommerce_before_add_to_cart_form' );
 
 	<?php if ( empty( $available_variations ) && false !== $available_variations ) : ?>
 		<p class="stock out-of-stock"><?php echo esc_html( apply_filters( 'woocommerce_out_of_stock_message', __( 'This product is currently out of stock and unavailable.', 'woocommerce' ) ) ); ?></p>
-	<?php elseif ( $is_footwear && empty( $attributes ) ) : ?>
-		<p class="stock out-of-stock"><?php esc_html_e( 'Size options are not configured for this safety shoe yet.', 'safestore-minimal' ); ?></p>
 	<?php else : ?>
 
-		<?php if ( $is_footwear ) : ?>
-			<div class="sft-pdp-size" data-sft-size-panel>
-				<div class="sft-pdp-size__header">
-					<span class="sft-pdp-size__label" id="sft-pdp-size-label"><?php esc_html_e( 'Size', 'safestore-minimal' ); ?></span>
-					<span class="sft-pdp-size__required"><?php esc_html_e( 'Required', 'safestore-minimal' ); ?></span>
-				</div>
-
-				<table class="variations sft-pdp-size__table" cellspacing="0" role="presentation">
-					<tbody>
-						<?php foreach ( $attributes as $attribute_name => $options ) : ?>
+		<table class="variations<?php echo $is_footwear ? ' sft-variations--size-native' : ''; ?>" cellspacing="0" role="presentation">
+			<tbody>
+				<?php foreach ( $attributes as $attribute_name => $options ) : ?>
+					<?php
+					$is_size_attr = ( 'pa_size' === $attribute_name || 'size' === sanitize_title( $attribute_name ) );
+					$row_class    = ( $is_footwear && $is_size_attr ) ? 'sft-size-dropdown-row' : '';
+					?>
+					<tr class="<?php echo esc_attr( $row_class ); ?>">
+						<th class="label<?php echo ( $is_footwear && $is_size_attr ) ? ' screen-reader-text' : ''; ?>">
+							<label for="<?php echo esc_attr( sanitize_title( $attribute_name ) ); ?>">
+								<?php echo wc_attribute_label( $attribute_name ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+							</label>
+						</th>
+						<td class="value">
 							<?php
-							$is_size_attr = ( 'pa_size' === $attribute_name || 'size' === sanitize_title( $attribute_name ) );
-							if ( ! $is_size_attr ) {
-								continue;
-							}
-							?>
-							<tr class="sft-pdp-size__row">
-								<th class="label screen-reader-text">
-									<label for="<?php echo esc_attr( sanitize_title( $attribute_name ) ); ?>">
-										<?php echo wc_attribute_label( $attribute_name ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-									</label>
-								</th>
-								<td class="value">
-									<?php
-									wc_dropdown_variation_attribute_options(
-										array(
-											'options'   => $options,
-											'attribute' => $attribute_name,
-											'product'   => $product,
-										)
-									);
-									?>
-								</td>
-							</tr>
-						<?php endforeach; ?>
-
-						<?php
-						// Keep any non-size attributes (rare) available but visually secondary.
-						foreach ( $attributes as $attribute_name => $options ) :
-							$is_size_attr = ( 'pa_size' === $attribute_name || 'size' === sanitize_title( $attribute_name ) );
-							if ( $is_size_attr ) {
-								continue;
-							}
-							?>
-							<tr>
-								<th class="label"><label for="<?php echo esc_attr( sanitize_title( $attribute_name ) ); ?>"><?php echo wc_attribute_label( $attribute_name ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></label></th>
-								<td class="value">
-									<?php
-									wc_dropdown_variation_attribute_options(
-										array(
-											'options'   => $options,
-											'attribute' => $attribute_name,
-											'product'   => $product,
-										)
-									);
-									echo end( $attribute_keys ) === $attribute_name
-										? wp_kses_post( apply_filters( 'woocommerce_reset_variations_link', '<a class="reset_variations" href="#" aria-label="' . esc_attr__( 'Clear options', 'woocommerce' ) . '">' . esc_html__( 'Clear', 'woocommerce' ) . '</a>' ) )
-										: '';
-									?>
-								</td>
-							</tr>
-						<?php endforeach; ?>
-					</tbody>
-				</table>
-
-				<div class="sft-pdp-size__meta" data-sft-size-meta aria-live="polite">
-					<p class="sft-pdp-size__prompt"><?php esc_html_e( 'Select a size (EU 39–44) to see stock and continue.', 'safestore-minimal' ); ?></p>
-					<p class="sft-pdp-size__stock" data-sft-size-stock hidden></p>
-					<p class="sft-pdp-size__sku" data-sft-size-sku hidden></p>
-				</div>
-
-				<a class="reset_variations sft-pdp-size__clear" href="#" aria-label="<?php esc_attr_e( 'Clear size', 'safestore-minimal' ); ?>"><?php esc_html_e( 'Clear size', 'safestore-minimal' ); ?></a>
-			</div>
-		<?php else : ?>
-			<table class="variations" cellspacing="0" role="presentation">
-				<tbody>
-					<?php foreach ( $attributes as $attribute_name => $options ) : ?>
-						<tr>
-							<th class="label"><label for="<?php echo esc_attr( sanitize_title( $attribute_name ) ); ?>"><?php echo wc_attribute_label( $attribute_name ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></label></th>
-							<td class="value">
-								<?php
-								wc_dropdown_variation_attribute_options(
-									array(
-										'options'   => $options,
-										'attribute' => $attribute_name,
-										'product'   => $product,
+							wc_dropdown_variation_attribute_options(
+								array(
+									'options'   => $options,
+									'attribute' => $attribute_name,
+									'product'   => $product,
+								)
+							);
+							if ( ! $is_footwear && end( $attribute_keys ) === $attribute_name ) {
+								echo wp_kses_post(
+									apply_filters(
+										'woocommerce_reset_variations_link',
+										'<a class="reset_variations" href="#" aria-label="' . esc_attr__( 'Clear options', 'woocommerce' ) . '">' . esc_html__( 'Clear', 'woocommerce' ) . '</a>'
 									)
 								);
-								echo end( $attribute_keys ) === $attribute_name
-									? wp_kses_post( apply_filters( 'woocommerce_reset_variations_link', '<a class="reset_variations" href="#" aria-label="' . esc_attr__( 'Clear options', 'woocommerce' ) . '">' . esc_html__( 'Clear', 'woocommerce' ) . '</a>' ) )
-									: '';
-								?>
-							</td>
-						</tr>
-					<?php endforeach; ?>
-				</tbody>
-			</table>
-		<?php endif; ?>
+							}
+							?>
+						</td>
+					</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
 
 		<div class="reset_variations_alert screen-reader-text" role="alert" aria-live="polite" aria-relevant="all"></div>
 
@@ -151,6 +86,10 @@ do_action( 'woocommerce_before_add_to_cart_form' );
 			do_action( 'woocommerce_single_variation' );
 			do_action( 'woocommerce_after_single_variation' );
 			?>
+			<?php if ( $is_footwear ) : ?>
+				<!-- Fallback mount; JS moves this directly above Add to Cart. -->
+				<div class="sft-size-swatches-host" data-sft-size-host hidden></div>
+			<?php endif; ?>
 		</div>
 	<?php endif; ?>
 

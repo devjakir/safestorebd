@@ -38,6 +38,12 @@ require get_template_directory() . '/inc/size-variations-setup.php';
  */
 require get_template_directory() . '/inc/footwear-sizing.php';
 
+/**
+ * PDP size selector for Safety Shoes simple products (cart item meta).
+ * Hook: woocommerce_before_add_to_cart_button.
+ */
+require get_template_directory() . '/inc/pdp-shoe-size.php';
+
 function safestore_minimal_enqueue_assets() {
     $version = wp_get_theme()->get('Version');
 
@@ -387,6 +393,38 @@ function safestore_minimal_buy_now_redirect($url) {
     return $url;
 }
 add_filter('woocommerce_add_to_cart_redirect', 'safestore_minimal_buy_now_redirect', 20);
+
+/**
+ * Simple Safety Shoes "Buy now" must submit the cart form so the selected
+ * size is posted as cart meta (not a bare add-to-cart checkout URL).
+ */
+add_action(
+    'wp',
+    static function () {
+        if (!function_exists('is_product') || !is_product()) {
+            return;
+        }
+        if (!function_exists('safestore_pdp_needs_shoe_size_meta')) {
+            return;
+        }
+        $product = wc_get_product(get_the_ID());
+        if (!safestore_pdp_needs_shoe_size_meta($product)) {
+            return;
+        }
+        remove_action('woocommerce_after_add_to_cart_button', 'safestore_minimal_pdp_buy_now_button');
+        add_action(
+            'woocommerce_after_add_to_cart_button',
+            static function () {
+                printf(
+                    '<button type="submit" name="safestore_buy_now" value="1" class="button sft-pdp-buy-now">%s</button>',
+                    esc_html__('Buy now', 'safestore-minimal')
+                );
+            },
+            10
+        );
+    },
+    20
+);
 
 /**
  * Pickup + courier + returns (filterable address and rates).

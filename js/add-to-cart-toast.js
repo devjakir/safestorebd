@@ -250,6 +250,12 @@
       data[this.name] = $(this).val();
     });
 
+    // Safety Shoes size meta (simple products — see inc/pdp-shoe-size.php).
+    var shoeSize = $form.find('[name="safestore_shoe_size"]').val();
+    if (shoeSize) {
+      data.safestore_shoe_size = shoeSize;
+    }
+
     $.ajax({
       url: AJAX_URL,
       type: 'POST',

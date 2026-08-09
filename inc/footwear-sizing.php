@@ -380,6 +380,14 @@ add_filter( 'woocommerce_available_variation', 'safestore_footwear_available_var
  * @param array  $args Args.
  * @return string
  */
+/**
+ * Keep WooCommerce's native Size <select> in the DOM (required for orders),
+ * but mark it so CSS can hide it. Swatches are built in JS from its options.
+ *
+ * @param string $html Dropdown HTML.
+ * @param array  $args Args.
+ * @return string
+ */
 function safestore_footwear_size_swatches_html( $html, $args ) {
 	$attribute_key = isset( $args['attribute'] ) ? sanitize_title( $args['attribute'] ) : '';
 	if ( ! in_array( $attribute_key, array( 'pa_size', 'size' ), true ) ) {
@@ -388,138 +396,17 @@ function safestore_footwear_size_swatches_html( $html, $args ) {
 
 	$product = isset( $args['product'] ) ? $args['product'] : null;
 	if ( ! safestore_is_footwear_product( $product ) ) {
-		// Non-footwear: hide Size entirely on the PDP.
-		return '<select class="sft-size-hidden" name="' . esc_attr( isset( $args['name'] ) ? $args['name'] : 'attribute_pa_size' ) . '" style="display:none;" disabled><option value=""></option></select>';
+		return $html;
 	}
 
-	$options   = isset( $args['options'] ) ? (array) $args['options'] : array();
-	$attribute = $args['attribute'];
-	$name      = isset( $args['name'] ) ? $args['name'] : wc_variation_attribute_name( $attribute );
-	$id        = isset( $args['id'] ) ? $args['id'] : sanitize_title( $attribute );
-	$selected  = isset( $args['selected'] ) ? (string) $args['selected'] : '';
-
-	if ( empty( $options ) && $product ) {
-		$attributes = $product->get_variation_attributes();
-		$options    = isset( $attributes[ $attribute ] ) ? $attributes[ $attribute ] : array();
+	// Ensure the native select is identifiable for hide + JS swatch builder.
+	if ( false !== strpos( $html, 'class="' ) ) {
+		$html = preg_replace( '/class="/', 'class="sft-size-dropdown ', $html, 1 );
+	} else {
+		$html = preg_replace( '/<select\b/', '<select class="sft-size-dropdown"', $html, 1 );
 	}
 
-	// Always expose the full Safety Shoes range 39–44 when terms exist.
-	$allowed = safestore_footwear_allowed_sizes();
-	$options = array_values( array_filter( $options, 'safestore_footwear_is_allowed_size' ) );
-	if ( count( $options ) < count( $allowed ) ) {
-		foreach ( $allowed as $size ) {
-			$slug = sanitize_title( $size );
-			$has  = false;
-			foreach ( $options as $opt ) {
-				if ( safestore_footwear_normalize_size_option( $opt ) === $slug || (string) $opt === (string) $size ) {
-					$has = true;
-					break;
-				}
-			}
-			if ( ! $has && taxonomy_exists( 'pa_size' ) && term_exists( $size, 'pa_size' ) ) {
-				$options[] = $slug;
-			}
-		}
-	}
-
-	$order = array_map( 'sanitize_title', $allowed );
-	usort(
-		$options,
-		static function ( $a, $b ) use ( $order ) {
-			$ai = array_search( safestore_footwear_normalize_size_option( $a ), $order, true );
-			$bi = array_search( safestore_footwear_normalize_size_option( $b ), $order, true );
-			$ai = false === $ai ? 99 : $ai;
-			$bi = false === $bi ? 99 : $bi;
-			return $ai <=> $bi;
-		}
-	);
-
-	$size_meta = array();
-	if ( $product instanceof WC_Product_Variable ) {
-		foreach ( $product->get_children() as $variation_id ) {
-			$variation = wc_get_product( $variation_id );
-			if ( ! $variation || ! $variation->exists() ) {
-				continue;
-			}
-			$attrs = $variation->get_attributes();
-			if ( empty( $attrs['pa_size'] ) ) {
-				continue;
-			}
-			$slug = safestore_footwear_normalize_size_option( $attrs['pa_size'] );
-			$qty  = $variation->managing_stock() ? $variation->get_stock_quantity() : null;
-			$size_meta[ $slug ] = array(
-				'variation_id' => (int) $variation_id,
-				'in_stock'     => $variation->is_in_stock() && $variation->is_purchasable(),
-				'stock_qty'    => null === $qty ? '' : (int) $qty,
-				'sku'          => (string) $variation->get_sku(),
-			);
-		}
-	}
-
-	ob_start();
-	?>
-	<div class="sft-size-swatches" data-attribute="<?php echo esc_attr( $attribute ); ?>" role="listbox" aria-labelledby="sft-pdp-size-label" aria-label="<?php esc_attr_e( 'Select size', 'safestore-minimal' ); ?>">
-		<?php foreach ( $options as $option ) : ?>
-			<?php
-			$slug  = safestore_footwear_normalize_size_option( $option );
-			$label = $option;
-			if ( taxonomy_exists( 'pa_size' ) ) {
-				$term = get_term_by( 'slug', $slug, 'pa_size' );
-				if ( ! $term ) {
-					$term = get_term_by( 'name', (string) $option, 'pa_size' );
-				}
-				if ( $term && ! is_wp_error( $term ) ) {
-					$label = $term->name;
-					$slug  = $term->slug;
-				}
-			}
-
-			$meta       = isset( $size_meta[ $slug ] ) ? $size_meta[ $slug ] : null;
-			$in_stock   = $meta ? ! empty( $meta['in_stock'] ) : false;
-			$is_sel     = (string) $selected === (string) $slug || (string) $selected === (string) $option;
-			$classes    = 'sft-size-swatch';
-			$classes   .= $is_sel ? ' is-selected' : '';
-			$classes   .= $in_stock ? '' : ' is-oos';
-			$var_id     = $meta ? (int) $meta['variation_id'] : 0;
-			$stock_qty  = ( $meta && '' !== $meta['stock_qty'] ) ? (string) $meta['stock_qty'] : '';
-			$sku        = $meta ? (string) $meta['sku'] : '';
-			?>
-			<button
-				type="button"
-				class="<?php echo esc_attr( $classes ); ?>"
-				role="option"
-				aria-selected="<?php echo $is_sel ? 'true' : 'false'; ?>"
-				aria-disabled="<?php echo $in_stock ? 'false' : 'true'; ?>"
-				data-value="<?php echo esc_attr( $slug ); ?>"
-				data-variation-id="<?php echo esc_attr( (string) $var_id ); ?>"
-				data-stock-qty="<?php echo esc_attr( $stock_qty ); ?>"
-				data-sku="<?php echo esc_attr( $sku ); ?>"
-				title="<?php echo $in_stock ? esc_attr( sprintf( __( 'Size %s', 'safestore-minimal' ), $label ) ) : esc_attr( sprintf( __( 'Size %s — out of stock', 'safestore-minimal' ), $label ) ); ?>"
-				<?php disabled( ! $in_stock ); ?>
-			><?php echo esc_html( $label ); ?></button>
-		<?php endforeach; ?>
-	</div>
-	<select id="<?php echo esc_attr( $id ); ?>" class="sft-size-swatches__select" name="<?php echo esc_attr( $name ); ?>" data-attribute_name="attribute_<?php echo esc_attr( sanitize_title( $attribute ) ); ?>" data-show_option_none="yes" autocomplete="off">
-		<option value=""><?php echo esc_html__( 'Choose an option', 'woocommerce' ); ?></option>
-		<?php foreach ( $options as $option ) : ?>
-			<?php
-			$slug  = safestore_footwear_normalize_size_option( $option );
-			$label = $option;
-			if ( taxonomy_exists( 'pa_size' ) ) {
-				$term = get_term_by( 'slug', $slug, 'pa_size' );
-				if ( $term && ! is_wp_error( $term ) ) {
-					$label = $term->name;
-					$slug  = $term->slug;
-				}
-			}
-			$meta     = isset( $size_meta[ $slug ] ) ? $size_meta[ $slug ] : null;
-			$in_stock = $meta ? ! empty( $meta['in_stock'] ) : false;
-			?>
-			<option value="<?php echo esc_attr( $slug ); ?>" <?php selected( $selected, $slug ); ?> <?php disabled( ! $in_stock ); ?>><?php echo esc_html( $label ); ?></option>
-		<?php endforeach; ?>
-	</select>
-	<?php
-	return ob_get_clean();
+	return $html;
 }
 add_filter( 'woocommerce_dropdown_variation_attribute_options_html', 'safestore_footwear_size_swatches_html', 20, 2 );
 
@@ -1144,7 +1031,7 @@ function safestore_footwear_enqueue_assets() {
 				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
 				'nonce'   => wp_create_nonce( 'safestore_footwear_sizing' ),
 				'i18n'    => array(
-					'selectSize' => __( 'Please choose a size (39–44) before adding to cart.', 'safestore-minimal' ),
+					'selectSize' => __( 'Please select a size first', 'safestore-minimal' ),
 					'noQty'      => __( 'Enter a quantity for at least one size.', 'safestore-minimal' ),
 					'adding'     => __( 'Adding…', 'safestore-minimal' ),
 					'stockHint'  => __( '%d in stock for this size', 'safestore-minimal' ),

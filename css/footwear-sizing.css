@@ -83,150 +83,15 @@
   background: #f8fafc;
 }
 
-/* PDP size panel (Safety Shoes only) */
-.sft-pdp-size {
-  margin: 0 0 14px;
-  padding: 0;
-}
+/* --------------------------------------------------------------------------
+ * Custom size swatches (PDP)
+ * 1) Hide native WC Size dropdown (kept in DOM)
+ * 2–4) Swatch UI + selection + error state
+ * -------------------------------------------------------------------------- */
 
-.sft-pdp-size__header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 10px;
-}
-
-.sft-pdp-size__label {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #0f172a;
-}
-
-.sft-pdp-size__required {
-  font-size: 11px;
-  font-weight: 600;
-  color: #b91c1c;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.sft-pdp-size__table {
-  width: 100%;
-  border: 0;
-  margin: 0;
-}
-
-.sft-pdp-size__table td,
-.sft-pdp-size__table th {
-  border: 0;
-  padding: 0;
-  background: transparent;
-}
-
-.sft-pdp-size.is-invalid .sft-size-swatches {
-  outline: 2px solid #ef4444;
-  outline-offset: 4px;
-  border-radius: 6px;
-}
-
-.sft-pdp-size__meta {
-  margin-top: 10px;
-  min-height: 1.4em;
-}
-
-.sft-pdp-size__prompt {
-  margin: 0;
-  font-size: 13px;
-  color: #64748b;
-  line-height: 1.45;
-}
-
-.sft-pdp-size__stock,
-.sft-pdp-size__sku {
-  margin: 0 0 4px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #0b3d2e;
-  line-height: 1.4;
-}
-
-.sft-pdp-size__stock.is-oos {
-  color: #b91c1c;
-}
-
-.sft-pdp-size__sku {
-  font-weight: 500;
-  color: #475569;
-}
-
-.sft-pdp-size__clear {
-  display: inline-block;
-  margin-top: 6px;
-  font-size: 12px;
-  color: #64748b;
-}
-
-.sft-pdp-size__clear:hover {
-  color: #0f172a;
-}
-
-/* PDP size swatches — match shop card chips, larger tap targets */
-.sft-size-swatches {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 0;
-}
-
-.sft-size-swatch {
-  min-width: 40px;
-  height: 36px;
-  padding: 0 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  background: #fff;
-  color: #0f172a;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.sft-size-swatch:hover:not(:disabled) {
-  border-color: #0f172a;
-}
-
-.sft-size-swatch.is-selected {
-  border-color: #b91c1c;
-  background: #b91c1c;
-  color: #fff;
-  box-shadow: 0 0 0 1px #b91c1c;
-}
-
-.sft-size-swatch.is-oos,
-.sft-size-swatch:disabled {
-  position: relative;
-  opacity: 0.45;
-  cursor: not-allowed;
-  color: #94a3b8;
-  background: #f8fafc;
-}
-
-.sft-size-swatch.is-oos::after {
-  content: '';
-  position: absolute;
-  left: 6px;
-  right: 6px;
-  top: 50%;
-  border-top: 1.5px solid #94a3b8;
-  transform: rotate(-28deg);
-}
-
-/* Keep select in DOM for WooCommerce variation JS; hide visually */
-.sft-size-swatches__select {
+/* Step 1: hide native Size dropdown + its table row (still in DOM) */
+.sft-variations-form--footwear .sft-size-dropdown-row,
+.sft-variations-form--footwear select.sft-size-dropdown {
   position: absolute !important;
   width: 1px !important;
   height: 1px !important;
@@ -238,24 +103,124 @@
   border: 0 !important;
 }
 
-.sft-variations-form--footwear .single_add_to_cart_button.disabled,
-.sft-variations-form--footwear .single_add_to_cart_button:disabled,
-.sft-variations-form--footwear .sft-pdp-buy-now.disabled,
-.sft-variations-form--footwear .sft-pdp-buy-now:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
+.sft-variations-form--footwear table.sft-variations--size-native {
+  margin: 0;
+  border: 0;
 }
 
-.sft-size-stock {
-  margin: 0 0 10px;
+/* Host sits directly above Add to Cart */
+.sft-size-swatches-host {
+  margin: 0 0 14px;
+}
+
+.sft-size-swatches-panel {
+  padding: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.sft-size-swatches-panel__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.sft-size-swatches-panel__label {
   font-size: 13px;
-  font-weight: 600;
-  color: #0b3d2e;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #0f172a;
 }
 
-.sft-size-stock.is-oos {
-  color: #b91c1c;
+.sft-size-swatches-panel__hint {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.sft-size-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+}
+
+.sft-size-swatch {
+  min-width: 48px;
+  height: 44px;
+  padding: 0 14px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  color: #0f172a;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.1s ease;
+}
+
+.sft-size-swatch:hover:not(:disabled) {
+  border-color: #0f172a;
+  background: #f8fafc;
+  transform: translateY(-1px);
+}
+
+.sft-size-swatch:focus-visible {
+  outline: 2px solid #b91c1c;
+  outline-offset: 2px;
+}
+
+/* Step 3: active / selected */
+.sft-size-swatch.is-selected,
+.sft-size-swatch.active {
+  border-color: #b91c1c;
+  background: #b91c1c;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(185, 28, 28, 0.25);
+}
+
+.sft-size-swatch.is-oos,
+.sft-size-swatch:disabled {
+  position: relative;
+  opacity: 0.45;
+  cursor: not-allowed;
+  color: #94a3b8;
+  background: #f8fafc;
+  transform: none;
+}
+
+.sft-size-swatch.is-oos::after {
+  content: '';
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 50%;
+  border-top: 1.5px solid #94a3b8;
+  transform: rotate(-28deg);
+}
+
+/* Step 4: red error highlight when Add to Cart without a size */
+.sft-size-swatches-panel.is-invalid,
+.sft-size-swatches-panel.sft-size-error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.sft-size-swatches-panel.is-invalid .sft-size-swatches,
+.sft-size-swatches-panel.sft-size-error .sft-size-swatches {
+  outline: 2px solid #ef4444;
+  outline-offset: 4px;
+  border-radius: 8px;
 }
 
 /* Size × qty matrix (retail quick-add / B2B bulk) */
@@ -341,15 +306,121 @@
   color: #475569;
 }
 
+/* --------------------------------------------------------------------------
+ * PDP simple-product size meta UI (Safety Shoes)
+ * Injected via woocommerce_before_add_to_cart_button
+ * -------------------------------------------------------------------------- */
+
+.sft-pdp-shoe-size {
+  flex: 1 1 100%;
+  width: 100%;
+  order: -1;
+  margin: 0 0 4px;
+  padding: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.sft-pdp form.cart .sft-pdp-shoe-size {
+  margin-bottom: 6px;
+}
+
+.sft-pdp-shoe-size__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.sft-pdp-shoe-size__label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #0f172a;
+}
+
+.sft-pdp-shoe-size__hint {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.sft-pdp-shoe-size__swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sft-pdp-shoe-size__swatch {
+  min-width: 32px;
+  height: 28px;
+  padding: 0 5px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 5px;
+  background: #fff;
+  color: #0f172a;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.1s ease;
+}
+
+.sft-pdp-shoe-size__swatch:hover {
+  border-color: #0f172a;
+  background: #f8fafc;
+  transform: translateY(-1px);
+}
+
+.sft-pdp-shoe-size__swatch.is-selected,
+.sft-pdp-shoe-size__swatch.active {
+  border-color: #b91c1c;
+  background: #b91c1c;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(185, 28, 28, 0.25);
+}
+
+.sft-pdp-shoe-size__error {
+  margin: 10px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #b91c1c;
+}
+
+.sft-pdp-shoe-size.is-invalid {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.sft-pdp form.cart .single_add_to_cart_button.disabled,
+.sft-pdp form.cart .single_add_to_cart_button:disabled,
+.sft-pdp form.cart .sft-pdp-buy-now.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 @media (max-width: 640px) {
   .sft-size-filter {
     padding: 10px 12px;
   }
 
   .sft-size-swatch {
-    min-width: 42px;
-    height: 38px;
+    min-width: 44px;
+    height: 42px;
     font-size: 14px;
+    padding: 0 12px;
+  }
+
+  .sft-size-swatches-panel {
+    padding: 12px;
   }
 
   .sft-size-matrix {
