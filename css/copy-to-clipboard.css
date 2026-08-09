@@ -23,8 +23,6 @@
 
 .sft-copy-btn:hover {
   color: var(--sft-contact-accent, #dc2626);
-  border-color: var(--sft-contact-accent, #dc2626);
-  background: var(--sft-contact-accent-soft, #fef2f2);
 }
 
 .sft-copy-btn:active {

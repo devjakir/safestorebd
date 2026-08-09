@@ -24,6 +24,9 @@
 							<circle cx="17.4" cy="6.6" r="1.1"/>
 						</svg>
 					</a>
+					<a href="<?php echo esc_url( 'https://www.pinterest.com/safestorebd/' ); ?>" class="sft-social sft-social--pinterest" aria-label="Pinterest" target="_blank" rel="noopener noreferrer">
+						<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.5 2 2 6.5 2 12c0 4.2 2.6 7.8 6.3 9.3-.1-.8-.2-2 0-2.9.2-.8 1.2-5 1.2-5s-.3-.6-.3-1.5c0-1.4.8-2.4 1.8-2.4.9 0 1.3.6 1.3 1.4 0 .9-.5 2.1-.8 3.3-.2 1 .5 1.8 1.5 1.8 1.8 0 3.1-1.9 3.1-4.6 0-2.4-1.7-4.1-4.2-4.1-2.8 0-4.5 2.1-4.5 4.3 0 .9.3 1.8.7 2.3.1.1.1.2.1.3l-.3 1.1c0 .2-.1.2-.3.1-1.2-.6-2-2.4-2-3.9 0-3.2 2.3-6.1 6.6-6.1 3.5 0 6.2 2.5 6.2 5.8 0 3.4-2.2 6.2-5.2 6.2-1 0-2-.5-2.3-1.1l-.6 2.4c-.2.9-.8 2-1.2 2.6.9.3 1.9.4 3 .4 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
+					</a>
 					<a href="<?php echo esc_url( 'https://www.linkedin.com/in/safestorebd/' ); ?>" class="sft-social sft-social--linkedin" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
 						<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5.4 8.1H2V21h3.4V8.1zM3.7 2.7A2 2 0 1 0 3.7 6.7 2 2 0 0 0 3.7 2.7zM22 13.6c0-3.4-1.8-5.9-5.2-5.9-2.4 0-3.4 1.3-4 2.2V8.1H9.4V21h3.4v-6.4c0-1.7.3-3.4 2.4-3.4s2.1 1.9 2.1 3.5V21H22v-7.4z"/></svg>
 					</a>
