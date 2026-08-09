@@ -26,6 +26,18 @@ require get_template_directory() . '/inc/copy-to-clipboard.php';
  */
 require get_template_directory() . '/inc/smtp.php';
 
+/**
+ * Safety Shoes size variations setup — admin tool under
+ * WooCommerce → Size Variations (pa_size 39–44).
+ */
+require get_template_directory() . '/inc/size-variations-setup.php';
+
+/**
+ * Footwear storefront logic — size swatches 39–44, archive size filter
+ * (footwear only), per-size stock validation, retail/B2B qty rules.
+ */
+require get_template_directory() . '/inc/footwear-sizing.php';
+
 function safestore_minimal_enqueue_assets() {
     $version = wp_get_theme()->get('Version');
 
@@ -334,23 +346,47 @@ function safestore_minimal_pdp_trust_line() {
 }
 
 /**
- * Secondary checkout CTA for simple products (mirrors common “Buy now”).
+ * Secondary checkout CTA — simple products link straight to checkout;
+ * variable products (e.g. Safety Shoes sizes) submit the variations form
+ * then redirect to checkout once a size is chosen.
  */
 function safestore_minimal_pdp_buy_now_button() {
     global $product;
     if (!$product || !$product->is_purchasable() || !$product->is_in_stock()) {
         return;
     }
-    if (!$product->is_type('simple')) {
+
+    if ($product->is_type('simple')) {
+        $url = add_query_arg('add-to-cart', $product->get_id(), wc_get_checkout_url());
+        printf(
+            '<a class="button sft-pdp-buy-now" href="%s" role="button">%s</a>',
+            esc_url($url),
+            esc_html__('Buy now', 'safestore-minimal')
+        );
         return;
     }
-    $url = add_query_arg('add-to-cart', $product->get_id(), wc_get_checkout_url());
-    printf(
-        '<a class="button sft-pdp-buy-now" href="%s" role="button">%s</a>',
-        esc_url($url),
-        esc_html__('Buy now', 'safestore-minimal')
-    );
+
+    if ($product->is_type('variable')) {
+        printf(
+            '<button type="submit" name="safestore_buy_now" value="1" class="button sft-pdp-buy-now">%s</button>',
+            esc_html__('Buy now', 'safestore-minimal')
+        );
+    }
 }
+
+/**
+ * After a Buy now submit on a variable product, go to checkout.
+ *
+ * @param string $url Redirect URL.
+ * @return string
+ */
+function safestore_minimal_buy_now_redirect($url) {
+    if (isset($_REQUEST['safestore_buy_now'])) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        return wc_get_checkout_url();
+    }
+    return $url;
+}
+add_filter('woocommerce_add_to_cart_redirect', 'safestore_minimal_buy_now_redirect', 20);
 
 /**
  * Pickup + courier + returns (filterable address and rates).

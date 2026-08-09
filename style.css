@@ -5499,8 +5499,18 @@ a.sft-contact-item:focus-visible,
 }
 
 .sft-pdp .single_variation_wrap form.cart .single_add_to_cart_button,
-.sft-pdp .variations_form form.cart .single_add_to_cart_button {
+.sft-pdp .variations_form form.cart .single_add_to_cart_button,
+.sft-pdp .single_variation_wrap form.cart .sft-pdp-buy-now,
+.sft-pdp .variations_form form.cart .sft-pdp-buy-now {
   width: 100%;
+}
+
+.sft-pdp .single_variation_wrap .woocommerce-variation-add-to-cart,
+.sft-pdp .variations_form .woocommerce-variation-add-to-cart {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: stretch;
 }
 
 .sft-pdp-fulfill {
