@@ -83,50 +83,168 @@
   background: #f8fafc;
 }
 
-/* PDP size swatches */
+/* PDP size panel (Safety Shoes only) */
+.sft-pdp-size {
+  margin: 0 0 14px;
+  padding: 0;
+}
+
+.sft-pdp-size__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.sft-pdp-size__label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #0f172a;
+}
+
+.sft-pdp-size__required {
+  font-size: 11px;
+  font-weight: 600;
+  color: #b91c1c;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sft-pdp-size__table {
+  width: 100%;
+  border: 0;
+  margin: 0;
+}
+
+.sft-pdp-size__table td,
+.sft-pdp-size__table th {
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.sft-pdp-size.is-invalid .sft-size-swatches {
+  outline: 2px solid #ef4444;
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
+.sft-pdp-size__meta {
+  margin-top: 10px;
+  min-height: 1.4em;
+}
+
+.sft-pdp-size__prompt {
+  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.45;
+}
+
+.sft-pdp-size__stock,
+.sft-pdp-size__sku {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0b3d2e;
+  line-height: 1.4;
+}
+
+.sft-pdp-size__stock.is-oos {
+  color: #b91c1c;
+}
+
+.sft-pdp-size__sku {
+  font-weight: 500;
+  color: #475569;
+}
+
+.sft-pdp-size__clear {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.sft-pdp-size__clear:hover {
+  color: #0f172a;
+}
+
+/* PDP size swatches — match shop card chips, larger tap targets */
 .sft-size-swatches {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin: 0 0 8px;
+  gap: 6px;
+  margin: 0;
 }
 
 .sft-size-swatch {
-  min-width: 48px;
-  height: 42px;
-  padding: 0 12px;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 6px;
+  min-width: 40px;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
   background: #fff;
   color: #0f172a;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .sft-size-swatch:hover:not(:disabled) {
-  border-color: #0b3d2e;
+  border-color: #0f172a;
 }
 
 .sft-size-swatch.is-selected {
-  border-color: #0b3d2e;
-  background: #0b3d2e;
+  border-color: #b91c1c;
+  background: #b91c1c;
   color: #fff;
+  box-shadow: 0 0 0 1px #b91c1c;
 }
 
 .sft-size-swatch.is-oos,
 .sft-size-swatch:disabled {
-  opacity: 0.4;
+  position: relative;
+  opacity: 0.45;
   cursor: not-allowed;
-  text-decoration: line-through;
+  color: #94a3b8;
+  background: #f8fafc;
 }
 
-.sft-size-swatches__hint {
-  margin: 0 0 12px;
-  font-size: 12px;
-  color: #64748b;
-  line-height: 1.45;
+.sft-size-swatch.is-oos::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  top: 50%;
+  border-top: 1.5px solid #94a3b8;
+  transform: rotate(-28deg);
+}
+
+/* Keep select in DOM for WooCommerce variation JS; hide visually */
+.sft-size-swatches__select {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.sft-variations-form--footwear .single_add_to_cart_button.disabled,
+.sft-variations-form--footwear .single_add_to_cart_button:disabled,
+.sft-variations-form--footwear .sft-pdp-buy-now.disabled,
+.sft-variations-form--footwear .sft-pdp-buy-now:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .sft-size-stock {
@@ -229,8 +347,9 @@
   }
 
   .sft-size-swatch {
-    min-width: 44px;
-    height: 40px;
+    min-width: 42px;
+    height: 38px;
+    font-size: 14px;
   }
 
   .sft-size-matrix {

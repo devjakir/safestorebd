@@ -1,11 +1,21 @@
 /**
- * Footwear sizing — size swatches + multi-size cart add.
+ * Footwear PDP — size swatches, stock/SKU/price state, ATC gate.
  */
 (function ($) {
   'use strict';
 
   var cfg = window.safestoreFootwear || {};
   var i18n = cfg.i18n || {};
+
+  function getForm() {
+    return $('form.variations_form.sft-variations-form--footwear, form.variations_form[data-footwear="1"]').first();
+  }
+
+  function getSizeSelect($form) {
+    return $form
+      .find('select[name="attribute_pa_size"], select.sft-size-swatches__select')
+      .first();
+  }
 
   function syncSwatchState($wrap, value) {
     $wrap.find('.sft-size-swatch').each(function () {
@@ -16,8 +26,25 @@
     });
   }
 
-  function updateQtyLimits(variation) {
-    var $qty = $('form.variations_form .quantity input.qty');
+  function setActionsEnabled($form, enabled) {
+    var $atc = $form.find('.single_add_to_cart_button');
+    var $buy = $form.find('.sft-pdp-buy-now');
+
+    $atc.toggleClass('disabled', !enabled);
+    $atc.prop('disabled', !enabled);
+    $atc.attr('aria-disabled', enabled ? 'false' : 'true');
+
+    if ($buy.is('button')) {
+      $buy.prop('disabled', !enabled);
+      $buy.toggleClass('disabled', !enabled);
+    } else {
+      $buy.toggleClass('disabled', !enabled);
+      $buy.attr('aria-disabled', enabled ? 'false' : 'true');
+    }
+  }
+
+  function updateQtyLimits($form, variation) {
+    var $qty = $form.find('.quantity input.qty');
     if (!$qty.length || !variation) {
       return;
     }
@@ -38,34 +65,64 @@
     }
   }
 
-  function updateStockHint(variation) {
-    var $form = $('form.variations_form');
-    var $hint = $form.find('.sft-size-stock');
-    if (!$hint.length) {
-      $hint = $('<p class="sft-size-stock" aria-live="polite"></p>');
-      $form.find('.sft-size-swatches__hint').after($hint);
-    }
+  function updateMetaPanel($form, variation) {
+    var $meta = $form.find('[data-sft-size-meta]');
+    var $prompt = $meta.find('.sft-pdp-size__prompt');
+    var $stock = $meta.find('[data-sft-size-stock]');
+    var $sku = $meta.find('[data-sft-size-sku]');
 
-    if (!variation || !variation.is_in_stock) {
-      $hint.addClass('is-oos').text(i18n.selectSize || 'Please choose a size.');
+    if (!$meta.length) {
       return;
     }
 
-    if (variation.safestore_stock_html) {
-      $hint.removeClass('is-oos').text(variation.safestore_stock_html);
-    } else if (typeof variation.safestore_stock_qty === 'number') {
-      var template = i18n.stockHint || '%d in stock for this size';
-      $hint.removeClass('is-oos').text(template.replace('%d', String(variation.safestore_stock_qty)));
-    } else {
-      $hint.removeClass('is-oos').text('');
+    if (!variation) {
+      $prompt.prop('hidden', false);
+      $stock.prop('hidden', true).text('').removeClass('is-oos is-ok');
+      $sku.prop('hidden', true).text('');
+      return;
     }
+
+    $prompt.prop('hidden', true);
+
+    var stockText = variation.safestore_stock_html || '';
+    if (!stockText && variation.is_in_stock) {
+      stockText = i18n.inStock || 'In stock for this size';
+    }
+    if (!variation.is_in_stock) {
+      stockText = variation.safestore_stock_html || i18n.outOfStock || 'Out of stock for this size';
+    }
+
+    $stock
+      .text(stockText)
+      .prop('hidden', !stockText)
+      .toggleClass('is-oos', !variation.is_in_stock)
+      .toggleClass('is-ok', !!variation.is_in_stock);
+
+    var skuText = variation.safestore_sku_html || '';
+    if (!skuText && variation.sku) {
+      skuText = (i18n.skuPrefix || 'SKU: %s').replace('%s', variation.sku);
+    }
+    if (!skuText && variation.safestore_sku) {
+      skuText = (i18n.skuPrefix || 'SKU: %s').replace('%s', variation.safestore_sku);
+    }
+    $sku.text(skuText).prop('hidden', !skuText);
+  }
+
+  function hasValidSelection($form) {
+    var variationId = $form.find('input[name="variation_id"]').val();
+    var sizeVal = getSizeSelect($form).val();
+    return !!(sizeVal && variationId && variationId !== '0');
   }
 
   function initSwatches() {
-    var $form = $('form.variations_form');
+    var $form = getForm();
     if (!$form.length) {
       return;
     }
+
+    // Start gated until a purchasable size is chosen.
+    setActionsEnabled($form, false);
+    updateMetaPanel($form, null);
 
     $form.on('click', '.sft-size-swatch', function (e) {
       e.preventDefault();
@@ -76,53 +133,87 @@
 
       var value = String($btn.data('value'));
       var $wrap = $btn.closest('.sft-size-swatches');
-      var $select = $wrap.nextAll('select.sft-size-swatches__select').first();
+      var $select = getSizeSelect($form);
+
       if (!$select.length) {
-        $select = $wrap.siblings('select.sft-size-swatches__select').first();
+        return;
       }
-      if (!$select.length) {
-        $select = $form.find('select[name="attribute_pa_size"]');
+
+      // Toggle off if clicking the same selected size.
+      if (String($select.val()) === value) {
+        $select.val('').trigger('change');
+        syncSwatchState($wrap, '');
+        return;
       }
 
       $select.val(value).trigger('change');
       syncSwatchState($wrap, value);
     });
 
-    $form.on('woocommerce_update_variation_values', function () {
-      var $select = $form.find('select[name="attribute_pa_size"], select.sft-size-swatches__select').first();
+    $form.on('woocommerce_update_variation_values check_variations', function () {
+      var $select = getSizeSelect($form);
       var $wrap = $form.find('.sft-size-swatches').first();
       if ($select.length && $wrap.length) {
         syncSwatchState($wrap, $select.val());
       }
+      if (!hasValidSelection($form)) {
+        setActionsEnabled($form, false);
+      }
     });
 
     $form.on('found_variation', function (event, variation) {
-      updateQtyLimits(variation);
-      updateStockHint(variation);
+      var purchasable = !!(
+        variation &&
+        variation.is_purchasable &&
+        variation.is_in_stock &&
+        variation.variation_id
+      );
+
+      updateQtyLimits($form, variation);
+      updateMetaPanel($form, variation);
+      setActionsEnabled($form, purchasable);
+
+      var $wrap = $form.find('.sft-size-swatches').first();
+      if (variation && variation.safestore_size) {
+        syncSwatchState($wrap, variation.safestore_size);
+      } else {
+        syncSwatchState($wrap, getSizeSelect($form).val());
+      }
     });
 
-    $form.on('reset_data', function () {
+    $form.on('reset_data hide_variation', function () {
       var $wrap = $form.find('.sft-size-swatches').first();
       syncSwatchState($wrap, '');
-      $form.find('.sft-size-stock').text('');
+      updateMetaPanel($form, null);
+      setActionsEnabled($form, false);
     });
 
-    // Validate size before native submit / Buy now (non-AJAX fallback).
+    $form.on('click', '.single_add_to_cart_button, button.sft-pdp-buy-now', function (e) {
+      if (hasValidSelection($form)) {
+        return;
+      }
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      $form.find('.sft-pdp-size').addClass('is-invalid');
+      window.alert(i18n.selectSize || 'Please choose a size.');
+      $form.find('.sft-size-swatch:not(:disabled):not(.is-oos)').first().trigger('focus');
+    });
+
+    $form.on('change', 'select[name="attribute_pa_size"], select.sft-size-swatches__select', function () {
+      $form.find('.sft-pdp-size').removeClass('is-invalid');
+    });
+
+    // Ensure cart payload includes attribute_pa_size + variation_id on native submit.
     $form.on('submit', function (e) {
-      var $select = $form.find('select[name="attribute_pa_size"], select.sft-size-swatches__select').first();
-      if ($select.length && !$select.val()) {
+      if (!hasValidSelection($form)) {
         e.preventDefault();
+        $form.find('.sft-pdp-size').addClass('is-invalid');
         window.alert(i18n.selectSize || 'Please choose a size.');
+        return;
       }
-    });
 
-    $form.on('click', 'button.sft-pdp-buy-now', function (e) {
-      var $select = $form.find('select[name="attribute_pa_size"], select.sft-size-swatches__select').first();
-      var variationId = $form.find('input[name="variation_id"]').val();
-      if (($select.length && !$select.val()) || !variationId || variationId === '0') {
-        e.preventDefault();
-        window.alert(i18n.selectSize || 'Please choose a size.');
-      }
+      // Hidden selects are fine; keep attribute fields enabled for POST.
+      getSizeSelect($form).prop('disabled', false);
     });
   }
 
