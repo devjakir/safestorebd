@@ -33,8 +33,8 @@ require get_template_directory() . '/inc/smtp.php';
 require get_template_directory() . '/inc/size-variations-setup.php';
 
 /**
- * Footwear storefront logic — size swatches 39–44, archive size filter
- * (footwear only), per-size stock validation, retail/B2B qty rules.
+ * Footwear storefront logic — PDP size swatches 39–44, per-size stock
+ * validation, retail/B2B qty rules.
  */
 require get_template_directory() . '/inc/footwear-sizing.php';
 

@@ -425,7 +425,7 @@ function safestore_footwear_body_class( $classes ) {
 add_filter( 'body_class', 'safestore_footwear_body_class' );
 
 /* --------------------------------------------------------------------------
- * 3) Archive Size filter — footwear categories only
+ * 3) Archive Size filter — removed (PDP-only size selection)
  * -------------------------------------------------------------------------- */
 
 /**
@@ -491,58 +491,9 @@ function safestore_footwear_product_query( $query ) {
 	);
 	$query->set( 'tax_query', $tax_query );
 }
-add_action( 'woocommerce_product_query', 'safestore_footwear_product_query' );
 
-/**
- * Render Size filter chips above the product loop (footwear only).
- */
-function safestore_footwear_render_size_filter() {
-	if ( ! safestore_is_footwear_archive() ) {
-		return;
-	}
-
-	$sizes    = safestore_footwear_allowed_sizes();
-	$selected = safestore_footwear_requested_sizes();
-	$base_url = get_term_link( get_queried_object() );
-
-	if ( is_wp_error( $base_url ) ) {
-		return;
-	}
-
-	// Preserve other query args (orderby, etc.) except size filters.
-	$preserve = $_GET; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	unset( $preserve['filter_size'], $preserve['pa_size'], $preserve['paged'] );
-	?>
-	<nav class="sft-size-filter" aria-label="<?php esc_attr_e( 'Filter by size', 'safestore-minimal' ); ?>">
-		<span class="sft-size-filter__label"><?php esc_html_e( 'Size', 'safestore-minimal' ); ?></span>
-		<ul class="sft-size-filter__list">
-			<li>
-				<?php
-				$all_url = $preserve ? add_query_arg( $preserve, $base_url ) : $base_url;
-				?>
-				<a class="sft-size-filter__chip<?php echo empty( $selected ) ? ' is-active' : ''; ?>" href="<?php echo esc_url( $all_url ); ?>">
-					<?php esc_html_e( 'All', 'safestore-minimal' ); ?>
-				</a>
-			</li>
-			<?php foreach ( $sizes as $size ) : ?>
-				<?php
-				$slug       = sanitize_title( $size );
-				$is_active  = in_array( $slug, $selected, true );
-				$args       = $preserve;
-				$args['filter_size'] = $slug;
-				$url        = add_query_arg( $args, $base_url );
-				?>
-				<li>
-					<a class="sft-size-filter__chip<?php echo $is_active ? ' is-active' : ''; ?>" href="<?php echo esc_url( $url ); ?>" <?php echo $is_active ? 'aria-current="true"' : ''; ?>>
-						<?php echo esc_html( $size ); ?>
-					</a>
-				</li>
-			<?php endforeach; ?>
-		</ul>
-	</nav>
-	<?php
-}
-add_action( 'woocommerce_before_shop_loop', 'safestore_footwear_render_size_filter', 15 );
+// Archive size-filter UI + query hook removed — size is selected on the PDP only.
+// Helpers above remain available if a filter UI is reintroduced later.
 
 /**
  * Hide WooCommerce layered-nav / attribute filter widgets for Size on non-footwear views.
