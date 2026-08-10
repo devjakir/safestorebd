@@ -5342,6 +5342,11 @@ a.sft-contact-item:focus-visible,
   gap: 8px;
 }
 
+.sft-pdp-contact__channels .sft-pdp-contact__btn {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
 .sft-pdp-contact__unit {
   display: inline-flex;
   align-items: stretch;
@@ -5902,12 +5907,9 @@ a.sft-contact-item:focus-visible,
     width: 100%;
   }
 
-  .sft-pdp-contact__channels .sft-pdp-contact__unit {
-    flex: 1 1 0;
-  }
-
   .sft-pdp-contact__channels .sft-pdp-contact__btn {
-    width: 100%;
+    flex: 1 1 0;
+    width: auto;
     padding: 0 6px;
     font-size: 11px;
     gap: 4px;
@@ -5923,21 +5925,6 @@ a.sft-contact-item:focus-visible,
     flex: 1 1 auto;
     width: auto;
     font-size: 13px;
-  }
-
-  /* Narrow phones: icon-only chat strip so WA + copy stay on one row */
-  @media (max-width: 360px) {
-    .sft-pdp-contact__channels .sft-pdp-contact__btn-label {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
   }
 
   .sft-pdp-actions {
