@@ -60,29 +60,6 @@
   color: #fff;
 }
 
-/* Product card size chips */
-.sft-product-card__sizes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin: 0 0 8px;
-}
-
-.sft-product-card__size {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 28px;
-  height: 22px;
-  padding: 0 5px;
-  border: 1px solid #e5e7eb;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  color: #475569;
-  background: #f8fafc;
-}
-
 /* --------------------------------------------------------------------------
  * Custom size swatches (PDP)
  * 1) Hide native WC Size dropdown (kept in DOM)

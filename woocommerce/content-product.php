@@ -43,11 +43,6 @@ if ($product->is_on_sale()) {
 $category_text = function_exists('safestore_get_product_category_label')
     ? safestore_get_product_category_label($product_id)
     : trim(wp_strip_all_tags(wc_get_product_category_list($product_id, ', ', '', '')));
-
-$is_footwear = function_exists('safestore_is_footwear_product') && safestore_is_footwear_product($product);
-$size_labels = ($is_footwear && function_exists('safestore_footwear_allowed_sizes'))
-    ? safestore_footwear_allowed_sizes()
-    : array();
 ?>
 <li <?php wc_product_class('sft-product-card', $product); ?>>
 
@@ -68,14 +63,6 @@ $size_labels = ($is_footwear && function_exists('safestore_footwear_allowed_size
                 <button type="button" class="sft-product-card__cat-toggle" aria-expanded="false" hidden
                     data-more="<?php esc_attr_e('Show more', 'safestore-minimal'); ?>"
                     data-less="<?php esc_attr_e('Show less', 'safestore-minimal'); ?>"><?php esc_html_e('Show more', 'safestore-minimal'); ?></button>
-            </div>
-        <?php endif; ?>
-
-        <?php if ($size_labels) : ?>
-            <div class="sft-product-card__sizes" aria-label="<?php esc_attr_e('Available sizes', 'safestore-minimal'); ?>">
-                <?php foreach ($size_labels as $size_label) : ?>
-                    <span class="sft-product-card__size"><?php echo esc_html($size_label); ?></span>
-                <?php endforeach; ?>
             </div>
         <?php endif; ?>
 

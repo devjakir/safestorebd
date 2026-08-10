@@ -5330,22 +5330,41 @@ a.sft-contact-item:focus-visible,
 
 .sft-pdp-contact {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 8px;
   margin: 0 0 16px;
+}
+
+.sft-pdp-contact__channels {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.sft-pdp-contact__unit {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 4px;
+  min-width: 0;
+}
+
+.sft-pdp-contact__unit--call {
+  align-self: flex-start;
 }
 
 .sft-pdp-contact__btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 5px 10px;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
   border-radius: 5px;
   font-size: 13px;
   font-weight: 600;
   font-family: inherit;
-  line-height: 1.3;
+  line-height: 1.2;
   cursor: pointer;
   text-decoration: none;
   background: var(--sft-pdp-surface);
@@ -5354,11 +5373,28 @@ a.sft-contact-item:focus-visible,
   transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
+.sft-pdp-contact__unit .sft-pdp-contact__btn {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 .sft-pdp-contact__btn:hover {
   background: #f8fafc;
   border-color: #cbd5e1;
   color: var(--sft-pdp-ink);
   text-decoration: none;
+}
+
+.sft-pdp-contact__btn svg {
+  flex-shrink: 0;
+  display: block;
+}
+
+.sft-pdp-contact__btn-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .sft-pdp-contact__btn--wa svg {
@@ -5371,6 +5407,32 @@ a.sft-contact-item:focus-visible,
 
 .sft-pdp-contact__btn--telegram svg {
   color: #229ed9;
+}
+
+/* Copy control paired with its action — same 36px touch target */
+.sft-pdp-contact__unit .sft-copy-btn.sft-pdp-contact__copy {
+  box-sizing: border-box;
+  width: 36px;
+  min-width: 36px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0;
+  border: 1px solid var(--sft-pdp-border);
+  border-radius: 5px;
+  background: var(--sft-pdp-surface);
+  color: #64748b;
+  opacity: 1;
+}
+
+.sft-pdp-contact__unit .sft-copy-btn.sft-pdp-contact__copy:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: var(--sft-pdp-ink);
+}
+
+.sft-pdp-contact__unit .sft-copy-btn.sft-pdp-contact__copy .sft-copy-btn__icon svg {
+  width: 15px;
+  height: 15px;
 }
 
 /* PDP action bar — Compare / Wishlist | Share */
@@ -5835,13 +5897,47 @@ a.sft-contact-item:focus-visible,
     align-items: flex-start;
   }
 
-  .sft-pdp-contact {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+  .sft-pdp-contact__channels {
+    flex-wrap: nowrap;
+    width: 100%;
   }
 
-  .sft-pdp-contact__btn {
+  .sft-pdp-contact__channels .sft-pdp-contact__unit {
+    flex: 1 1 0;
+  }
+
+  .sft-pdp-contact__channels .sft-pdp-contact__btn {
     width: 100%;
+    padding: 0 6px;
+    font-size: 11px;
+    gap: 4px;
+  }
+
+  .sft-pdp-contact__unit--call {
+    display: flex;
+    width: 100%;
+    align-self: stretch;
+  }
+
+  .sft-pdp-contact__unit--call .sft-pdp-contact__btn {
+    flex: 1 1 auto;
+    width: auto;
+    font-size: 13px;
+  }
+
+  /* Narrow phones: icon-only chat strip so WA + copy stay on one row */
+  @media (max-width: 360px) {
+    .sft-pdp-contact__channels .sft-pdp-contact__btn-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
   }
 
   .sft-pdp-actions {

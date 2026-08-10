@@ -334,7 +334,9 @@
       }
       // The shared contact component ships its own server-rendered button, and
       // the floating WhatsApp widget is a launcher rather than a contact detail.
-      if (link.closest('.sft-contact-item, .sft-wa, .sft-copy-skip, [data-sft-copy-skip]')) {
+      // PDP Need help? units ship their own paired copy control — never
+      // append a sibling that would break the flex/grid layout.
+      if (link.closest('.sft-contact-item, .sft-wa, .sft-pdp-contact, .sft-copy-skip, [data-sft-copy-skip]')) {
         link.setAttribute('data-sft-copy-init', '1');
         return;
       }
