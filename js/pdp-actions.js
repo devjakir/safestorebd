@@ -1,6 +1,7 @@
 /**
  * SafeStoreBD — PDP action bar (compare, wishlist, share menu).
- * Vanilla JS, deferred, no dependencies. localStorage only — no network calls.
+ * Vanilla JS, deferred. Wishlist/compare use localStorage.
+ * Compare syncs with js/product-compare.js via SftCompare + sft:compare-change.
  */
 (function () {
   'use strict';
@@ -16,6 +17,7 @@
   var MAX_COMPARE = 4;
   var WL_KEY = 'sft_wishlist';
   var CMP_KEY = 'sft_compare';
+  var CMP_EVENT = 'sft:compare-change';
 
   function t(key, fallback) {
     return typeof I18N[key] === 'string' && I18N[key] !== '' ? I18N[key] : fallback;
@@ -56,6 +58,18 @@
     }, 40);
   }
 
+  function emitCompareChange(ids) {
+    try {
+      window.dispatchEvent(
+        new CustomEvent(CMP_EVENT, {
+          detail: { ids: (ids || []).slice() },
+        })
+      );
+    } catch (err) {
+      /* ignore */
+    }
+  }
+
   /* ------------------------------------------------------------------ */
   /* Wishlist / Compare                                                   */
   /* ------------------------------------------------------------------ */
@@ -88,12 +102,19 @@
     );
   }
 
+  function compareIds() {
+    if (window.SftCompare && typeof window.SftCompare.getIds === 'function') {
+      return window.SftCompare.getIds();
+    }
+    return readList(CMP_KEY);
+  }
+
   function syncCompare() {
     var btn = document.querySelector('[data-sft-compare]');
     if (!btn || !PRODUCT_ID) {
       return;
     }
-    var list = readList(CMP_KEY);
+    var list = compareIds();
     var active = list.indexOf(PRODUCT_ID) !== -1;
     setToggleState(
       btn,
@@ -126,11 +147,35 @@
     if (!PRODUCT_ID) {
       return;
     }
+
+    // Prefer shared store when product-compare.js is present.
+    if (window.SftCompare && typeof window.SftCompare.toggle === 'function') {
+      var result = window.SftCompare.toggle(PRODUCT_ID);
+      syncCompare();
+      if (!result.ok && result.reason === 'full') {
+        announce(t('compareFull', 'Compare list is full (max 4)'));
+        return;
+      }
+      if (result.removed) {
+        announce(t('compareRemoved', 'Removed from compare'));
+        return;
+      }
+      if (result.duplicate) {
+        announce(t('compareAdded', 'Added to compare'));
+        return;
+      }
+      if (result.added) {
+        announce(t('compareAdded', 'Added to compare'));
+      }
+      return;
+    }
+
     var list = readList(CMP_KEY);
     var idx = list.indexOf(PRODUCT_ID);
     if (idx !== -1) {
       list.splice(idx, 1);
       writeList(CMP_KEY, list);
+      emitCompareChange(list);
       syncCompare();
       announce(t('compareRemoved', 'Removed from compare'));
       return;
@@ -141,6 +186,7 @@
     }
     list.push(PRODUCT_ID);
     writeList(CMP_KEY, list);
+    emitCompareChange(list);
     syncCompare();
     announce(t('compareAdded', 'Added to compare'));
   }
@@ -221,6 +267,13 @@
   document.addEventListener('keydown', function (event) {
     if (event.key === 'Escape') {
       closeShare();
+    }
+  });
+
+  window.addEventListener(CMP_EVENT, syncCompare);
+  window.addEventListener('storage', function (event) {
+    if (event.key === CMP_KEY) {
+      syncCompare();
     }
   });
 

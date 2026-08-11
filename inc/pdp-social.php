@@ -93,10 +93,16 @@ function safestore_pdp_actions_enqueue() {
 		return;
 	}
 
+	$deps = array();
+	// Prefer shared compare store (floating bar / page) when available.
+	if ( wp_script_is( 'safestore-product-compare', 'registered' ) || wp_script_is( 'safestore-product-compare', 'enqueued' ) ) {
+		$deps[] = 'safestore-product-compare';
+	}
+
 	wp_enqueue_script(
 		'safestore-pdp-actions',
 		get_template_directory_uri() . '/js/pdp-actions.js',
-		array(),
+		$deps,
 		(string) filemtime( $path ),
 		true
 	);
@@ -107,8 +113,11 @@ function safestore_pdp_actions_enqueue() {
 		'safestore-pdp-actions',
 		'sftPdpActions',
 		array(
-			'productId' => $share['id'],
-			'i18n'      => array(
+			'productId'  => $share['id'],
+			'compareUrl' => function_exists( 'safestore_compare_page_url' )
+				? safestore_compare_page_url()
+				: home_url( '/compare/' ),
+			'i18n'       => array(
 				'wishlistAdd'     => __( 'Add to wishlist', 'safestore-minimal' ),
 				'wishlistRemove'  => __( 'Remove from wishlist', 'safestore-minimal' ),
 				'wishlistAdded'   => __( 'Added to wishlist', 'safestore-minimal' ),

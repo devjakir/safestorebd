@@ -60,21 +60,23 @@ require get_template_directory() . '/inc/pdp-shoe-size.php';
  */
 require get_template_directory() . '/inc/pdp-social.php';
 
+/**
+ * Product comparison — floating bar, REST payload, /compare/ page seed.
+ * Complements the PDP Compare toggle (localStorage key sft_compare).
+ */
+require get_template_directory() . '/inc/product-compare.php';
+
 function safestore_minimal_enqueue_assets() {
     $version = wp_get_theme()->get('Version');
 
-    $style_deps = array();
-    foreach (array('woocommerce-general', 'woocommerce-layout', 'woocommerce-blocktheme') as $handle) {
-        if (wp_style_is($handle, 'registered')) {
-            $style_deps[] = $handle;
-        }
-    }
-
+    // Do not chain theme CSS behind WooCommerce styles — that made WC CSS
+    // render-blocking for the entire first paint (PSI). Theme rules already
+    // own product-card / PDP chrome; WC sheets load separately (often async).
     $style_path = get_stylesheet_directory() . '/style.css';
     wp_enqueue_style(
         'safestore-minimal-style',
         get_stylesheet_uri(),
-        $style_deps,
+        array(),
         file_exists($style_path) ? (string) filemtime($style_path) : $version
     );
 
@@ -1063,7 +1065,16 @@ function safestore_contact_email_links( $args = array() ) {
 		// data-sft-copy-init tells the auto-enhancer this mailto already has a
 		// server-rendered copy control, so it must not append a second button.
 		$init_attr = '' !== $copy_button ? ' data-sft-copy-init="1"' : '';
-		$link      = '<a class="sft-contact-emails__link" href="' . esc_url( 'mailto:' . $email ) . '"' . $init_attr . '>' . esc_html( $email ) . '</a>';
+		$safe_mail = sanitize_email( $email );
+		$mailto    = '' !== $safe_mail && is_email( $safe_mail ) ? 'mailto:' . $safe_mail : '';
+		$href      = '' !== $mailto ? esc_url( $mailto, array( 'mailto' ) ) : '';
+		if ( '' !== $mailto && '' === $href ) {
+			$href = esc_attr( $mailto );
+		}
+		if ( '' === $href ) {
+			continue;
+		}
+		$link = '<a class="sft-contact-emails__link" href="' . $href . '"' . $init_attr . '>' . esc_html( $email ) . '</a>';
 
 		$items[] = '<span class="sft-contact-emails__item">' . $link . $copy_button . '</span>';
 	}
@@ -1096,7 +1107,7 @@ function safestore_contact_emails_row( $args = array() ) {
 	}
 
 	$emails  = safestore_contact_email_addresses();
-	$primary = isset( $emails[0] ) ? $emails[0] : '';
+	$primary = isset( $emails[0] ) ? sanitize_email( $emails[0] ) : '';
 	$icon    = safestore_contact_icon_svg( 'email' );
 	$copyable = function_exists( 'safestore_copy_to_clipboard_enabled' ) && safestore_copy_to_clipboard_enabled();
 
@@ -1114,13 +1125,34 @@ function safestore_contact_emails_row( $args = array() ) {
 		$classes .= ' sft-contact-item--copyable';
 	}
 
-	// Match phone / WhatsApp: [lead] [addresses + inline copy] … [action chip].
-	if ( $copyable && '' !== $primary ) {
+	// One shared action for the email group (primary address). Each address
+	// keeps its own mailto text link + copy control — two action chips would
+	// break parity with phone / WhatsApp and muddy the primary CTA.
+	if ( $copyable && '' !== $primary && is_email( $primary ) ) {
+		$mailto = 'mailto:' . $primary;
+		// Prefer esc_url; fall back if a protocol filter empties mailto hrefs.
+		$href = esc_url( $mailto, array( 'mailto' ) );
+		if ( '' === $href ) {
+			$href = esc_attr( $mailto );
+		}
+
 		$action = sprintf(
 			'<a class="sft-contact-item__action" href="%1$s" aria-label="%2$s" title="%3$s" data-sft-copy-init="1"><span class="sft-contact-item__icon" aria-hidden="true">%4$s</span></a>',
-			esc_url( 'mailto:' . $primary ),
-			esc_attr( trim( wp_strip_all_tags( $args['label'] . ': ' . $primary ) ) ),
-			esc_attr( $args['label'] ),
+			$href,
+			esc_attr(
+				sprintf(
+					/* translators: %s: primary email address */
+					__( 'Email %s', 'safestore-minimal' ),
+					$primary
+				)
+			),
+			esc_attr(
+				sprintf(
+					/* translators: %s: primary email address */
+					__( 'Email %s', 'safestore-minimal' ),
+					$primary
+				)
+			),
 			$icon
 		);
 

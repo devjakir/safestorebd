@@ -92,6 +92,135 @@ function safestore_perf_maybe_dequeue_woocommerce_styles() {
 add_action( 'wp_enqueue_scripts', 'safestore_perf_maybe_dequeue_woocommerce_styles', 99 );
 
 /**
+ * Stylesheets that are safe to load non-blocking (widgets / below-fold / WC
+ * sheets the theme already overrides for first paint).
+ *
+ * Cart, checkout, and account keep WooCommerce CSS render-blocking so forms
+ * do not flash unstyled.
+ *
+ * @return string[]
+ */
+function safestore_perf_async_style_handles() {
+	$handles = array(
+		'safestore-whatsapp-chat',
+		'safestore-cart-toast',
+		'safestore-copy-to-clipboard',
+		'safestore-product-compare',
+		'wc-blocks-style',
+		'wc-blocks-vendors-style',
+		'woocommerce-blocktheme',
+	);
+
+	$needs_sync_wc = class_exists( 'WooCommerce' )
+		&& ( is_cart() || is_checkout() || is_account_page() );
+
+	if ( ! $needs_sync_wc ) {
+		$handles = array_merge(
+			$handles,
+			array(
+				'woocommerce-general',
+				'woocommerce-layout',
+				'woocommerce-smallscreen',
+			)
+		);
+	}
+
+	/**
+	 * Filter async (non-render-blocking) style handles.
+	 *
+	 * @param string[] $handles Style handles.
+	 */
+	return array_values( array_unique( (array) apply_filters( 'safestore_perf_async_style_handles', $handles ) ) );
+}
+
+/**
+ * Load selected stylesheets without blocking first paint.
+ *
+ * Uses media="print" + onload swap (with noscript fallback). Visual styles
+ * still apply; only the critical path is shortened.
+ *
+ * @param string $html   Link tag HTML.
+ * @param string $handle Style handle.
+ * @param string $href   Stylesheet URL.
+ * @param string $media  Media attribute.
+ * @return string
+ */
+function safestore_perf_style_loader_tag( $html, $handle, $href, $media ) {
+	unset( $media );
+
+	if ( is_admin() || is_feed() ) {
+		return $html;
+	}
+
+	if ( ! in_array( $handle, safestore_perf_async_style_handles(), true ) ) {
+		return $html;
+	}
+
+	if ( false !== strpos( $html, 'onload=' ) ) {
+		return $html;
+	}
+
+	$async = preg_replace(
+		'/\smedia=(["\'])[^"\']*\1/i',
+		' media="print" onload="this.media=\'all\'"',
+		$html,
+		1
+	);
+
+	if ( ! is_string( $async ) || $async === $html ) {
+		$async = str_replace(
+			"rel='stylesheet'",
+			"rel='stylesheet' media=\"print\" onload=\"this.media='all'\"",
+			$html
+		);
+		if ( $async === $html ) {
+			$async = str_replace(
+				'rel="stylesheet"',
+				'rel="stylesheet" media="print" onload="this.media=\'all\'"',
+				$html
+			);
+		}
+	}
+
+	$noscript = sprintf(
+		'<noscript><link rel="stylesheet" href="%s" /></noscript>' . "\n",
+		esc_url( $href )
+	);
+
+	return $async . $noscript;
+}
+add_filter( 'style_loader_tag', 'safestore_perf_style_loader_tag', 10, 4 );
+
+/**
+ * Drop jquery-migrate and defer jquery-core on the storefront.
+ *
+ * PSI listed both as render-blocking. Theme + modern WooCommerce scripts do
+ * not need migrate; defer keeps add-to-cart / fragments working via WP 6.3+
+ * script strategies and dependency order.
+ */
+function safestore_perf_jquery_loading() {
+	if ( is_admin() ) {
+		return;
+	}
+
+	$scripts = wp_scripts();
+	if ( isset( $scripts->registered['jquery'] ) ) {
+		$scripts->registered['jquery']->deps = array_values(
+			array_diff( $scripts->registered['jquery']->deps, array( 'jquery-migrate' ) )
+		);
+	}
+
+	wp_dequeue_script( 'jquery-migrate' );
+	wp_deregister_script( 'jquery-migrate' );
+
+	if ( version_compare( get_bloginfo( 'version' ), '6.3', '>=' ) ) {
+		wp_script_add_data( 'jquery-core', 'strategy', 'defer' );
+		wp_script_add_data( 'jquery', 'strategy', 'defer' );
+	}
+}
+add_action( 'wp_enqueue_scripts', 'safestore_perf_jquery_loading', 1 );
+
+/**
  * Theme script handles that are safe to defer (no document.write / sync deps).
  *
  * @return string[]
@@ -108,6 +237,7 @@ function safestore_perf_defer_script_handles() {
 		'safestore-footwear-sizing',
 		'safestore-pdp-shoe-size',
 		'safestore-pdp-actions',
+		'safestore-product-compare',
 	);
 }
 

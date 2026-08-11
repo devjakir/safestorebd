@@ -3993,6 +3993,9 @@ select {
 .sft-contact-item--copyable .sft-contact-item__body {
   flex: 1 1 auto;
   min-width: 0;
+  /* Keep overflowing nowrap addresses from painting over the action chip
+     and stealing its clicks (common with two stacked emails + copy buttons). */
+  overflow: hidden;
 }
 
 /* Outline field marker — grouped with the value on the left. */
@@ -4036,14 +4039,16 @@ a.sft-contact-item__value:focus-visible {
 /* Soft accent chip on the right — the primary call / chat / mail action. */
 .sft-contact-item__action {
   flex: none;
+  flex-shrink: 0;
   margin-left: auto;
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: inline-flex;
   color: inherit;
   text-decoration: none;
   border-radius: 5px;
   -webkit-tap-highlight-color: transparent;
+  pointer-events: auto;
 }
 
 .sft-contact-item__action:hover .sft-contact-item__icon,
@@ -4129,6 +4134,7 @@ a.sft-contact-item__value:focus-visible {
   align-items: flex-start;
   gap: 2px;
   max-width: 100%;
+  min-width: 0;
   font-size: inherit;
   font-weight: inherit;
   line-height: inherit;
@@ -4144,9 +4150,13 @@ a.sft-contact-item__value:focus-visible {
 }
 
 .sft-contact-emails__link {
+  flex: 1 1 auto;
+  min-width: 0;
   color: inherit;
   text-decoration: none;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   transition: color 0.15s ease;
 }
 
@@ -5603,8 +5613,16 @@ a.sft-contact-item:focus-visible {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px 20px;
+  gap: 8px 16px;
   min-width: 0;
+}
+
+.sft-pdp-actions__left .sft-pdp-actions__view-compare {
+  order: 3;
+  flex-basis: 100%;
+  margin-left: 26px;
+  min-height: 0;
+  padding: 0 0 4px;
 }
 
 .sft-pdp-actions__right {
@@ -5663,12 +5681,15 @@ a.sft-contact-item:focus-visible {
 }
 
 .sft-pdp-actions__link.is-active .sft-pdp-actions__icon {
-  fill: currentColor;
   stroke: currentColor;
 }
 
 .sft-pdp-actions__link[data-sft-wishlist].is-active .sft-pdp-actions__icon {
   fill: currentColor;
+}
+
+.sft-pdp-actions__link[data-sft-compare].is-active .sft-pdp-actions__icon {
+  fill: none;
 }
 
 .sft-pdp-actions__share-panel {
