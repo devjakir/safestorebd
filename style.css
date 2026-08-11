@@ -3975,6 +3975,11 @@ select {
   gap: 16px;
 }
 
+.sft-footer-contact-col:has(.sft-contact-email-chooser[open]) {
+  position: relative;
+  z-index: 6;
+}
+
 /* ============================================================
    Reusable contact item — brand icon (left) + detail (right)
    Shared by the footer contact column and the homepage support

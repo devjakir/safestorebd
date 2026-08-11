@@ -115,9 +115,10 @@
   }, true);
 
   // Initialise aria-expanded on every chooser present at load.
-  document.querySelectorAll(ROOT_SEL).forEach(function (root) {
-    syncExpanded(root);
-  });
+  var choosers = document.querySelectorAll(ROOT_SEL);
+  for (var c = 0; c < choosers.length; c++) {
+    syncExpanded(choosers[c]);
+  }
 
   document.addEventListener('click', function (event) {
     var target = event.target;
