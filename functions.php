@@ -1011,6 +1011,29 @@ function safestore_contact_email_addresses() {
 }
 
 /**
+ * Build a safe mailto: href for a contact email. Falls back to esc_attr if a
+ * protocol filter empties esc_url() — keeps the action working under strict
+ * URL sanitizers.
+ *
+ * @param string $email Raw email address.
+ * @return string Escaped href ready for an attribute, or '' when invalid.
+ */
+function safestore_contact_mailto_href( $email ) {
+	$safe = sanitize_email( (string) $email );
+	if ( '' === $safe || ! is_email( $safe ) ) {
+		return '';
+	}
+
+	$mailto = 'mailto:' . $safe;
+	$href   = esc_url( $mailto, array( 'mailto' ) );
+	if ( '' === $href ) {
+		$href = esc_attr( $mailto );
+	}
+
+	return $href;
+}
+
+/**
  * Stacked mailto links for the site contact emails (one address per line;
  * .sft-contact-emails CSS keeps each address from wrapping mid-string).
  * When copy-to-clipboard is enabled, each address gets its own copy button.
@@ -1041,6 +1064,18 @@ function safestore_contact_email_links( $args = array() ) {
 
 	$items = array();
 	foreach ( $emails as $email ) {
+		$href = safestore_contact_mailto_href( $email );
+		if ( '' === $href ) {
+			continue;
+		}
+
+		$safe_mail = sanitize_email( $email );
+		$send_label = sprintf(
+			/* translators: %s: email address */
+			__( 'Send email to %s', 'safestore-minimal' ),
+			$safe_mail
+		);
+
 		$copy_button = '';
 		if ( $wants_copy ) {
 			$copy = function_exists( 'safestore_copy_contact_value' )
@@ -1065,16 +1100,13 @@ function safestore_contact_email_links( $args = array() ) {
 		// data-sft-copy-init tells the auto-enhancer this mailto already has a
 		// server-rendered copy control, so it must not append a second button.
 		$init_attr = '' !== $copy_button ? ' data-sft-copy-init="1"' : '';
-		$safe_mail = sanitize_email( $email );
-		$mailto    = '' !== $safe_mail && is_email( $safe_mail ) ? 'mailto:' . $safe_mail : '';
-		$href      = '' !== $mailto ? esc_url( $mailto, array( 'mailto' ) ) : '';
-		if ( '' !== $mailto && '' === $href ) {
-			$href = esc_attr( $mailto );
-		}
-		if ( '' === $href ) {
-			continue;
-		}
-		$link = '<a class="sft-contact-emails__link" href="' . $href . '"' . $init_attr . '>' . esc_html( $email ) . '</a>';
+		$link      = sprintf(
+			'<a class="sft-contact-emails__link" href="%1$s" aria-label="%2$s" title="%2$s"%3$s>%4$s</a>',
+			$href,
+			esc_attr( $send_label ),
+			$init_attr,
+			esc_html( $email )
+		);
 
 		$items[] = '<span class="sft-contact-emails__item">' . $link . $copy_button . '</span>';
 	}
@@ -1085,9 +1117,105 @@ function safestore_contact_email_links( $args = array() ) {
 }
 
 /**
- * Full contact row for the email addresses — same copyable layout as
- * safestore_contact_item(): lead icon, stacked addresses with inline copy,
- * and a mailto action chip. Drops into the footer and homepage support section.
+ * Direct mailto action chip for a single email (mirrors phone / WhatsApp).
+ *
+ * @param string $email Email address.
+ * @param string $icon  Trusted SVG markup.
+ * @return string
+ */
+function safestore_contact_email_action_link( $email, $icon ) {
+	$href = safestore_contact_mailto_href( $email );
+	$safe = sanitize_email( $email );
+	if ( '' === $href || '' === $safe ) {
+		return '';
+	}
+
+	$label = sprintf(
+		/* translators: %s: email address */
+		__( 'Send email to %s', 'safestore-minimal' ),
+		$safe
+	);
+
+	return sprintf(
+		'<a class="sft-contact-item__action" href="%1$s" aria-label="%2$s" title="%2$s" data-sft-copy-init="1"><span class="sft-contact-item__icon" aria-hidden="true">%3$s</span></a>',
+		$href,
+		esc_attr( $label ),
+		$icon
+	);
+}
+
+/**
+ * Multi-email action: disclosure that lets the user choose which address to open.
+ * Uses <details> so the menu works without JS; the companion script adds Escape,
+ * outside-click close, one-open-at-a-time, and arrow-key focus.
+ *
+ * @param string[] $emails Validated email addresses.
+ * @param string   $icon   Trusted SVG markup for the trigger chip.
+ * @return string
+ */
+function safestore_contact_email_chooser( $emails, $icon ) {
+	$emails = array_values( array_filter( array_map( 'sanitize_email', (array) $emails ) ) );
+	$emails = array_values( array_filter( $emails, 'is_email' ) );
+	if ( count( $emails ) < 2 ) {
+		return '';
+	}
+
+	static $chooser_i = 0;
+	++$chooser_i;
+	$panel_id = 'sft-email-chooser-panel-' . $chooser_i;
+
+	$chevron = '<svg class="sft-contact-email-chooser__caret" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 4.5 6 7.5 9 4.5"/></svg>';
+
+	$trigger_label = __( 'Choose an email address to contact', 'safestore-minimal' );
+	$menu_label    = __( 'Email addresses', 'safestore-minimal' );
+
+	$items = array();
+	foreach ( $emails as $email ) {
+		$href = safestore_contact_mailto_href( $email );
+		if ( '' === $href ) {
+			continue;
+		}
+		$item_label = sprintf(
+			/* translators: %s: email address */
+			__( 'Send email to %s', 'safestore-minimal' ),
+			$email
+		);
+		$items[] = sprintf(
+			'<a class="sft-contact-email-chooser__option" role="menuitem" href="%1$s" aria-label="%2$s" data-sft-copy-init="1"><span class="sft-contact-email-chooser__option-icon" aria-hidden="true">%3$s</span><span class="sft-contact-email-chooser__option-text">%4$s</span></a>',
+			$href,
+			esc_attr( $item_label ),
+			$icon,
+			esc_html( $email )
+		);
+	}
+
+	if ( empty( $items ) ) {
+		return '';
+	}
+
+	return sprintf(
+		'<details class="sft-contact-email-chooser" data-sft-email-chooser>'
+		. '<summary class="sft-contact-item__action sft-contact-email-chooser__trigger" aria-haspopup="menu" aria-controls="%1$s" aria-label="%2$s" title="%2$s">'
+		. '<span class="sft-contact-item__icon" aria-hidden="true">%3$s%4$s</span>'
+		. '</summary>'
+		. '<div id="%1$s" class="sft-contact-email-chooser__panel" role="menu" aria-label="%5$s">'
+		. '%6$s'
+		. '</div>'
+		. '</details>',
+		esc_attr( $panel_id ),
+		esc_attr( $trigger_label ),
+		$icon,
+		$chevron,
+		esc_attr( $menu_label ),
+		implode( '', $items )
+	);
+}
+
+/**
+ * Full contact row for the email addresses — lead icon, stacked addresses with
+ * inline copy, and a clear action: direct mailto when there is one address, or
+ * a choose-email disclosure when there are two or more. Used by the footer and
+ * homepage support section.
  *
  * @param array $args { @type string $label, @type string $detail, @type string $class }
  * @return string
@@ -1106,9 +1234,9 @@ function safestore_contact_emails_row( $args = array() ) {
 		return '';
 	}
 
-	$emails  = safestore_contact_email_addresses();
-	$primary = isset( $emails[0] ) ? sanitize_email( $emails[0] ) : '';
-	$icon    = safestore_contact_icon_svg( 'email' );
+	$emails   = safestore_contact_email_addresses();
+	$primary  = isset( $emails[0] ) ? sanitize_email( $emails[0] ) : '';
+	$icon     = safestore_contact_icon_svg( 'email' );
 	$copyable = function_exists( 'safestore_copy_to_clipboard_enabled' ) && safestore_copy_to_clipboard_enabled();
 
 	$body = '';
@@ -1125,37 +1253,19 @@ function safestore_contact_emails_row( $args = array() ) {
 		$classes .= ' sft-contact-item--copyable';
 	}
 
-	// One shared action for the email group (primary address). Each address
-	// keeps its own mailto text link + copy control — two action chips would
-	// break parity with phone / WhatsApp and muddy the primary CTA.
-	if ( $copyable && '' !== $primary && is_email( $primary ) ) {
-		$mailto = 'mailto:' . $primary;
-		// Prefer esc_url; fall back if a protocol filter empties mailto hrefs.
-		$href = esc_url( $mailto, array( 'mailto' ) );
-		if ( '' === $href ) {
-			$href = esc_attr( $mailto );
+	// Multi-address: explicit chooser so the action chip is never ambiguous.
+	// Single address: same direct mailto chip pattern as phone / WhatsApp.
+	$action = '';
+	if ( count( $emails ) > 1 ) {
+		$action = safestore_contact_email_chooser( $emails, $icon );
+		if ( '' !== $action ) {
+			$classes .= ' sft-contact-item--email-chooser';
 		}
+	} elseif ( '' !== $primary && is_email( $primary ) ) {
+		$action = safestore_contact_email_action_link( $primary, $icon );
+	}
 
-		$action = sprintf(
-			'<a class="sft-contact-item__action" href="%1$s" aria-label="%2$s" title="%3$s" data-sft-copy-init="1"><span class="sft-contact-item__icon" aria-hidden="true">%4$s</span></a>',
-			$href,
-			esc_attr(
-				sprintf(
-					/* translators: %s: primary email address */
-					__( 'Email %s', 'safestore-minimal' ),
-					$primary
-				)
-			),
-			esc_attr(
-				sprintf(
-					/* translators: %s: primary email address */
-					__( 'Email %s', 'safestore-minimal' ),
-					$primary
-				)
-			),
-			$icon
-		);
-
+	if ( '' !== $action ) {
 		return sprintf(
 			'<div class="%1$s"><span class="sft-contact-item__lead" aria-hidden="true">%2$s</span><span class="sft-contact-item__body">%3$s</span>%4$s</div>',
 			esc_attr( trim( $classes . ' ' . $args['class'] ) ),
@@ -1172,6 +1282,30 @@ function safestore_contact_emails_row( $args = array() ) {
 		$body
 	);
 }
+
+/**
+ * Enqueue the multi-email chooser enhancer (Escape, outside click, focus).
+ * Markup works without this script via native <details>.
+ */
+function safestore_contact_email_chooser_enqueue() {
+	if ( is_admin() ) {
+		return;
+	}
+
+	$js_path = get_template_directory() . '/js/contact-email-chooser.js';
+	if ( ! file_exists( $js_path ) ) {
+		return;
+	}
+
+	wp_enqueue_script(
+		'safestore-contact-email-chooser',
+		get_template_directory_uri() . '/js/contact-email-chooser.js',
+		array(),
+		(string) filemtime( $js_path ),
+		function_exists( 'safestore_perf_script_args' ) ? safestore_perf_script_args( true ) : true
+	);
+}
+add_action( 'wp_enqueue_scripts', 'safestore_contact_email_chooser_enqueue', 21 );
 
 /**
  * Render a clickable contact item. Copyable methods (phone / WhatsApp / email)

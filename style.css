@@ -4166,11 +4166,151 @@ a.sft-contact-item__value:focus-visible {
   text-decoration: none;
 }
 
+.sft-contact-emails__link:focus-visible {
+  outline: 2px solid var(--sft-contact-accent, #2563eb);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 /* Per-email copy control sits beside the address; keep it above any row
    hit-area so the button stays clickable. */
 .sft-contact-emails__item .sft-copy-btn {
   position: relative;
   z-index: 2;
+}
+
+/* ============================================================
+   Multi-email chooser — replaces the ambiguous single mailto chip
+   when two or more addresses share a contact row. Native <details>
+   disclosure; panel lists one mailto option per address.
+   ============================================================ */
+.sft-contact-email-chooser {
+  flex: none;
+  flex-shrink: 0;
+  margin-left: auto;
+  position: relative;
+  z-index: 3;
+}
+
+.sft-contact-email-chooser__trigger {
+  display: inline-flex;
+  list-style: none;
+  cursor: pointer;
+  margin-left: 0;
+}
+
+.sft-contact-email-chooser__trigger::-webkit-details-marker,
+.sft-contact-email-chooser__trigger::marker {
+  display: none;
+  content: '';
+}
+
+.sft-contact-email-chooser__trigger .sft-contact-item__icon {
+  position: relative;
+}
+
+/* Small caret signals “menu” vs a direct one-address mailto action. */
+.sft-contact-email-chooser__caret {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.sft-contact-email-chooser[open] > .sft-contact-email-chooser__trigger .sft-contact-item__icon,
+.sft-contact-email-chooser__trigger:hover .sft-contact-item__icon,
+.sft-contact-email-chooser__trigger:focus-visible .sft-contact-item__icon {
+  background: var(--sft-contact-accent);
+  color: var(--sft-contact-accent-ink);
+  transform: translateY(-1px);
+}
+
+.sft-contact-email-chooser__trigger:focus-visible {
+  outline: 2px solid var(--sft-contact-accent);
+  outline-offset: 3px;
+}
+
+.sft-contact-email-chooser__panel {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  top: auto;
+  min-width: min(260px, 78vw);
+  padding: 6px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 20;
+}
+
+.sft-contact-email-chooser.is-drop-down .sft-contact-email-chooser__panel {
+  top: calc(100% + 8px);
+  bottom: auto;
+}
+
+.sft-contact-email-chooser__option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 5px;
+  color: #0f172a;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sft-contact-email-chooser__option-icon {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  background: var(--sft-contact-accent-soft, #eef4ff);
+  color: var(--sft-contact-accent, #2563eb);
+}
+
+.sft-contact-email-chooser__option-icon svg {
+  width: 15px;
+  height: 15px;
+  display: block;
+}
+
+.sft-contact-email-chooser__option-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sft-contact-email-chooser__option:hover,
+.sft-contact-email-chooser__option:focus-visible {
+  background: var(--sft-contact-accent-soft, #eef4ff);
+  color: var(--sft-contact-accent, #2563eb);
+  text-decoration: none;
+}
+
+.sft-contact-email-chooser__option:focus-visible {
+  outline: 2px solid var(--sft-contact-accent, #2563eb);
+  outline-offset: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sft-contact-email-chooser__option {
+    transition: none;
+  }
 }
 
 /* Clickable variant — hover & keyboard-focus states for plain anchor rows
