@@ -1195,7 +1195,7 @@ function safestore_contact_email_chooser( $emails, $icon ) {
 
 	return sprintf(
 		'<details class="sft-contact-email-chooser" data-sft-email-chooser>'
-		. '<summary class="sft-contact-item__action sft-contact-email-chooser__trigger" aria-haspopup="menu" aria-controls="%1$s" aria-label="%2$s" title="%2$s">'
+		. '<summary class="sft-contact-item__action sft-contact-email-chooser__trigger" aria-haspopup="menu" aria-expanded="false" aria-controls="%1$s" aria-label="%2$s" title="%2$s">'
 		. '<span class="sft-contact-item__icon" aria-hidden="true">%3$s%4$s</span>'
 		. '</summary>'
 		. '<div id="%1$s" class="sft-contact-email-chooser__panel" role="menu" aria-label="%5$s">'

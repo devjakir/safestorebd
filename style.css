@@ -3315,6 +3315,20 @@ select {
   overflow: hidden;
 }
 
+/* Let the multi-email chooser panel escape the card while open. */
+.home .support-bar-card:has(.sft-contact-email-chooser[open]) {
+  overflow: visible;
+}
+
+.home .support-bar-grid .sft-contact-item--email-chooser {
+  position: relative;
+  z-index: 1;
+}
+
+.home .support-bar-grid .sft-contact-item--email-chooser:has(.sft-contact-email-chooser[open]) {
+  z-index: 5;
+}
+
 .home .support-bar-head {
   padding: 44px 24px 36px;
   text-align: center;
@@ -4348,7 +4362,9 @@ a.sft-contact-item:focus-visible {
   }
 
   a.sft-contact-item:hover .sft-contact-item__icon,
-  .sft-contact-item__action:hover .sft-contact-item__icon {
+  .sft-contact-item__action:hover .sft-contact-item__icon,
+  .sft-contact-email-chooser[open] > .sft-contact-email-chooser__trigger .sft-contact-item__icon,
+  .sft-contact-email-chooser__trigger:hover .sft-contact-item__icon {
     transform: none;
   }
 }

@@ -27,6 +27,18 @@
   }
 
   /**
+   * Keep aria-expanded in sync for AT that does not expose <details> state.
+   *
+   * @param {HTMLDetailsElement} root
+   */
+  function syncExpanded(root) {
+    var trigger = root && root.querySelector('.sft-contact-email-chooser__trigger');
+    if (trigger) {
+      trigger.setAttribute('aria-expanded', root.open ? 'true' : 'false');
+    }
+  }
+
+  /**
    * @param {HTMLDetailsElement} root
    * @param {boolean} open
    */
@@ -35,6 +47,7 @@
       return;
     }
     root.open = !!open;
+    syncExpanded(root);
     if (open) {
       placePanel(root);
     }
@@ -94,11 +107,17 @@
     if (!root || !root.matches || !root.matches(ROOT_SEL)) {
       return;
     }
+    syncExpanded(root);
     if (root.open) {
       closeOthers(root);
       placePanel(root);
     }
   }, true);
+
+  // Initialise aria-expanded on every chooser present at load.
+  document.querySelectorAll(ROOT_SEL).forEach(function (root) {
+    syncExpanded(root);
+  });
 
   document.addEventListener('click', function (event) {
     var target = event.target;
@@ -148,16 +167,17 @@
 
     var active = document.activeElement;
     var index = items.indexOf(active);
+    var onTrigger = !!(active && active.closest && active.closest('.sft-contact-email-chooser__trigger'));
 
     if (key === 'ArrowDown') {
       event.preventDefault();
-      focusOption(open, index < 0 ? 0 : index + 1);
+      focusOption(open, onTrigger || index < 0 ? 0 : index + 1);
       return;
     }
 
     if (key === 'ArrowUp') {
       event.preventDefault();
-      focusOption(open, index < 0 ? items.length - 1 : index - 1);
+      focusOption(open, onTrigger || index < 0 ? items.length - 1 : index - 1);
       return;
     }
 
