@@ -285,7 +285,7 @@ function safestore_perf_script_args( $args = true ) {
 }
 
 /**
- * Preload the LCP candidate: hero WebP on home, header logo elsewhere.
+ * Preload the LCP candidate: hero 720w WebP on home, logo WebP elsewhere.
  */
 function safestore_perf_preload_lcp() {
 	if ( is_admin() ) {
@@ -293,21 +293,147 @@ function safestore_perf_preload_lcp() {
 	}
 
 	if ( is_page_template( 'page-home.php' ) || is_front_page() ) {
-		$hero = get_template_directory_uri() . '/assets/images/' . rawurlencode( 'sf-helmet-category.webp' );
+		$hero = get_template_directory_uri() . '/assets/images/' . rawurlencode( 'sf-helmet-category-720w.webp' );
+		$images_dir = get_template_directory() . '/assets/images/';
+		if ( ! file_exists( $images_dir . 'sf-helmet-category-720w.webp' ) ) {
+			$hero = get_template_directory_uri() . '/assets/images/' . rawurlencode( 'sf-helmet-category.webp' );
+		}
 		printf(
-			'<link rel="preload" as="image" href="%s" type="image/webp" fetchpriority="high" />' . "\n",
-			esc_url( $hero )
+			'<link rel="preload" as="image" href="%s" type="image/webp" fetchpriority="high" imagesrcset="%s" imagesizes="%s" />' . "\n",
+			esc_url( $hero ),
+			esc_attr(
+				implode(
+					', ',
+					array(
+						get_template_directory_uri() . '/assets/images/' . rawurlencode( 'sf-helmet-category-480w.webp' ) . ' 480w',
+						get_template_directory_uri() . '/assets/images/' . rawurlencode( 'sf-helmet-category-720w.webp' ) . ' 720w',
+						get_template_directory_uri() . '/assets/images/' . rawurlencode( 'sf-helmet-category.webp' ) . ' 900w',
+					)
+				)
+			),
+			esc_attr( '(max-width: 900px) 62vw, 42vw' )
 		);
 		return;
 	}
 
-	$logo = get_template_directory_uri() . '/assets/images/logo/safe-store-bd.png';
+	$logo_webp = get_template_directory() . '/assets/images/logo/safe-store-bd.webp';
+	$logo      = file_exists( $logo_webp )
+		? get_template_directory_uri() . '/assets/images/logo/safe-store-bd.webp'
+		: get_template_directory_uri() . '/assets/images/logo/safe-store-bd.png';
 	printf(
 		'<link rel="preload" as="image" href="%s" />' . "\n",
 		esc_url( $logo )
 	);
 }
 add_action( 'wp_head', 'safestore_perf_preload_lcp', 2 );
+
+/**
+ * Defer heavy WooCommerce / cookie helpers that are not needed for first paint.
+ */
+function safestore_perf_defer_vendor_scripts() {
+	if ( is_admin() || version_compare( get_bloginfo( 'version' ), '6.3', '<' ) ) {
+		return;
+	}
+
+	$handles = array(
+		'sourcebuster-js',
+		'wc-order-attribution',
+		'js-cookie',
+		'jquery-blockui',
+		'jquery-cookie',
+		'wc-add-to-cart',
+		'wc-cart-fragments',
+		'woocommerce',
+	);
+
+	foreach ( $handles as $handle ) {
+		if ( wp_script_is( $handle, 'registered' ) ) {
+			wp_script_add_data( $handle, 'strategy', 'defer' );
+		}
+	}
+}
+add_action( 'wp_enqueue_scripts', 'safestore_perf_defer_vendor_scripts', 100 );
+
+/**
+ * Whether a script URL looks like delayed marketing / analytics.
+ *
+ * @param string $src Script URL.
+ * @return bool
+ */
+function safestore_perf_is_delayed_third_party_src( $src ) {
+	if ( ! is_string( $src ) || '' === $src ) {
+		return false;
+	}
+
+	return (bool) preg_match(
+		'#connect\.facebook\.net|fbevents\.js|facebook\.com/tr|googletagmanager\.com|google-analytics\.com|gtag/js|static\.cloudflareinsights\.com/beacon#i',
+		$src
+	);
+}
+
+/**
+ * Rewrite marketing pixels to type=text/plain so they do not compete with LCP.
+ *
+ * @param string $tag    Script tag.
+ * @param string $handle Handle.
+ * @param string $src    Source URL.
+ * @return string
+ */
+function safestore_perf_delay_third_party_script_tag( $tag, $handle, $src ) {
+	unset( $handle );
+
+	if ( is_admin() || ! safestore_perf_is_delayed_third_party_src( $src ) ) {
+		return $tag;
+	}
+
+	if ( false !== strpos( $tag, 'data-sft-delay' ) ) {
+		return $tag;
+	}
+
+	return sprintf(
+		'<script type="text/plain" data-sft-delay data-src="%s"></script>' . "\n",
+		esc_url( $src )
+	);
+}
+add_filter( 'script_loader_tag', 'safestore_perf_delay_third_party_script_tag', 40, 3 );
+
+/**
+ * Boot loader: inject delayed marketing scripts after idle / first interaction.
+ */
+function safestore_perf_delay_third_party_boot() {
+	if ( is_admin() ) {
+		return;
+	}
+	?>
+<script id="sft-delay-third-party">
+(function(){
+	var loaded=false;
+	function boot(){
+		if(loaded){return;}
+		loaded=true;
+		var nodes=document.querySelectorAll('script[type="text/plain"][data-sft-delay]');
+		for(var i=0;i<nodes.length;i++){
+			var s=nodes[i], n=document.createElement('script');
+			n.async=true;
+			if(s.getAttribute('data-src')){n.src=s.getAttribute('data-src');}
+			else{n.text=s.textContent;}
+			document.body.appendChild(n);
+		}
+	}
+	var events=['scroll','pointerdown','keydown','touchstart'];
+	for(var e=0;e<events.length;e++){
+		window.addEventListener(events[e],boot,{once:true,passive:true});
+	}
+	if('requestIdleCallback' in window){
+		requestIdleCallback(boot,{timeout:4500});
+	}else{
+		setTimeout(boot,4500);
+	}
+})();
+</script>
+	<?php
+}
+add_action( 'wp_footer', 'safestore_perf_delay_third_party_boot', 1 );
 
 /**
  * Ensure product loop / thumbnail images carry CLS-safe attrs on mobile.

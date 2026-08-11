@@ -84,9 +84,10 @@ $categories = array(
 					alt="<?php echo esc_attr( $cat['alt'] ); ?>"
 					width="800"
 					height="600"
-					sizes="(max-width: 480px) 92vw, (max-width: 900px) 46vw, 50vw"
+					sizes="(max-width: 480px) 92vw, (max-width: 900px) 46vw, (max-width: 1200px) 40vw, 420px"
 					loading="lazy"
-					decoding="async">
+					decoding="async"
+					fetchpriority="low">
 				<div class="category-card-overlay">
 					<?php if ( ! empty( $cat['tag'] ) ) : ?>
 						<span class="category-card-tag"><?php echo esc_html( $cat['tag'] ); ?></span>
@@ -106,5 +107,8 @@ $categories = array(
 		</div>
 		<a class="featured-categories-view-all" href="<?php echo esc_url( $shop_url ); ?>">View all <span aria-hidden="true">&rarr;</span></a>
 	</div>
-	<?php echo do_shortcode( '[products limit="8" columns="4" orderby="popularity"]' ); ?>
+	<?php
+	// Keep 8 bestsellers for UX; Woo loop images stay lazy via performance.php.
+	echo do_shortcode( '[products limit="8" columns="4" orderby="popularity"]' );
+	?>
 </section>

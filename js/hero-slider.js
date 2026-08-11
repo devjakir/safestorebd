@@ -10,8 +10,31 @@
 	let current = 0;
 	let timer = null;
 
+	function hydrateImage(slide) {
+		const img = slide.querySelector('img.hero-slide-product[data-src]');
+		if (!img) return;
+		const src = img.getAttribute('data-src');
+		if (!src) return;
+		img.src = src;
+		const srcset = img.getAttribute('data-srcset');
+		const sizes = img.getAttribute('data-sizes');
+		if (srcset) img.srcset = srcset;
+		if (sizes) img.sizes = sizes;
+		img.removeAttribute('data-src');
+		img.removeAttribute('data-srcset');
+		img.removeAttribute('data-sizes');
+	}
+
+	function prefetchNeighbors(index) {
+		const next = slides[(index + 1) % slides.length];
+		const prev = slides[(index - 1 + slides.length) % slides.length];
+		if (next) hydrateImage(next);
+		if (prev) hydrateImage(prev);
+	}
+
 	function go(index) {
 		current = (index + slides.length) % slides.length;
+		hydrateImage(slides[current]);
 		slides.forEach(function (slide, i) {
 			const active = i === current;
 			slide.classList.toggle('is-active', active);
@@ -22,6 +45,7 @@
 			dot.classList.toggle('is-active', active);
 			dot.setAttribute('aria-selected', active ? 'true' : 'false');
 		});
+		prefetchNeighbors(current);
 	}
 
 	function next() { go(current + 1); }
@@ -64,6 +88,16 @@
 				if (activeDot) activeDot.focus();
 			}
 		});
+	}
+
+	// Warm the next slide after first paint so autoplay does not hitch.
+	const warm = function () {
+		prefetchNeighbors(0);
+	};
+	if ('requestIdleCallback' in window) {
+		window.requestIdleCallback(warm, { timeout: 2500 });
+	} else {
+		window.setTimeout(warm, 1200);
 	}
 
 	// Respect the user's reduced-motion preference: no autoplay, manual nav still works

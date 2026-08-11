@@ -166,3 +166,69 @@ add_action( 'woocommerce_variation_set_stock', function ( $product ) {
 		safestore_seo_purge_caches_on_content_change( $product->get_id() );
 	}
 }, 20 );
+
+/**
+ * Organization + WebSite JSON-LD on the homepage (complements Rank Math).
+ *
+ * Skips when Rank Math already prints matching graph types to avoid duplicates.
+ */
+function safestore_seo_home_structured_data() {
+	if ( is_admin() || ! ( is_front_page() || is_page_template( 'page-home.php' ) ) ) {
+		return;
+	}
+
+	if ( defined( 'RANK_MATH_VERSION' ) && ! apply_filters( 'safestore_seo_force_home_schema', false ) ) {
+		// Rank Math typically owns Organization / WebSite when configured.
+		return;
+	}
+
+	$site_name = wp_strip_all_tags( get_bloginfo( 'name' ) );
+	$site_url  = home_url( '/' );
+	$logo      = get_template_directory_uri() . '/assets/images/logo/safe-store-bd.webp';
+	if ( ! file_exists( get_template_directory() . '/assets/images/logo/safe-store-bd.webp' ) ) {
+		$logo = get_template_directory_uri() . '/assets/images/logo/safe-store-bd.png';
+	}
+
+	$graph = array(
+		'@context' => 'https://schema.org',
+		'@graph'   => array(
+			array(
+				'@type' => 'Organization',
+				'@id'   => trailingslashit( $site_url ) . '#organization',
+				'name'  => $site_name,
+				'url'   => $site_url,
+				'logo'  => array(
+					'@type' => 'ImageObject',
+					'url'   => $logo,
+				),
+				'sameAs' => array(
+					'https://www.facebook.com/safestorebd',
+					'https://www.instagram.com/safestorebd/',
+					'https://www.linkedin.com/in/safestorebd/',
+					'https://www.youtube.com/@SafeStoreBD',
+				),
+			),
+			array(
+				'@type'           => 'WebSite',
+				'@id'             => trailingslashit( $site_url ) . '#website',
+				'url'             => $site_url,
+				'name'            => $site_name,
+				'publisher'       => array( '@id' => trailingslashit( $site_url ) . '#organization' ),
+				'potentialAction' => array(
+					'@type'       => 'SearchAction',
+					'target'      => array(
+						'@type'       => 'EntryPoint',
+						'urlTemplate' => home_url( '/?s={search_term_string}&post_type=product' ),
+					),
+					'query-input' => 'required name=search_term_string',
+				),
+			),
+		),
+	);
+
+	printf(
+		'<script type="application/ld+json">%s</script>' . "\n",
+		wp_json_encode( $graph, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE )
+	);
+}
+add_action( 'wp_head', 'safestore_seo_home_structured_data', 20 );

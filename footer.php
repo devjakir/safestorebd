@@ -5,13 +5,17 @@
 
 			<div class="sft-footer-col sft-footer-brand-col">
 				<a class="sft-brand" href="<?php echo esc_url(home_url('/')); ?>" aria-label="<?php bloginfo('name'); ?> home">
-					<img class="sft-brand-logo"
-						src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/logo/safe-store-bd.png'); ?>"
-						alt="<?php bloginfo('name'); ?>"
-						width="240"
-						height="128"
-						loading="lazy"
-						decoding="async" />
+					<?php $sft_footer_logo_dir = get_template_directory_uri() . '/assets/images/logo'; ?>
+					<picture>
+						<source type="image/webp" srcset="<?php echo esc_url( $sft_footer_logo_dir . '/safe-store-bd.webp' ); ?>">
+						<img class="sft-brand-logo"
+							src="<?php echo esc_url( $sft_footer_logo_dir . '/safe-store-bd.png' ); ?>"
+							alt="<?php bloginfo('name'); ?>"
+							width="240"
+							height="128"
+							loading="lazy"
+							decoding="async" />
+					</picture>
 				</a>
 				<p class="sft-brand-desc">Bangladesh's trusted source for industrial safety products. Quality PPE, dependable service, paperwork that holds up.</p>
 				<div class="sft-socials" aria-label="Follow SafeStoreBD">
