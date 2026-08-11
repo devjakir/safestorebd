@@ -6,6 +6,11 @@
 require get_template_directory() . '/inc/performance.php';
 
 /**
+ * Sitemap / crawl hygiene (Rank Math exclusions, noindex, cache busting).
+ */
+require get_template_directory() . '/inc/seo-sitemap.php';
+
+/**
  * WhatsApp chat widget — floating button, chat panel, admin settings
  * (Settings → WhatsApp Chat).
  */
@@ -1069,10 +1074,9 @@ function safestore_contact_email_links( $args = array() ) {
 }
 
 /**
- * Full contact row for the email addresses — brand icon on the left, both
- * emails stacked on the right (each with its own copy button). Mirrors
- * safestore_contact_item()'s layout so it drops into the footer and homepage
- * support section unchanged.
+ * Full contact row for the email addresses — same copyable layout as
+ * safestore_contact_item(): lead icon, stacked addresses with inline copy,
+ * and a mailto action chip. Drops into the footer and homepage support section.
  *
  * @param array $args { @type string $label, @type string $detail, @type string $class }
  * @return string
@@ -1091,6 +1095,11 @@ function safestore_contact_emails_row( $args = array() ) {
 		return '';
 	}
 
+	$emails  = safestore_contact_email_addresses();
+	$primary = isset( $emails[0] ) ? $emails[0] : '';
+	$icon    = safestore_contact_icon_svg( 'email' );
+	$copyable = function_exists( 'safestore_copy_to_clipboard_enabled' ) && safestore_copy_to_clipboard_enabled();
+
 	$body = '';
 	if ( '' !== (string) $args['label'] ) {
 		$body .= '<span class="sft-contact-item__label">' . esc_html( $args['label'] ) . '</span>';
@@ -1101,21 +1110,42 @@ function safestore_contact_emails_row( $args = array() ) {
 	}
 
 	$classes = 'sft-contact-item sft-contact-item--email sft-contact-item--emails';
-	if ( function_exists( 'safestore_copy_to_clipboard_enabled' ) && safestore_copy_to_clipboard_enabled() ) {
+	if ( $copyable ) {
 		$classes .= ' sft-contact-item--copyable';
+	}
+
+	// Match phone / WhatsApp: [lead] [addresses + inline copy] … [action chip].
+	if ( $copyable && '' !== $primary ) {
+		$action = sprintf(
+			'<a class="sft-contact-item__action" href="%1$s" aria-label="%2$s" title="%3$s" data-sft-copy-init="1"><span class="sft-contact-item__icon" aria-hidden="true">%4$s</span></a>',
+			esc_url( 'mailto:' . $primary ),
+			esc_attr( trim( wp_strip_all_tags( $args['label'] . ': ' . $primary ) ) ),
+			esc_attr( $args['label'] ),
+			$icon
+		);
+
+		return sprintf(
+			'<div class="%1$s"><span class="sft-contact-item__lead" aria-hidden="true">%2$s</span><span class="sft-contact-item__body">%3$s</span>%4$s</div>',
+			esc_attr( trim( $classes . ' ' . $args['class'] ) ),
+			$icon,
+			$body,
+			$action
+		);
 	}
 
 	return sprintf(
 		'<div class="%1$s"><span class="sft-contact-item__icon" aria-hidden="true">%2$s</span><span class="sft-contact-item__body">%3$s</span></div>',
 		esc_attr( trim( $classes . ' ' . $args['class'] ) ),
-		safestore_contact_icon_svg( 'email' ),
+		$icon,
 		$body
 	);
 }
 
 /**
- * Render a clickable contact item — brand icon on the left, contact detail
- * on the right. Returns markup; callers echo it (contains trusted SVG).
+ * Render a clickable contact item. Copyable methods (phone / WhatsApp / email)
+ * use [lead icon] [value + inline copy] … [action chip]; non-copyable methods
+ * (e.g. Help Center) stay a single anchor with the brand icon on the left.
+ * Returns markup; callers echo it (contains trusted SVG).
  *
  * @param array $args {
  *     @type string $type   phone|whatsapp|email (selects icon + auto-builds href). Default 'phone'.
@@ -1125,7 +1155,7 @@ function safestore_contact_emails_row( $args = array() ) {
  *     @type string $detail Small line below the value.
  *     @type string $icon   Custom trusted SVG (overrides the type icon).
  *     @type bool   $external Open in a new tab. Defaults to true for WhatsApp.
- *     @type string $class  Extra classes on the root anchor.
+ *     @type string $class  Extra classes on the root element.
  * }
  * @return string
  */
@@ -1173,43 +1203,59 @@ function safestore_contact_item( $args = array() ) {
 	$method = '' !== $args['label'] ? $args['label'] : ( isset( $names[ $type ] ) ? $names[ $type ] : ucfirst( $type ) );
 
 	$root_class = trim( preg_replace( '/\s+/', ' ', 'sft-contact-item sft-contact-item--' . $type . ' ' . $args['class'] ) );
+	$aria_label = trim( wp_strip_all_tags( $method . ': ' . $value ) );
+	$ext_attrs  = $external ? ' target="_blank" rel="noopener noreferrer"' : '';
 
-	// Copyable methods (phone / WhatsApp / email) get a button beside the value.
-	// Everything else — the Help Center link, for instance — stays a plain row.
+	// Copyable methods (phone / WhatsApp / email) use the reference layout:
+	// [lead icon] [value] [inline copy] … [action chip]. Everything else —
+	// the Help Center link, for instance — stays a plain row.
 	$copy        = safestore_copy_contact_value( $type, $value );
 	$copy_button = '' !== $copy['value']
 		? safestore_copy_button(
 			array(
 				'value' => $copy['value'],
 				'noun'  => $copy['noun'],
+				'class' => 'sft-copy-btn--inline',
 			)
 		)
 		: '';
 
-	// The label is not shown; it is preserved as the aria-label (accessible
-	// name) and as a hover tooltip so the row stays clear without the clutter.
-	$link = sprintf(
-		'<a class="%1$s" href="%2$s"%3$s aria-label="%4$s" title="%5$s">%6$s</a>',
-		esc_attr( '' !== $copy_button ? 'sft-contact-item__main' : $root_class ),
-		esc_url( $href ),
-		$external ? ' target="_blank" rel="noopener noreferrer"' : '',
-		esc_attr( trim( wp_strip_all_tags( $method . ': ' . $value ) ) ),
-		esc_attr( $method ),
-		safestore_contact_item_markup( $icon, $args['label'], $value, $args['detail'] )
-	);
-
 	if ( '' === $copy_button ) {
-		return $link;
+		return sprintf(
+			'<a class="%1$s" href="%2$s"%3$s aria-label="%4$s" title="%5$s">%6$s</a>',
+			esc_attr( $root_class ),
+			esc_url( $href ),
+			$ext_attrs,
+			esc_attr( $aria_label ),
+			esc_attr( $method ),
+			safestore_contact_item_markup( $icon, $args['label'], $value, $args['detail'] )
+		);
 	}
 
-	// A button may not live inside an anchor, so the row becomes a wrapper that
-	// keeps every existing .sft-contact-item class (layout, per-method accent,
-	// support-bar cell borders) and holds the link and the button side by side.
+	$body = '';
+	if ( '' !== (string) $args['label'] ) {
+		$body .= '<span class="sft-contact-item__label">' . esc_html( $args['label'] ) . '</span>';
+	}
+	// Value stays a real link (click-to-call / chat / mail). data-sft-copy-init
+	// prevents the auto-enhancer from injecting a second copy control.
+	$body .= '<span class="sft-contact-item__value-row">'
+		. '<a class="sft-contact-item__value" href="' . esc_url( $href ) . '"' . $ext_attrs . ' data-sft-copy-init="1">' . esc_html( $value ) . '</a>'
+		. $copy_button
+		. '</span>';
+	if ( '' !== (string) $args['detail'] ) {
+		$body .= '<span class="sft-contact-item__detail">' . esc_html( $args['detail'] ) . '</span>';
+	}
+
 	return sprintf(
-		'<div class="%1$s">%2$s%3$s</div>',
+		'<div class="%1$s"><span class="sft-contact-item__lead" aria-hidden="true">%2$s</span><span class="sft-contact-item__body">%3$s</span><a class="sft-contact-item__action" href="%4$s"%5$s aria-label="%6$s" title="%7$s" data-sft-copy-init="1"><span class="sft-contact-item__icon" aria-hidden="true">%8$s</span></a></div>',
 		esc_attr( $root_class . ' sft-contact-item--copyable' ),
-		$link,
-		$copy_button
+		$icon,
+		$body,
+		esc_url( $href ),
+		$ext_attrs,
+		esc_attr( $aria_label ),
+		esc_attr( $method ),
+		$icon
 	);
 }
 

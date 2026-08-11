@@ -101,7 +101,8 @@
   transform: translate(-50%, 0);
 }
 
-/* Inline variant — sits next to a link inside a paragraph or list item. */
+/* Inline variant — sits immediately beside the copyable value (phone /
+   WhatsApp / email), matching the reference: value then small copy glyph. */
 .sft-copy-btn--inline {
   border-radius: 5px;
   vertical-align: middle;
@@ -115,19 +116,37 @@
   height: 14px;
 }
 
-/* Keep the contact-component button unobtrusive until the row is engaged.
-   Always visible on touch/coarse pointers, where there is no hover. */
+/* Contact rows: tint the inline copy control with the method accent and keep
+   it always visible next to the value (reference layout). */
+.sft-contact-item .sft-copy-btn--inline {
+  color: var(--sft-contact-accent, #94a3b8);
+}
+
+.sft-contact-item .sft-copy-btn--inline:hover {
+  color: var(--sft-contact-accent, #dc2626);
+  background: transparent;
+  border-color: transparent;
+}
+
+.sft-contact-item__value-row .sft-copy-btn,
+.sft-contact-emails__item .sft-copy-btn {
+  position: relative;
+  z-index: 2;
+}
+
+/* Trailing (non-inline) copy on static rows — e.g. address — stays quiet until
+   the row is engaged. Always visible on touch/coarse pointers. */
 @media (hover: hover) and (pointer: fine) {
 
-  .sft-contact-item .sft-copy-btn {
+  .sft-contact-item .sft-copy-btn:not(.sft-copy-btn--inline) {
     opacity: 0;
     transition: opacity 0.18s ease, color 0.18s ease, border-color 0.18s ease, background-color 0.18s ease, transform 0.18s ease;
   }
 
-  .sft-contact-item:hover .sft-copy-btn,
-  .sft-contact-item:focus-within .sft-copy-btn,
-  .sft-contact-item .sft-copy-btn.is-copied,
-  .sft-contact-item .sft-copy-btn.is-copy-failed {
+  .sft-contact-item:hover .sft-copy-btn:not(.sft-copy-btn--inline),
+  .sft-contact-item:focus-within .sft-copy-btn:not(.sft-copy-btn--inline),
+  .sft-contact-item .sft-copy-btn:not(.sft-copy-btn--inline).is-copied,
+  .sft-contact-item .sft-copy-btn:not(.sft-copy-btn--inline).is-copy-failed {
     opacity: 1;
   }
 }
@@ -136,7 +155,7 @@
 
   .sft-copy-btn,
   .sft-copy-btn__flash,
-  .sft-contact-item .sft-copy-btn {
+  .sft-contact-item .sft-copy-btn:not(.sft-copy-btn--inline) {
     transition: none;
   }
 
