@@ -99,16 +99,22 @@ $categories = array(
 		<?php endforeach; ?>
 	</div>
 </section>
-<section class="featured-categories" aria-label="Best selling products">
-	<div class="featured-categories-head">
-		<div>
-			<h2>Best Sellers</h2>
-			<p>The safety gear teams across Bangladesh order most.</p>
+<section class="sft-bestsellers" aria-label="<?php esc_attr_e( 'Best selling products', 'safestore-minimal' ); ?>">
+	<div class="sft-bestsellers__head">
+		<div class="sft-bestsellers__intro">
+			<h2 class="sft-bestsellers__title"><?php esc_html_e( 'Best Sellers', 'safestore-minimal' ); ?></h2>
+			<p class="sft-bestsellers__lede"><?php esc_html_e( 'The safety gear teams across Bangladesh order most.', 'safestore-minimal' ); ?></p>
 		</div>
-		<a class="featured-categories-view-all" href="<?php echo esc_url( $shop_url ); ?>">View all <span aria-hidden="true">&rarr;</span></a>
+		<a class="sft-bestsellers__view-all" href="<?php echo esc_url( $shop_url ); ?>">
+			<?php esc_html_e( 'View all', 'safestore-minimal' ); ?>
+			<span aria-hidden="true">&rarr;</span>
+		</a>
 	</div>
-	<?php
-	// Keep 8 bestsellers for UX; Woo loop images stay lazy via performance.php.
-	echo do_shortcode( '[products limit="8" columns="4" orderby="popularity"]' );
-	?>
+	<div class="sft-bestsellers__grid">
+		<?php
+		// 8 products, 4-up on desktop — same card template as shop (content-product.php).
+		// Images stay lazy via performance.php / card markup.
+		echo do_shortcode( '[products limit="8" columns="4" orderby="popularity"]' );
+		?>
+	</div>
 </section>
