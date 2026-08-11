@@ -133,6 +133,7 @@ $hero_slides = array(
 						alt="<?php echo esc_attr( $slide['alt'] ); ?>"
 						width="900"
 						height="900"
+						sizes="(max-width: 900px) 70vw, 42vw"
 						loading="<?php echo 0 === $index ? 'eager' : 'lazy'; ?>"
 						decoding="async"
 						<?php echo 0 === $index ? 'fetchpriority="high"' : ''; ?>>

@@ -972,7 +972,7 @@ function safestore_footwear_enqueue_assets() {
 			get_template_directory_uri() . '/js/footwear-sizing.js',
 			array( 'jquery', 'wc-add-to-cart-variation' ),
 			(string) filemtime( $js ),
-			true
+			function_exists( 'safestore_perf_script_args' ) ? safestore_perf_script_args( true ) : true
 		);
 
 		wp_localize_script(

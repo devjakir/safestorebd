@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * Front-end performance helpers (defer, preload, emoji/CSS cleanup).
+ */
+require get_template_directory() . '/inc/performance.php';
+
+/**
  * WhatsApp chat widget — floating button, chat panel, admin settings
  * (Settings → WhatsApp Chat).
  */
@@ -86,7 +91,7 @@ function safestore_minimal_enqueue_assets() {
                 get_template_directory_uri() . '/js/pdp-gallery.js',
                 array('jquery'),
                 (string) filemtime($pdp_gallery_path),
-                true
+                function_exists('safestore_perf_script_args') ? safestore_perf_script_args(true) : true
             );
         }
     }
@@ -96,7 +101,7 @@ function safestore_minimal_enqueue_assets() {
         get_template_directory_uri() . '/js/header-search-cat.js',
         array(),
         $version,
-        true
+        function_exists('safestore_perf_script_args') ? safestore_perf_script_args(true) : true
     );
 
     if (is_page_template('page-home.php')) {
@@ -105,7 +110,7 @@ function safestore_minimal_enqueue_assets() {
             get_template_directory_uri() . '/js/hero-slider.js',
             array(),
             $version,
-            true
+            function_exists('safestore_perf_script_args') ? safestore_perf_script_args(true) : true
         );
     }
 
@@ -119,7 +124,7 @@ function safestore_minimal_enqueue_assets() {
                 get_template_directory_uri() . '/js/shop-cards.js',
                 array(),
                 (string) filemtime($shop_cards_path),
-                true
+                function_exists('safestore_perf_script_args') ? safestore_perf_script_args(true) : true
             );
         }
     }

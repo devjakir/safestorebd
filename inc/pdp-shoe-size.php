@@ -259,7 +259,7 @@ function safestore_pdp_shoe_size_assets() {
 			get_template_directory_uri() . '/js/pdp-shoe-size.js',
 			array( 'jquery' ),
 			(string) filemtime( $js ),
-			true
+			function_exists( 'safestore_perf_script_args' ) ? safestore_perf_script_args( true ) : true
 		);
 
 		wp_localize_script(

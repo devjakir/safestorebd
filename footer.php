@@ -7,7 +7,11 @@
 				<a class="sft-brand" href="<?php echo esc_url(home_url('/')); ?>" aria-label="<?php bloginfo('name'); ?> home">
 					<img class="sft-brand-logo"
 						src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/logo/safe-store-bd.png'); ?>"
-						alt="<?php bloginfo('name'); ?>" />
+						alt="<?php bloginfo('name'); ?>"
+						width="240"
+						height="128"
+						loading="lazy"
+						decoding="async" />
 				</a>
 				<p class="sft-brand-desc">Bangladesh's trusted source for industrial safety products. Quality PPE, dependable service, paperwork that holds up.</p>
 				<div class="sft-socials" aria-label="Follow SafeStoreBD">

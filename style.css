@@ -4,7 +4,7 @@ Theme URI: https://example.com
 Author: SafeStoreBD
 Author URI: https://example.com
 Description: Custom WordPress theme for SafeStoreBD — industrial PPE e-commerce in Bangladesh.
-Version: 1.0
+Version: 1.1.0
 License: GNU General Public License v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: safestore-minimal
@@ -13,7 +13,8 @@ Tags: custom-logo, custom-menu, featured-images, translation-ready, responsive-l
 
 :root {
   color-scheme: light;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  /* System UI stack — no render-blocking webfont request */
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   line-height: 1.6;
   font-size: 100%;
   color: #111827;
@@ -28,6 +29,7 @@ Tags: custom-logo, custom-menu, featured-images, translation-ready, responsive-l
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
 }
 
 body {
@@ -35,6 +37,7 @@ body {
   min-height: 100vh;
   background: #f8fafc;
   color: #111827;
+  overflow-x: clip;
 }
 
 a {
@@ -98,6 +101,11 @@ select {
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 20px;
+}
+
+/* Hidden on desktop; shown inside the header grid on ≤1024px */
+.sft-header-main .mobile-menu-trigger {
+  display: none;
 }
 
 /* Brand */
@@ -540,19 +548,38 @@ select {
   }
 }
 
-@media (max-width: 720px) {
+/* Phone + small tablet: hamburger + brand + actions on row 1, search full-width */
+@media (max-width: 767px) {
   .sft-header-main {
-    grid-template-columns: auto auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     grid-template-rows: auto auto;
-    gap: 14px;
-    padding: 12px 18px;
+    gap: 12px 10px;
+    padding: 10px 14px;
+  }
+
+  .sft-header-main .mobile-menu-trigger {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .sft-header-brand {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+  }
+
+  .sft-header-actions {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    gap: 12px;
   }
 
   .sft-header-search {
     grid-column: 1 / -1;
     grid-row: 2;
-    justify-self: end;
-    width: 80%;
+    justify-self: stretch;
+    width: 100%;
   }
 
   .sft-header-search-cat-wrap {
@@ -563,14 +590,23 @@ select {
     display: none;
   }
 
-  .sft-header-actions {
-    justify-self: end;
-    gap: 14px;
+  .sft-header .sft-header-brand-logo {
+    height: 32px;
+    min-height: 32px;
+    max-height: 32px;
+    max-width: 140px;
   }
 
   .sft-header-nav-inner {
     padding: 0 18px;
     gap: 16px;
+  }
+
+  .sft-header-action {
+    min-width: 44px;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
   }
 }
 
@@ -2810,28 +2846,46 @@ select {
 
   .home .hero-slider-viewport {
     border-radius: 5px;
-    /* Fixed height so slide changes don’t resize the banner */
-    height: clamp(620px, 92vh, 720px);
-    min-height: clamp(620px, 92vh, 720px);
+    /* Compact mobile hero — keeps LCP media in the first viewport */
+    height: clamp(460px, 72vh, 560px);
+    min-height: clamp(460px, 72vh, 560px);
   }
 
   .home .hero-slide {
     grid-template-columns: 1fr;
-    grid-template-rows: minmax(0, 1fr) 240px;
+    grid-template-rows: minmax(0, 1.15fr) minmax(160px, 0.85fr);
   }
 
   .home .hero-slide-content {
-    padding: 32px 22px 16px;
+    padding: 28px 18px 10px;
     max-width: 100%;
+    gap: 12px;
+  }
+
+  .home .hero-slide-title {
+    font-size: clamp(28px, 8vw, 40px);
+    min-height: calc(2 * 1.02 * clamp(28px, 8vw, 40px) + 2px);
+  }
+
+  .home .hero-slide-text {
+    font-size: 14px;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    min-height: 4.8em;
+    max-height: 4.8em;
   }
 
   .home .hero-slide-media {
-    padding: 8px 22px 48px;
+    padding: 4px 18px 44px;
   }
 
   .home .hero-slide-product {
-    max-height: 200px;
-    max-width: 70%;
+    max-height: 168px;
+    max-width: 62%;
+  }
+
+  .home .hero-slide-glow {
+    filter: blur(4px);
   }
 
   .home .hero-slide-spec {
@@ -2850,12 +2904,35 @@ select {
   }
 
   .home .hero-slider-dots {
-    bottom: 16px;
+    bottom: 12px;
+  }
+
+  .home .hero-slide-actions {
+    gap: 10px;
+    margin-top: 8px;
   }
 
   .home .hero-slide-actions .hero-slide-cta {
-    padding: 12px 18px;
+    padding: 12px 16px;
     font-size: 14px;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home .hero-slider-viewport {
+    height: 430px;
+    min-height: 430px;
+  }
+
+  .home .hero-slide-badge {
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+
+  .home .hero-slide-actions .hero-slide-cta {
+    width: 100%;
+    justify-content: center;
   }
 }
 
@@ -3183,6 +3260,10 @@ select {
 }
 
 @media (max-width: 480px) {
+  .home .featured-categories {
+    margin: 32px auto 40px;
+  }
+
   .home .featured-categories-head {
     flex-direction: column;
     align-items: flex-start;
@@ -3191,11 +3272,32 @@ select {
 
   .home .category-card--sm,
   .home .category-card--md {
+    grid-column: span 6;
+  }
+
+  .home .category-card--xl,
+  .home .category-card--lg {
     grid-column: span 12;
   }
 
   .home .featured-categories-grid {
-    grid-auto-rows: 216px;
+    grid-auto-rows: 180px;
+    gap: 8px;
+  }
+
+  .home .category-card-title {
+    font-size: 15px;
+  }
+
+  .home .category-card-arrow {
+    width: 32px;
+    height: 32px;
+    top: 10px;
+    right: 10px;
+  }
+
+  .home .category-card--cover .category-card-overlay {
+    padding: 48px 12px 12px;
   }
 }
 
@@ -4922,12 +5024,12 @@ a.sft-contact-item:focus-visible,
 
   .sft-shop .woocommerce ul.products,
   .sft-shop ul.products {
-    grid-template-columns: 1fr;
-    gap: 20px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 10px;
   }
 
   .sft-product-card {
-    padding: 10px 10px 16px;
+    padding: 8px 8px 12px;
     border-radius: 5px;
   }
 
@@ -4936,39 +5038,51 @@ a.sft-contact-item:focus-visible,
   }
 
   .sft-product-card__badge {
-    top: 10px;
-    left: 10px;
+    top: 8px;
+    left: 8px;
+    font-size: 10.5px;
+    padding: 4px 8px;
+  }
+
+  .sft-product-card__title {
+    font-size: 13px;
   }
 
   .woocommerce ul.products li.product.sft-product-card .sft-product-card__footer a.button.sft-product-card__cart-btn,
   .sft-product-card__footer a.button.sft-product-card__cart-btn {
-    min-height: 44px;
-    width: auto;
-    max-width: none;
-    font-size: 11.5px;
-    padding: 12px 16px;
+    min-height: 40px;
+    width: 100%;
+    max-width: 100%;
+    font-size: 11px;
+    padding: 10px 12px;
     letter-spacing: 0.06em;
   }
 
   .sft-product-card__cart-icon {
-    width: 16px;
-    height: 16px;
+    width: 15px;
+    height: 15px;
   }
 }
 
-/* Phones (<=640px): one product card per row for shop, archives, related
-   products, and the homepage featured grid. Tablet (641-820px) keeps 2
-   columns; desktop unchanged. */
+/* Phones (<=640px): two compact product cards per row for shop, archives,
+   related products, and the homepage featured grid. Desktop unchanged. */
 @media (max-width: 640px) {
 
   .sft-shop .woocommerce ul.products,
   .sft-shop ul.products,
   .woocommerce.sft-shop-main ul.products {
-    grid-template-columns: 1fr;
-    gap: 24px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 12px;
   }
 
-  /* Homepage featured products (WooCommerce default float layout) */
+  .home .woocommerce ul.products,
+  .home ul.products {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 12px;
+  }
+
+  /* Homepage featured products (override WooCommerce float layout) */
   .home .woocommerce ul.products li.product,
   .home ul.products li.product,
   .home ul.products li.sft-product-card {
@@ -6535,19 +6649,20 @@ input.button:hover {
 
 /* ACR mobile menu custom css start */
 @media screen and (max-width: 767px) {
+  .sft-header-main .mobile-menu-trigger,
   .mobile-menu-trigger {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     width: 44px;
-    height: 42px;
+    height: 44px;
     background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 5px;
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
     cursor: pointer;
-    padding: 13px 11px;
-    margin: -50px 0px 20px 20px;
+    padding: 12px 10px;
+    margin: 0;
     z-index: 100;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
     -webkit-tap-highlight-color: transparent;
@@ -6758,23 +6873,31 @@ input.button:hover {
 }
 
 @media screen and (min-width: 768px) and (max-width: 1024px) {
-  .sft-header-search {
-    width: min(500px, 96vw);
+  .sft-header-main {
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
+    gap: 14px;
   }
 
+  .sft-header-search {
+    width: min(500px, 96vw);
+    justify-self: stretch;
+  }
+
+  .sft-header-main .mobile-menu-trigger,
   .mobile-menu-trigger {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 46px;
+    width: 44px;
     height: 44px;
-    background: none;
-    border: 1px solid #333333;
-    border-radius: 100%;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 5px;
     cursor: pointer;
-    padding: 10px;
-    margin: 10px 0px 10px 30px;
+    padding: 11px 10px;
+    margin: 0;
     z-index: 100;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
   }
 
   .hamburger-bar {
@@ -7185,4 +7308,93 @@ input.button:hover {
 .sft-shop-breadcrumb a:hover {
   color: #0f172a;
   text-decoration: underline;
+}
+
+/* ==========================================================================
+   Mobile performance + touch polish (desktop rules above stay authoritative)
+   ========================================================================== */
+
+/* Contain paint for clearly below-the-fold blocks (skip trust-bar — near LCP) */
+.home .featured-categories,
+.home .support-bar,
+.sft-site-footer {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 520px;
+}
+
+/* Touch devices: kill hover transforms that cause jank / layout thrash */
+@media (hover: none), (pointer: coarse) {
+  .sft-product-card:hover {
+    transform: none;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+  }
+
+  .sft-product-card:hover .sft-product-card__img,
+  .sft-product-card:hover .sft-product-card__media-link img,
+  .home .category-card--cover:hover img,
+  .home .category-card--contain:hover img {
+    transform: none;
+  }
+
+  .home .hero-slide-cta--primary:hover,
+  .home .hero-slide-cta--secondary:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  /* Keep off-canvas drawer out of the document flow until opened */
+  .menu-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .menu-overlay.is-active {
+    pointer-events: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .site-content {
+    padding: 24px 14px;
+  }
+
+  /* Sticky-feel header actions for one-thumb shopping */
+  .sft-header-action-icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .sft-header-search {
+    height: 44px;
+  }
+
+  .sft-header-search-btn {
+    min-width: 44px;
+  }
+
+  .sft-header-search-input {
+    font-size: 16px; /* prevents iOS zoom-on-focus */
+  }
+
+  .home .trust-bar-card {
+    gap: 12px;
+  }
+
+  .sft-footer-links a,
+  .sft-legal a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+/* Avoid 100vw horizontal bleed from overlays/scrollbars */
+.menu-overlay,
+#offcanvas-menu {
+  max-width: 100%;
 }

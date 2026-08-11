@@ -14,10 +14,19 @@ $cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/
 
 <header class="sft-header" role="banner">
     <div class="sft-header-main">
+        <button type="button" class="mobile-menu-trigger" aria-label="Open Menu" aria-controls="offcanvas-menu" aria-expanded="false">
+            <span class="hamburger-bar"></span>
+            <span class="hamburger-bar"></span>
+            <span class="hamburger-bar"></span>
+        </button>
         <a class="sft-header-brand" href="<?php echo esc_url(home_url('/')); ?>" aria-label="<?php bloginfo('name'); ?> home">
             <img class="sft-header-brand-logo"
                 src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/logo/safe-store-bd.png'); ?>"
-                alt="<?php bloginfo('name'); ?>" />
+                alt="<?php bloginfo('name'); ?>"
+                width="240"
+                height="128"
+                decoding="async"
+                <?php echo ( is_page_template( 'page-home.php' ) || is_front_page() ) ? '' : 'fetchpriority="high"'; ?> />
         </a>
 
         <?php
@@ -114,18 +123,13 @@ $cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/
             </a>
         </div>
     </div>
-<button class="mobile-menu-trigger" aria-label="Open Menu" aria-controls="offcanvas-menu" aria-expanded="false">
-  <span class="hamburger-bar"></span>
-  <span class="hamburger-bar"></span>
-  <span class="hamburger-bar"></span>
-</button>
 <!-- Dark Overlay Backdrop Component -->
 <div class="menu-overlay" id="menu-overlay"></div>
 <!-- Off-Canvas Left Side Sliding Panel -->
 <div class="offcanvas-menu" id="offcanvas-menu">
   <div class="offcanvas-header">
     <div class="menu-logo">All Categories</div>
-    <button class="mobile-menu-close" aria-label="Close Menu">&times;</button>
+    <button type="button" class="mobile-menu-close" aria-label="Close Menu">&times;</button>
   </div>
   
   <div class="offcanvas-body">

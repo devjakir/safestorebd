@@ -72,7 +72,7 @@ function safestore_copy_to_clipboard_enqueue() {
 		$theme_uri . '/js/copy-to-clipboard.js',
 		array(),
 		(string) filemtime( $js_path ),
-		true
+		function_exists( 'safestore_perf_script_args' ) ? safestore_perf_script_args( true ) : true
 	);
 
 	wp_localize_script(

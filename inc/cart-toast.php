@@ -81,7 +81,7 @@ function safestore_cart_toast_enqueue() {
         $theme_uri . '/js/add-to-cart-toast.js',
         $deps,
         (string) filemtime($js_path),
-        true
+        function_exists('safestore_perf_script_args') ? safestore_perf_script_args(true) : true
     );
 
     // One-time product name for standard (non-AJAX) page-reload adds. AJAX adds

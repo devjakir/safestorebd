@@ -133,12 +133,18 @@ document.addEventListener('DOMContentLoaded', () => {
     screenOverlay.classList.toggle('is-active');
     triggerBtn.classList.toggle('is-open', isCurrentlyOpen);
     triggerBtn.setAttribute('aria-expanded', isCurrentlyOpen);
+    slidePanel.setAttribute('aria-hidden', isCurrentlyOpen ? 'false' : 'true');
 
     // Prevent the background page from scrolling behind the menu overlay
     document.body.style.overflow = isCurrentlyOpen ? 'hidden' : '';
 
     // Return focus to the trigger when closing (a11y)
     if (!isCurrentlyOpen) triggerBtn.focus({ preventScroll: true });
+  }
+
+  // Closed by default for assistive tech on small screens
+  if (slidePanel && window.matchMedia('(max-width: 1024px)').matches) {
+    slidePanel.setAttribute('aria-hidden', 'true');
   }
 
   if (triggerBtn && closeBtn && screenOverlay && slidePanel) {
