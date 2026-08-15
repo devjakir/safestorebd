@@ -66,6 +66,12 @@ require get_template_directory() . '/inc/pdp-social.php';
  */
 require get_template_directory() . '/inc/product-compare.php';
 
+/**
+ * Made in Bangladesh origin badge — Product Data checkbox, shop cards, PDP.
+ * See inc/origin-badge.php.
+ */
+require get_template_directory() . '/inc/origin-badge.php';
+
 function safestore_minimal_enqueue_assets() {
     $version = wp_get_theme()->get('Version');
 

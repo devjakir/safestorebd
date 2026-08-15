@@ -5104,6 +5104,33 @@ a.sft-contact-item:focus-visible {
   color: #dc2626;
 }
 
+/* Made in Bangladesh — shop / loop card */
+.origin-badge {
+  --sft-origin-bd-bg: #ecfdf5;
+  --sft-origin-bd-ink: #166534;
+  --sft-origin-bd-border: #86efac;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--sft-origin-bd-border);
+  background: var(--sft-origin-bd-bg);
+  color: var(--sft-origin-bd-ink);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.origin-badge.badge-bd .origin-badge__flag {
+  font-size: 12px;
+  line-height: 1;
+}
+
 /* ----- Stars ----- */
 
 .sft-product-card__rating {
@@ -5251,6 +5278,12 @@ a.sft-contact-item:focus-visible {
 
   .sft-product-card__title {
     font-size: 13px;
+  }
+
+  .origin-badge {
+    font-size: 10px;
+    padding: 2px 7px;
+    margin-top: 4px;
   }
 
   .woocommerce ul.products li.product.sft-product-card .sft-product-card__footer a.button.sft-product-card__cart-btn,
@@ -5683,6 +5716,39 @@ a.sft-contact-item:focus-visible {
   text-decoration: none;
   background: none;
   color: var(--sft-pdp-accent);
+}
+
+/* Made in Bangladesh — PDP trust line (after price) */
+.single-origin-badge {
+  --sft-origin-bd-bg: #ecfdf5;
+  --sft-origin-bd-ink: #166534;
+  --sft-origin-bd-border: #86efac;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: -4px 0 16px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--sft-origin-bd-border);
+  background: var(--sft-origin-bd-bg);
+  color: var(--sft-origin-bd-ink);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.single-origin-badge.bd span:first-child {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 11px;
+  color: #15803d;
+}
+
+.single-origin-badge__flag {
+  font-size: 14px;
+  line-height: 1;
 }
 
 .sft-pdp .woocommerce-product-rating {

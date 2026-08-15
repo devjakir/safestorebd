@@ -85,6 +85,13 @@ $category_text = function_exists('safestore_get_product_category_label')
         </h3>
 
         <?php
+        // Custom card does not fire woocommerce_after_shop_loop_item_title.
+        if ( function_exists( 'safestore_origin_badge_loop' ) ) {
+            safestore_origin_badge_loop();
+        }
+        ?>
+
+        <?php
         /**
          * Loop add-to-cart — always visible, pinned to the bottom of the card.
          *
