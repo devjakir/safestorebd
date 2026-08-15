@@ -130,15 +130,17 @@ add_action( 'woocommerce_process_product_meta', 'safestore_origin_save_field' );
  * calls this directly because it does not fire title hooks.
  */
 function safestore_origin_badge_loop() {
-	$origin = safestore_product_origin();
-	if ( 'bd' !== $origin ) {
-		return;
-	}
+    $origin = safestore_product_origin();
+    if ( 'bd' !== $origin ) {
+        return;
+    }
 
-	echo '<span class="origin-badge badge-bd">';
-	echo '<span class="origin-badge__flag" aria-hidden="true">🇧🇩</span> ';
-	echo esc_html__( 'Made in BD', 'safestore-minimal' );
-	echo '</span>';
+    echo '<div class="origin-badge-wrapper">';
+    echo '<span class="origin-badge badge-bd">';
+    echo '<span class="origin-badge__flag" aria-hidden="true">🇧🇩</span> ';
+    echo esc_html__( 'Made in BD', 'safestore-minimal' );
+    echo '</span>';
+    echo '</div>';
 }
 add_action( 'woocommerce_after_shop_loop_item_title', 'safestore_origin_badge_loop', 6 );
 
