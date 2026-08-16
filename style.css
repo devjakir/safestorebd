@@ -3242,19 +3242,12 @@ select {
     gap: 10px;
   }
 
-  .home .category-card--xl {
-    grid-column: span 12;
-  }
-
-  .home .category-card--sm {
+  /* One shared DOM order: shoe first (full width), remaining four at 50%. */
+  .home .featured-categories-grid > .category-card {
     grid-column: span 6;
   }
 
-  .home .category-card--md {
-    grid-column: span 6;
-  }
-
-  .home .category-card--lg {
+  .home .featured-categories-grid > .category-card:first-child {
     grid-column: span 12;
   }
 }
@@ -3268,16 +3261,6 @@ select {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
-  }
-
-  .home .category-card--sm,
-  .home .category-card--md {
-    grid-column: span 6;
-  }
-
-  .home .category-card--xl,
-  .home .category-card--lg {
-    grid-column: span 12;
   }
 
   .home .featured-categories-grid {

@@ -22,11 +22,11 @@ $categories = array(
 	array(
 		'size'  => 'xl',
 		'tag'   => '',
-		'title' => 'Safety Helmets & Hard Hats',
-		'image' => $safestore_cat_img( 'industrial_safety_category-helmet.webp' ),
+		'title' => 'Industrial Safety Shoes',
+		'image' => $safestore_cat_img( 'premium_brown_leather_industrial_safety_boots.webp' ),
 		'fit'   => 'cover',
-		'url'   => $helmet_cat,
-		'alt'   => 'Industrial safety helmets and hard hats category art',
+		'url'   => $shoe_cat,
+		'alt'   => 'Premium brown leather industrial safety boots and work shoes',
 	),
 	array(
 		'size'  => 'sm',
@@ -58,11 +58,11 @@ $categories = array(
 	array(
 		'size'  => 'lg',
 		'tag'   => '',
-		'title' => 'Industrial Safety Shoes',
-		'image' => $safestore_cat_img( 'premium_brown_leather_industrial_safety_boots.webp' ),
+		'title' => 'Safety Helmets & Hard Hats',
+		'image' => $safestore_cat_img( 'industrial_safety_category-helmet.webp' ),
 		'fit'   => 'cover',
-		'url'   => $shoe_cat,
-		'alt'   => 'Premium brown leather industrial safety boots and work shoes',
+		'url'   => $helmet_cat,
+		'alt'   => 'Industrial safety helmets and hard hats category art',
 	),
 );
 ?>
@@ -78,13 +78,18 @@ $categories = array(
 
 	<div class="featured-categories-grid">
 		<?php foreach ( $categories as $cat ) : ?>
+			<?php
+			$card_sizes = ( $cat['size'] === 'xl' )
+				? '(max-width: 900px) 92vw, (max-width: 1200px) 50vw, 560px'
+				: '(max-width: 900px) 46vw, (max-width: 1200px) 40vw, 420px';
+			?>
 			<a class="category-card category-card--<?php echo esc_attr( $cat['size'] ); ?> category-card--<?php echo esc_attr( $cat['fit'] ); ?>"
 				href="<?php echo esc_url( $cat['url'] ); ?>">
 				<img src="<?php echo esc_url( $cat['image'] ); ?>"
 					alt="<?php echo esc_attr( $cat['alt'] ); ?>"
 					width="800"
 					height="600"
-					sizes="(max-width: 480px) 92vw, (max-width: 900px) 46vw, (max-width: 1200px) 40vw, 420px"
+					sizes="<?php echo esc_attr( $card_sizes ); ?>"
 					loading="lazy"
 					decoding="async"
 					fetchpriority="low">
