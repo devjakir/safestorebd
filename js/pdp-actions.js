@@ -280,4 +280,25 @@
   syncWishlist();
   syncCompare();
   setShareOpen(false);
+
+  document.addEventListener('click', function (event) {
+    var trigger = event.target.closest('[data-sft-open-tab]');
+    if (!trigger) {
+      return;
+    }
+    var key = trigger.getAttribute('data-sft-open-tab');
+    if (!key) {
+      return;
+    }
+    var tabLink = document.querySelector('.sft-pdp-tabs .' + key + '_tab a, .woocommerce-tabs .' + key + '_tab a');
+    if (!tabLink) {
+      return;
+    }
+    event.preventDefault();
+    tabLink.click();
+    var panel = document.getElementById('tab-' + key);
+    if (panel) {
+      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
 })();

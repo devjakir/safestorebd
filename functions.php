@@ -72,6 +72,12 @@ require get_template_directory() . '/inc/product-compare.php';
  */
 require get_template_directory() . '/inc/origin-badge.php';
 
+/**
+ * PDP compact trust badges + Delivery & returns product tab.
+ * See inc/pdp-fulfillment.php.
+ */
+require get_template_directory() . '/inc/pdp-fulfillment.php';
+
 function safestore_minimal_enqueue_assets() {
     $version = wp_get_theme()->get('Version');
 
@@ -288,8 +294,6 @@ add_action(
         // After add-to-cart (priority 30): Compare / Wishlist | Share icon.
         add_action('woocommerce_single_product_summary', 'safestore_minimal_pdp_action_bar', 35);
 
-        add_action('woocommerce_after_single_product_summary', 'safestore_minimal_pdp_fulfillment_section', 8);
-
         add_filter(
             'woocommerce_single_product_carousel_options',
             static function ($options) {
@@ -502,56 +506,6 @@ add_action(
     },
     20
 );
-
-/**
- * Pickup + courier + returns (filterable address and rates).
- */
-function safestore_minimal_pdp_fulfillment_section() {
-    $pickup_address = safestore_minimal_get_pickup_address();
-    ?>
-    <section class="sft-pdp-fulfill" aria-label="<?php echo esc_attr__('Delivery and pickup', 'safestore-minimal'); ?>">
-        <h2 class="sft-pdp-fulfill__heading"><?php esc_html_e('How you get it', 'safestore-minimal'); ?></h2>
-        <ul class="sft-pdp-fulfill__list">
-            <li class="sft-pdp-fulfill__item">
-                <span class="sft-pdp-fulfill__icon" aria-hidden="true">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
-                </span>
-                <div class="sft-pdp-fulfill__body">
-                    <p class="sft-pdp-fulfill__title"><?php esc_html_e('Pick up from store', 'safestore-minimal'); ?> <span class="sft-pdp-fulfill__badge"><?php esc_html_e('Free', 'safestore-minimal'); ?></span></p>
-                    <p class="sft-pdp-fulfill__detail"><?php echo esc_html($pickup_address); ?></p>
-                </div>
-            </li>
-            <li class="sft-pdp-fulfill__item">
-                <span class="sft-pdp-fulfill__icon" aria-hidden="true">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="16" height="12" rx="1"/><path d="M18 11h2.5a1.5 1.5 0 0 1 1.5 1.5V17a1 1 0 0 1-1 1h-3M8 5v4M12 5v4M6 5h8"/></svg>
-                </span>
-                <div class="sft-pdp-fulfill__body">
-                    <p class="sft-pdp-fulfill__title"><?php esc_html_e('Courier — inside Dhaka', 'safestore-minimal'); ?></p>
-                    <p class="sft-pdp-fulfill__detail"><?php esc_html_e('Typical handover within ~24 hours. From ৳80 depending on partner & weight.', 'safestore-minimal'); ?></p>
-                </div>
-            </li>
-            <li class="sft-pdp-fulfill__item">
-                <span class="sft-pdp-fulfill__icon" aria-hidden="true">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
-                </span>
-                <div class="sft-pdp-fulfill__body">
-                    <p class="sft-pdp-fulfill__title"><?php esc_html_e('Outside Dhaka', 'safestore-minimal'); ?></p>
-                    <p class="sft-pdp-fulfill__detail"><?php esc_html_e('2–3 days typical. From ৳135+ by destination and carrier.', 'safestore-minimal'); ?></p>
-                </div>
-            </li>
-            <li class="sft-pdp-fulfill__item">
-                <span class="sft-pdp-fulfill__icon" aria-hidden="true">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                </span>
-                <div class="sft-pdp-fulfill__body">
-                    <p class="sft-pdp-fulfill__title"><?php esc_html_e('Returns', 'safestore-minimal'); ?> <span class="sft-pdp-fulfill__badge sft-pdp-fulfill__badge--muted"><?php esc_html_e('7 days', 'safestore-minimal'); ?></span></p>
-                    <p class="sft-pdp-fulfill__detail"><?php esc_html_e('Unused items in original condition where applicable. Contact us before sending anything back.', 'safestore-minimal'); ?></p>
-                </div>
-            </li>
-        </ul>
-    </section>
-    <?php
-}
 
 /**
  * PDP tabs: clearer labels for long-form storytelling (reference site style).
