@@ -3268,11 +3268,11 @@ select {
   }
 
   /* One shared DOM order: shoe first (full width), remaining four at 50%. */
-  .home .featured-categories-grid > .category-card {
+  .home .featured-categories-grid>.category-card {
     grid-column: span 6;
   }
 
-  .home .featured-categories-grid > .category-card:first-child {
+  .home .featured-categories-grid>.category-card:first-child {
     grid-column: span 12;
   }
 }
@@ -4280,7 +4280,7 @@ a.sft-contact-item__value:focus-visible {
   opacity: 0.85;
 }
 
-.sft-contact-email-chooser[open] > .sft-contact-email-chooser__trigger .sft-contact-item__icon,
+.sft-contact-email-chooser[open]>.sft-contact-email-chooser__trigger .sft-contact-item__icon,
 .sft-contact-email-chooser__trigger:hover .sft-contact-item__icon,
 .sft-contact-email-chooser__trigger:focus-visible .sft-contact-item__icon {
   background: var(--sft-contact-accent);
@@ -4410,7 +4410,7 @@ a.sft-contact-item:focus-visible {
   a.sft-contact-item:hover .sft-contact-item__icon,
   .sft-contact-item__action:hover .sft-contact-item__icon,
   .sft-contact-item__action:active .sft-contact-item__icon,
-  .sft-contact-email-chooser[open] > .sft-contact-email-chooser__trigger .sft-contact-item__icon,
+  .sft-contact-email-chooser[open]>.sft-contact-email-chooser__trigger .sft-contact-item__icon,
   .sft-contact-email-chooser__trigger:hover .sft-contact-item__icon {
     transform: none;
   }
@@ -5470,6 +5470,7 @@ a.sft-contact-item:focus-visible {
 }
 
 @media (max-width: 1080px) {
+
   .home .sft-bestsellers ul.products,
   .home .sft-bestsellers .woocommerce ul.products {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -5501,6 +5502,7 @@ a.sft-contact-item:focus-visible {
     gap: 8px;
     margin-bottom: 14px;
   }
+
   .home .sft-bestsellers__grid {
     margin-inline: -8px;
     padding-inline: 8px;
@@ -5850,8 +5852,8 @@ a.sft-contact-item:focus-visible {
 }
 
 .sft-pdp .product_meta a {
-  color: inherit;
-  font-weight: inherit;
+  color: #e52e04;
+  font-weight: 600;
   text-decoration: none;
 }
 
@@ -7078,6 +7080,7 @@ input.button:hover {
 
 /* ACR mobile menu custom css start */
 @media screen and (max-width: 767px) {
+
   .sft-header-main .mobile-menu-trigger,
   .mobile-menu-trigger {
     display: flex;
@@ -7131,7 +7134,7 @@ input.button:hover {
     top: 0;
     left: 0;
     max-width: 50%;
-    max-width:220px;
+    max-width: 220px;
     height: 100vh;
     background-color: #ffffff;
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
@@ -7752,7 +7755,8 @@ input.button:hover {
 }
 
 /* Touch devices: kill hover transforms that cause jank / layout thrash */
-@media (hover: none), (pointer: coarse) {
+@media (hover: none),
+(pointer: coarse) {
   .sft-product-card:hover {
     transform: none;
     box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
@@ -7772,6 +7776,7 @@ input.button:hover {
 }
 
 @media (max-width: 1024px) {
+
   /* Keep off-canvas drawer out of the document flow until opened */
   .menu-overlay {
     display: block;
@@ -7807,7 +7812,8 @@ input.button:hover {
   }
 
   .sft-header-search-input {
-    font-size: 16px; /* prevents iOS zoom-on-focus */
+    font-size: 16px;
+    /* prevents iOS zoom-on-focus */
   }
 
   .home .trust-bar-card {
