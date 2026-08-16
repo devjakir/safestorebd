@@ -5926,7 +5926,6 @@ a.sft-contact-item:focus-visible {
 
 .sft-pdp-contact {
   display: flex;
-  flex-direction: column;
   align-items: flex-start;
   gap: 8px;
   margin: 0 0 16px;
