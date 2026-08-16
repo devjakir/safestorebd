@@ -29,6 +29,11 @@
   transform: scale(0.94);
 }
 
+.sft-copy-btn.is-copied:active,
+.sft-copy-btn.is-copy-failed:active {
+  transform: none;
+}
+
 .sft-copy-btn:focus-visible {
   outline: 2px solid var(--sft-contact-accent, #dc2626);
   outline-offset: 2px;
@@ -58,6 +63,11 @@
   display: inline-flex;
 }
 
+.sft-copy-btn.is-copied,
+.sft-copy-btn.is-copy-failed {
+  z-index: 6;
+}
+
 .sft-copy-btn.is-copied {
   color: #15803d;
   border-color: #86efac;
@@ -81,24 +91,45 @@
   position: absolute;
   bottom: calc(100% + 8px);
   left: 50%;
+  z-index: 7;
   transform: translate(-50%, 4px);
-  padding: 4px 9px;
+  padding: 5px 10px;
   border-radius: 5px;
   background: #0f172a;
   color: #ffffff;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   line-height: 1.4;
   white-space: nowrap;
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.18s ease, transform 0.18s ease;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.28);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
 }
 
 .sft-copy-btn.is-copied .sft-copy-btn__flash,
 .sft-copy-btn.is-copy-failed .sft-copy-btn__flash {
   opacity: 1;
+  visibility: visible;
   transform: translate(-50%, 0);
+}
+
+/* Contact rows clip overflowing addresses; lift that clip while the
+   confirmation bubble is open so it is not cut off mid-animation. */
+.sft-contact-item--copyable:has(.sft-copy-btn.is-copied),
+.sft-contact-item--copyable:has(.sft-copy-btn.is-copy-failed) {
+  z-index: 5;
+}
+
+.sft-contact-item--copyable:has(.sft-copy-btn.is-copied) .sft-contact-item__body,
+.sft-contact-item--copyable:has(.sft-copy-btn.is-copy-failed) .sft-contact-item__body {
+  overflow: visible;
+}
+
+.home .support-bar-card:has(.sft-copy-btn.is-copied),
+.home .support-bar-card:has(.sft-copy-btn.is-copy-failed) {
+  overflow: visible;
 }
 
 /* Inline variant — sits immediately beside the copyable value (phone /
@@ -132,6 +163,13 @@
 .sft-contact-emails__item .sft-copy-btn {
   position: relative;
   z-index: 2;
+}
+
+.sft-contact-item__value-row .sft-copy-btn.is-copied,
+.sft-contact-item__value-row .sft-copy-btn.is-copy-failed,
+.sft-contact-emails__item .sft-copy-btn.is-copied,
+.sft-contact-emails__item .sft-copy-btn.is-copy-failed {
+  z-index: 6;
 }
 
 /* Trailing (non-inline) copy on static rows — e.g. address — stays quiet until

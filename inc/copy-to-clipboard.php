@@ -84,7 +84,7 @@ function safestore_copy_to_clipboard_enqueue() {
 			'i18n' => array(
 				/* translators: %s: what is being copied, e.g. "email address". */
 				'copy'         => __( 'Copy %s', 'safestore-minimal' ),
-				'copied'       => __( 'Copied', 'safestore-minimal' ),
+				'copied'       => __( 'Copied!', 'safestore-minimal' ),
 				/* translators: %s: what was copied, e.g. "Email address". */
 				'copiedNoun'   => __( '%s copied', 'safestore-minimal' ),
 				'failed'       => __( 'Press Ctrl+C to copy', 'safestore-minimal' ),

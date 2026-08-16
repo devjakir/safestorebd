@@ -2936,6 +2936,31 @@ select {
   }
 }
 
+/* Phones: keep the ghost CTA readable over bright hero product glow */
+@media (max-width: 767px) {
+  .home .hero-slide-cta--secondary {
+    background: rgba(10, 13, 20, 0.88);
+    border-color: rgba(255, 255, 255, 0.48);
+    color: #ffffff;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.38);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+
+  .home .hero-slide-cta--secondary:hover,
+  .home .hero-slide-cta--secondary:active {
+    background: rgba(10, 13, 20, 0.96);
+    border-color: rgba(251, 191, 36, 0.62);
+    color: #ffffff;
+    text-decoration: none;
+  }
+
+  .home .hero-slide-cta--secondary:focus-visible {
+    outline: 2px solid #fbbf24;
+    outline-offset: 3px;
+  }
+}
+
 /* Trust bar — 4 feature highlights below the hero */
 .home .trust-bar {
   width: min(1440px, calc(100% - 32px));

@@ -31,8 +31,8 @@
   var CFG = window.sftCopy || {};
   var I18N = CFG.i18n || {};
 
-  // How long the button stays in its "Copied" state before reverting.
-  var FEEDBACK_MS = 1800;
+  // How long the confirmation bubble stays visible before reverting.
+  var FEEDBACK_MS = 2400;
 
   var COPY_ICON =
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
@@ -161,7 +161,34 @@
   }
 
   /**
+   * Restore a trigger after its confirmation bubble is dismissed.
+   *
+   * @param {HTMLElement} trigger
+   */
+  function clearFlash(trigger) {
+    if (!trigger) {
+      return;
+    }
+    if (trigger.__sftTimer) {
+      window.clearTimeout(trigger.__sftTimer);
+      trigger.__sftTimer = null;
+    }
+    trigger.classList.remove('is-copied', 'is-copy-failed');
+    var label = trigger.getAttribute('data-sft-copy-title');
+    if (label) {
+      trigger.setAttribute('title', label);
+      trigger.setAttribute('aria-label', label);
+    }
+  }
+
+  /**
    * Flip a trigger into its transient "Copied" / "Press Ctrl+C" state.
+   *
+   * The visible bubble uses a short confirmation. The live region keeps the
+   * longer “{value} copied” wording for screen readers. The native `title`
+   * attribute is removed for the duration — updating it on tap made mobile
+   * browsers flash their own tooltip and dismiss it as soon as the gesture
+   * ended, which looked like the confirmation disappearing immediately.
    *
    * @param {HTMLElement} trigger
    * @param {boolean}     ok
@@ -169,26 +196,30 @@
    */
   function flash(trigger, ok, message) {
     var stateClass = ok ? 'is-copied' : 'is-copy-failed';
+    var visual = ok ? t('copied', 'Copied!') : message;
+    var others = document.querySelectorAll('.sft-copy-btn.is-copied, .sft-copy-btn.is-copy-failed');
+
+    each(others, function (btn) {
+      if (btn !== trigger) {
+        clearFlash(btn);
+      }
+    });
 
     if (trigger.__sftTimer) {
       window.clearTimeout(trigger.__sftTimer);
-      trigger.classList.remove('is-copied', 'is-copy-failed');
+      trigger.__sftTimer = null;
     }
 
     var flashNode = trigger.querySelector('.sft-copy-btn__flash');
     if (flashNode) {
-      flashNode.textContent = message;
+      flashNode.textContent = visual;
     }
     trigger.classList.add(stateClass);
-    trigger.setAttribute('title', message);
+    trigger.removeAttribute('title');
+    trigger.setAttribute('aria-label', visual);
 
     trigger.__sftTimer = window.setTimeout(function () {
-      trigger.classList.remove(stateClass);
-      trigger.__sftTimer = null;
-      var label = trigger.getAttribute('data-sft-copy-title');
-      if (label) {
-        trigger.setAttribute('title', label);
-      }
+      clearFlash(trigger);
     }, FEEDBACK_MS);
 
     announce(message);
@@ -220,15 +251,18 @@
 
   function handleTrigger(trigger) {
     var value = valueFor(trigger);
-    if (value === '') {
+    if (value === '' || trigger.__sftCopying) {
       return;
     }
 
+    trigger.__sftCopying = true;
     writeText(value).then(
       function () {
-        flash(trigger, true, trigger.getAttribute('data-sft-copy-done') || t('copied', 'Copied'));
+        trigger.__sftCopying = false;
+        flash(trigger, true, trigger.getAttribute('data-sft-copy-done') || t('copied', 'Copied!'));
       },
       function () {
+        trigger.__sftCopying = false;
         flash(trigger, false, t('failed', 'Press Ctrl+C to copy'));
       }
     );
@@ -247,7 +281,49 @@
     }
 
     event.preventDefault();
+    event.stopPropagation();
     handleTrigger(trigger);
+  });
+
+  // Capture-phase pointerdown:
+  //  1. Strip `title` before the browser can show its native tooltip on tap.
+  //  2. Dismiss an open confirmation when the user interacts elsewhere.
+  document.addEventListener('pointerdown', function (event) {
+    var target = event.target;
+    var trigger = target && target.closest ? target.closest('[data-sft-copy]') : null;
+
+    if (trigger) {
+      trigger.removeAttribute('title');
+    }
+
+    var active = document.querySelector('.sft-copy-btn.is-copied, .sft-copy-btn.is-copy-failed');
+    if (active && active !== trigger) {
+      clearFlash(active);
+    }
+  }, true);
+
+  function restoreTitleIfIdle(event) {
+    var trigger = event.target && event.target.closest ? event.target.closest('[data-sft-copy]') : null;
+    if (!trigger || trigger.__sftCopying || trigger.classList.contains('is-copied') || trigger.classList.contains('is-copy-failed')) {
+      return;
+    }
+    var label = trigger.getAttribute('data-sft-copy-title');
+    if (label) {
+      trigger.setAttribute('title', label);
+    }
+  }
+
+  document.addEventListener('pointerup', restoreTitleIfIdle);
+  document.addEventListener('pointercancel', restoreTitleIfIdle);
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key !== 'Escape') {
+      return;
+    }
+    var active = document.querySelector('.sft-copy-btn.is-copied, .sft-copy-btn.is-copy-failed');
+    if (active) {
+      clearFlash(active);
+    }
   });
 
   /* ---------------------------------------------------------------------
