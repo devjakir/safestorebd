@@ -5584,7 +5584,7 @@ a.sft-contact-item:focus-visible {
 
 .sft-pdp__hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, .75fr) minmax(0, 1fr);
   gap: 32px 56px;
   align-items: start;
   margin-bottom: 48px;
