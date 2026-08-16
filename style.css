@@ -5861,60 +5861,6 @@ a.sft-contact-item:focus-visible {
   text-decoration: underline;
 }
 
-.sft-pdp-promo {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  margin: 0 0 16px;
-  padding: 14px 16px;
-  border-radius: 5px;
-  background: var(--sft-pdp-surface);
-  border: 1px solid var(--sft-pdp-border);
-  border-left: 3px solid var(--sft-pdp-accent);
-}
-
-.sft-pdp-promo__title {
-  margin: 0 0 4px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--sft-pdp-ink);
-}
-
-.sft-pdp-promo__desc {
-  margin: 0;
-  font-size: 13px;
-  color: var(--sft-pdp-muted);
-  line-height: 1.5;
-}
-
-.sft-pdp-promo__code {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 5px;
-  background: #f8fafc;
-  border: 1px solid var(--sft-pdp-border);
-}
-
-.sft-pdp-promo__code-label {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--sft-pdp-muted);
-}
-
-.sft-pdp-promo__code-value {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--sft-pdp-ink);
-  background: transparent;
-  letter-spacing: 0.04em;
-}
-
 .sft-pdp-contact__label {
   margin: 0 0 8px;
   font-size: 12px;
@@ -6500,11 +6446,6 @@ a.sft-contact-item:focus-visible {
 @media (max-width: 480px) {
   .sft-pdp-breadcrumb {
     font-size: 12px;
-  }
-
-  .sft-pdp-promo {
-    flex-direction: column;
-    align-items: flex-start;
   }
 
   .sft-pdp-contact__channels {

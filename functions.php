@@ -245,7 +245,7 @@ add_filter('loop_shop_columns', function () { return 4; }, 99);
 add_filter('loop_shop_per_page', function () { return 12; }, 99);
 
 /**
- * Single product (PDP): breadcrumb, summary order, promo/contact/delivery blocks.
+ * Single product (PDP): breadcrumb, summary order, contact/delivery blocks.
  */
 function safestore_minimal_is_product_page() {
     return function_exists('is_product') && is_product();
@@ -287,7 +287,8 @@ add_action(
         add_action('woocommerce_single_product_summary', 'woocommerce_template_single_rating', 11);
         add_action('woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 18);
         add_action('woocommerce_single_product_summary', 'woocommerce_template_single_meta', 22);
-        add_action('woocommerce_single_product_summary', 'safestore_minimal_pdp_promo_strip', 25);
+        add_action('woocommerce_product_meta_start', 'safestore_minimal_pdp_suppress_meta_taxonomies');
+        add_action('woocommerce_product_meta_end', 'safestore_minimal_pdp_restore_meta_taxonomies');
         add_action('woocommerce_single_product_summary', 'safestore_minimal_pdp_contact_row', 26);
         add_action('woocommerce_single_product_summary', 'safestore_minimal_pdp_trust_line', 27);
         add_action('woocommerce_after_add_to_cart_button', 'safestore_minimal_pdp_buy_now_button');
@@ -305,33 +306,22 @@ add_action(
 );
 
 /**
- * Optional coupon / event strip (filterable for store-specific copy).
+ * Hide category and tag rows in the PDP meta box only. Taxonomies stay in
+ * wp-admin and remain available for breadcrumbs, archives, filters, and SEO.
  */
-function safestore_minimal_pdp_promo_strip() {
-    $title = apply_filters('safestore_minimal_pdp_promo_title', __('Safety shoe shopping event', 'safestore-minimal'));
-    $text  = apply_filters(
-        'safestore_minimal_pdp_promo_text',
-        __('Get discounts on safety footwear and workwear — up to 20% off eligible lines.', 'safestore-minimal')
-    );
-    $code = apply_filters('safestore_minimal_pdp_promo_code', 'SAFETY20');
-
-    if ($title === false) {
-        return;
+function safestore_minimal_pdp_hide_meta_terms($terms, $post_id, $taxonomy) {
+    if ($taxonomy === 'product_cat' || $taxonomy === 'product_tag') {
+        return false;
     }
-    ?>
-    <div class="sft-pdp-promo">
-        <div class="sft-pdp-promo__text">
-            <p class="sft-pdp-promo__title"><?php echo esc_html($title); ?></p>
-            <p class="sft-pdp-promo__desc"><?php echo esc_html($text); ?></p>
-        </div>
-        <?php if ($code !== false && $code !== '') : ?>
-            <div class="sft-pdp-promo__code" data-code="<?php echo esc_attr($code); ?>">
-                <span class="sft-pdp-promo__code-label"><?php esc_html_e('Code', 'safestore-minimal'); ?></span>
-                <code class="sft-pdp-promo__code-value"><?php echo esc_html($code); ?></code>
-            </div>
-        <?php endif; ?>
-    </div>
-    <?php
+    return $terms;
+}
+
+function safestore_minimal_pdp_suppress_meta_taxonomies() {
+    add_filter('get_the_terms', 'safestore_minimal_pdp_hide_meta_terms', 10, 3);
+}
+
+function safestore_minimal_pdp_restore_meta_taxonomies() {
+    remove_filter('get_the_terms', 'safestore_minimal_pdp_hide_meta_terms', 10);
 }
 
 /**
