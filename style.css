@@ -4063,26 +4063,54 @@ a.sft-contact-item__value:focus-visible {
   text-decoration: none;
 }
 
-/* Soft accent chip on the right — the primary call / chat / mail action. */
+/* Soft accent chip on the right — the primary call / chat / mail action.
+   Mobile WebKit paints tap-highlight on the inner SVG; filled WhatsApp
+   glyphs used the 300×150 replaced-element box, so the highlight must be
+   cleared on the SVG as well as the <a>, and the chip must clip overflow. */
 .sft-contact-item__action {
   flex: none;
   flex-shrink: 0;
+  align-self: center;
   margin-left: auto;
   position: relative;
   z-index: 2;
   display: inline-flex;
   color: inherit;
   text-decoration: none;
+  background: transparent;
   border-radius: 5px;
-  -webkit-tap-highlight-color: transparent;
+  line-height: 0;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   pointer-events: auto;
 }
 
+.sft-contact-item__action,
+.sft-contact-item__action .sft-contact-item__icon,
+.sft-contact-item__action svg {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.sft-contact-item__action:hover,
+.sft-contact-item__action:active,
+.sft-contact-item__action:focus {
+  background: transparent;
+  color: inherit;
+  text-decoration: none;
+}
+
 .sft-contact-item__action:hover .sft-contact-item__icon,
-.sft-contact-item__action:focus-visible .sft-contact-item__icon {
+.sft-contact-item__action:focus-visible .sft-contact-item__icon,
+.sft-contact-item__action:active .sft-contact-item__icon {
   background: var(--sft-contact-accent);
   color: var(--sft-contact-accent-ink);
   transform: translateY(-1px);
+}
+
+/* Touch/mouse activation uses :focus, not :focus-visible — suppress the UA
+   ring so it cannot appear as a square box around the chip. Keyboard users
+   still get the outline below. */
+.sft-contact-item__action:focus {
+  outline: none;
 }
 
 .sft-contact-item__action:focus-visible {
@@ -4098,6 +4126,7 @@ a.sft-contact-item__value:focus-visible {
   align-items: center;
   justify-content: center;
   border-radius: 5px;
+  overflow: hidden;
   background: var(--sft-contact-accent-soft);
   color: var(--sft-contact-accent);
   transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
@@ -4107,7 +4136,11 @@ a.sft-contact-item__value:focus-visible {
 .sft-contact-item__glyph {
   width: 20px;
   height: 20px;
+  max-width: 100%;
+  max-height: 100%;
   display: block;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .sft-contact-item__body {
@@ -4376,6 +4409,7 @@ a.sft-contact-item:focus-visible {
 
   a.sft-contact-item:hover .sft-contact-item__icon,
   .sft-contact-item__action:hover .sft-contact-item__icon,
+  .sft-contact-item__action:active .sft-contact-item__icon,
   .sft-contact-email-chooser[open] > .sft-contact-email-chooser__trigger .sft-contact-item__icon,
   .sft-contact-email-chooser__trigger:hover .sft-contact-item__icon {
     transform: none;
