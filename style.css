@@ -5501,11 +5501,6 @@ a.sft-contact-item:focus-visible {
     gap: 8px;
     margin-bottom: 14px;
   }
-
-  /*
-   * Phones: horizontal snap-scroll strip — denser discovery than a tall
-   * 2-up stack, without forcing awkward full-width cards.
-   */
   .home .sft-bestsellers__grid {
     margin-inline: -8px;
     padding-inline: 8px;
@@ -5519,7 +5514,7 @@ a.sft-contact-item:focus-visible {
     overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
-    scroll-padding-inline: 8px;
+    scroll-padding-inline: 0;
     -webkit-overflow-scrolling: touch;
     padding-bottom: 6px;
     scrollbar-width: thin;
@@ -5527,8 +5522,11 @@ a.sft-contact-item:focus-visible {
 
   .home .sft-bestsellers ul.products li.product,
   .home .sft-bestsellers ul.products li.sft-product-card {
-    flex: 0 0 min(72vw, 220px);
+    flex: 0 0 100%;
+    width: 100% !important;
+    max-width: 100% !important;
     scroll-snap-align: start;
+    scroll-snap-stop: always;
   }
 
   .home .sft-bestsellers .sft-product-card {
