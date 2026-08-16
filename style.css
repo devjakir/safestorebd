@@ -5927,6 +5927,7 @@ a.sft-contact-item:focus-visible {
 .sft-pdp-contact {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 8px;
   margin: 0 0 16px;
 }
@@ -5934,13 +5935,13 @@ a.sft-contact-item:focus-visible {
 .sft-pdp-contact__channels {
   display: flex;
   flex-wrap: wrap;
-  align-items: stretch;
+  align-items: center;
   gap: 8px;
+  max-width: 100%;
 }
 
 .sft-pdp-contact__channels .sft-pdp-contact__btn {
-  flex: 1 1 0;
-  min-width: 0;
+  flex: 0 1 auto;
 }
 
 .sft-pdp-contact__unit {
@@ -5948,6 +5949,7 @@ a.sft-contact-item:focus-visible {
   align-items: stretch;
   gap: 4px;
   min-width: 0;
+  max-width: 100%;
 }
 
 .sft-pdp-contact__unit--call {
@@ -5955,10 +5957,13 @@ a.sft-contact-item:focus-visible {
 }
 
 .sft-pdp-contact__btn {
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
+  width: max-content;
+  max-width: 100%;
   min-height: 36px;
   padding: 0 12px;
   border-radius: 5px;
@@ -5968,6 +5973,7 @@ a.sft-contact-item:focus-visible {
   line-height: 1.2;
   cursor: pointer;
   text-decoration: none;
+  white-space: nowrap;
   background: var(--sft-pdp-surface);
   border: 1px solid var(--sft-pdp-border);
   color: var(--sft-pdp-ink);
@@ -5975,7 +5981,7 @@ a.sft-contact-item:focus-visible {
 }
 
 .sft-pdp-contact__unit .sft-pdp-contact__btn {
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-width: 0;
 }
 
@@ -5992,6 +5998,7 @@ a.sft-contact-item:focus-visible {
 }
 
 .sft-pdp-contact__btn-label {
+  flex: 0 1 auto;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -6502,28 +6509,25 @@ a.sft-contact-item:focus-visible {
   }
 
   .sft-pdp-contact__channels {
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     width: 100%;
   }
 
   .sft-pdp-contact__channels .sft-pdp-contact__btn {
-    flex: 1 1 0;
-    width: auto;
-    padding: 0 6px;
-    font-size: 11px;
-    gap: 4px;
+    flex: 0 1 auto;
+    padding: 0 10px;
+    gap: 5px;
   }
 
   .sft-pdp-contact__unit--call {
-    display: flex;
-    width: 100%;
-    align-self: stretch;
+    display: inline-flex;
+    width: auto;
+    max-width: 100%;
+    align-self: flex-start;
   }
 
   .sft-pdp-contact__unit--call .sft-pdp-contact__btn {
-    flex: 1 1 auto;
-    width: auto;
-    font-size: 13px;
+    flex: 0 1 auto;
   }
 
   .sft-pdp-actions {
