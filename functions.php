@@ -306,8 +306,8 @@ add_action(
 );
 
 /**
- * Hide category and tag rows in the PDP meta box only. Taxonomies stay in
- * wp-admin and remain available for breadcrumbs, archives, filters, and SEO.
+ * Hide SKU, category, and tag rows in the PDP meta box only.
+ * Brand remains. Taxonomies and SKU stay in wp-admin and elsewhere.
  */
 function safestore_minimal_pdp_hide_meta_terms($terms, $post_id, $taxonomy) {
     if ($taxonomy === 'product_cat' || $taxonomy === 'product_tag') {
@@ -318,10 +318,12 @@ function safestore_minimal_pdp_hide_meta_terms($terms, $post_id, $taxonomy) {
 
 function safestore_minimal_pdp_suppress_meta_taxonomies() {
     add_filter('get_the_terms', 'safestore_minimal_pdp_hide_meta_terms', 10, 3);
+    add_filter('wc_product_sku_enabled', '__return_false');
 }
 
 function safestore_minimal_pdp_restore_meta_taxonomies() {
     remove_filter('get_the_terms', 'safestore_minimal_pdp_hide_meta_terms', 10);
+    remove_filter('wc_product_sku_enabled', '__return_false');
 }
 
 /**
