@@ -29,7 +29,7 @@ get_header(); ?>
                     if (is_product_taxonomy()) {
                         single_term_title();
                     } else {
-                        echo esc_html(woocommerce_page_title(false));
+                        echo esc_html__('Safety Equipment in Bangladesh', 'safestore-minimal');
                     }
                     ?>
                 </h1>
