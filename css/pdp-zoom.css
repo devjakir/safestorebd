@@ -1,0 +1,106 @@
+/**
+ * PDP side-by-side image zoom — lens over the gallery, magnified flyout beside it.
+ *
+ * Everything lives inside the desktop query, so touch and small screens get
+ * plain markup with no leftover positioning. js/pdp-zoom.js applies the same
+ * gate before it binds any listener; keep the 992px breakpoint in sync.
+ */
+
+@media (min-width: 992px) and (hover: hover) and (pointer: fine) {
+
+  /* --------------------------------------------------------------------------
+     Stacking
+     --------------------------------------------------------------------------
+     The media column is `position: sticky`, which ALWAYS opens a stacking
+     context — so a z-index on the flyout alone is scoped inside the column and
+     can never beat the summary column, which paints later in DOM order. The
+     column itself has to be raised, and only while zooming so normal page
+     stacking (header, toasts, share popover) is untouched otherwise. */
+  .sft-pdp__col--media.sft-zoom-on {
+    z-index: 9999;
+  }
+
+  /* Anchors the lens and clips it to the image area only — not to the gallery
+     box, which also contains the thumbnail strip. */
+  .sft-pdp__col--media .woocommerce-product-gallery .flex-viewport,
+  .sft-pdp__col--media .woocommerce-product-gallery>.woocommerce-product-gallery__wrapper {
+    position: relative;
+  }
+
+  .sft-pdp__col--media.sft-zoom-on .woocommerce-product-gallery__image img {
+    cursor: crosshair;
+  }
+
+  /* The lightbox button sits under the cursor's corner path; fade it while
+     zooming so it never reads as part of the lens. */
+  .sft-pdp__col--media.sft-zoom-on .woocommerce-product-gallery__trigger {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* --------------------------------------------------------------------------
+     Lens
+     -------------------------------------------------------------------------- */
+
+  .sft-zoom-lens {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    width: 160px;
+    height: 160px;
+    background: rgba(255, 255, 255, 0.28);
+    border: 1px solid rgba(15, 23, 42, 0.35);
+    box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.12);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    will-change: transform;
+    /* No transition on the resting state, so removing .is-active hides the
+       layer on the same frame as mouseleave. */
+    transition: none;
+  }
+
+  /* --------------------------------------------------------------------------
+     Flyout
+     -------------------------------------------------------------------------- */
+
+  .sft-zoom-flyout {
+    position: absolute;
+    top: 0;
+    /* JS measures the product-details column and overrides left/width/height on
+       every hover, so the panel spans that column exactly. These are only the
+       fallback for a skipped measure pass — deliberately no `min-width`, since
+       a CSS floor cannot know how much room is left and would push the panel
+       off-screen on a narrow desktop. The floor lives in JS instead. */
+    left: calc(100% + 24px);
+    z-index: 9999;
+    width: 560px;
+    height: 100%;
+    border: 1px solid var(--sft-pdp-border, #e2e8f0);
+    border-radius: 5px;
+    background-color: #ffffff;
+    background-repeat: no-repeat;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    visibility: hidden;
+    /* Never intercept a click meant for the summary column underneath. */
+    pointer-events: none;
+    transition: none;
+  }
+
+  .sft-zoom-lens.is-active,
+  .sft-zoom-flyout.is-active {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.12s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+
+    .sft-zoom-lens.is-active,
+    .sft-zoom-flyout.is-active {
+      transition: none;
+    }
+  }
+}
