@@ -113,6 +113,29 @@ function safestore_minimal_enqueue_assets() {
                 function_exists('safestore_perf_script_args') ? safestore_perf_script_args(true) : true
             );
         }
+
+        // Side-by-side image zoom (lens + flyout). Desktop-only; the asset pair
+        // self-gates at 992px so it stays inert on touch devices.
+        $pdp_zoom_css = get_template_directory() . '/css/pdp-zoom.css';
+        if (file_exists($pdp_zoom_css)) {
+            wp_enqueue_style(
+                'safestore-minimal-pdp-zoom',
+                get_template_directory_uri() . '/css/pdp-zoom.css',
+                array('safestore-minimal-style'),
+                (string) filemtime($pdp_zoom_css)
+            );
+        }
+
+        $pdp_zoom_js = get_template_directory() . '/js/pdp-zoom.js';
+        if (file_exists($pdp_zoom_js)) {
+            wp_enqueue_script(
+                'safestore-minimal-pdp-zoom',
+                get_template_directory_uri() . '/js/pdp-zoom.js',
+                array(),
+                (string) filemtime($pdp_zoom_js),
+                function_exists('safestore_perf_script_args') ? safestore_perf_script_args(true) : true
+            );
+        }
     }
 
     wp_enqueue_script(
@@ -165,6 +188,16 @@ function safestore_minimal_setup() {
     ));
 }
 add_action('after_setup_theme', 'safestore_minimal_setup');
+
+/**
+ * Turn off WooCommerce's in-place magnifier (jquery-zoom).
+ *
+ * js/pdp-zoom.js replaces it with a side-by-side lens + flyout; running both
+ * puts two magnifiers on the same hover. Theme support stays declared so the
+ * lightbox and gallery slider are untouched — flip this back to __return_true
+ * to restore core behaviour.
+ */
+add_filter('woocommerce_single_product_zoom_enabled', '__return_false');
 
 /**
  * Strip WooCommerce's default page wrappers and sidebar — the theme provides its own layout.

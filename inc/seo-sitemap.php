@@ -31,6 +31,16 @@ function safestore_seo_utility_page_ids() {
 		}
 	}
 
+	$hello = get_page_by_path( 'hello-world', OBJECT, 'post' );
+	if ( $hello instanceof WP_Post ) {
+		$ids[] = (int) $hello->ID;
+	}
+
+	$compare = get_page_by_path( 'compare' );
+	if ( $compare instanceof WP_Post ) {
+		$ids[] = (int) $compare->ID;
+	}
+
 	/**
 	 * Filter utility page IDs excluded from sitemaps / indexing.
 	 *
@@ -74,13 +84,40 @@ function safestore_seo_rank_math_sitemap_entry( $url, $type, $object ) {
 add_filter( 'rank_math/sitemap/entry', 'safestore_seo_rank_math_sitemap_entry', 10, 3 );
 
 /**
- * Reinforce noindex on cart / checkout / account (and Rank Math robots array).
+ * Whether the current request should be noindexed.
+ *
+ * @return bool
+ */
+function safestore_seo_should_noindex_request() {
+	if ( function_exists( 'is_cart' ) && ( is_cart() || is_checkout() || is_account_page() ) ) {
+		return true;
+	}
+	if ( function_exists( 'is_search' ) && is_search() ) {
+		return true;
+	}
+	if ( function_exists( 'is_product_tag' ) && is_product_tag() ) {
+		return true;
+	}
+	if ( is_page( 'compare' ) ) {
+		return true;
+	}
+	if ( is_singular( 'post' ) ) {
+		$slug = get_post_field( 'post_name', get_queried_object_id() );
+		if ( 'hello-world' === $slug ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/**
+ * Reinforce noindex on cart / checkout / account / search / product tags.
  *
  * @param array $robots Robots directives.
  * @return array
  */
 function safestore_seo_rank_math_robots( $robots ) {
-	if ( function_exists( 'is_cart' ) && ( is_cart() || is_checkout() || is_account_page() ) ) {
+	if ( safestore_seo_should_noindex_request() ) {
 		$robots['index']  = 'noindex';
 		$robots['follow'] = 'follow';
 	}
@@ -95,12 +132,90 @@ add_filter( 'rank_math/frontend/robots', 'safestore_seo_rank_math_robots' );
  * @return array
  */
 function safestore_seo_wp_robots( $robots ) {
-	if ( function_exists( 'is_cart' ) && ( is_cart() || is_checkout() || is_account_page() ) ) {
+	if ( safestore_seo_should_noindex_request() ) {
 		$robots['noindex'] = true;
 	}
 	return $robots;
 }
 add_filter( 'wp_robots', 'safestore_seo_wp_robots' );
+
+/**
+ * Detect crawl-spam /?items/... and /?items/.../m request URIs.
+ *
+ * Matches encoded and raw slashes. Does not match legitimate POST `items`
+ * arrays (footwear size AJAX) because those are not query-string URLs.
+ *
+ * @return bool
+ */
+function safestore_seo_is_junk_items_request() {
+	$uri = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+	$qs  = isset( $_SERVER['QUERY_STRING'] ) ? (string) wp_unslash( $_SERVER['QUERY_STRING'] ) : '';
+	$hay = rawurldecode( $uri . "\n" . $qs );
+
+	return (bool) preg_match( '#(?:\?|&|^)items(/|%2F)#i', $hay );
+}
+
+/**
+ * Keep WordPress from 301-encoding /?items/X into /?items%2FX (GSC "Page with redirect").
+ *
+ * @param string|false $redirect_url Canonical redirect target.
+ * @return string|false
+ */
+function safestore_seo_disable_canonical_for_junk_items( $redirect_url ) {
+	if ( safestore_seo_is_junk_items_request() ) {
+		return false;
+	}
+	return $redirect_url;
+}
+add_filter( 'redirect_canonical', 'safestore_seo_disable_canonical_for_junk_items', 0 );
+
+/**
+ * Return HTTP 410 for junk /?items/... crawl-spam URLs.
+ *
+ * Hooked on init so it runs before redirect_canonical (template_redirect:10).
+ */
+function safestore_seo_gone_junk_item_urls() {
+	if ( is_admin() || wp_doing_ajax() || wp_doing_cron() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+		return;
+	}
+	if ( ! safestore_seo_is_junk_items_request() ) {
+		return;
+	}
+
+	status_header( 410 );
+	nocache_headers();
+	header( 'X-Robots-Tag: noindex, nofollow', true );
+	header( 'Content-Type: text/plain; charset=UTF-8', true );
+	echo 'Gone';
+	exit;
+}
+add_action( 'init', 'safestore_seo_gone_junk_item_urls', 0 );
+
+/**
+ * Ask crawlers not to fetch new /?items/ URLs.
+ *
+ * Existing GSC URLs still need a 410 recrawl to drop; robots.txt only
+ * stops additional discovery. Google wildcard support: /*?items
+ *
+ * @param string $output Robots.txt body.
+ * @param bool   $public Whether the site is public.
+ * @return string
+ */
+function safestore_seo_robots_txt( $output, $public ) {
+	if ( ! $public ) {
+		return $output;
+	}
+
+	$output .= "\n# Crawl-spam: /?items/{id} and /?items/{id}/m\n";
+	$output .= "User-agent: *\n";
+	$output .= "Disallow: /*?items/\n";
+	$output .= "Disallow: /*?items%2F\n";
+	$output .= "Disallow: /*?*items/\n";
+	$output .= "Disallow: /*?*items%2F\n";
+
+	return $output;
+}
+add_filter( 'robots_txt', 'safestore_seo_robots_txt', 99, 2 );
 
 /**
  * Send no-cache headers for Rank Math / WP sitemap responses.
