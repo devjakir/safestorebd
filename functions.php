@@ -78,6 +78,12 @@ require get_template_directory() . '/inc/origin-badge.php';
  */
 require get_template_directory() . '/inc/pdp-fulfillment.php';
 
+/**
+ * Mobile & tablet navigation — sticky bottom bar, header quick links,
+ * hide-on-scroll header. Renders below 1025px only.
+ */
+require get_template_directory() . '/inc/mobile-nav.php';
+
 function safestore_minimal_enqueue_assets() {
     $version = wp_get_theme()->get('Version');
 
@@ -136,6 +142,29 @@ function safestore_minimal_enqueue_assets() {
                 function_exists('safestore_perf_script_args') ? safestore_perf_script_args(true) : true
             );
         }
+    }
+
+    // Site footer — dark Star Tech-style slab. Its own sheet so it never
+    // has to out-specify the light-theme footer rules still in style.css.
+    $footer_css = get_template_directory() . '/css/footer.css';
+    if ( file_exists( $footer_css ) ) {
+        wp_enqueue_style(
+            'safestore-minimal-footer',
+            get_template_directory_uri() . '/css/footer.css',
+            array( 'safestore-minimal-style' ),
+            (string) filemtime( $footer_css )
+        );
+    }
+
+    $footer_js = get_template_directory() . '/js/footer-accordion.js';
+    if ( file_exists( $footer_js ) ) {
+        wp_enqueue_script(
+            'safestore-minimal-footer-accordion',
+            get_template_directory_uri() . '/js/footer-accordion.js',
+            array(),
+            (string) filemtime( $footer_js ),
+            function_exists('safestore_perf_script_args') ? safestore_perf_script_args(true) : true
+        );
     }
 
     wp_enqueue_script(
@@ -2407,9 +2436,11 @@ function sft_custom_theme_cart_fragments( $fragments ) {
     //  Update the Cart Total Price Label
     ob_start();
     ?>
-    <span class="sft-header-action-label"><?php echo WC()->cart->get_cart_total(); ?></span>
+    <span class="sft-header-action-label sft-header-cart-total"><?php echo WC()->cart->get_cart_total(); ?></span>
     <?php
-    $fragments['span.sft-header-action-label'] = ob_get_clean();
+    // Target the cart-specific class. The bare .sft-header-action-label
+    // selector also matched the Wishlist label and overwrote it.
+    $fragments['span.sft-header-cart-total'] = ob_get_clean();
 
     return $fragments;
 }

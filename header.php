@@ -13,6 +13,10 @@ $cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/
 ?>
 
 <header class="sft-header" role="banner">
+    <?php /* Only this wrapper may be transformed — the drawer and overlay below are
+       position:fixed children, and a transformed ancestor would become their
+       containing block. See css/mobile-nav.css. */ ?>
+    <div class="sft-header-sticky">
     <div class="sft-header-main">
         <button type="button" class="mobile-menu-trigger" aria-label="Open Menu" aria-controls="offcanvas-menu" aria-expanded="false">
             <span class="hamburger-bar"></span>
@@ -65,6 +69,7 @@ $cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/
             }
         }
         ?>
+        <div class="sft-header-searchwrap" id="sft-header-search-panel">
         <form class="sft-header-search" role="search" action="<?php echo esc_url($sft_search_action); ?>" method="get">
             <?php if (function_exists('wc_get_page_permalink')) : ?>
                 <input type="hidden" name="post_type" value="product">
@@ -98,9 +103,12 @@ $cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             </button>
         </form>
+        </div><!-- /.sft-header-searchwrap -->
 
         <div class="sft-header-actions">
-            <a class="sft-header-action" href="<?php echo esc_url(wp_login_url()); ?>">
+            <?php if ( function_exists( 'safestore_mnav_search_toggle' ) ) { safestore_mnav_search_toggle(); } ?>
+
+            <a class="sft-header-action sft-header-action--account" href="<?php echo esc_url( function_exists('safestore_mnav_account_url') ? safestore_mnav_account_url() : wp_login_url() ); ?>">
                 <svg class="sft-header-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
                 <span class="sft-header-action-text">
                     <span class="sft-header-action-eyebrow">Hello, sign in</span>
@@ -108,7 +116,7 @@ $cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/
                 </span>
             </a>
 
-            <a class="sft-header-action" href="<?php echo esc_url(home_url('/wishlist/')); ?>">
+            <a class="sft-header-action sft-header-action--wishlist" href="<?php echo esc_url(home_url('/wishlist/')); ?>">
                 <svg class="sft-header-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
                 <span class="sft-header-action-text">
                     <span class="sft-header-action-label sft-header-action-label--single">Wishlist</span>
@@ -127,6 +135,12 @@ $cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/
             </a>
         </div>
     </div>
+
+    <?php if ( function_exists( 'safestore_mnav_quicklinks' ) ) { safestore_mnav_quicklinks(); } ?>
+    </div><!-- /.sft-header-sticky -->
+
+    <?php if ( function_exists( 'safestore_mnav_search_backdrop' ) ) { safestore_mnav_search_backdrop(); } ?>
+
 <!-- Dark Overlay Backdrop Component -->
 <div class="menu-overlay" id="menu-overlay"></div>
 <!-- Off-Canvas Left Side Sliding Panel -->

@@ -1,0 +1,733 @@
+/* ==========================================================================
+   SafeStore — mobile & tablet navigation chrome
+   Sticky bottom bar, header quick-links strip, hide-on-scroll header.
+   Everything here is scoped to max-width: 1024px; desktop is untouched.
+   ========================================================================== */
+
+:root {
+  --sft-bottomnav-h: 58px;
+  --sft-bottomnav-inset: env(safe-area-inset-bottom, 0px);
+}
+
+/* Markup is always printed; visibility is purely a breakpoint concern. */
+.sft-bottomnav {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Sticky header — hides on scroll down, returns on scroll up.
+
+   The transform lives on .sft-header-sticky, never on .sft-header, because a
+   transformed ancestor becomes the containing block for position:fixed
+   descendants — and the off-canvas drawer and overlay are children of
+   .sft-header. Transforming the outer element would tear the drawer out of
+   the viewport. Keep it that way.
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1024px) {
+  .sft-header {
+    position: sticky;
+    top: 0;
+    /* Above the bottom bar (99500) and the WhatsApp widget (99000), so an
+       open drawer and its overlay cover both. */
+    z-index: 99600;
+    background: transparent;
+    border-bottom: 0;
+  }
+
+  .sft-header-sticky {
+    position: relative;
+    z-index: 2;
+    background: #ffffff;
+    border-bottom: 1px solid #eef0f3;
+    /* Flat at rest, lifted once the page moves under it. Both animated
+       properties are compositor-friendly, so this never costs a frame. */
+    box-shadow: 0 1px 0 rgba(15, 23, 42, 0.03);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.24s ease;
+  }
+
+  .sft-header.is-scrolled .sft-header-sticky {
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.05),
+                0 8px 24px rgba(15, 23, 42, 0.07);
+  }
+
+  .sft-header.is-nav-hidden .sft-header-sticky {
+    transform: translateY(-100%);
+  }
+
+  /* While the bar is translated away, its reserved strip must not swallow
+     taps meant for the content underneath. The drawer stays interactive. */
+  .sft-header.is-nav-hidden {
+    pointer-events: none;
+  }
+
+  .sft-header.is-nav-hidden .sft-header-sticky,
+  .sft-header.is-nav-hidden .offcanvas-menu,
+  .sft-header.is-nav-hidden .menu-overlay.is-active {
+    pointer-events: auto;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Header on phone / tablet
+   Account and Wishlist move to the bottom bar and the quick-links strip, so
+   the top row keeps only the cart.
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1024px) {
+  /* Reachable without stretching, and never smaller than a fingertip. */
+  .sft-header-actions .sft-header-action {
+    min-width: 40px;
+    min-height: 40px;
+    justify-content: center;
+  }
+
+  .sft-header-action--account,
+  .sft-header-action--wishlist {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Centred brand + icon-triggered search
+
+   Equal 1fr side columns rather than `auto` ones: the hamburger (44px) and
+   the actions cluster are not the same width, so an `auto | auto | auto`
+   grid would leave the logo a few pixels off true centre.
+
+   The search field leaves the header row entirely and becomes a dropdown.
+   .has-js-search is added by js/mobile-nav.js, so with scripting disabled
+   the field stays in flow exactly as before and the toggle never appears.
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1024px) {
+  .sft-header-main {
+    position: relative;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 10px;
+  }
+
+  .sft-header-main .mobile-menu-trigger {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+  }
+
+  .sft-header-brand {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: center;
+  }
+
+  .sft-header-actions {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    gap: 4px;
+  }
+
+  .sft-header-searchwrap {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  /* The category selector has no room inside a dropdown field. */
+  .sft-header-search-cat-wrap {
+    display: none;
+  }
+
+  /* No-JS: the trigger would do nothing, so it is not shown. */
+  .sft-header-action--search {
+    display: none;
+  }
+
+  .sft-header.has-js-search .sft-header-action--search {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #0f172a;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.15s ease;
+  }
+
+  .sft-header.has-js-search .sft-header-action--search svg {
+    width: 23px;
+    height: 23px;
+  }
+
+  .sft-header.has-js-search.is-search-open .sft-header-action--search {
+    color: #dc2626;
+  }
+
+  /* ---- The dropdown itself ---- */
+
+  .sft-header.has-js-search .sft-header-searchwrap {
+    grid-area: auto;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 3;
+    padding: 10px 14px 12px;
+    background: #ffffff;
+    border-top: 1px solid #f1f4f8;
+    box-shadow: 0 10px 20px rgba(15, 23, 42, 0.09);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 0.18s ease,
+                transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 0s linear 0.22s;
+  }
+
+  .sft-header.has-js-search.is-search-open .sft-header-searchwrap {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition: opacity 0.18s ease,
+                transform 0.26s cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 0s;
+  }
+
+  .sft-header.has-js-search .sft-header-searchwrap .sft-header-search {
+    width: 100%;
+    height: 44px;
+  }
+
+  /* Backdrop — a sibling of .sft-header-sticky, so it sits under the bar. */
+  .sft-search-backdrop {
+    position: fixed;
+    top: var(--sft-header-h, 120px);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    background: rgba(15, 23, 42, 0.32);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+  }
+
+  .sft-header.is-search-open .sft-search-backdrop {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.2s ease, visibility 0s;
+  }
+}
+
+@media (min-width: 1025px) {
+  /* The wrapper now occupies the grid slot the form used to hold. */
+  .sft-header-searchwrap {
+    justify-self: center;
+    width: min(600px, 96vw);
+    min-width: 0;
+  }
+
+  .sft-header-searchwrap .sft-header-search {
+    width: 100%;
+  }
+
+  .sft-header-action--search,
+  .sft-search-backdrop {
+    display: none !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Quick-links strip — horizontally scrollable shortcut chips
+   -------------------------------------------------------------------------- */
+
+.sft-quicklinks {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .sft-quicklinks {
+    display: block;
+    border-top: 1px solid #f1f4f8;
+    background: #fbfcfd;
+  }
+
+  .sft-quicklinks__list {
+    list-style: none;
+    margin: 0;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    scroll-padding-inline: 14px;
+  }
+
+  .sft-quicklinks__list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sft-quicklinks__list > li {
+    margin: 0;
+    flex: 0 0 auto;
+  }
+
+  .sft-quicklinks__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 13px;
+    border: 1px solid #e3e8ef;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #334155;
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .sft-quicklinks__chip:active {
+    background: #f1f5f9;
+    color: #0f172a;
+    text-decoration: none;
+  }
+
+  .sft-quicklinks__chip--accent {
+    border-color: #fecaca;
+    background: #fef2f2;
+    color: #b91c1c;
+  }
+
+  .sft-quicklinks__chip--accent:active {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .sft-quicklinks__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: #dc2626;
+    flex: 0 0 auto;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Sticky bottom navigation bar
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1024px) {
+  .sft-bottomnav {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99500;
+    background: #ffffff;
+    border-top: 1px solid #e8ecf1;
+    box-shadow: 0 -2px 14px rgba(15, 23, 42, 0.07);
+    padding-bottom: var(--sft-bottomnav-inset);
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  /* Reserve the bar's footprint so nothing sits under it. */
+  body {
+    padding-bottom: calc(var(--sft-bottomnav-h) + var(--sft-bottomnav-inset));
+  }
+
+  /* Lift the floating WhatsApp widget clear of the bar. The variable is
+     already declared by css/whatsapp-chat.css — this only changes its value. */
+  :root {
+    --sft-wa-offset: calc(var(--sft-bottomnav-h) + 12px);
+  }
+
+  /* Footer clearance for the floating widget now lives in css/footer.css
+     (.sfx-subfooter), next to the markup it applies to. */
+
+  .sft-bottomnav__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    min-height: var(--sft-bottomnav-h);
+    padding: 6px 2px 7px;
+    margin: 0;
+    border: 0;
+    background: none;
+    color: #64748b;
+    font-family: inherit;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.1;
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.15s ease;
+  }
+
+  .sft-bottomnav__item:hover,
+  .sft-bottomnav__item:focus-visible {
+    color: #0f172a;
+    text-decoration: none;
+  }
+
+  .sft-bottomnav__item:focus-visible {
+    outline: 2px solid #dc2626;
+    outline-offset: -3px;
+    border-radius: 6px;
+  }
+
+  .sft-bottomnav__item:active {
+    background: #f8fafc;
+  }
+
+  .sft-bottomnav__item.is-active {
+    color: #dc2626;
+  }
+
+  .sft-bottomnav__icon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+  }
+
+  .sft-bottomnav__svg {
+    width: 23px;
+    height: 23px;
+  }
+
+  .sft-bottomnav__item.is-active .sft-bottomnav__svg {
+    stroke-width: 2;
+  }
+
+  .sft-bottomnav__label {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Cart badge */
+  .sft-bottomnav__badge {
+    position: absolute;
+    top: -5px;
+    right: -8px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #dc2626;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 17px;
+    text-align: center;
+    box-shadow: 0 0 0 2px #ffffff;
+  }
+
+  .sft-bottomnav__badge.is-empty {
+    display: none;
+  }
+
+  /* The drawer tab reflects the drawer's state. */
+  .sft-bottomnav__item--categories[aria-expanded="true"] {
+    color: #dc2626;
+  }
+}
+
+/* Tablets: full-bleed bar, but the tap targets stay hand-sized and centred
+   instead of stretching to 160px+ cells. */
+@media (min-width: 600px) and (max-width: 1024px) {
+  .sft-bottomnav {
+    grid-template-columns: repeat(5, minmax(0, 108px));
+    justify-content: center;
+    column-gap: 10px;
+  }
+}
+
+/* Narrow phones: labels stay legible without wrapping. */
+@media (max-width: 359px) {
+  .sft-bottomnav__item {
+    font-size: 9.5px;
+  }
+
+  .sft-bottomnav__svg {
+    width: 21px;
+    height: 21px;
+  }
+}
+
+/* Landscape phones have very little height — drop the labels, keep the icons. */
+@media (max-width: 1024px) and (max-height: 460px) and (orientation: landscape) {
+  :root {
+    --sft-bottomnav-h: 46px;
+  }
+
+  .sft-bottomnav__label {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sft-header-sticky {
+    transition: none;
+  }
+
+  .sft-bottomnav__item {
+    transition: none;
+  }
+}
+
+@media print {
+  .sft-bottomnav,
+  .sft-quicklinks {
+    display: none !important;
+  }
+
+  body {
+    padding-bottom: 0 !important;
+  }
+}
+
+/* ==========================================================================
+   Slide-down category menu (replaces the left drawer)
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .sft-header-sticky {
+    position: relative;
+    z-index: 2;
+  }
+
+  #offcanvas-menu {
+    display: block;
+    position: fixed;
+    top: var(--sft-header-h, 120px);
+    left: 0;
+    right: auto;
+    width: min(78vw, 320px);
+    max-width: 320px;
+    height: calc(100vh - var(--sft-header-h, 120px));
+    height: calc(100dvh - var(--sft-header-h, 120px));
+    max-height: none;
+    padding: 0;
+    background: #ffffff;
+    box-shadow: 6px 0 26px rgba(15, 23, 42, 0.16);
+    border-top: 1px solid #eef0f3;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    z-index: 1;
+    /* translateX only — no width/left animation, so the drawer is composited
+       and holds 60fps on low-end Androids. */
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+  }
+
+  #offcanvas-menu.is-active {
+    transform: translateX(0);
+  }
+
+  /* Dim only what is below the header — the bar stays fully legible, and the
+     open panel is not tinted by its own backdrop. */
+  .menu-overlay {
+    top: var(--sft-header-h, 168px);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    height: auto;
+    z-index: 0;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background-color: rgba(15, 23, 42, 0.4);
+  }
+
+  /* The hamburger already becomes an X in the header, so the panel's own
+     title row is a duplicate close affordance taking vertical space. */
+  .offcanvas-header {
+    display: none !important;
+  }
+
+  #offcanvas-menu .offcanvas-body {
+    padding: 0;
+  }
+
+  #offcanvas-menu .sft-header-nav-inner,
+  #offcanvas-menu .sft-menu-container,
+  #offcanvas-menu .sft-header-nav-list {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  /* ---- Rows ---- */
+
+  #offcanvas-menu .menu-item {
+    position: relative;
+    display: block;
+    margin: 0;
+    border-bottom: 1px solid #f1f4f8;
+  }
+
+  /* style.css sets `padding: 14px 0 !important` on these links, so the
+     override has to carry !important too — specificity alone loses. */
+  #offcanvas-menu .menu-item a {
+    display: block !important;
+    padding: 14px 52px 14px 18px !important;
+    min-height: 48px;
+    font-size: 14.5px !important;
+    line-height: 1.4;
+    color: #1f2937;
+    border-bottom: 0 !important;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Row separators live on the item, not the link, so nested lists do not
+     draw a second line under their parent. */
+  #offcanvas-menu .menu-item-has-children > a {
+    padding-right: 52px !important;
+  }
+
+  #offcanvas-menu .menu-item a:active {
+    background: #f8fafc;
+  }
+
+  /* Open parent is highlighted, matching the reference. */
+  #offcanvas-menu .menu-item.sub-menu-open > a {
+    color: #dc2626;
+    font-weight: 600;
+  }
+
+  /* ---- Plus / minus toggle ---- */
+
+  #offcanvas-menu .dropdown-toggle-btn {
+    display: flex !important;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 52px;
+    height: 48px;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    z-index: 5;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #offcanvas-menu .dropdown-toggle-btn::before,
+  #offcanvas-menu .dropdown-toggle-btn::after {
+    content: "";
+    position: absolute;
+    background: #94a3b8;
+    border: 0;
+    border-radius: 1px;
+    transform: none;
+    transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+  }
+
+  /* Horizontal bar — always visible. */
+  #offcanvas-menu .dropdown-toggle-btn::before {
+    width: 13px;
+    height: 1.6px;
+  }
+
+  /* Vertical bar — hidden when open, turning the plus into a minus. */
+  #offcanvas-menu .dropdown-toggle-btn::after {
+    width: 1.6px;
+    height: 13px;
+  }
+
+  #offcanvas-menu .menu-item.sub-menu-open > .dropdown-toggle-btn::after {
+    opacity: 0;
+    transform: rotate(90deg);
+  }
+
+  #offcanvas-menu .menu-item.sub-menu-open > .dropdown-toggle-btn::before {
+    background: #dc2626;
+  }
+
+  /* ---- Nested levels ---- */
+
+  #offcanvas-menu .sub-menu {
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fbfcfd !important;
+    border-left: 0 !important;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  #offcanvas-menu .menu-item.sub-menu-open > .sub-menu {
+    max-height: 1600px;
+  }
+
+  #offcanvas-menu .sub-menu .menu-item {
+    border-bottom: 1px solid #eef2f7;
+  }
+
+  #offcanvas-menu .sub-menu .menu-item:last-child {
+    border-bottom: 0;
+  }
+
+  #offcanvas-menu .sub-menu .menu-item a {
+    padding-left: 34px !important;
+    font-size: 14px !important;
+    color: #475569;
+  }
+
+  #offcanvas-menu .sub-menu .sub-menu .menu-item a {
+    padding-left: 50px !important;
+    font-size: 13.5px !important;
+  }
+
+  /* ---- Deals button ---- */
+
+  #offcanvas-menu .sft-header-deal {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 16px 18px 24px;
+    padding: 13px;
+    border-radius: 6px;
+    background: #dc2626;
+    color: #ffffff !important;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #offcanvas-menu,
+  #offcanvas-menu .sub-menu,
+  #offcanvas-menu .dropdown-toggle-btn::before,
+  #offcanvas-menu .dropdown-toggle-btn::after {
+    transition: none;
+  }
+}

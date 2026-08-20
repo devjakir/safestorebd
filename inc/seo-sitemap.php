@@ -206,12 +206,11 @@ function safestore_seo_robots_txt( $output, $public ) {
 		return $output;
 	}
 
-	$output .= "\n# Crawl-spam: /?items/{id} and /?items/{id}/m\n";
-	$output .= "User-agent: *\n";
-	$output .= "Disallow: /*?items/\n";
-	$output .= "Disallow: /*?items%2F\n";
-	$output .= "Disallow: /*?*items/\n";
-	$output .= "Disallow: /*?*items%2F\n";
+	// Robots.txt Disallow rules for /*?items/ removed (2026-08-20).
+	// Blocking crawl prevented Googlebot from seeing the 410 responses,
+	// so the spam URLs could never drop out of the index (GSC validation
+	// kept failing). The 410 handler above is the real fix - crawling of
+	// these URLs must remain allowed until they fall out of the index.
 
 	return $output;
 }
