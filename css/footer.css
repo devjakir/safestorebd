@@ -1,0 +1,656 @@
+/* ==========================================================================
+   SafeStore site footer
+   ========================================================================== */
+
+.sfx-footer {
+  --sfx-bg: #081621;
+  --sfx-bg-alt: #0c1e2c;
+  --sfx-rule: rgba(255, 255, 255, 0.09);
+  --sfx-text: rgba(255, 255, 255, 0.66);
+  --sfx-text-strong: #ffffff;
+  --sfx-accent: #dc2626;
+  --sfx-accent-soft: #f87171;
+  --sfx-gutter: 15px;
+
+  background: var(--sfx-bg);
+  color: var(--sfx-text);
+  padding: 50px 0 0;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  /* Below the fold on every page — skip paint until it is needed. */
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 620px;
+}
+
+.sfx-footer__inner {
+  width: min(1440px, 100%);
+  margin: 0 auto;
+  padding: 0 26px;
+}
+
+.sfx-footer__main {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  padding: 0 0 30px;
+}
+
+/* 25 / 50 / 25, matching Star Tech's proportions. min-width:0 keeps long
+   emails and addresses from forcing the flex row wider than the viewport. */
+.sfx-block {
+  min-width: 0;
+}
+
+.sfx-block--support {
+  flex: 1 1 25%;
+  padding-right: 50px;
+}
+
+.sfx-block--links {
+  flex: 1 1 50%;
+  display: flex;
+  gap: 30px;
+}
+
+.sfx-block--org {
+  flex: 1 1 25%;
+  padding-left: 50px;
+}
+
+.sfx-linkcol {
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+/* ---------- Headings ---------- */
+
+.sfx-heading {
+  margin: 0 0 30px;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--sfx-text-strong);
+}
+
+/* ---------- Support column: icon + two-line action blocks ---------- */
+
+.sfx-bigbtn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  color: var(--sfx-text);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sfx-bigbtn:last-child {
+  margin-bottom: 0;
+}
+
+/* The hours block is information, not an action. */
+.sfx-bigbtn--static {
+  cursor: default;
+}
+
+.sfx-bigbtn__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--sfx-accent-soft);
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.sfx-bigbtn__icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.sfx-bigbtn__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.sfx-bigbtn__eyebrow {
+  font-size: 12px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.sfx-bigbtn__value {
+  font-size: 15px;
+  line-height: 1.35;
+  color: var(--sfx-text-strong);
+  overflow-wrap: anywhere;
+}
+
+.sfx-bigbtn:hover .sfx-bigbtn__value,
+.sfx-bigbtn:focus-visible .sfx-bigbtn__value {
+  color: var(--sfx-accent-soft);
+}
+
+.sfx-bigbtn:hover .sfx-bigbtn__icon,
+.sfx-bigbtn:focus-visible .sfx-bigbtn__icon {
+  background: var(--sfx-accent);
+  color: #ffffff;
+}
+
+.sfx-bigbtn:focus-visible {
+  outline: 2px solid var(--sfx-accent-soft);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ---------- Link lists ---------- */
+
+.sfx-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sfx-links li {
+  margin: 0 0 14px;
+}
+
+.sfx-links li:last-child {
+  margin-bottom: 0;
+}
+
+.sfx-links a {
+  color: var(--sfx-text);
+  text-decoration: none;
+  font-size: 14px;
+  line-height: 1.5;
+  transition: color 0.15s ease;
+  overflow-wrap: anywhere;
+}
+
+.sfx-links a:hover,
+.sfx-links a:focus-visible {
+  color: var(--sfx-accent-soft);
+  text-decoration: none;
+}
+
+/* ---------- Stay Connected column ---------- */
+
+.sfx-org__logo {
+  display: inline-block;
+  margin: 0 0 14px;
+}
+
+.sfx-org__logo img {
+  display: block;
+  width: auto;
+  height: 38px;
+  max-width: 170px;
+  /* The wordmark is dark-ink artwork built for a white page. Inverting keeps
+     it legible on navy without shipping a second asset. Swap this for a real
+     light variant when one exists. */
+  filter: brightness(0) invert(1);
+  opacity: 0.94;
+}
+
+.sfx-org__desc {
+  margin: 0 0 16px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--sfx-text);
+}
+
+.sfx-org__line {
+  margin: 0 0 10px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.sfx-org__line strong {
+  display: block;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+.sfx-org__line a {
+  color: var(--sfx-text-strong);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.sfx-org__line a:hover,
+.sfx-org__line a:focus-visible {
+  color: var(--sfx-accent-soft);
+}
+
+/* ---------- Socials ---------- */
+
+.sfx-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 18px 0 0;
+}
+
+.sfx-social {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.sfx-social svg {
+  width: 17px;
+  height: 17px;
+}
+
+.sfx-social:hover,
+.sfx-social:focus-visible {
+  background: var(--sfx-accent);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.sfx-social:focus-visible {
+  outline: 2px solid var(--sfx-accent-soft);
+  outline-offset: 2px;
+}
+
+/* ---------- Payment + sourcing ---------- */
+
+.sfx-meta {
+  margin-top: 22px;
+}
+
+.sfx-meta__label {
+  display: block;
+  margin: 0 0 8px;
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.sfx-pills {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sfx-pills:last-child {
+  margin-bottom: 0;
+}
+
+.sfx-pay {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.sfx-pay svg {
+  display: block;
+  height: 20px;
+  width: auto;
+  max-width: 100%;
+}
+
+.sfx-cert {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border: 1px solid var(--sfx-rule);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 12.5px;
+  color: var(--sfx-text);
+}
+
+/* ---------- Sub-footer bar ---------- */
+
+.sfx-subfooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+  padding: 18px 0 26px;
+  border-top: 1px solid var(--sfx-rule);
+  font-size: 13px;
+}
+
+.sfx-copy {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.sfx-legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+}
+
+.sfx-legal a {
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.sfx-legal a:hover,
+.sfx-legal a:focus-visible {
+  color: var(--sfx-accent-soft);
+}
+
+/* The floating WhatsApp button occupies the bottom-right ~78px of the
+   viewport at the same height as this row. Keep the legal links out from
+   under it rather than letting the widget sit on top of them. */
+@media (min-width: 1025px) {
+  .sfx-subfooter {
+    padding-right: 84px;
+  }
+}
+
+/* ---------- Accordion toggle (mobile only) ---------- */
+
+.sfx-acc__btn {
+  display: none;
+}
+
+/* ==========================================================================
+   Tablet — 3 blocks become 2 rows, gutters tighten
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .sfx-footer {
+    padding-top: 40px;
+  }
+
+  .sfx-footer__inner {
+    padding: 0 20px;
+  }
+
+  .sfx-footer__main {
+    flex-wrap: wrap;
+    gap: 34px 30px;
+  }
+
+  .sfx-block--support {
+    flex: 1 1 46%;
+    padding-right: 0;
+  }
+
+  .sfx-block--org {
+    flex: 1 1 46%;
+    padding-left: 0;
+    order: 3;
+  }
+
+  .sfx-block--links {
+    flex: 1 1 100%;
+    order: 4;
+    gap: 30px;
+  }
+
+  .sfx-heading {
+    margin-bottom: 20px;
+    letter-spacing: 3px;
+  }
+
+  /* Tablets are touch devices — a 21px text link is not a tap target. */
+  .sfx-legal a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+  }
+
+  .sfx-links li {
+    margin: 0;
+  }
+
+  .sfx-links a {
+    display: block;
+    padding: 9px 0;
+  }
+}
+
+/* ==========================================================================
+   Mobile — single column, collapsible link lists
+   ========================================================================== */
+
+@media (max-width: 767px) {
+  .sfx-footer {
+    padding-top: 30px;
+    font-size: 14px;
+  }
+
+  .sfx-footer__inner {
+    padding: 0 16px;
+  }
+
+  .sfx-footer__main {
+    display: block;
+    padding-bottom: 8px;
+  }
+
+  .sfx-block {
+    margin-bottom: 26px;
+  }
+
+  .sfx-block--links {
+    display: block;
+    margin-bottom: 0;
+  }
+
+  .sfx-block--support,
+  .sfx-block--org {
+    flex: none;
+    padding: 0;
+  }
+
+  /* Link groups collapse behind a full-width tap target so the footer stays
+     short. Contact details are never hidden behind a tap. */
+  .sfx-linkcol {
+    border-top: 1px solid var(--sfx-rule);
+  }
+
+  /* Progressive enhancement: the plain heading + open list is the no-JS
+     state. The script adds .is-acc once it has taken over, and only then
+     does the heading swap for a tap target. */
+  .sfx-linkcol.is-acc .sfx-heading {
+    display: none;
+  }
+
+  .sfx-linkcol.is-acc .sfx-acc__btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    min-height: 52px;
+    margin: 0;
+    padding: 14px 2px;
+    border: 0;
+    background: none;
+    color: var(--sfx-text-strong);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-align: left;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .sfx-linkcol.is-acc .sfx-acc__btn:focus-visible {
+    outline: 2px solid var(--sfx-accent-soft);
+    outline-offset: -2px;
+  }
+
+  .sfx-acc__chevron {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    color: rgba(255, 255, 255, 0.55);
+    transition: transform 0.22s ease;
+  }
+
+  .sfx-linkcol.is-acc .sfx-acc__btn[aria-expanded="true"] .sfx-acc__chevron {
+    transform: rotate(180deg);
+  }
+
+  /* Hidden via the hidden attribute, so it degrades correctly without JS:
+     the script removes `hidden` and takes over on first run. */
+  .sfx-linkcol .sfx-links {
+    padding: 0 2px 18px;
+  }
+
+  .sfx-links li {
+    margin: 0;
+  }
+
+  .sfx-links a {
+    display: block;
+    padding: 11px 0;
+    font-size: 14px;
+  }
+
+  .sfx-bigbtn {
+    margin-bottom: 16px;
+    padding: 2px 0;
+  }
+
+  .sfx-socials {
+    gap: 10px;
+  }
+
+  .sfx-social {
+    width: 40px;
+    height: 40px;
+  }
+
+  .sfx-subfooter {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 18px 0 22px;
+    font-size: 12.5px;
+  }
+
+  .sfx-legal {
+    gap: 6px 16px;
+  }
+
+  .sfx-legal a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+  }
+}
+
+/* Very narrow phones (320px): nothing may push the layout sideways. */
+@media (max-width: 359px) {
+  .sfx-footer__inner {
+    padding: 0 12px;
+  }
+
+  .sfx-heading,
+  .sfx-acc__btn {
+    letter-spacing: 2px;
+    font-size: 13px;
+  }
+
+  .sfx-bigbtn__icon {
+    width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+  }
+
+  .sfx-bigbtn__value {
+    font-size: 14px;
+  }
+
+  .sfx-social {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Clearance for the fixed chrome.
+
+   body already carries padding-bottom for the sticky bottom bar (see
+   mobile-nav.css). The WhatsApp button floats higher than that, so the
+   sub-footer needs its own room or the copyright sits under the widget.
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1024px) {
+  .sfx-subfooter {
+    padding-bottom: 104px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sfx-social,
+  .sfx-bigbtn__icon,
+  .sfx-acc__chevron,
+  .sfx-links a,
+  .sfx-legal a {
+    transition: none;
+  }
+
+  .sfx-social:hover {
+    transform: none;
+  }
+}
+
+@media print {
+  .sfx-footer {
+    background: #ffffff;
+    color: #000000;
+    padding: 12px 0 0;
+    content-visibility: visible;
+  }
+
+  .sfx-heading,
+  .sfx-bigbtn__value,
+  .sfx-org__line a {
+    color: #000000;
+  }
+
+  .sfx-socials,
+  .sfx-acc__btn {
+    display: none !important;
+  }
+
+  .sfx-org__logo img {
+    filter: none;
+  }
+
+  .sfx-subfooter {
+    padding-bottom: 0;
+  }
+}
