@@ -6,6 +6,12 @@
  * online/offline status based on business hours, and an admin
  * settings page (Settings → WhatsApp Chat).
  *
+ * Also the single source of truth for every WhatsApp number the theme
+ * advertises. Templates must never hardcode a wa.me URL — call
+ * safestore_wa_link() / safestore_wa_display() / safestore_wa_lines()
+ * instead, so a blocked number is a one-field fix in the admin rather
+ * than a hunt through a dozen files.
+ *
  * Self-hosted: no third-party scripts, no external requests.
  * Assets are tiny and the JS is loaded deferred, so the widget has
  * no measurable impact on Core Web Vitals.
@@ -18,6 +24,14 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Settings schema version. Bumped when the stored option shape changes so
+ * safestore_wa_maybe_upgrade() can migrate an existing site exactly once.
+ */
+if (!defined('SAFESTORE_WA_SCHEMA')) {
+    define('SAFESTORE_WA_SCHEMA', 2);
+}
+
+/**
  * Default settings.
  *
  * @return array<string, mixed>
@@ -25,7 +39,12 @@ if (!defined('ABSPATH')) {
 function safestore_wa_defaults() {
     return array(
         'enabled'      => 1,
-        'number'       => '8801811892291',
+        'number'       => '8801761699627',
+        'label'        => __('Sales & Orders', 'safestore-minimal'),
+        'number_2'     => '8801811892291',
+        'label_2'      => __('Second line', 'safestore-minimal'),
+        'dual'         => 1,
+        'dual_note'    => __('Both lines are staffed. If one does not reply, use the other.', 'safestore-minimal'),
         'prefill'      => __("Hello SafeStoreBD! I'm visiting your website and would like some help with a product.", 'safestore-minimal'),
         'title'        => __('SafeStoreBD', 'safestore-minimal'),
         'subtitle'     => __('Typically replies within minutes', 'safestore-minimal'),
@@ -39,6 +58,7 @@ function safestore_wa_defaults() {
         'mode'         => 'panel',
         'status_mode'  => 'always', // 'always' = always show Online; 'hours' = follow business hours.
         'pdp_number'   => 1,
+        'schema'       => SAFESTORE_WA_SCHEMA,
     );
 }
 
@@ -56,6 +76,51 @@ function safestore_wa_get_settings() {
 }
 
 /**
+ * One-time migration from the single-number schema (v1) to the two-line
+ * schema (v2).
+ *
+ * A site that was already running stored one number. That number is kept —
+ * demoted to the second line — and the new primary takes its place, so no
+ * number the shop has already advertised silently disappears. Runs once;
+ * afterwards both numbers are edited from Settings → WhatsApp Chat.
+ */
+function safestore_wa_maybe_upgrade() {
+    $saved = get_option('safestore_whatsapp_chat', null);
+    if (!is_array($saved) || array() === $saved) {
+        return; // Nothing stored yet — the defaults already carry both lines.
+    }
+
+    if (isset($saved['schema']) && (int) $saved['schema'] >= SAFESTORE_WA_SCHEMA) {
+        return;
+    }
+
+    $d       = safestore_wa_defaults();
+    $current = safestore_wa_clean_number($saved['number'] ?? '');
+    $backup  = safestore_wa_clean_number($saved['number_2'] ?? '');
+
+    if ('' === $backup) {
+        // Keep whatever the site was already advertising as the second line.
+        $saved['number_2'] = ('' !== $current && $current !== $d['number'])
+            ? $current
+            : $d['number_2'];
+    }
+
+    if ('' === $current || $current === $saved['number_2']) {
+        $saved['number'] = $d['number'];
+    }
+
+    foreach (array('label', 'label_2', 'dual', 'dual_note') as $key) {
+        if (!isset($saved[$key])) {
+            $saved[$key] = $d[$key];
+        }
+    }
+
+    $saved['schema'] = SAFESTORE_WA_SCHEMA;
+    update_option('safestore_whatsapp_chat', $saved);
+}
+add_action('admin_init', 'safestore_wa_maybe_upgrade', 5);
+
+/**
  * Digits-only WhatsApp number in international format.
  *
  * @param string $raw Raw number.
@@ -63,6 +128,139 @@ function safestore_wa_get_settings() {
  */
 function safestore_wa_clean_number($raw) {
     return preg_replace('/[^0-9]/', '', (string) $raw);
+}
+
+/**
+ * Human-readable form of a digits-only number, e.g. "+880 1761-699627".
+ *
+ * @param string $digits Digits-only number.
+ * @return string
+ */
+function safestore_wa_format_number($digits) {
+    $digits = safestore_wa_clean_number($digits);
+    if ('' === $digits) {
+        return '';
+    }
+
+    // Bangladesh mobile: 880 + 10 digits, grouped to match the theme's style.
+    if (13 === strlen($digits) && 0 === strpos($digits, '880')) {
+        return '+880 ' . substr($digits, 3, 4) . '-' . substr($digits, 7);
+    }
+
+    return '+' . $digits;
+}
+
+/**
+ * Every WhatsApp line the shop currently advertises, primary first.
+ *
+ * Single source of truth — filter `safestore_wa_lines` to change them.
+ * Each entry: slot, number (digits), display, label.
+ *
+ * @return array<int, array<string, string>>
+ */
+function safestore_wa_lines() {
+    $o     = safestore_wa_get_settings();
+    $lines = array();
+
+    $primary = safestore_wa_clean_number($o['number']);
+    if ('' !== $primary) {
+        $lines[] = array(
+            'slot'    => 'primary',
+            'number'  => $primary,
+            'display' => safestore_wa_format_number($primary),
+            'label'   => (string) $o['label'],
+        );
+    }
+
+    if (!empty($o['dual'])) {
+        $backup = safestore_wa_clean_number($o['number_2']);
+        if ('' !== $backup && $backup !== $primary) {
+            $lines[] = array(
+                'slot'    => 'backup',
+                'number'  => $backup,
+                'display' => safestore_wa_format_number($backup),
+                'label'   => (string) $o['label_2'],
+            );
+        }
+    }
+
+    /**
+     * Filter the advertised WhatsApp lines.
+     *
+     * @param array<int, array<string, string>> $lines Ordered lines, primary first.
+     */
+    return apply_filters('safestore_wa_lines', $lines);
+}
+
+/**
+ * Resolve one line by slot, falling back to the first available line so the
+ * site never renders a dead link when only one number is configured.
+ *
+ * @param string $slot 'primary' or 'backup'.
+ * @return array<string, string>|null
+ */
+function safestore_wa_line($slot = 'primary') {
+    $lines = safestore_wa_lines();
+    if (empty($lines)) {
+        return null;
+    }
+    foreach ($lines as $line) {
+        if ($line['slot'] === $slot) {
+            return $line;
+        }
+    }
+    return $lines[0];
+}
+
+/**
+ * Digits-only number for a slot.
+ *
+ * @param string $slot 'primary' or 'backup'.
+ * @return string
+ */
+function safestore_wa_number($slot = 'primary') {
+    $line = safestore_wa_line($slot);
+    return $line ? $line['number'] : '';
+}
+
+/**
+ * Display number for a slot, e.g. "+880 1761-699627".
+ *
+ * @param string $slot 'primary' or 'backup'.
+ * @return string
+ */
+function safestore_wa_display($slot = 'primary') {
+    $line = safestore_wa_line($slot);
+    return $line ? $line['display'] : '';
+}
+
+/**
+ * wa.me deep link for a slot.
+ *
+ * @param string $slot 'primary' or 'backup'.
+ * @param string $text Optional pre-filled message. Empty = no prefill.
+ * @return string
+ */
+function safestore_wa_link($slot = 'primary', $text = '') {
+    $number = safestore_wa_number($slot);
+    if ('' === $number) {
+        return '';
+    }
+    $url = 'https://wa.me/' . $number;
+    if ('' !== (string) $text) {
+        $url .= '?text=' . rawurlencode((string) $text);
+    }
+    return $url;
+}
+
+/**
+ * The configured pre-filled message.
+ *
+ * @return string
+ */
+function safestore_wa_prefill() {
+    $o = safestore_wa_get_settings();
+    return (string) $o['prefill'];
 }
 
 /**
@@ -75,7 +273,7 @@ function safestore_wa_should_render() {
         return false;
     }
     $o = safestore_wa_get_settings();
-    if (empty($o['enabled']) || safestore_wa_clean_number($o['number']) === '') {
+    if (empty($o['enabled']) || array() === safestore_wa_lines()) {
         return false;
     }
     /**
@@ -87,7 +285,7 @@ function safestore_wa_should_render() {
 }
 
 /**
- * Feed the saved number into the existing PDP contact-row filter
+ * Feed the primary number into the existing PDP contact-row filter
  * (only when no other code has provided one).
  */
 add_filter('safestore_minimal_whatsapp_e164', function ($number) {
@@ -98,7 +296,7 @@ add_filter('safestore_minimal_whatsapp_e164', function ($number) {
     if (empty($o['pdp_number'])) {
         return $number;
     }
-    return safestore_wa_clean_number($o['number']);
+    return safestore_wa_number('primary');
 });
 
 /**
@@ -153,11 +351,15 @@ function safestore_wa_icon_svg($class) {
  * "WhatsApp" text label wherever the theme links out to wa.me.
  *
  * @param string $href       WhatsApp deep link (wa.me URL).
- * @param string $phone      Display phone number, e.g. "+880 1811-892291".
+ * @param string $phone      Display phone number, e.g. "+880 1761-699627".
  * @param string $class      Extra classes for the anchor (space-separated).
  * @return string
  */
 function safestore_wa_cta_link($href, $phone, $class = '') {
+    if ('' === (string) $href) {
+        return '';
+    }
+
     $label = sprintf(
         /* translators: %s: phone number */
         __('Chat on WhatsApp: %s', 'safestore-minimal'),
@@ -182,10 +384,12 @@ function safestore_wa_render_widget() {
         return;
     }
 
-    $o      = safestore_wa_get_settings();
-    $number = safestore_wa_clean_number($o['number']);
-    $link   = 'https://wa.me/' . $number . '?text=' . rawurlencode((string) $o['prefill']);
-    $mode   = ($o['mode'] === 'direct') ? 'direct' : 'panel';
+    $o       = safestore_wa_get_settings();
+    $lines   = safestore_wa_lines();
+    $prefill = (string) $o['prefill'];
+    $link    = safestore_wa_link('primary', $prefill);
+    $mode    = ($o['mode'] === 'direct') ? 'direct' : 'panel';
+    $multi   = (count($lines) > 1);
 
     $timezone = function_exists('wp_timezone_string') ? wp_timezone_string() : '';
     if ('' === $timezone || 'UTC' === $timezone || '+00:00' === $timezone) {
@@ -237,11 +441,34 @@ function safestore_wa_render_widget() {
                 </p>
                 <p class="sft-wa__offline-note" hidden><?php echo esc_html($o['offline_note']); ?></p>
             </div>
-            <div class="sft-wa__footer">
-                <a class="sft-wa__start" href="<?php echo esc_url($link); ?>" target="_blank" rel="noopener noreferrer">
-                    <?php echo safestore_wa_icon_svg('sft-wa__start-icon'); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-                    <?php esc_html_e('Start Chat', 'safestore-minimal'); ?>
-                </a>
+            <div class="sft-wa__footer<?php echo $multi ? ' sft-wa__footer--multi' : ''; ?>">
+                <?php if ($multi) : ?>
+                    <ul class="sft-wa__lines">
+                        <?php foreach ($lines as $line) : ?>
+                            <li>
+                                <a class="sft-wa__start sft-wa__start--<?php echo esc_attr($line['slot']); ?>"
+                                    href="<?php echo esc_url(safestore_wa_link($line['slot'], $prefill)); ?>"
+                                    target="_blank" rel="noopener noreferrer">
+                                    <?php echo safestore_wa_icon_svg('sft-wa__start-icon'); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+                                    <span class="sft-wa__start-text">
+                                        <?php if ('' !== $line['label']) : ?>
+                                            <span class="sft-wa__start-label"><?php echo esc_html($line['label']); ?></span>
+                                        <?php endif; ?>
+                                        <span class="sft-wa__start-num"><?php echo esc_html($line['display']); ?></span>
+                                    </span>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                    <?php if ('' !== trim((string) $o['dual_note'])) : ?>
+                        <p class="sft-wa__alt-note"><?php echo esc_html($o['dual_note']); ?></p>
+                    <?php endif; ?>
+                <?php else : ?>
+                    <a class="sft-wa__start" href="<?php echo esc_url($link); ?>" target="_blank" rel="noopener noreferrer">
+                        <?php echo safestore_wa_icon_svg('sft-wa__start-icon'); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+                        <?php esc_html_e('Start Chat', 'safestore-minimal'); ?>
+                    </a>
+                <?php endif; ?>
             </div>
         </section>
         <?php endif; ?>
@@ -294,9 +521,23 @@ function safestore_wa_sanitize_settings($input) {
     $out = array();
     $out['enabled']    = empty($input['enabled']) ? 0 : 1;
     $out['pdp_number'] = empty($input['pdp_number']) ? 0 : 1;
+    $out['dual']       = empty($input['dual']) ? 0 : 1;
     $out['number']     = safestore_wa_clean_number($input['number'] ?? $d['number']);
+    $out['number_2']   = safestore_wa_clean_number($input['number_2'] ?? '');
 
-    foreach (array('prefill', 'title', 'subtitle', 'welcome', 'hours_text', 'offline_note') as $key) {
+    // A second line identical to the first is not a fallback — drop it.
+    if ('' !== $out['number_2'] && $out['number_2'] === $out['number']) {
+        $out['number_2'] = '';
+    }
+
+    // Never leave the site with no reachable line: if the primary field was
+    // cleared but a second number exists, promote it.
+    if ('' === $out['number'] && '' !== $out['number_2']) {
+        $out['number']   = $out['number_2'];
+        $out['number_2'] = '';
+    }
+
+    foreach (array('prefill', 'title', 'subtitle', 'welcome', 'hours_text', 'offline_note', 'label', 'label_2', 'dual_note') as $key) {
         $out[$key] = isset($input[$key]) ? sanitize_text_field((string) $input[$key]) : $d[$key];
     }
 
@@ -321,6 +562,10 @@ function safestore_wa_sanitize_settings($input) {
             }
         }
     }
+
+    // Saving is an explicit choice — record the schema so the one-time
+    // migration never runs again and overwrites it.
+    $out['schema'] = SAFESTORE_WA_SCHEMA;
 
     return $out;
 }
@@ -360,6 +605,7 @@ function safestore_wa_settings_page() {
     <div class="wrap">
         <h1><?php esc_html_e('WhatsApp Chat', 'safestore-minimal'); ?></h1>
         <p><?php esc_html_e('Floating WhatsApp chat button shown on every page of the site. Online/offline status follows the business hours below, using the site timezone.', 'safestore-minimal'); ?></p>
+        <p><strong><?php esc_html_e('These numbers are used everywhere on the site.', 'safestore-minimal'); ?></strong> <?php esc_html_e('The footer, the home support bar, product pages and every policy page read from this screen. If a number is blocked, change it here once and the whole site follows.', 'safestore-minimal'); ?></p>
         <form method="post" action="options.php">
             <?php settings_fields('safestore_whatsapp_chat'); ?>
             <table class="form-table" role="presentation">
@@ -368,11 +614,60 @@ function safestore_wa_settings_page() {
                     <td><label><input type="checkbox" name="safestore_whatsapp_chat[enabled]" value="1" <?php checked(!empty($o['enabled'])); ?>> <?php esc_html_e('Show the floating WhatsApp button on the site', 'safestore-minimal'); ?></label></td>
                 </tr>
                 <tr>
-                    <th scope="row"><label for="sft-wa-number"><?php esc_html_e('WhatsApp number', 'safestore-minimal'); ?></label></th>
+                    <th scope="row"><label for="sft-wa-number"><?php esc_html_e('Primary WhatsApp number', 'safestore-minimal'); ?></label></th>
                     <td>
-                        <input id="sft-wa-number" type="text" class="regular-text" name="safestore_whatsapp_chat[number]" value="<?php echo esc_attr($o['number']); ?>" placeholder="8801811892291">
+                        <input id="sft-wa-number" type="text" class="regular-text" name="safestore_whatsapp_chat[number]" value="<?php echo esc_attr($o['number']); ?>" placeholder="8801761699627">
                         <p class="description"><?php esc_html_e('International format, digits only (country code + number, no + sign or spaces).', 'safestore-minimal'); ?></p>
+                        <p class="description">
+                            <?php
+                            printf(
+                                /* translators: %s: formatted phone number */
+                                esc_html__('Shown to visitors as: %s', 'safestore-minimal'),
+                                '<code>' . esc_html(safestore_wa_format_number($o['number'])) . '</code>'
+                            );
+                            ?>
+                        </p>
                     </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="sft-wa-label"><?php esc_html_e('Primary line label', 'safestore-minimal'); ?></label></th>
+                    <td>
+                        <input id="sft-wa-label" type="text" class="regular-text" name="safestore_whatsapp_chat[label]" value="<?php echo esc_attr($o['label']); ?>">
+                        <p class="description"><?php esc_html_e('Short caption above the number in the chat panel, e.g. “Sales & Orders”.', 'safestore-minimal'); ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="sft-wa-number-2"><?php esc_html_e('Second WhatsApp number', 'safestore-minimal'); ?></label></th>
+                    <td>
+                        <input id="sft-wa-number-2" type="text" class="regular-text" name="safestore_whatsapp_chat[number_2]" value="<?php echo esc_attr($o['number_2']); ?>" placeholder="8801811892291">
+                        <p class="description"><?php esc_html_e('Backup line, shown next to the primary number so a visitor always has a second way through if one account is unavailable. Leave blank to advertise a single number.', 'safestore-minimal'); ?></p>
+                        <?php if ('' !== safestore_wa_clean_number($o['number_2'])) : ?>
+                            <p class="description">
+                                <?php
+                                printf(
+                                    /* translators: %s: formatted phone number */
+                                    esc_html__('Shown to visitors as: %s', 'safestore-minimal'),
+                                    '<code>' . esc_html(safestore_wa_format_number($o['number_2'])) . '</code>'
+                                );
+                                ?>
+                            </p>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="sft-wa-label-2"><?php esc_html_e('Second line label', 'safestore-minimal'); ?></label></th>
+                    <td><input id="sft-wa-label-2" type="text" class="regular-text" name="safestore_whatsapp_chat[label_2]" value="<?php echo esc_attr($o['label_2']); ?>"></td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php esc_html_e('Show both lines', 'safestore-minimal'); ?></th>
+                    <td>
+                        <label><input type="checkbox" name="safestore_whatsapp_chat[dual]" value="1" <?php checked(!empty($o['dual'])); ?>> <?php esc_html_e('Offer both numbers in the chat panel, the footer and the home support bar', 'safestore-minimal'); ?></label>
+                        <p class="description"><?php esc_html_e('Untick to advertise the primary number only. The second number stays saved, so you can bring it back with one click.', 'safestore-minimal'); ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="sft-wa-dual-note"><?php esc_html_e('Note under the two buttons', 'safestore-minimal'); ?></label></th>
+                    <td><input id="sft-wa-dual-note" type="text" class="large-text" name="safestore_whatsapp_chat[dual_note]" value="<?php echo esc_attr($o['dual_note']); ?>"></td>
                 </tr>
                 <tr>
                     <th scope="row"><label for="sft-wa-prefill"><?php esc_html_e('Pre-filled message', 'safestore-minimal'); ?></label></th>
@@ -437,13 +732,14 @@ function safestore_wa_settings_page() {
                 <tr>
                     <th scope="row"><?php esc_html_e('Click behaviour', 'safestore-minimal'); ?></th>
                     <td>
-                        <label style="display:block; margin-bottom:6px;"><input type="radio" name="safestore_whatsapp_chat[mode]" value="panel" <?php checked($o['mode'] !== 'direct'); ?>> <?php esc_html_e('Open the chat panel (status, hours, welcome message, Start Chat button)', 'safestore-minimal'); ?></label>
+                        <label style="display:block; margin-bottom:6px;"><input type="radio" name="safestore_whatsapp_chat[mode]" value="panel" <?php checked($o['mode'] !== 'direct'); ?>> <?php esc_html_e('Open the chat panel (status, hours, welcome message, both numbers)', 'safestore-minimal'); ?></label>
                         <label><input type="radio" name="safestore_whatsapp_chat[mode]" value="direct" <?php checked($o['mode'] === 'direct'); ?>> <?php esc_html_e('Open WhatsApp directly on click', 'safestore-minimal'); ?></label>
+                        <p class="description"><?php esc_html_e('Direct mode can only open one number — the primary. Keep the chat panel if you want visitors to see both lines.', 'safestore-minimal'); ?></p>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row"><?php esc_html_e('Product pages', 'safestore-minimal'); ?></th>
-                    <td><label><input type="checkbox" name="safestore_whatsapp_chat[pdp_number]" value="1" <?php checked(!empty($o['pdp_number'])); ?>> <?php esc_html_e('Also use this number for the “Need help?” WhatsApp button on product pages', 'safestore-minimal'); ?></label></td>
+                    <td><label><input type="checkbox" name="safestore_whatsapp_chat[pdp_number]" value="1" <?php checked(!empty($o['pdp_number'])); ?>> <?php esc_html_e('Also use the primary number for the “Need help?” WhatsApp button on product pages', 'safestore-minimal'); ?></label></td>
                 </tr>
             </table>
             <?php submit_button(); ?>

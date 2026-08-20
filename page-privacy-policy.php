@@ -12,7 +12,8 @@ $terms_url    = home_url( '/terms-of-service/' );
 $returns_url  = home_url( '/return-refund-policy/' );
 $email        = 'contact@safestorebd.com';
 $privacy_mail = 'mailto:' . $email . '?subject=' . rawurlencode( 'Privacy request — SafeStoreBD' );
-$wa_href      = 'https://wa.me/8801811892291';
+$wa_href      = safestore_wa_link();
+$wa_phone     = safestore_wa_display();
 $phone        = '+880 1811-892291';
 $sections     = safestore_minimal_get_privacy_sections();
 $updated      = apply_filters( 'safestore_minimal_privacy_policy_updated', 'May 2026' );
@@ -73,7 +74,7 @@ while ( have_posts() ) :
 					<ul class="sft-about-contact-list">
 						<li><?php echo safestore_contact_email_links(); ?></li>
 						<li>
-							<?php echo safestore_wa_cta_link( $wa_href, $phone, 'sft-about-contact-wa' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+							<?php echo safestore_wa_cta_link( $wa_href, $wa_phone, 'sft-about-contact-wa' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 						</li>
 					</ul>
 					<a class="sft-about-btn sft-about-btn--primary sft-about-contact-shop" href="<?php echo esc_url( $privacy_mail ); ?>"><?php esc_html_e( 'Email us', 'safestore-minimal' ); ?></a>

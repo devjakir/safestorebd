@@ -13,7 +13,8 @@ $shop_url     = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permali
 $contact_url  = home_url( '/contact/' );
 $phone_href   = 'tel:+8801811892291';
 $phone        = '+880 1811-892291';
-$wa_href      = 'https://wa.me/8801811892291';
+$wa_href      = safestore_wa_link();
+$wa_phone     = safestore_wa_display();
 $email        = 'contact@safestorebd.com';
 
 while ( have_posts() ) :
@@ -71,7 +72,7 @@ while ( have_posts() ) :
 						<li><a href="<?php echo esc_url( $phone_href ); ?>"><?php echo esc_html( $phone ); ?></a></li>
 						<li><?php echo safestore_contact_email_links(); ?></li>
 						<li>
-							<?php echo safestore_wa_cta_link( $wa_href, $phone, 'sft-about-contact-wa' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+							<?php echo safestore_wa_cta_link( $wa_href, $wa_phone, 'sft-about-contact-wa' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 						</li>
 					</ul>
 					<a class="sft-about-btn sft-about-btn--primary sft-about-contact-shop" href="<?php echo esc_url( $contact_url ); ?>"><?php esc_html_e( 'Contact us', 'safestore-minimal' ); ?></a>

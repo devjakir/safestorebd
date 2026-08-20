@@ -9,7 +9,8 @@ get_header();
 
 $contact_url  = home_url( '/contact/' );
 $sitemap_url  = home_url( '/sitemap/' );
-$wa_href      = 'https://wa.me/8801811892291';
+$wa_href      = safestore_wa_link();
+$wa_phone     = safestore_wa_display();
 $phone        = '+880 1811-892291';
 $sections     = safestore_minimal_get_legal_sections();
 $documents    = safestore_minimal_get_legal_documents();
@@ -85,7 +86,7 @@ while ( have_posts() ) :
 					<ul class="sft-about-contact-list">
 						<li><?php echo safestore_contact_email_links(); // phpcs:ignore WordPress.Security.EscapeOutput ?></li>
 						<li>
-							<?php echo safestore_wa_cta_link( $wa_href, $phone, 'sft-about-contact-wa' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+							<?php echo safestore_wa_cta_link( $wa_href, $wa_phone, 'sft-about-contact-wa' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 						</li>
 					</ul>
 					<a class="sft-about-btn sft-about-btn--primary sft-about-contact-shop" href="<?php echo esc_url( $sitemap_url ); ?>"><?php esc_html_e( 'View sitemap', 'safestore-minimal' ); ?></a>

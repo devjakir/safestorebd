@@ -14,12 +14,21 @@ $support_items = array(
 		'detail' => __( 'Sat–Thu, 9am–8pm', 'safestore-minimal' ),
 		'href'   => 'tel:+8801811892291',
 	),
+	// The grid is a fixed four-column layout, so both WhatsApp lines share
+	// one cell: the primary is the link, the second line sits in the detail
+	// row. The floating widget offers both as separate buttons.
 	array(
 		'type'   => 'whatsapp',
 		'label'  => __( 'WhatsApp', 'safestore-minimal' ),
-		'value'  => '+880 1811-892291',
-		'detail' => __( 'Avg reply ~5 min', 'safestore-minimal' ),
-		'href'   => 'https://wa.me/8801811892291',
+		'value'  => safestore_wa_display( 'primary' ),
+		'detail' => '' !== safestore_wa_display( 'backup' ) && safestore_wa_display( 'backup' ) !== safestore_wa_display( 'primary' )
+			? sprintf(
+				/* translators: %s: second WhatsApp number */
+				__( 'Also on %s', 'safestore-minimal' ),
+				safestore_wa_display( 'backup' )
+			)
+			: __( 'Avg reply ~5 min', 'safestore-minimal' ),
+		'href'   => safestore_wa_link( 'primary' ),
 	),
 	array(
 		// Rendered via safestore_contact_emails_row() in the loop below — both

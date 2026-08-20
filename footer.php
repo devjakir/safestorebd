@@ -84,12 +84,16 @@
 						'value' => '+880 1811-892291',
 						'href'  => 'tel:+8801811892291',
 					) ); // phpcs:ignore WordPress.Security.EscapeOutput ?></li>
-					<li><?php echo safestore_contact_item( array(
-						'type'  => 'whatsapp',
-						'label' => __( 'WhatsApp', 'safestore-minimal' ),
-						'value' => '+880 1811-892291',
-						'href'  => 'https://wa.me/8801811892291',
-					) ); // phpcs:ignore WordPress.Security.EscapeOutput ?></li>
+					<?php foreach ( safestore_wa_lines() as $sft_wa_line ) : ?>
+						<li><?php echo safestore_contact_item( array(
+							'type'  => 'whatsapp',
+							'label' => 'backup' === $sft_wa_line['slot']
+								? __( 'WhatsApp (second line)', 'safestore-minimal' )
+								: __( 'WhatsApp', 'safestore-minimal' ),
+							'value' => $sft_wa_line['display'],
+							'href'  => safestore_wa_link( $sft_wa_line['slot'] ),
+						) ); // phpcs:ignore WordPress.Security.EscapeOutput ?></li>
+					<?php endforeach; ?>
 					<li><?php echo safestore_contact_emails_row( array(
 						'label' => __( 'Email', 'safestore-minimal' ),
 					) ); // phpcs:ignore WordPress.Security.EscapeOutput ?></li>
