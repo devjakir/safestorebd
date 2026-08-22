@@ -18,18 +18,11 @@
   'use strict';
 
   var MIN_WIDTH = 992;   // keep in sync with css/pdp-zoom.css
-  var TARGET_ZOOM = 2.15; // mid close-up — sharp flyout, readable select area
-  var MIN_ZOOM = 1.8;
-  var LENS_MAX_RATIO = 0.5; // select area ~half the photo, not a tiny crop
-
-  // The panel is sized to the product-details column so it lands flush with the
-  // layout instead of at an arbitrary width. FLYOUT_MIN is a *preferred* floor
-  // applied where there is room; FLYOUT_FLOOR is the hard cut-off below which
-  // zooming is skipped entirely rather than rendered clipped.
-  var FLYOUT_GAP = 24;      // fallback offset when the summary column is missing
-  var FLYOUT_MIN = 520;
+  var MEDIUM_ZOOM = 1.6; // inspect detail without blowing past source pixels
+  var MIN_ZOOM = 1.5;
+  var FLYOUT_GAP = 24;
   var FLYOUT_FLOOR = 320;
-  var VIEWPORT_MARGIN = 16; // never let the panel touch the window edge
+  var VIEWPORT_MARGIN = 16;
 
   var desktopQuery = window.matchMedia('(min-width: ' + MIN_WIDTH + 'px)');
   var pointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
@@ -210,45 +203,23 @@
     var fit = window.getComputedStyle(img).objectFit || 'fill';
     var painted = paintedRect(boxW, boxH, natural.w, natural.h, fit);
 
-    // Panel placement. Measured off the product-details column rather than
-    // hard-coded, so the panel spans exactly that section at any container
-    // width and stays aligned if the hero grid ratio ever changes.
     var mediaRect = media.getBoundingClientRect();
     var summaryRect = summary ? summary.getBoundingClientRect() : null;
 
     var left;
-    var width;
+    var maxPanelW;
 
-    // Guard against a stacked layout (summary below media), where matching the
-    // column would put the panel underneath the image.
     if (summaryRect && summaryRect.width > 1 && summaryRect.left > mediaRect.left) {
       left = summaryRect.left - mediaRect.left;
-      width = summaryRect.width;
+      maxPanelW = summaryRect.width;
     } else {
       left = mediaRect.width + FLYOUT_GAP;
-      width = Math.max(boxW, FLYOUT_MIN);
+      maxPanelW = boxW;
     }
 
-    // Grow to the preferred minimum, then hold the panel inside the window.
-    // Order matters: the window clamp has to win, or a narrow desktop gets a
-    // panel running off-screen.
     var room = document.documentElement.clientWidth - VIEWPORT_MARGIN - (mediaRect.left + left);
+    maxPanelW = Math.min(maxPanelW, room);
 
-    width = Math.min(Math.max(width, FLYOUT_MIN), room);
-
-    var flyoutW = Math.round(width);
-    var flyoutH = Math.round(boxH);
-
-    if (flyoutW < FLYOUT_FLOOR) {
-      return null;
-    }
-
-    flyout.style.left = Math.round(left) + 'px';
-    flyout.style.top = Math.round(imgRect.top - mediaRect.top) + 'px';
-    flyout.style.width = flyoutW + 'px';
-    flyout.style.height = flyoutH + 'px';
-
-    // Visible slice of the painted image: the box intersected with the paint.
     var areaX = Math.max(0, painted.x);
     var areaY = Math.max(0, painted.y);
     var areaW = Math.min(boxW, painted.x + painted.w) - areaX;
@@ -258,22 +229,32 @@
       return null;
     }
 
-    // Stay near native resolution so the flyout does not pixelate, then
-    // keep the lens around half the photo — not a postage-stamp crop.
-    var resolutionCap = painted.w > 0 ? natural.w / painted.w : TARGET_ZOOM;
-    var zoom = Math.min(TARGET_ZOOM, Math.max(MIN_ZOOM, resolutionCap));
+    // Amazon / Daraz: flyout matches the details column and the main image
+    // height. Medium zoom keeps it sharp — a bigger panel grows the lens,
+    // it does not stretch a tiny crop.
+    var flyoutW = Math.round(maxPanelW);
+    var flyoutH = Math.round(boxH);
 
-    zoom = Math.max(zoom, flyoutW / areaW, flyoutH / areaH);
+    if (flyoutW < FLYOUT_FLOOR || flyoutH < 2) {
+      return null;
+    }
 
-    var compact = Math.max(
-      flyoutW / (areaW * LENS_MAX_RATIO),
-      flyoutH / (areaH * LENS_MAX_RATIO)
-    );
-    zoom = Math.min(TARGET_ZOOM, Math.max(zoom, compact));
-    zoom = Math.max(zoom, flyoutW / areaW, flyoutH / areaH);
+    var resolutionCap = painted.w > 0 ? natural.w / painted.w : MEDIUM_ZOOM;
+    var zoom = Math.min(MEDIUM_ZOOM, Math.max(MIN_ZOOM, resolutionCap));
 
     var lensW = flyoutW / zoom;
     var lensH = flyoutH / zoom;
+
+    if (lensW > areaW || lensH > areaH) {
+      zoom = Math.max(flyoutW / areaW, flyoutH / areaH);
+      lensW = flyoutW / zoom;
+      lensH = flyoutH / zoom;
+    }
+
+    flyout.style.left = Math.round(left) + 'px';
+    flyout.style.top = Math.round(imgRect.top - mediaRect.top) + 'px';
+    flyout.style.width = flyoutW + 'px';
+    flyout.style.height = flyoutH + 'px';
 
     // Travel limits, resolved once per measure so apply() only clamps.
     // Upper bounds are the image box (0 .. boxW - lensW) intersected with the
