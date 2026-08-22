@@ -2534,9 +2534,7 @@ select {
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
   align-items: stretch;
-  background:
-    radial-gradient(ellipse 70% 80% at 78% 50%, rgba(245, 158, 11, 0.28) 0%, rgba(245, 158, 11, 0.08) 35%, rgba(245, 158, 11, 0) 65%),
-    linear-gradient(135deg, #0a0d14 0%, #11161f 60%, #161c27 100%);
+  background: linear-gradient(135deg, #0a0d14 0%, #11161f 60%, #161c27 100%);
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.7s ease-in-out, visibility 0s linear 0.7s;
@@ -2995,38 +2993,60 @@ select {
 
   .home .hero-slider-viewport {
     border-radius: 5px;
-    /* Compact mobile hero — keeps LCP media in the first viewport */
-    height: clamp(500px, 76vh, 600px);
-    min-height: clamp(500px, 76vh, 600px);
+    height: auto;
+    min-height: 0;
+    overflow: hidden;
   }
 
   .home .hero-slide {
+    position: absolute;
+    inset: 0;
+    display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: minmax(0, 1.15fr) minmax(160px, 0.85fr);
+    grid-template-rows: auto auto;
+    align-content: start;
+    align-items: start;
+    overflow: hidden;
+  }
+
+  .home .hero-slide.is-active {
+    position: relative;
+    inset: auto;
+    height: auto;
   }
 
   .home .hero-slide-content {
-    padding: 28px 18px 10px;
+    padding: 20px 16px 8px;
     max-width: 100%;
-    gap: 12px;
+    gap: 10px;
+    justify-content: flex-start;
   }
 
   .home .hero-slide-title {
-    font-size: clamp(28px, 8vw, 40px);
-    min-height: calc(2 * 1.02 * clamp(28px, 8vw, 40px) + 2px);
+    font-size: clamp(26px, 7.5vw, 36px);
+    min-height: 0;
   }
 
   .home .hero-slide-text {
     font-size: 14px;
     -webkit-line-clamp: 3;
     line-clamp: 3;
-    min-height: 4.8em;
-    max-height: 4.8em;
+    min-height: 0;
+    max-height: none;
   }
 
   .home .hero-slide-media {
-    padding: 4px 16px 44px;
+    padding: 8px 16px 48px;
+    height: auto;
     min-height: 0;
+    container-type: normal;
+  }
+
+  .home .hero-slide-stage {
+    width: min(68vw, 260px);
+    height: auto;
+    aspect-ratio: 1 / 1;
+    max-height: none;
   }
 
   .home .hero-slide-product {
@@ -3080,8 +3100,12 @@ select {
 
 @media (max-width: 480px) {
   .home .hero-slider-viewport {
-    height: 500px;
-    min-height: 500px;
+    height: auto;
+    min-height: 0;
+  }
+
+  .home .hero-slide-stage {
+    width: min(72vw, 220px);
   }
 
   .home .hero-slide-badge {
