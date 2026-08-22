@@ -46,7 +46,7 @@ $hero_slides = array(
 		'badge'         => 'Head protection',
 		'title'         => 'Safety' . $nbsp . 'Helmets',
 		'title_accent'  => '&' . $nbsp . 'Hard' . $nbsp . 'Hats',
-		'text'          => 'Certified helmets and hard hats for construction, plant, and logistics crews — trusted brands in stock.',
+		'text'          => 'Certified helmets and hard hats for construction, plant, and logistics crews — <strong>delivered to all 64 districts</strong>.',
 		'price_old'     => '',
 		'price_new'     => '',
 		'discount'      => '',
@@ -63,7 +63,7 @@ $hero_slides = array(
 		'badge'         => 'High visibility',
 		'title'         => 'Hi-Vis',
 		'title_accent'  => 'Safety Vest',
-		'text'          => 'Hi-vis vests for roads, warehouses, and yards. Bright reflective tape keeps crews visible in low light.',
+		'text'          => 'Hi-vis vests for roads, warehouses, and yards — <strong>delivered to all 64 districts</strong>.',
 		'price_old'     => '',
 		'price_new'     => '',
 		'discount'      => '',
@@ -80,7 +80,7 @@ $hero_slides = array(
 		'badge'         => 'Foot protection',
 		'title'         => 'Industrial',
 		'title_accent'  => 'Safety Shoes',
-		'text'          => 'Leather work boots for oil, grit, and long shifts — slip-resistant soles and dependable toe protection.',
+		'text'          => 'Leather work boots for oil, grit, and long shifts — <strong>delivered to all 64 districts</strong>.',
 		'price_old'     => '',
 		'price_new'     => '',
 		'discount'      => '',
@@ -96,6 +96,41 @@ $hero_slides = array(
 );
 
 $hero_sizes = '(max-width: 900px) 62vw, 42vw';
+
+$hero_proof = array(
+	array(
+		'icon' => 'check',
+		'html' => __( '<strong>10,000+</strong> orders delivered', 'safestore-minimal' ),
+	),
+	array(
+		'icon' => 'pay',
+		'html' => __( 'bKash · Nagad · <strong>COD</strong>', 'safestore-minimal' ),
+	),
+	array(
+		'icon' => 'shield',
+		'html' => __( '<strong>7-day</strong> easy returns', 'safestore-minimal' ),
+	),
+);
+
+/**
+ * Compact stroke icon for the hero proof row.
+ *
+ * @param string $name Icon key: check|pay|shield.
+ * @return string
+ */
+$safestore_hero_proof_icon = static function ( string $name ): string {
+	$paths = array(
+		'check'  => '<circle cx="12" cy="12" r="9"/><path d="m8.5 12.2 2.3 2.3 4.7-5"/>',
+		'pay'    => '<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><path d="M7 15h3"/>',
+		'shield' => '<path d="M12 3 5 6v6c0 4.2 2.8 7.4 7 8.5 4.2-1.1 7-4.3 7-8.5V6z"/><path d="m9 12 2.2 2.2L15.5 10"/>',
+	);
+
+	if ( ! isset( $paths[ $name ] ) ) {
+		return '';
+	}
+
+	return '<svg class="hero-slide-proof__icon hero-slide-proof__icon--' . esc_attr( $name ) . '" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' . $paths[ $name ] . '</svg>';
+};
 ?>
 
 <section class="hero-slider" aria-roledescription="carousel" aria-label="Featured safety products">
@@ -155,6 +190,14 @@ $hero_sizes = '(max-width: 900px) 62vw, 42vw';
 							</a>
 						<?php endif; ?>
 					</div>
+					<ul class="hero-slide-proof" aria-label="<?php esc_attr_e( 'Why shop with SafeStoreBD', 'safestore-minimal' ); ?>">
+						<?php foreach ( $hero_proof as $proof ) : ?>
+							<li class="hero-slide-proof__item">
+								<?php echo $safestore_hero_proof_icon( $proof['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+								<span class="hero-slide-proof__text"><?php echo wp_kses( $proof['html'], array( 'strong' => array() ) ); ?></span>
+							</li>
+						<?php endforeach; ?>
+					</ul>
 				</div>
 				<div class="hero-slide-media">
 					<span class="hero-slide-glow" aria-hidden="true"></span>

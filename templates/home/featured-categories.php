@@ -69,7 +69,7 @@ $categories = array(
 
 <section id="browse-categories" class="featured-categories" aria-label="Shop by safety category">
 	<div class="featured-categories-head">
-		<div>
+		<div class="featured-categories-intro">
 			<h2>Shop by Safety Category</h2>
 			<p>Certified industrial PPE — browse helmets, hi-vis vests, gloves, eyewear, and safety shoes.</p>
 		</div>
@@ -104,10 +104,10 @@ $categories = array(
 		<?php endforeach; ?>
 	</div>
 </section>
-<section class="sft-bestsellers" aria-label="<?php esc_attr_e( 'Best selling products', 'safestore-minimal' ); ?>">
+<section class="sft-bestsellers" aria-label="<?php esc_attr_e( 'Featured products', 'safestore-minimal' ); ?>">
 	<div class="sft-bestsellers__head">
 		<div class="sft-bestsellers__intro">
-			<h2 class="sft-bestsellers__title"><?php esc_html_e( 'Best Sellers', 'safestore-minimal' ); ?></h2>
+			<h2 class="sft-bestsellers__title"><?php esc_html_e( 'Featured Products', 'safestore-minimal' ); ?></h2>
 			<p class="sft-bestsellers__lede"><?php esc_html_e( 'The safety gear teams across Bangladesh order most.', 'safestore-minimal' ); ?></p>
 		</div>
 		<a class="sft-bestsellers__view-all" href="<?php echo esc_url( $shop_url ); ?>">

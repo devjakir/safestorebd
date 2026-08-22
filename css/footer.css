@@ -49,8 +49,10 @@
 
 .sfx-block--links {
   flex: 1 1 50%;
-  display: flex;
-  gap: 30px;
+}
+
+.sfx-linkcol--about {
+  min-width: 0;
 }
 
 .sfx-block--org {
@@ -59,7 +61,6 @@
 }
 
 .sfx-linkcol {
-  flex: 1 1 50%;
   min-width: 0;
 }
 
@@ -180,6 +181,15 @@
 .sfx-links a:focus-visible {
   color: var(--sfx-accent-soft);
   text-decoration: none;
+}
+
+.sfx-links--grid {
+  columns: 3;
+  column-gap: 36px;
+}
+
+.sfx-links--grid li {
+  break-inside: avoid;
 }
 
 /* ---------- Stay Connected column ---------- */
@@ -410,7 +420,6 @@
   .sfx-block--links {
     flex: 1 1 100%;
     order: 4;
-    gap: 30px;
   }
 
   .sfx-heading {
@@ -461,6 +470,10 @@
   .sfx-block--links {
     display: block;
     margin-bottom: 0;
+  }
+
+  .sfx-links--grid {
+    columns: 1;
   }
 
   .sfx-block--support,

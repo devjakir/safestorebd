@@ -44,12 +44,12 @@
        properties are compositor-friendly, so this never costs a frame. */
     box-shadow: 0 1px 0 rgba(15, 23, 42, 0.03);
     transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
-                box-shadow 0.24s ease;
+      box-shadow 0.24s ease;
   }
 
   .sft-header.is-scrolled .sft-header-sticky {
     box-shadow: 0 2px 4px rgba(15, 23, 42, 0.05),
-                0 8px 24px rgba(15, 23, 42, 0.07);
+      0 8px 24px rgba(15, 23, 42, 0.07);
   }
 
   .sft-header.is-nav-hidden .sft-header-sticky {
@@ -76,6 +76,7 @@
    -------------------------------------------------------------------------- */
 
 @media (max-width: 1024px) {
+
   /* Reachable without stretching, and never smaller than a fingertip. */
   .sft-header-actions .sft-header-action {
     min-width: 40px;
@@ -89,23 +90,11 @@
   }
 }
 
-/* --------------------------------------------------------------------------
-   Centred brand + icon-triggered search
-
-   Equal 1fr side columns rather than `auto` ones: the hamburger (44px) and
-   the actions cluster are not the same width, so an `auto | auto | auto`
-   grid would leave the logo a few pixels off true centre.
-
-   The search field leaves the header row entirely and becomes a dropdown.
-   .has-js-search is added by js/mobile-nav.js, so with scripting disabled
-   the field stays in flow exactly as before and the toggle never appears.
-   -------------------------------------------------------------------------- */
-
 @media (max-width: 1024px) {
   .sft-header-main {
     position: relative;
     grid-template-columns: 1fr auto 1fr;
-    gap: 10px;
+    gap: 0 10px;
   }
 
   .sft-header-main .mobile-menu-trigger {
@@ -181,8 +170,8 @@
     visibility: hidden;
     transform: translateY(-8px);
     transition: opacity 0.18s ease,
-                transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-                visibility 0s linear 0.22s;
+      transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+      visibility 0s linear 0.22s;
   }
 
   .sft-header.has-js-search.is-search-open .sft-header-searchwrap {
@@ -190,8 +179,8 @@
     visibility: visible;
     transform: translateY(0);
     transition: opacity 0.18s ease,
-                transform 0.26s cubic-bezier(0.16, 1, 0.3, 1),
-                visibility 0s;
+      transform 0.26s cubic-bezier(0.16, 1, 0.3, 1),
+      visibility 0s;
   }
 
   .sft-header.has-js-search .sft-header-searchwrap .sft-header-search {
@@ -221,6 +210,7 @@
 }
 
 @media (min-width: 1025px) {
+
   /* The wrapper now occupies the grid slot the form used to hold. */
   .sft-header-searchwrap {
     justify-self: center;
@@ -271,7 +261,7 @@
     display: none;
   }
 
-  .sft-quicklinks__list > li {
+  .sft-quicklinks__list>li {
     margin: 0;
     flex: 0 0 auto;
   }
@@ -494,6 +484,7 @@
 }
 
 @media print {
+
   .sft-bottomnav,
   .sft-quicklinks {
     display: none !important;
@@ -605,7 +596,7 @@
 
   /* Row separators live on the item, not the link, so nested lists do not
      draw a second line under their parent. */
-  #offcanvas-menu .menu-item-has-children > a {
+  #offcanvas-menu .menu-item-has-children>a {
     padding-right: 52px !important;
   }
 
@@ -614,7 +605,7 @@
   }
 
   /* Open parent is highlighted, matching the reference. */
-  #offcanvas-menu .menu-item.sub-menu-open > a {
+  #offcanvas-menu .menu-item.sub-menu-open>a {
     color: #dc2626;
     font-weight: 600;
   }
@@ -660,12 +651,12 @@
     height: 13px;
   }
 
-  #offcanvas-menu .menu-item.sub-menu-open > .dropdown-toggle-btn::after {
+  #offcanvas-menu .menu-item.sub-menu-open>.dropdown-toggle-btn::after {
     opacity: 0;
     transform: rotate(90deg);
   }
 
-  #offcanvas-menu .menu-item.sub-menu-open > .dropdown-toggle-btn::before {
+  #offcanvas-menu .menu-item.sub-menu-open>.dropdown-toggle-btn::before {
     background: #dc2626;
   }
 
@@ -682,7 +673,7 @@
     transition: max-height 0.3s ease;
   }
 
-  #offcanvas-menu .menu-item.sub-menu-open > .sub-menu {
+  #offcanvas-menu .menu-item.sub-menu-open>.sub-menu {
     max-height: 1600px;
   }
 
@@ -724,6 +715,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   #offcanvas-menu,
   #offcanvas-menu .sub-menu,
   #offcanvas-menu .dropdown-toggle-btn::before,
