@@ -2572,57 +2572,134 @@ select {
   align-items: center;
   justify-content: center;
   padding: 24px;
-  min-height: 100%;
-}
-
-.home .hero-slide-glow {
-  position: absolute;
-  inset: 14% 6%;
-  border-radius: 50%;
-  background: radial-gradient(circle at center, rgba(245, 158, 11, 0.45) 0%, rgba(245, 158, 11, 0.15) 35%, rgba(245, 158, 11, 0) 70%);
-  pointer-events: none;
-  z-index: 0;
-  filter: blur(8px);
+  min-height: 0;
+  height: 100%;
 }
 
 .home .hero-slide-product {
   position: relative;
   z-index: 1;
-  max-width: 84%;
-  max-height: 380px;
+  display: block;
   width: auto;
   height: auto;
-  -webkit-mask-image: radial-gradient(ellipse 62% 62% at center, #000 55%, transparent 78%);
-  mask-image: radial-gradient(ellipse 62% 62% at center, #000 55%, transparent 78%);
-  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.55));
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 0;
 }
 
-.home .hero-slide-spec {
+.home .hero-slide-card {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   display: inline-flex;
   align-items: center;
-  padding: 8px 14px;
+  gap: 8px;
+  padding: 10px 12px;
   border-radius: 5px;
-  background: rgba(20, 24, 33, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #f1f5f9;
+  background: #ffffff;
+  color: #0f172a;
+  font-family: inherit;
   font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  backdrop-filter: blur(8px);
+  line-height: 1.2;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
   white-space: nowrap;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
 }
 
-.home .hero-slide-spec--cert {
+.home .hero-slide-card--price {
   top: 14%;
   right: 6%;
+  flex-wrap: wrap;
+  max-width: calc(100% - 24px);
 }
 
-.home .hero-slide-spec--reviews {
+.home .hero-slide-card--reviews {
   bottom: 18%;
   left: 6%;
+}
+
+.home .hero-slide-card__old,
+.home .hero-slide-card__old .amount,
+.home .hero-slide-card__old .woocommerce-Price-amount {
+  color: #94a3b8;
+  font-weight: 500;
+  font-size: 13px;
+  text-decoration: line-through;
+}
+
+.home .hero-slide-card__now {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+}
+
+.home .hero-slide-card__now .amount,
+.home .hero-slide-card__now .woocommerce-Price-amount {
+  color: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+}
+
+.home .hero-slide-card__from {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.home .hero-slide-card__save {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #166534;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.home .hero-slide-card__stars {
+  position: relative;
+  display: inline-block;
+  font-size: 13px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  color: #e2e8f0;
+}
+
+.home .hero-slide-card__stars-bg,
+.home .hero-slide-card__stars-fill {
+  display: block;
+}
+
+.home .hero-slide-card__stars-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  color: #f59e0b;
+}
+
+.home .hero-slide-card__rating {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.home .hero-slide-card__count {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.home .hero-slide-card bdi {
+  font-style: normal;
 }
 
 .home .hero-slide-content {
@@ -2923,31 +3000,33 @@ select {
   }
 
   .home .hero-slide-media {
-    padding: 4px 18px 44px;
+    padding: 8px 16px 44px;
+    min-height: 0;
   }
 
   .home .hero-slide-product {
-    max-height: 168px;
-    max-width: 62%;
+    max-height: 100%;
+    max-width: 100%;
   }
 
-  .home .hero-slide-glow {
-    filter: blur(4px);
-  }
-
-  .home .hero-slide-spec {
+  .home .hero-slide-card {
     font-size: 12px;
-    padding: 6px 11px;
+    padding: 7px 9px;
+    gap: 6px;
   }
 
-  .home .hero-slide-spec--cert {
+  .home .hero-slide-card--price {
     top: 8px;
     right: 12px;
   }
 
-  .home .hero-slide-spec--reviews {
-    bottom: 8px;
+  .home .hero-slide-card--reviews {
+    bottom: 40px;
     left: 12px;
+  }
+
+  .home .hero-slide-card__now {
+    font-size: 15px;
   }
 
   .home .hero-slider-dots {

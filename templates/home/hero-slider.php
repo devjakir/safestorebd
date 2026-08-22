@@ -47,15 +47,11 @@ $hero_slides = array(
 		'title'         => 'Safety' . $nbsp . 'Helmets',
 		'title_accent'  => '&' . $nbsp . 'Hard' . $nbsp . 'Hats',
 		'text'          => 'Certified helmets and hard hats for construction, plant, and logistics crews — <strong>delivered to all 64 districts</strong>.',
-		'price_old'     => '',
-		'price_new'     => '',
-		'discount'      => '',
 		'cta'           => 'Shop Hard Hats',
 		'url'           => $helmet_cat,
 		'cta_secondary' => 'Browse categories',
 		'url_secondary' => $browse_anchor,
-		'cert_badge'    => '',
-		'reviews'       => '',
+		'category_slug' => 'protective-helmets',
 		'image_base'    => 'sf-helmet-category',
 		'alt'           => 'Safety helmets and hard hats with protective eyewear on a bright surface',
 	),
@@ -64,15 +60,11 @@ $hero_slides = array(
 		'title'         => 'Hi-Vis',
 		'title_accent'  => 'Safety Vest',
 		'text'          => 'Hi-vis vests for roads, warehouses, and yards — <strong>delivered to all 64 districts</strong>.',
-		'price_old'     => '',
-		'price_new'     => '',
-		'discount'      => '',
 		'cta'           => 'Shop Safety Vests',
 		'url'           => $vest_cat,
 		'cta_secondary' => 'Explore PPE',
 		'url_secondary' => $browse_anchor,
-		'cert_badge'    => '',
-		'reviews'       => '',
+		'category_slug' => 'safety-vests',
 		'image_base'    => 'sf-safety-vest',
 		'alt'           => 'High visibility safety vests in yellow and orange for industrial and warehouse use',
 	),
@@ -81,15 +73,11 @@ $hero_slides = array(
 		'title'         => 'Industrial',
 		'title_accent'  => 'Safety Shoes',
 		'text'          => 'Leather work boots for oil, grit, and long shifts — <strong>delivered to all 64 districts</strong>.',
-		'price_old'     => '',
-		'price_new'     => '',
-		'discount'      => '',
 		'cta'           => 'Shop Safety Shoes',
 		'url'           => $shoe_cat,
 		'cta_secondary' => 'Shop now',
 		'url_secondary' => $shop_url,
-		'cert_badge'    => '',
-		'reviews'       => '',
+		'category_slug' => 'safety-shoes',
 		'image_base'    => 'sf-category-shoe',
 		'alt'           => 'Industrial safety shoes and leather work boots on a construction-site surface',
 	),
@@ -137,9 +125,30 @@ $safestore_hero_proof_icon = static function ( string $name ): string {
 	<div class="hero-slider-viewport">
 		<?php foreach ( $hero_slides as $index => $slide ) : ?>
 			<?php
-			$img_src    = $safestore_hero_product_src( $slide['image_base'] . '.webp' );
-			$img_srcset = $safestore_hero_srcset( $slide['image_base'] );
-			$is_first   = ( 0 === $index );
+			$overlay    = ( ! empty( $slide['category_slug'] ) && function_exists( 'safestore_hero_overlay_for_category' ) )
+				? safestore_hero_overlay_for_category( $slide['category_slug'] )
+				: array();
+			$overlay_html = function_exists( 'safestore_hero_overlay_markup' )
+				? safestore_hero_overlay_markup( $overlay )
+				: '';
+
+			$product_image = ( ! empty( $overlay['image'] ) && is_array( $overlay['image'] ) ) ? $overlay['image'] : null;
+			if ( $product_image ) {
+				$img_src    = $product_image['src'];
+				$img_srcset = isset( $product_image['srcset'] ) ? (string) $product_image['srcset'] : '';
+				$img_sizes  = ! empty( $product_image['sizes'] ) ? (string) $product_image['sizes'] : $hero_sizes;
+				$img_alt    = ! empty( $product_image['alt'] ) ? (string) $product_image['alt'] : $slide['alt'];
+				$img_w      = ! empty( $product_image['width'] ) ? (int) $product_image['width'] : 900;
+				$img_h      = ! empty( $product_image['height'] ) ? (int) $product_image['height'] : 900;
+			} else {
+				$img_src    = $safestore_hero_product_src( $slide['image_base'] . '.webp' );
+				$img_srcset = $safestore_hero_srcset( $slide['image_base'] );
+				$img_sizes  = $hero_sizes;
+				$img_alt    = $slide['alt'];
+				$img_w      = 900;
+				$img_h      = 900;
+			}
+			$is_first = ( 0 === $index );
 			?>
 			<article class="hero-slide<?php echo $is_first ? ' is-active' : ''; ?>"
 				role="group"
@@ -168,17 +177,6 @@ $safestore_hero_proof_icon = static function ( string $name ): string {
 						</h2>
 					<?php endif; ?>
 					<p class="hero-slide-text"><?php echo wp_kses_post( $slide['text'] ); ?></p>
-					<?php if ( ! empty( $slide['price_new'] ) ) : ?>
-						<div class="hero-slide-price">
-							<?php if ( ! empty( $slide['price_old'] ) ) : ?>
-								<span class="hero-slide-price-old"><?php echo esc_html( $slide['price_old'] ); ?></span>
-							<?php endif; ?>
-							<span class="hero-slide-price-new"><?php echo esc_html( $slide['price_new'] ); ?></span>
-							<?php if ( ! empty( $slide['discount'] ) ) : ?>
-								<span class="hero-slide-price-discount"><?php echo esc_html( $slide['discount'] ); ?></span>
-							<?php endif; ?>
-						</div>
-					<?php endif; ?>
 					<div class="hero-slide-actions">
 						<a class="hero-slide-cta hero-slide-cta--primary" href="<?php echo esc_url( $slide['url'] ); ?>">
 							<?php echo esc_html( $slide['cta'] ); ?>
@@ -200,15 +198,14 @@ $safestore_hero_proof_icon = static function ( string $name ): string {
 					</ul>
 				</div>
 				<div class="hero-slide-media">
-					<span class="hero-slide-glow" aria-hidden="true"></span>
 					<?php if ( $is_first ) : ?>
 						<img class="hero-slide-product"
-							src="<?php echo esc_url( $safestore_hero_product_src( $slide['image_base'] . '-720w.webp' ) ); ?>"
-							srcset="<?php echo esc_attr( $img_srcset ); ?>"
-							sizes="<?php echo esc_attr( $hero_sizes ); ?>"
-							alt="<?php echo esc_attr( $slide['alt'] ); ?>"
-							width="900"
-							height="900"
+							src="<?php echo esc_url( $img_src ); ?>"
+							<?php echo '' !== $img_srcset ? 'srcset="' . esc_attr( $img_srcset ) . '"' : ''; ?>
+							sizes="<?php echo esc_attr( $img_sizes ); ?>"
+							alt="<?php echo esc_attr( $img_alt ); ?>"
+							width="<?php echo esc_attr( (string) $img_w ); ?>"
+							height="<?php echo esc_attr( (string) $img_h ); ?>"
 							loading="eager"
 							decoding="async"
 							fetchpriority="high">
@@ -216,20 +213,15 @@ $safestore_hero_proof_icon = static function ( string $name ): string {
 						<img class="hero-slide-product"
 							src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
 							data-src="<?php echo esc_url( $img_src ); ?>"
-							data-srcset="<?php echo esc_attr( $img_srcset ); ?>"
-							data-sizes="<?php echo esc_attr( $hero_sizes ); ?>"
-							alt="<?php echo esc_attr( $slide['alt'] ); ?>"
-							width="900"
-							height="900"
+							<?php echo '' !== $img_srcset ? 'data-srcset="' . esc_attr( $img_srcset ) . '"' : ''; ?>
+							data-sizes="<?php echo esc_attr( $img_sizes ); ?>"
+							alt="<?php echo esc_attr( $img_alt ); ?>"
+							width="<?php echo esc_attr( (string) $img_w ); ?>"
+							height="<?php echo esc_attr( (string) $img_h ); ?>"
 							loading="lazy"
 							decoding="async">
 					<?php endif; ?>
-					<?php if ( ! empty( $slide['cert_badge'] ) ) : ?>
-						<span class="hero-slide-spec hero-slide-spec--cert"><?php echo wp_kses_post( $slide['cert_badge'] ); ?></span>
-					<?php endif; ?>
-					<?php if ( ! empty( $slide['reviews'] ) ) : ?>
-						<span class="hero-slide-spec hero-slide-spec--reviews"><?php echo wp_kses_post( $slide['reviews'] ); ?></span>
-					<?php endif; ?>
+					<?php echo $overlay_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</div>
 			</article>
 		<?php endforeach; ?>
