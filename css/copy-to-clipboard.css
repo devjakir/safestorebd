@@ -127,11 +127,6 @@
   overflow: visible;
 }
 
-.home .support-bar-card:has(.sft-copy-btn.is-copied),
-.home .support-bar-card:has(.sft-copy-btn.is-copy-failed) {
-  overflow: visible;
-}
-
 /* Inline variant — sits immediately beside the copyable value (phone /
    WhatsApp / email), matching the reference: value then small copy glyph. */
 .sft-copy-btn--inline {

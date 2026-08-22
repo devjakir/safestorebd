@@ -605,7 +605,7 @@ function safestore_wa_settings_page() {
     <div class="wrap">
         <h1><?php esc_html_e('WhatsApp Chat', 'safestore-minimal'); ?></h1>
         <p><?php esc_html_e('Floating WhatsApp chat button shown on every page of the site. Online/offline status follows the business hours below, using the site timezone.', 'safestore-minimal'); ?></p>
-        <p><strong><?php esc_html_e('These numbers are used everywhere on the site.', 'safestore-minimal'); ?></strong> <?php esc_html_e('The footer, the home support bar, product pages and every policy page read from this screen. If a number is blocked, change it here once and the whole site follows.', 'safestore-minimal'); ?></p>
+        <p><strong><?php esc_html_e('These numbers are used everywhere on the site.', 'safestore-minimal'); ?></strong> <?php esc_html_e('The footer, product pages and every policy page read from this screen. If a number is blocked, change it here once and the whole site follows.', 'safestore-minimal'); ?></p>
         <form method="post" action="options.php">
             <?php settings_fields('safestore_whatsapp_chat'); ?>
             <table class="form-table" role="presentation">
@@ -661,7 +661,7 @@ function safestore_wa_settings_page() {
                 <tr>
                     <th scope="row"><?php esc_html_e('Show both lines', 'safestore-minimal'); ?></th>
                     <td>
-                        <label><input type="checkbox" name="safestore_whatsapp_chat[dual]" value="1" <?php checked(!empty($o['dual'])); ?>> <?php esc_html_e('Offer both numbers in the chat panel, the footer and the home support bar', 'safestore-minimal'); ?></label>
+                        <label><input type="checkbox" name="safestore_whatsapp_chat[dual]" value="1" <?php checked(!empty($o['dual'])); ?>> <?php esc_html_e('Offer both numbers in the chat panel and the footer', 'safestore-minimal'); ?></label>
                         <p class="description"><?php esc_html_e('Untick to advertise the primary number only. The second number stays saved, so you can bring it back with one click.', 'safestore-minimal'); ?></p>
                     </td>
                 </tr>
