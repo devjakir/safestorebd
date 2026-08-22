@@ -129,6 +129,24 @@ function safestore_minimal_pdp_trust_badges() {
 		<?php endforeach; ?>
 	</ul>
 	<?php
+	safestore_minimal_pdp_payment_methods();
+}
+
+/**
+ * Compact payment trust strip under the buy-box fulfillment badges.
+ * Shows methods customers already use (COD / bKash / Nagad) — logos BD buyers scan for legitimacy.
+ */
+function safestore_minimal_pdp_payment_methods() {
+	?>
+	<div class="sft-pdp-pay" aria-label="<?php esc_attr_e( 'Payment methods', 'safestore-minimal' ); ?>">
+		<span class="sft-pdp-pay__label"><?php esc_html_e( 'Pay with', 'safestore-minimal' ); ?></span>
+		<ul class="sft-pdp-pay__list">
+			<li class="sft-pay sft-pay--cod"><span class="sft-ship-pay-label"><?php esc_html_e( 'COD', 'safestore-minimal' ); ?></span></li>
+			<li class="sft-pay sft-pay--bkash"><span class="sft-ship-pay-label">bKash</span></li>
+			<li class="sft-pay sft-pay--nagad"><span class="sft-ship-pay-label">Nagad</span></li>
+		</ul>
+	</div>
+	<?php
 }
 
 /**

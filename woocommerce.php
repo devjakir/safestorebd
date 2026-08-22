@@ -34,7 +34,12 @@ get_header(); ?>
                     ?>
                 </h1>
                 <?php
-                $description = is_product_taxonomy() ? term_description() : '';
+                if (is_product_taxonomy()) {
+                    $description = term_description();
+                } else {
+                    $shop_page_id = function_exists('wc_get_page_id') ? (int) wc_get_page_id('shop') : 0;
+                    $description  = $shop_page_id > 0 ? apply_filters('the_content', get_post_field('post_content', $shop_page_id)) : '';
+                }
                 if ($description) : ?>
                     <div class="sft-shop-desc"><?php echo wp_kses_post($description); ?></div>
                 <?php endif; ?>

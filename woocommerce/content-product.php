@@ -80,6 +80,27 @@ $category_text = function_exists('safestore_get_product_category_label')
             <?php echo $product->get_price_html(); ?>
         </div>
 
+        <?php
+        // Star rating when reviews exist — BD buyers treat stars as a legitimacy check.
+        $rating_count = (int) $product->get_rating_count();
+        $avg_rating   = (float) $product->get_average_rating();
+        if ( $rating_count > 0 && $avg_rating > 0 && function_exists( 'wc_get_rating_html' ) ) :
+            $fill_pct = max( 0, min( 100, ( $avg_rating / 5 ) * 100 ) );
+            ?>
+            <div class="sft-product-card__rating" aria-label="<?php echo esc_attr( sprintf(
+                /* translators: 1: average rating, 2: review count */
+                __( 'Rated %1$s out of 5 from %2$s reviews', 'safestore-minimal' ),
+                number_format_i18n( $avg_rating, 1 ),
+                number_format_i18n( $rating_count )
+            ) ); ?>">
+                <span class="sft-stars" aria-hidden="true">
+                    <span class="sft-stars__row sft-stars__row--empty">★★★★★</span>
+                    <span class="sft-stars__row sft-stars__row--filled" style="width: <?php echo esc_attr( (string) $fill_pct ); ?>%">★★★★★</span>
+                </span>
+                <span class="sft-rating-count">(<?php echo esc_html( number_format_i18n( $rating_count ) ); ?>)</span>
+            </div>
+        <?php endif; ?>
+
         <h3 class="sft-product-card__title">
             <a href="<?php echo esc_url($permalink); ?>" title="<?php echo esc_attr($product->get_name()); ?>"><?php echo esc_html($product->get_name()); ?></a>
         </h3>

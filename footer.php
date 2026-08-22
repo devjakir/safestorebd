@@ -159,19 +159,17 @@ function sfx_footer_icon( $name ) {
 					<?php endforeach; ?>
 				</div>
 
-				<!-- <div class="sfx-meta">
+				<div class="sfx-meta">
 					<span class="sfx-meta__label"><?php esc_html_e( 'We accept', 'safestore-minimal' ); ?></span>
-					<ul class="sfx-pills">
-						<?php /* bKash/Nagad/Rocket/Upay badges removed until an online payment gateway is connected — restore from git history when ready. */ ?>
-						<li class="sfx-pay" title="<?php esc_attr_e( 'Cash on Delivery', 'safestore-minimal' ); ?>">
-							<svg width="152" height="24" viewBox="0 0 152 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="<?php esc_attr_e( 'Cash on Delivery', 'safestore-minimal' ); ?>">
-								<g transform="translate(0,3)">
-									<rect x="0.75" y="0.75" width="22.5" height="14.5" rx="2" fill="#ecfdf5" stroke="#16a34a" stroke-width="1.5"/>
-									<circle cx="12" cy="8" r="3.6" fill="none" stroke="#16a34a" stroke-width="1.5"/>
-									<path d="M11 6.4 h2 M11 9.6 h2 M12 5.2 v5.6" stroke="#16a34a" stroke-width="1.2" stroke-linecap="round"/>
-								</g>
-								<text x="30" y="17" fill="#0f172a" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="700" font-size="13" letter-spacing="0.2">Cash on Delivery</text>
-							</svg>
+					<ul class="sfx-pills" aria-label="<?php esc_attr_e( 'Payment methods', 'safestore-minimal' ); ?>">
+						<li class="sfx-pay sfx-pay--cod" title="<?php esc_attr_e( 'Cash on Delivery', 'safestore-minimal' ); ?>">
+							<span class="sfx-pay__label"><?php esc_html_e( 'COD', 'safestore-minimal' ); ?></span>
+						</li>
+						<li class="sfx-pay sfx-pay--bkash" title="bKash">
+							<span class="sfx-pay__label">bKash</span>
+						</li>
+						<li class="sfx-pay sfx-pay--nagad" title="Nagad">
+							<span class="sfx-pay__label">Nagad</span>
 						</li>
 					</ul>
 
@@ -179,7 +177,7 @@ function sfx_footer_icon( $name ) {
 					<ul class="sfx-pills">
 						<li class="sfx-cert"><?php esc_html_e( '100% Genuine Imported Stock', 'safestore-minimal' ); ?></li>
 					</ul>
-				</div> -->
+				</div>
 			</div>
 
 		</div>

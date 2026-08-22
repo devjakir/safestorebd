@@ -317,13 +317,48 @@
   padding: 6px 10px;
   border-radius: 6px;
   background: #ffffff;
+  border: 1px solid #e5e7eb;
+  line-height: 1;
+}
+
+.sfx-pay__label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #0f172a;
+}
+
+.sfx-pay--cod {
+  border-color: rgba(22, 163, 74, 0.35);
+  background: #ecfdf5;
+}
+
+.sfx-pay--cod .sfx-pay__label {
+  color: #166534;
+}
+
+.sfx-pay--bkash {
+  border-color: rgba(226, 19, 110, 0.3);
+  background: #fdf2f8;
+}
+
+.sfx-pay--bkash .sfx-pay__label {
+  color: #be185d;
+}
+
+.sfx-pay--nagad {
+  border-color: rgba(245, 130, 31, 0.35);
+  background: #fff7ed;
+}
+
+.sfx-pay--nagad .sfx-pay__label {
+  color: #c2410c;
 }
 
 .sfx-pay svg {
   display: block;
-  height: 20px;
+  height: 18px;
   width: auto;
-  max-width: 100%;
 }
 
 .sfx-cert {
