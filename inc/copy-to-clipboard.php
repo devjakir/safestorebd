@@ -9,10 +9,10 @@
  *   - the shared contact component (safestore_contact_item() /
  *     safestore_contact_line() / safestore_contact_emails_row()) renders a
  *     copy button next to the phone, WhatsApp, each email address, and the
- *     address value — so the footer and the homepage support bar are covered
- *     on every page. Multi-email rows also expose a choose-email disclosure
- *     whose mailto options are marked data-sft-copy-init so this script
- *     does not inject a second copy control into the menu;
+ *     address value — so the footer is covered on every page. Multi-email
+ *     rows also expose a choose-email disclosure whose mailto options are
+ *     marked data-sft-copy-init so this script does not inject a second
+ *     copy control into the menu;
  *   - the script additionally attaches an inline copy button to plain
  *     tel: / mailto: / wa.me links found in page content (contact, careers,
  *     policy, track-order, …), so no per-template markup is needed.

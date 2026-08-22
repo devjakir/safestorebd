@@ -46,7 +46,7 @@ $hero_slides = array(
 		'badge'         => 'Head protection',
 		'title'         => 'Safety' . $nbsp . 'Helmets',
 		'title_accent'  => '&' . $nbsp . 'Hard' . $nbsp . 'Hats',
-		'text'          => 'Certified helmets and hard hats for construction, plant, and logistics crews — <strong>delivered to all 64 districts</strong>.',
+		'text'          => 'Certified helmets and hard hats for construction, plant, and logistics crews.',
 		'cta'           => 'Shop Hard Hats',
 		'url'           => $helmet_cat,
 		'cta_secondary' => 'Browse categories',
@@ -59,7 +59,7 @@ $hero_slides = array(
 		'badge'         => 'High visibility',
 		'title'         => 'Hi-Vis',
 		'title_accent'  => 'Safety Vest',
-		'text'          => 'Hi-vis vests for roads, warehouses, and yards — <strong>delivered to all 64 districts</strong>.',
+		'text'          => 'Hi-vis vests for roads, warehouses, and yards.',
 		'cta'           => 'Shop Safety Vests',
 		'url'           => $vest_cat,
 		'cta_secondary' => 'Explore PPE',
@@ -72,7 +72,7 @@ $hero_slides = array(
 		'badge'         => 'Foot protection',
 		'title'         => 'Industrial',
 		'title_accent'  => 'Safety Shoes',
-		'text'          => 'Leather work boots for oil, grit, and long shifts — <strong>delivered to all 64 districts</strong>.',
+		'text'          => 'Leather work boots for oil, grit, and long shifts.',
 		'cta'           => 'Shop Safety Shoes',
 		'url'           => $shoe_cat,
 		'cta_secondary' => 'Shop now',
@@ -94,23 +94,18 @@ $hero_proof = array(
 		'icon' => 'pay',
 		'html' => __( 'bKash · Nagad · <strong>COD</strong>', 'safestore-minimal' ),
 	),
-	array(
-		'icon' => 'shield',
-		'html' => __( '<strong>7-day</strong> easy returns', 'safestore-minimal' ),
-	),
 );
 
 /**
  * Compact stroke icon for the hero proof row.
  *
- * @param string $name Icon key: check|pay|shield.
+ * @param string $name Icon key: check|pay.
  * @return string
  */
 $safestore_hero_proof_icon = static function ( string $name ): string {
 	$paths = array(
-		'check'  => '<circle cx="12" cy="12" r="9"/><path d="m8.5 12.2 2.3 2.3 4.7-5"/>',
-		'pay'    => '<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><path d="M7 15h3"/>',
-		'shield' => '<path d="M12 3 5 6v6c0 4.2 2.8 7.4 7 8.5 4.2-1.1 7-4.3 7-8.5V6z"/><path d="m9 12 2.2 2.2L15.5 10"/>',
+		'check' => '<circle cx="12" cy="12" r="9"/><path d="m8.5 12.2 2.3 2.3 4.7-5"/>',
+		'pay'   => '<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><path d="M7 15h3"/>',
 	);
 
 	if ( ! isset( $paths[ $name ] ) ) {
