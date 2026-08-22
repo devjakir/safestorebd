@@ -227,7 +227,7 @@ function safestore_hero_product_image_payload( $product ) {
 		'width'  => (int) $src[1],
 		'height' => (int) $src[2],
 		'srcset' => is_string( $srcset ) ? $srcset : '',
-		'sizes'  => is_string( $sizes ) && '' !== $sizes ? $sizes : '(max-width: 900px) 92vw, 42vw',
+		'sizes'  => is_string( $sizes ) && '' !== $sizes ? $sizes : '(max-width: 900px) 70vw, 464px',
 		'alt'    => $alt,
 	);
 }

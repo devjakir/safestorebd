@@ -83,7 +83,7 @@ $hero_slides = array(
 	),
 );
 
-$hero_sizes = '(max-width: 900px) 62vw, 42vw';
+$hero_sizes = '(max-width: 900px) 70vw, 464px';
 
 $hero_proof = array(
 	array(
@@ -198,30 +198,32 @@ $safestore_hero_proof_icon = static function ( string $name ): string {
 					</ul>
 				</div>
 				<div class="hero-slide-media">
-					<?php if ( $is_first ) : ?>
-						<img class="hero-slide-product"
-							src="<?php echo esc_url( $img_src ); ?>"
-							<?php echo '' !== $img_srcset ? 'srcset="' . esc_attr( $img_srcset ) . '"' : ''; ?>
-							sizes="<?php echo esc_attr( $img_sizes ); ?>"
-							alt="<?php echo esc_attr( $img_alt ); ?>"
-							width="<?php echo esc_attr( (string) $img_w ); ?>"
-							height="<?php echo esc_attr( (string) $img_h ); ?>"
-							loading="eager"
-							decoding="async"
-							fetchpriority="high">
-					<?php else : ?>
-						<img class="hero-slide-product"
-							src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-							data-src="<?php echo esc_url( $img_src ); ?>"
-							<?php echo '' !== $img_srcset ? 'data-srcset="' . esc_attr( $img_srcset ) . '"' : ''; ?>
-							data-sizes="<?php echo esc_attr( $img_sizes ); ?>"
-							alt="<?php echo esc_attr( $img_alt ); ?>"
-							width="<?php echo esc_attr( (string) $img_w ); ?>"
-							height="<?php echo esc_attr( (string) $img_h ); ?>"
-							loading="lazy"
-							decoding="async">
-					<?php endif; ?>
-					<?php echo $overlay_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<div class="hero-slide-stage">
+						<?php if ( $is_first ) : ?>
+							<img class="hero-slide-product"
+								src="<?php echo esc_url( $img_src ); ?>"
+								<?php echo '' !== $img_srcset ? 'srcset="' . esc_attr( $img_srcset ) . '"' : ''; ?>
+								sizes="<?php echo esc_attr( $img_sizes ); ?>"
+								alt="<?php echo esc_attr( $img_alt ); ?>"
+								width="<?php echo esc_attr( (string) $img_w ); ?>"
+								height="<?php echo esc_attr( (string) $img_h ); ?>"
+								loading="eager"
+								decoding="async"
+								fetchpriority="high">
+						<?php else : ?>
+							<img class="hero-slide-product"
+								src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+								data-src="<?php echo esc_url( $img_src ); ?>"
+								<?php echo '' !== $img_srcset ? 'data-srcset="' . esc_attr( $img_srcset ) . '"' : ''; ?>
+								data-sizes="<?php echo esc_attr( $img_sizes ); ?>"
+								alt="<?php echo esc_attr( $img_alt ); ?>"
+								width="<?php echo esc_attr( (string) $img_w ); ?>"
+								height="<?php echo esc_attr( (string) $img_h ); ?>"
+								loading="lazy"
+								decoding="async">
+						<?php endif; ?>
+						<?php echo $overlay_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					</div>
 				</div>
 			</article>
 		<?php endforeach; ?>

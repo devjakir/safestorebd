@@ -18,8 +18,9 @@
   'use strict';
 
   var MIN_WIDTH = 992;   // keep in sync with css/pdp-zoom.css
-  var TARGET_ZOOM = 2.5; // preferred magnification over on-screen size
-  var MIN_ZOOM = 1.5;    // never bother zooming less than this
+  var TARGET_ZOOM = 3.25; // preferred magnification over on-screen size
+  var MIN_ZOOM = 2.4;     // floor so the select area never fills most of the photo
+  var LENS_MAX_RATIO = 0.38; // lens ≤ 38% of the visible image on each axis
 
   // The panel is sized to the product-details column so it lands flush with the
   // layout instead of at an arbitrary width. FLYOUT_MIN is a *preferred* floor
@@ -257,13 +258,19 @@
       return null;
     }
 
-    // Cap magnification at the point where one source pixel fills one screen
-    // pixel — past that the flyout is just blur.
+    // Prefer a tight close-up. Do not let a large flyout / low-res source
+    // force a select area that covers most of the product photo.
     var resolutionCap = painted.w > 0 ? natural.w / painted.w : TARGET_ZOOM;
-    var zoom = Math.min(TARGET_ZOOM, Math.max(MIN_ZOOM, resolutionCap));
+    var zoom = Math.max(MIN_ZOOM, Math.min(TARGET_ZOOM, resolutionCap));
 
-    // ...but the lens must still fit inside the visible area.
-    zoom = Math.max(zoom, flyoutW / areaW, flyoutH / areaH);
+    // Lens must fit inside the visible paint, and stay a compact select area.
+    zoom = Math.max(
+      zoom,
+      flyoutW / areaW,
+      flyoutH / areaH,
+      flyoutW / (areaW * LENS_MAX_RATIO),
+      flyoutH / (areaH * LENS_MAX_RATIO)
+    );
 
     var lensW = flyoutW / zoom;
     var lensH = flyoutH / zoom;

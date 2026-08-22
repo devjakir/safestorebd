@@ -213,7 +213,10 @@ function safestore_minimal_setup() {
     add_theme_support('post-thumbnails');
     add_theme_support('custom-logo');
     add_theme_support('html5', array('search-form', 'comment-form', 'comment-list', 'gallery', 'caption'));
-    add_theme_support('woocommerce');
+    add_theme_support('woocommerce', array(
+        'thumbnail_image_width' => 600,
+        'single_image_width'    => 800,
+    ));
     add_theme_support('wc-product-gallery-zoom');
     add_theme_support('wc-product-gallery-lightbox');
     add_theme_support('wc-product-gallery-slider');
@@ -223,6 +226,25 @@ function safestore_minimal_setup() {
     ));
 }
 add_action('after_setup_theme', 'safestore_minimal_setup');
+
+/**
+ * Square catalog thumbnails so mixed source photos share one grid cell.
+ * Existing files need a thumbnail regen; CSS aspect-ratio is the display lock.
+ *
+ * @param array<string,mixed> $size Image size args.
+ * @return array<string,mixed>
+ */
+function safestore_square_catalog_image_size( $size ) {
+    if ( ! is_array( $size ) ) {
+        $size = array();
+    }
+    $size['width']  = 600;
+    $size['height'] = 600;
+    $size['crop']   = 1;
+    return $size;
+}
+add_filter( 'woocommerce_get_image_size_thumbnail', 'safestore_square_catalog_image_size' );
+add_filter( 'woocommerce_get_image_size_woocommerce_thumbnail', 'safestore_square_catalog_image_size' );
 
 /**
  * Turn off WooCommerce's in-place magnifier (jquery-zoom).
