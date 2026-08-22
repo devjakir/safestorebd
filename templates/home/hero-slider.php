@@ -152,25 +152,27 @@ $safestore_hero_proof_icon = static function ( string $name ): string {
 				data-slide="<?php echo (int) $index; ?>"
 				<?php echo ! $is_first ? 'aria-hidden="true"' : ''; ?>>
 				<div class="hero-slide-content">
+					<?php
+					// One homepage H1 (site value prop). Slide category titles stay H2
+					// so Google gets the right topical signal; other slides keep the
+					// same visual line as a non-heading so layout does not jump.
+					$site_h1 = __( 'Industrial Safety Equipment & PPE Store in Bangladesh', 'safestore-minimal' );
+					if ( $is_first ) :
+						?>
+						<h1 class="hero-site-h1"><?php echo esc_html( $site_h1 ); ?></h1>
+					<?php else : ?>
+						<p class="hero-site-h1" aria-hidden="true"><?php echo esc_html( $site_h1 ); ?></p>
+					<?php endif; ?>
 					<span class="hero-slide-badge">
 						<span class="hero-slide-badge-star" aria-hidden="true">&#9733;</span>
 						<?php echo wp_kses_post( $slide['badge'] ); ?>
 					</span>
-					<?php if ( $is_first ) : ?>
-						<h1 class="hero-slide-title">
-							<span class="hero-slide-title-line"><?php echo esc_html( $slide['title'] ); ?></span>
-							<?php if ( ! empty( $slide['title_accent'] ) ) : ?>
-								<span class="hero-slide-title-accent"><?php echo esc_html( $slide['title_accent'] ); ?></span>
-							<?php endif; ?>
-						</h1>
-					<?php else : ?>
-						<h2 class="hero-slide-title">
-							<span class="hero-slide-title-line"><?php echo esc_html( $slide['title'] ); ?></span>
-							<?php if ( ! empty( $slide['title_accent'] ) ) : ?>
-								<span class="hero-slide-title-accent"><?php echo esc_html( $slide['title_accent'] ); ?></span>
-							<?php endif; ?>
-						</h2>
-					<?php endif; ?>
+					<h2 class="hero-slide-title">
+						<span class="hero-slide-title-line"><?php echo esc_html( $slide['title'] ); ?></span>
+						<?php if ( ! empty( $slide['title_accent'] ) ) : ?>
+							<span class="hero-slide-title-accent"><?php echo esc_html( $slide['title_accent'] ); ?></span>
+						<?php endif; ?>
+					</h2>
 					<p class="hero-slide-text"><?php echo wp_kses_post( $slide['text'] ); ?></p>
 					<div class="hero-slide-actions">
 						<a class="hero-slide-cta hero-slide-cta--primary" href="<?php echo esc_url( $slide['url'] ); ?>">

@@ -2737,6 +2737,18 @@ select {
   gap: 18px;
 }
 
+/* Homepage topical H1 — echoes the title tag; slide titles are H2. */
+.home .hero-site-h1 {
+  margin: 0;
+  max-width: 36em;
+  font-size: clamp(12px, 1.15vw, 14px);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(226, 232, 240, 0.72);
+}
+
 .home .hero-slide-badge {
   align-self: flex-start;
   display: inline-flex;
@@ -3020,6 +3032,11 @@ select {
     max-width: 100%;
     gap: 10px;
     justify-content: flex-start;
+  }
+
+  .home .hero-site-h1 {
+    font-size: 11px;
+    letter-spacing: 0.05em;
   }
 
   .home .hero-slide-title {
@@ -6543,6 +6560,53 @@ a.sft-contact-item:focus-visible {
 .sft-pdp-trustb__item--returns .sft-pdp-trustb__hint {
   color: #3730a3;
   font-weight: 600;
+}
+
+.sft-pdp-pay {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 12px;
+  margin: 14px 0 0;
+}
+
+.sft-pdp-pay__label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.sft-pdp-pay__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sft-pdp-pay .sft-pay {
+  height: 30px;
+  padding: 0 10px;
+}
+
+.sft-pdp-pay .sft-ship-pay-label {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.sft-pdp-pay .sft-pay--cod .sft-ship-pay-label {
+  color: #166534;
+}
+
+.sft-pdp-pay .sft-pay--bkash .sft-ship-pay-label {
+  color: #be185d;
+}
+
+.sft-pdp-pay .sft-pay--nagad .sft-ship-pay-label {
+  color: #c2410c;
 }
 
 /* Product tabs & reviews: see css/pdp-tabs.css (enqueued on single product). */

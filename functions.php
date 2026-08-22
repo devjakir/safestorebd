@@ -2449,29 +2449,9 @@ function safestorebd_checkout_fields( $fields ) {
 }
 // ACR Checkout Page customize End
 
-// ACR Dynamically update cart count and price via WooCommerce AJAX
-add_filter( 'woocommerce_add_to_cart_fragments', 'sft_custom_theme_cart_fragments' );
-
-function sft_custom_theme_cart_fragments( $fragments ) {
-    //  Update the Cart Item Count Badge
-    ob_start();
-    ?>
-    <span class="sft-header-cart-badge"><?php echo WC()->cart->get_cart_contents_count(); ?></span>
-    <?php
-    $fragments['span.sft-header-cart-badge'] = ob_get_clean();
-
-    //  Update the Cart Total Price Label
-    ob_start();
-    ?>
-    <span class="sft-header-action-label sft-header-cart-total"><?php echo WC()->cart->get_cart_total(); ?></span>
-    <?php
-    // Target the cart-specific class. The bare .sft-header-action-label
-    // selector also matched the Wishlist label and overwrote it.
-    $fragments['span.sft-header-cart-total'] = ob_get_clean();
-
-    return $fragments;
-}
-// ACR Dynamically update cart count and price via WooCommerce AJAX End
+// Header cart count/total fragments live in inc/cart-toast.php
+// (safestore_cart_toast_fragments) — keyed to .sft-header-cart-total only,
+// so Account/Wishlist labels are never overwritten after AJAX add-to-cart.
 
 /**
  * Prevent duplicate category description on shop archives.
