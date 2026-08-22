@@ -84,15 +84,6 @@ function sfx_footer_icon( $name ) {
 					</a>
 				<?php endif; ?>
 
-
-				<a class="sfx-bigbtn" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">
-					<span class="sfx-bigbtn__icon"><?php echo sfx_footer_icon( 'place' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
-					<span class="sfx-bigbtn__text">
-						<span class="sfx-bigbtn__eyebrow"><?php esc_html_e( 'Visit us', 'safestore-minimal' ); ?></span>
-						<span class="sfx-bigbtn__value"><?php echo esc_html( $sfx_address ); ?></span>
-					</span>
-				</a>
-
 				<div class="sfx-bigbtn sfx-bigbtn--static">
 					<span class="sfx-bigbtn__icon"><?php echo sfx_footer_icon( 'clock' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
 					<span class="sfx-bigbtn__text">
@@ -103,37 +94,24 @@ function sfx_footer_icon( $name ) {
 				</div>
 			</div>
 
-			<!-- Link lists --------------------------------------------------- -->
+			<!-- About us ----------------------------------------------------- -->
 			<div class="sfx-block sfx-block--links">
 				<?php
-				$sfx_groups = array(
-					array(
-						'id'    => 'shop',
-						'title' => __( 'Shop', 'safestore-minimal' ),
-						'links' => $sfx_shop_links,
-					),
-					array(
-						'id'    => 'information',
-						'title' => __( 'Information', 'safestore-minimal' ),
-						'links' => $sfx_info_links,
-					),
-				);
-				foreach ( $sfx_groups as $sfx_group ) :
-					$sfx_panel_id = 'sfx-panel-' . $sfx_group['id'];
-					?>
-					<div class="sfx-linkcol" data-sfx-acc>
-						<h2 class="sfx-heading"><?php echo esc_html( $sfx_group['title'] ); ?></h2>
-						<button type="button" class="sfx-acc__btn" aria-expanded="false" aria-controls="<?php echo esc_attr( $sfx_panel_id ); ?>">
-							<span><?php echo esc_html( $sfx_group['title'] ); ?></span>
-							<svg class="sfx-acc__chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="6 9 12 15 18 9"/></svg>
-						</button>
-						<ul class="sfx-links" id="<?php echo esc_attr( $sfx_panel_id ); ?>">
-							<?php foreach ( $sfx_group['links'] as $sfx_link ) : ?>
-								<li><a href="<?php echo esc_url( $sfx_link[1] ); ?>"><?php echo esc_html( $sfx_link[0] ); ?></a></li>
-							<?php endforeach; ?>
-						</ul>
-					</div>
-				<?php endforeach; ?>
+				$sfx_about_links = array_merge( $sfx_shop_links, $sfx_info_links );
+				$sfx_panel_id    = 'sfx-panel-about';
+				?>
+				<div class="sfx-linkcol sfx-linkcol--about" data-sfx-acc>
+					<h2 class="sfx-heading"><?php esc_html_e( 'About Us', 'safestore-minimal' ); ?></h2>
+					<button type="button" class="sfx-acc__btn" aria-expanded="false" aria-controls="<?php echo esc_attr( $sfx_panel_id ); ?>">
+						<span><?php esc_html_e( 'About Us', 'safestore-minimal' ); ?></span>
+						<svg class="sfx-acc__chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="6 9 12 15 18 9"/></svg>
+					</button>
+					<ul class="sfx-links sfx-links--grid" id="<?php echo esc_attr( $sfx_panel_id ); ?>">
+						<?php foreach ( $sfx_about_links as $sfx_link ) : ?>
+							<li><a href="<?php echo esc_url( $sfx_link[1] ); ?>"><?php echo esc_html( $sfx_link[0] ); ?></a></li>
+						<?php endforeach; ?>
+					</ul>
+				</div>
 			</div>
 
 			<!-- Stay connected ----------------------------------------------- -->
@@ -150,11 +128,11 @@ function sfx_footer_icon( $name ) {
 					</picture>
 				</a>
 
-				<p class="sfx-org__desc"><?php esc_html_e( "Bangladesh's trusted source for industrial safety products. Quality PPE, dependable service, paperwork that holds up.", 'safestore-minimal' ); ?></p>
+				<!--<p class="sfx-org__desc"><?php esc_html_e( "Bangladesh's trusted source for industrial safety products. Quality PPE, dependable service, paperwork that holds up.", 'safestore-minimal' ); ?></p> -->
 
 				<p class="sfx-org__line">
-					<strong><?php esc_html_e( 'Head Office', 'safestore-minimal' ); ?></strong>
-					<?php echo esc_html( $sfx_address ); ?>
+					<strong><?php esc_html_e( 'Visit us', 'safestore-minimal' ); ?></strong>
+					<a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php echo esc_html( $sfx_address ); ?></a>
 				</p>
 
 				<?php if ( ! empty( $sfx_emails ) ) : ?>
@@ -181,7 +159,7 @@ function sfx_footer_icon( $name ) {
 					<?php endforeach; ?>
 				</div>
 
-				<div class="sfx-meta">
+				<!-- <div class="sfx-meta">
 					<span class="sfx-meta__label"><?php esc_html_e( 'We accept', 'safestore-minimal' ); ?></span>
 					<ul class="sfx-pills">
 						<?php /* bKash/Nagad/Rocket/Upay badges removed until an online payment gateway is connected — restore from git history when ready. */ ?>
@@ -201,7 +179,7 @@ function sfx_footer_icon( $name ) {
 					<ul class="sfx-pills">
 						<li class="sfx-cert"><?php esc_html_e( '100% Genuine Imported Stock', 'safestore-minimal' ); ?></li>
 					</ul>
-				</div>
+				</div> -->
 			</div>
 
 		</div>

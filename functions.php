@@ -1017,7 +1017,6 @@ function safestore_contact_email_addresses() {
 		'safestore_contact_emails',
 		array(
 			'contact@safestorebd.com',
-			'bdsafestore@gmail.com',
 		)
 	);
 

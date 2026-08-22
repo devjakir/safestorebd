@@ -31,8 +31,7 @@ $support_items = array(
 		'href'   => safestore_wa_link( 'primary' ),
 	),
 	array(
-		// Rendered via safestore_contact_emails_row() in the loop below — both
-		// email addresses stacked one per line.
+		// Rendered via safestore_contact_emails_row() in the loop below.
 		'type'   => 'email',
 		'label'  => __( 'Email', 'safestore-minimal' ),
 		'detail' => __( 'Reply within 4 hours', 'safestore-minimal' ),
@@ -63,7 +62,6 @@ $support_items = array(
 			<?php
 			foreach ( $support_items as $sft_support_item ) {
 				if ( 'email' === ( $sft_support_item['type'] ?? '' ) ) {
-					// The email cell lists both addresses stacked (one per line).
 					echo safestore_contact_emails_row( array(
 						'label'  => $sft_support_item['label'],
 						'detail' => $sft_support_item['detail'],
