@@ -79,6 +79,12 @@ require get_template_directory() . '/inc/origin-badge.php';
 require get_template_directory() . '/inc/pdp-fulfillment.php';
 
 /**
+ * Home hero — live price/review overlays from a category hero product.
+ * See inc/hero-category-imagery.php.
+ */
+require get_template_directory() . '/inc/hero-category-imagery.php';
+
+/**
  * Mobile & tablet navigation — sticky bottom bar, header quick links,
  * hide-on-scroll header. Renders below 1025px only.
  */

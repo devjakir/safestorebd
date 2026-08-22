@@ -70,8 +70,8 @@ $categories = array(
 <section id="browse-categories" class="featured-categories" aria-label="Shop by safety category">
 	<div class="featured-categories-head">
 		<div class="featured-categories-intro">
-			<h2>Shop by Safety Category</h2>
-			<p>Certified industrial PPE — browse helmets, hi-vis vests, gloves, eyewear, and safety shoes.</p>
+			<h2>Featured Category</h2>
+			<p>Get Your Desired Product from Featured Category!</p>
 		</div>
 		<a class="featured-categories-view-all" href="<?php echo esc_url( $shop_url ); ?>">View all <span aria-hidden="true">&rarr;</span></a>
 	</div>
