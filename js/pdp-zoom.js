@@ -18,9 +18,9 @@
   'use strict';
 
   var MIN_WIDTH = 992;   // keep in sync with css/pdp-zoom.css
-  var TARGET_ZOOM = 3.25; // preferred magnification over on-screen size
-  var MIN_ZOOM = 2.4;     // floor so the select area never fills most of the photo
-  var LENS_MAX_RATIO = 0.38; // lens ≤ 38% of the visible image on each axis
+  var TARGET_ZOOM = 2.15; // mid close-up — sharp flyout, readable select area
+  var MIN_ZOOM = 1.8;
+  var LENS_MAX_RATIO = 0.5; // select area ~half the photo, not a tiny crop
 
   // The panel is sized to the product-details column so it lands flush with the
   // layout instead of at an arbitrary width. FLYOUT_MIN is a *preferred* floor
@@ -258,19 +258,19 @@
       return null;
     }
 
-    // Prefer a tight close-up. Do not let a large flyout / low-res source
-    // force a select area that covers most of the product photo.
+    // Stay near native resolution so the flyout does not pixelate, then
+    // keep the lens around half the photo — not a postage-stamp crop.
     var resolutionCap = painted.w > 0 ? natural.w / painted.w : TARGET_ZOOM;
-    var zoom = Math.max(MIN_ZOOM, Math.min(TARGET_ZOOM, resolutionCap));
+    var zoom = Math.min(TARGET_ZOOM, Math.max(MIN_ZOOM, resolutionCap));
 
-    // Lens must fit inside the visible paint, and stay a compact select area.
-    zoom = Math.max(
-      zoom,
-      flyoutW / areaW,
-      flyoutH / areaH,
+    zoom = Math.max(zoom, flyoutW / areaW, flyoutH / areaH);
+
+    var compact = Math.max(
       flyoutW / (areaW * LENS_MAX_RATIO),
       flyoutH / (areaH * LENS_MAX_RATIO)
     );
+    zoom = Math.min(TARGET_ZOOM, Math.max(zoom, compact));
+    zoom = Math.max(zoom, flyoutW / areaW, flyoutH / areaH);
 
     var lensW = flyoutW / zoom;
     var lensH = flyoutH / zoom;
