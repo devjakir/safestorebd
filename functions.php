@@ -90,6 +90,22 @@ require get_template_directory() . '/inc/hero-category-imagery.php';
  */
 require get_template_directory() . '/inc/mobile-nav.php';
 
+/**
+ * Product reviews — keep the WooCommerce Reviews tab on the PDP by forcing
+ * comments open on products. Ported from the "Re-add WooCommerce Reviews tab"
+ * Code Snippets entry; deactivate that snippet on live after deploying.
+ * See SNIPPETS-MIGRATION.md.
+ */
+require get_template_directory() . '/inc/product-reviews.php';
+
+/**
+ * Shop filter bar — renders the HUSKY / WOOF [woof] filter above the shop and
+ * category grid. Needs the woocommerce-products-filter plugin; inert without
+ * it. Ported from the "Show product filter (HUSKY)" Code Snippets entry;
+ * deactivate that snippet on live after deploying. See SNIPPETS-MIGRATION.md.
+ */
+require get_template_directory() . '/inc/shop-filter.php';
+
 function safestore_minimal_enqueue_assets() {
     $version = wp_get_theme()->get('Version');
 

@@ -1,0 +1,32 @@
+/*
+ * Shop filter bar — HUSKY / WOOF filter above the shop & category grid.
+ *
+ * Loaded by inc/shop-filter.php on the shop page and product category / tag
+ * archives only. Ported verbatim from the inline <style> block that the live
+ * Code Snippets entry printed into wp_head.
+ */
+
+.sft-shop-filter {
+  background: #fff;
+  border: 1px solid #e6eaf1;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin: 0 0 22px;
+}
+
+.sft-shop-filter .woof {
+  margin: 0;
+}
+
+.sft-shop-filter .woof_container {
+  margin: 0 0 6px;
+}
+
+/* Free-text search is handled by the header search, not the filter bar. */
+.sft-shop-filter .woof_text_search_container {
+  display: none;
+}
+
+.sft-shop-filter .woof_submit_search_form_container {
+  margin-top: 8px;
+}
