@@ -16,24 +16,17 @@ $sfx_address    = function_exists( 'safestore_minimal_get_pickup_address' )
 $sfx_emails     = function_exists( 'safestore_contact_email_addresses' )
 	? safestore_contact_email_addresses()
 	: array( 'contact@safestorebd.com' );
-$sfx_shop_url   = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
-
-$sfx_shop_links = array(
-	array( 'All Products', $sfx_shop_url ),
-	array( 'Safety Shoes', home_url( '/product-category/safety-shoes/' ) ),
-	array( 'Safety Helmets', home_url( '/product-category/protective-helmets/' ) ),
-	array( 'Safety Gloves', home_url( '/product-category/safety-gloves/' ) ),
-	array( 'Safety Vests', home_url( '/product-category/safety-vests/' ) ),
-	array( 'Safety Goggles', home_url( '/product-category/safety-goggles/' ) ),
-);
-
-$sfx_info_links = array(
+$sfx_about_links = array(
 	array( 'About Us', home_url( '/about/' ) ),
 	array( 'Careers', home_url( '/careers/' ) ),
 	array( 'Contact', home_url( '/contact/' ) ),
-	array( 'Track Order', home_url( '/track-order/' ) ),
+	array( 'Legal', home_url( '/legal/' ) ),
+);
+
+$sfx_service_links = array(
 	array( 'Shipping', home_url( '/shipping-delivery/' ) ),
 	array( 'Return and Refund Policy', home_url( '/return-refund-policy/' ) ),
+	array( 'Track Order', home_url( '/track-order/' ) ),
 	array( 'FAQ', home_url( '/faqs/' ) ),
 );
 
@@ -94,40 +87,41 @@ function sfx_footer_icon( $name ) {
 				</div>
 			</div>
 
-			<!-- About us ----------------------------------------------------- -->
+			<!-- About us + customer service --------------------------------- -->
 			<div class="sfx-block sfx-block--links">
 				<?php
-				$sfx_about_links = array_merge( $sfx_shop_links, $sfx_info_links );
-				$sfx_panel_id    = 'sfx-panel-about';
+				$sfx_link_groups = array(
+					array(
+						'id'    => 'sfx-panel-about',
+						'title' => __( 'About Us', 'safestore-minimal' ),
+						'links' => $sfx_about_links,
+					),
+					array(
+						'id'    => 'sfx-panel-service',
+						'title' => __( 'Customer Service', 'safestore-minimal' ),
+						'links' => $sfx_service_links,
+					),
+				);
 				?>
-				<div class="sfx-linkcol sfx-linkcol--about" data-sfx-acc>
-					<h2 class="sfx-heading"><?php esc_html_e( 'About Us', 'safestore-minimal' ); ?></h2>
-					<button type="button" class="sfx-acc__btn" aria-expanded="false" aria-controls="<?php echo esc_attr( $sfx_panel_id ); ?>">
-						<span><?php esc_html_e( 'About Us', 'safestore-minimal' ); ?></span>
-						<svg class="sfx-acc__chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="6 9 12 15 18 9"/></svg>
-					</button>
-					<ul class="sfx-links sfx-links--grid" id="<?php echo esc_attr( $sfx_panel_id ); ?>">
-						<?php foreach ( $sfx_about_links as $sfx_link ) : ?>
-							<li><a href="<?php echo esc_url( $sfx_link[1] ); ?>"><?php echo esc_html( $sfx_link[0] ); ?></a></li>
-						<?php endforeach; ?>
-					</ul>
-				</div>
+				<?php foreach ( $sfx_link_groups as $sfx_group ) : ?>
+					<div class="sfx-linkcol" data-sfx-acc>
+						<h2 class="sfx-heading"><?php echo esc_html( $sfx_group['title'] ); ?></h2>
+						<button type="button" class="sfx-acc__btn" aria-expanded="false" aria-controls="<?php echo esc_attr( $sfx_group['id'] ); ?>">
+							<span><?php echo esc_html( $sfx_group['title'] ); ?></span>
+							<svg class="sfx-acc__chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="6 9 12 15 18 9"/></svg>
+						</button>
+						<ul class="sfx-links" id="<?php echo esc_attr( $sfx_group['id'] ); ?>">
+							<?php foreach ( $sfx_group['links'] as $sfx_link ) : ?>
+								<li><a href="<?php echo esc_url( $sfx_link[1] ); ?>"><?php echo esc_html( $sfx_link[0] ); ?></a></li>
+							<?php endforeach; ?>
+						</ul>
+					</div>
+				<?php endforeach; ?>
 			</div>
 
 			<!-- Stay connected ----------------------------------------------- -->
 			<div class="sfx-block sfx-block--org">
 				<h2 class="sfx-heading"><?php esc_html_e( 'Stay Connected', 'safestore-minimal' ); ?></h2>
-
-				<a class="sfx-org__logo" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="<?php bloginfo( 'name' ); ?>">
-					<?php $sfx_logo_dir = get_template_directory_uri() . '/assets/images/logo'; ?>
-					<picture>
-						<source type="image/webp" srcset="<?php echo esc_url( $sfx_logo_dir . '/safe-store-bd.webp' ); ?>">
-						<img src="<?php echo esc_url( $sfx_logo_dir . '/safe-store-bd.png' ); ?>"
-							alt="<?php bloginfo( 'name' ); ?>"
-							width="240" height="128" loading="lazy" decoding="async">
-					</picture>
-				</a>
-
 				<!--<p class="sfx-org__desc"><?php esc_html_e( "Bangladesh's trusted source for industrial safety products. Quality PPE, dependable service, paperwork that holds up.", 'safestore-minimal' ); ?></p> -->
 
 				<p class="sfx-org__line">
@@ -150,16 +144,14 @@ function sfx_footer_icon( $name ) {
 						<?php endforeach; ?>
 					</p>
 				<?php endif; ?>
+			</div>
 
-				<div class="sfx-socials" aria-label="<?php esc_attr_e( 'Follow SafeStoreBD', 'safestore-minimal' ); ?>">
-					<?php foreach ( $sfx_socials as $sfx_social ) : ?>
-						<a class="sfx-social" href="<?php echo esc_url( $sfx_social[1] ); ?>" aria-label="<?php echo esc_attr( $sfx_social[0] ); ?>" target="_blank" rel="noopener noreferrer">
-							<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><?php echo $sfx_social[2]; // phpcs:ignore WordPress.Security.EscapeOutput ?></svg>
-						</a>
-					<?php endforeach; ?>
-				</div>
+		</div>
 
-				<div class="sfx-meta">
+		<!-- Payment / sourcing / socials ---------------------------------- -->
+		<div class="sfx-footer__strip">
+			<div class="sfx-strip__meta">
+				<div class="sfx-metagroup">
 					<span class="sfx-meta__label"><?php esc_html_e( 'We accept', 'safestore-minimal' ); ?></span>
 					<ul class="sfx-pills" aria-label="<?php esc_attr_e( 'Payment methods', 'safestore-minimal' ); ?>">
 						<li class="sfx-pay sfx-pay--cod" title="<?php esc_attr_e( 'Cash on Delivery', 'safestore-minimal' ); ?>">
@@ -172,7 +164,9 @@ function sfx_footer_icon( $name ) {
 							<span class="sfx-pay__label">Nagad</span>
 						</li>
 					</ul>
+				</div>
 
+				<div class="sfx-metagroup">
 					<span class="sfx-meta__label"><?php esc_html_e( 'Sourcing', 'safestore-minimal' ); ?></span>
 					<ul class="sfx-pills">
 						<li class="sfx-cert"><?php esc_html_e( '100% Genuine Imported Stock', 'safestore-minimal' ); ?></li>
@@ -180,6 +174,13 @@ function sfx_footer_icon( $name ) {
 				</div>
 			</div>
 
+			<div class="sfx-socials" aria-label="<?php esc_attr_e( 'Follow SafeStoreBD', 'safestore-minimal' ); ?>">
+				<?php foreach ( $sfx_socials as $sfx_social ) : ?>
+					<a class="sfx-social" href="<?php echo esc_url( $sfx_social[1] ); ?>" aria-label="<?php echo esc_attr( $sfx_social[0] ); ?>" target="_blank" rel="noopener noreferrer">
+						<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><?php echo $sfx_social[2]; // phpcs:ignore WordPress.Security.EscapeOutput ?></svg>
+					</a>
+				<?php endforeach; ?>
+			</div>
 		</div>
 
 		<div class="sfx-subfooter">
@@ -195,7 +196,6 @@ function sfx_footer_icon( $name ) {
 			<nav class="sfx-legal" aria-label="<?php esc_attr_e( 'Legal', 'safestore-minimal' ); ?>">
 				<a href="<?php echo esc_url( home_url( '/privacy-policy/' ) ); ?>"><?php esc_html_e( 'Privacy Policy', 'safestore-minimal' ); ?></a>
 				<a href="<?php echo esc_url( home_url( '/terms-of-service/' ) ); ?>"><?php esc_html_e( 'Terms of Service', 'safestore-minimal' ); ?></a>
-				<a href="<?php echo esc_url( home_url( '/legal/' ) ); ?>"><?php esc_html_e( 'Legal', 'safestore-minimal' ); ?></a>
 				<a href="<?php echo esc_url( home_url( '/sitemap/' ) ); ?>"><?php esc_html_e( 'Sitemap', 'safestore-minimal' ); ?></a>
 			</nav>
 		</div>

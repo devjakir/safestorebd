@@ -47,12 +47,11 @@
   padding-right: 50px;
 }
 
+/* Two titled link columns share this half of the row. */
 .sfx-block--links {
   flex: 1 1 50%;
-}
-
-.sfx-linkcol--about {
-  min-width: 0;
+  display: flex;
+  gap: 36px;
 }
 
 .sfx-block--org {
@@ -61,6 +60,7 @@
 }
 
 .sfx-linkcol {
+  flex: 1 1 50%;
   min-width: 0;
 }
 
@@ -183,15 +183,6 @@
   text-decoration: none;
 }
 
-.sfx-links--grid {
-  columns: 3;
-  column-gap: 36px;
-}
-
-.sfx-links--grid li {
-  break-inside: avoid;
-}
-
 /* ---------- Stay Connected column ---------- */
 
 .sfx-org__logo {
@@ -250,7 +241,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 9px;
-  margin: 18px 0 0;
+  margin: 0;
 }
 
 .sfx-social {
@@ -283,32 +274,56 @@
   outline-offset: 2px;
 }
 
-/* ---------- Payment + sourcing ---------- */
+/* ---------- Payment / sourcing / socials strip ----------
 
-.sfx-meta {
-  margin-top: 22px;
+   These three groups used to stack inside the Stay Connected column, which
+   made that column run far taller than the other two. They read as
+   site-wide badges rather than "stay connected" content, so they sit on
+   their own full-width row instead: payment + sourcing left, socials right.
+   -------------------------------------------------------------------- */
+
+.sfx-footer__strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px 32px;
+  padding: 18px 0;
+  border-top: 1px solid var(--sfx-rule);
+}
+
+.sfx-strip__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 30px;
+  min-width: 0;
+}
+
+.sfx-metagroup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
 }
 
 .sfx-meta__label {
-  display: block;
-  margin: 0 0 8px;
+  margin: 0;
   font-size: 11.5px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  white-space: nowrap;
   color: rgba(255, 255, 255, 0.45);
 }
 
 .sfx-pills {
   list-style: none;
-  margin: 0 0 16px;
+  margin: 0;
   padding: 0;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-}
-
-.sfx-pills:last-child {
-  margin-bottom: 0;
 }
 
 .sfx-pay {
@@ -380,7 +395,7 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 10px 24px;
-  padding: 18px 0 26px;
+  padding: 15px 0 15px;
   border-top: 1px solid var(--sfx-rule);
   font-size: 13px;
 }
@@ -412,6 +427,7 @@
    viewport at the same height as this row. Keep the legal links out from
    under it rather than letting the widget sit on top of them. */
 @media (min-width: 1025px) {
+  .sfx-footer__strip,
   .sfx-subfooter {
     padding-right: 84px;
   }
@@ -507,8 +523,8 @@
     margin-bottom: 0;
   }
 
-  .sfx-links--grid {
-    columns: 1;
+  .sfx-linkcol {
+    flex: none;
   }
 
   .sfx-block--support,
@@ -591,7 +607,21 @@
     padding: 2px 0;
   }
 
-  .sfx-socials {
+  .sfx-footer__strip {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 16px 0 18px;
+  }
+
+  .sfx-strip__meta {
+    gap: 24px 24px;
+  }
+
+  /* Socials sat above the payment badges before this row existed — keep that
+     order on phones, where the strip stacks anyway. */
+  .sfx-footer__strip .sfx-socials {
+    order: -1;
     gap: 10px;
   }
 
@@ -654,12 +684,6 @@
    mobile-nav.css). The WhatsApp button floats higher than that, so the
    sub-footer needs its own room or the copyright sits under the widget.
    -------------------------------------------------------------------------- */
-
-@media (max-width: 1024px) {
-  .sfx-subfooter {
-    padding-bottom: 104px;
-  }
-}
 
 @media (prefers-reduced-motion: reduce) {
   .sfx-social,
