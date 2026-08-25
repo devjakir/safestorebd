@@ -140,23 +140,48 @@ function safestore_seo_wp_robots( $robots ) {
 add_filter( 'wp_robots', 'safestore_seo_wp_robots' );
 
 /**
- * Detect crawl-spam /?items/... and /?items/.../m request URIs.
+ * Detect crawl-spam "path-style" query strings.
  *
- * Matches encoded and raw slashes. Does not match legitimate POST `items`
- * arrays (footwear size AJAX) because those are not query-string URLs.
+ * Covers the original /?items/<ID> campaign AND every sibling pattern from
+ * the same campaign (/?pw/, /?<token>/<ID>, trailing-slash variants, raw or
+ * percent-encoded slashes). GSC validation for "Page with redirect" failed
+ * on 2026-08-22 because only the `items` prefix returned 410 while e.g.
+ * /?pw/ was still 301-encoded to /?pw%2F by redirect_canonical().
+ *
+ * A junk query string is one that contains a slash but no key=value pair.
+ * Every legitimate query URL on this site (?s=, ?p=, ?add-to-cart=,
+ * ?orderby=, ?wc-ajax=, ?preview=, UTM/fbclid, etc.) contains "=", and no
+ * legitimate WordPress or theme URL puts a bare slash in the query string.
+ * Does not match legitimate POST `items` arrays (footwear size AJAX)
+ * because those are not query-string URLs.
  *
  * @return bool
  */
 function safestore_seo_is_junk_items_request() {
-	$uri = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
-	$qs  = isset( $_SERVER['QUERY_STRING'] ) ? (string) wp_unslash( $_SERVER['QUERY_STRING'] ) : '';
-	$hay = rawurldecode( $uri . "\n" . $qs );
+	$qs = isset( $_SERVER['QUERY_STRING'] ) ? (string) wp_unslash( $_SERVER['QUERY_STRING'] ) : '';
+	if ( '' === $qs ) {
+		return false;
+	}
 
-	return (bool) preg_match( '#(?:\?|&|^)items(/|%2F)#i', $hay );
+	// Decode twice so single- and double-encoded slashes (%2F, %252F) both surface.
+	$decoded = rawurldecode( rawurldecode( $qs ) );
+
+	// Original campaign prefix — kept explicit for clarity in logs/greps.
+	if ( preg_match( '#(?:^|&)items/#i', $decoded ) ) {
+		return true;
+	}
+
+	// Generic junk: a slash anywhere in the query string with no "=" at all.
+	if ( false === strpos( $decoded, '=' ) && false !== strpos( $decoded, '/' ) ) {
+		return true;
+	}
+
+	return false;
 }
 
 /**
- * Keep WordPress from 301-encoding /?items/X into /?items%2FX (GSC "Page with redirect").
+ * Keep WordPress from 301-encoding junk queries (/?items/X → /?items%2FX,
+ * /?pw/ → /?pw%2F) — those 301s are what GSC reports as "Page with redirect".
  *
  * @param string|false $redirect_url Canonical redirect target.
  * @return string|false
@@ -170,7 +195,7 @@ function safestore_seo_disable_canonical_for_junk_items( $redirect_url ) {
 add_filter( 'redirect_canonical', 'safestore_seo_disable_canonical_for_junk_items', 0 );
 
 /**
- * Return HTTP 410 for junk /?items/... crawl-spam URLs.
+ * Return HTTP 410 for junk crawl-spam URLs (/?items/..., /?pw/, etc.).
  *
  * Hooked on init so it runs before redirect_canonical (template_redirect:10).
  */
