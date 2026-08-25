@@ -35,10 +35,17 @@ get_header(); ?>
                 </h1>
                 <?php
                 if (is_product_taxonomy()) {
+                    // Term descriptions are short — keep them in the header.
                     $description = term_description();
                 } else {
+                    // Shop page: short tagline only. The full SEO content now
+                    // renders below the product grid (inc/shop-filter.php),
+                    // so products stay above the fold.
                     $shop_page_id = function_exists('wc_get_page_id') ? (int) wc_get_page_id('shop') : 0;
-                    $description  = $shop_page_id > 0 ? apply_filters('the_content', get_post_field('post_content', $shop_page_id)) : '';
+                    $raw          = $shop_page_id > 0 ? get_post_field('post_content', $shop_page_id) : '';
+                    $description  = '' !== trim((string) $raw)
+                        ? '<p>' . esc_html(wp_trim_words(wp_strip_all_tags((string) $raw), 24, '…')) . '</p>'
+                        : '';
                 }
                 if ($description) : ?>
                     <div class="sft-shop-desc"><?php echo wp_kses_post($description); ?></div>
