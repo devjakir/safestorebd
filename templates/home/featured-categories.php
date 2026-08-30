@@ -119,7 +119,7 @@ $categories = array(
 		<?php
 		// 8 products, 4-up on desktop — same card template as shop (content-product.php).
 		// Deterministic: WooCommerce popularity (total sales), not random.
-		echo do_shortcode( '[products limit="8" columns="4" orderby="popularity"]' );
+		echo do_shortcode( '[products limit="10" columns="4" orderby="popularity"]' );
 		?>
 	</div>
 </section>

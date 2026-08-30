@@ -106,6 +106,13 @@ require get_template_directory() . '/inc/product-reviews.php';
  */
 require get_template_directory() . '/inc/shop-filter.php';
 
+/**
+ * Home Featured Products mobile slider: arrows + dot indicator over the
+ * scroll-snap track. Inlined in the footer (no extra request) and inert
+ * outside the mobile breakpoint.
+ */
+require get_template_directory() . '/inc/home-products-slider.php';
+
 function safestore_minimal_enqueue_assets() {
     $version = wp_get_theme()->get('Version');
 
@@ -345,10 +352,10 @@ function safestore_minimal_loop_add_to_cart_link($link, $product, $args) {
 add_filter('woocommerce_loop_add_to_cart_link', 'safestore_minimal_loop_add_to_cart_link', 10, 3);
 
 /**
- * Shop loop: 4 columns, 12 products per page (grid scales 4→3→2→1 in CSS).
+ * Shop loop: 5 columns, 15 products per page (grid scales 5→4→3→2 in CSS).
  */
-add_filter('loop_shop_columns', function () { return 4; }, 99);
-add_filter('loop_shop_per_page', function () { return 12; }, 99);
+add_filter('loop_shop_columns', function () { return 5; }, 99);
+add_filter('loop_shop_per_page', function () { return 15; }, 99);
 
 /**
  * Single product (PDP): breadcrumb, summary order, contact/delivery blocks.

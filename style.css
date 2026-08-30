@@ -3578,7 +3578,7 @@ select {
 }
 
 .home .sft-home-story a {
-  color: #dc2626;
+  color: #ac1e1e;
   font-weight: 500;
   text-decoration: none;
 }
@@ -4890,7 +4890,7 @@ a.sft-contact-item:focus-visible {
 .sft-shop ul.products,
 .woocommerce.sft-shop-main ul.products {
   display: grid !important;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 32px 24px;
   margin: 0;
   padding: 0;
@@ -5008,7 +5008,6 @@ a.sft-contact-item:focus-visible {
   /* width: 100%; */
   display: flex;
   align-items: center;
-  justify-content: center;
   padding-bottom: 10px;
 }
 
@@ -5189,7 +5188,7 @@ a.sft-contact-item:focus-visible {
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #7c8698;
+  color: #525965;
   line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -5424,6 +5423,17 @@ a.sft-contact-item:focus-visible {
 
 /* ----- Responsive ----- */
 
+/* Shop grid steps 5 -> 4 -> 3 -> 2. Unlike the home row this is paginated, so
+   never hide overflow cards; a short last row is correct here. */
+@media (max-width: 1280px) {
+
+  .sft-shop .woocommerce ul.products,
+  .sft-shop ul.products {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 28px 22px;
+  }
+}
+
 @media (max-width: 1080px) {
 
   .sft-shop .woocommerce ul.products,
@@ -5455,7 +5465,8 @@ a.sft-contact-item:focus-visible {
   }
 
   .sft-shop .woocommerce ul.products,
-  .sft-shop ul.products {
+  .sft-shop ul.products,
+  .woocommerce.sft-shop-main ul.products {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 14px 10px;
   }
@@ -5510,6 +5521,19 @@ a.sft-contact-item:focus-visible {
   .woocommerce.sft-shop-main ul.products {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px 12px;
+  }
+}
+
+/* Small phones (<=375px): a single full-width card. Must stay after the 480px
+   and 640px blocks above, which both set two columns and would otherwise win
+   on source order. */
+@media (max-width: 375px) {
+
+  .sft-shop .woocommerce ul.products,
+  .sft-shop ul.products,
+  .woocommerce.sft-shop-main ul.products {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 16px;
   }
 }
 
@@ -5584,7 +5608,7 @@ a.sft-contact-item:focus-visible {
 .home .sft-bestsellers ul.products,
 .home .sft-bestsellers .woocommerce ul.products {
   display: grid !important;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 28px 20px;
   margin: 0 !important;
   padding: 0;
@@ -5633,6 +5657,24 @@ a.sft-contact-item:focus-visible {
 .home .sft-bestsellers .sft-product-card:focus-within .sft-product-card__img,
 .home .sft-bestsellers .sft-product-card:focus-within .sft-product-card__media-link img {
   transform: scale(1.03);
+}
+
+/* Featured Products slider chrome (arrows + dots). Injected by
+   js/home-products-slider.js and revealed only in the mobile block below. */
+.sft-slider-controls {
+  display: none;
+}
+
+/* Featured products steps 5 -> 4 -> 3 -> 2 -> swipe carousel.
+   Every product the shortcode returns stays visible at every width; a short
+   last row is preferred over hiding cards. */
+@media (max-width: 1280px) {
+
+  .home .sft-bestsellers ul.products,
+  .home .sft-bestsellers .woocommerce ul.products {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 26px 18px;
+  }
 }
 
 @media (max-width: 1080px) {
@@ -5692,17 +5734,87 @@ a.sft-contact-item:focus-visible {
     scroll-snap-type: x mandatory;
     scroll-padding-inline: 0;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: 6px;
-    scrollbar-width: thin;
+    padding-bottom: 2px;
+    /* Dots below the track communicate position; the thin native bar was too
+       faint to read as one and is hidden in favour of them. */
+    scrollbar-width: none;
+  }
+
+  .home .sft-bestsellers ul.products::-webkit-scrollbar,
+  .home .sft-bestsellers .woocommerce ul.products::-webkit-scrollbar {
+    display: none;
   }
 
   .home .sft-bestsellers ul.products li.product,
   .home .sft-bestsellers ul.products li.sft-product-card {
-    flex: 0 0 100%;
-    width: 100% !important;
-    max-width: 100% !important;
+    /* 82% leaves a sliver of the next card visible at the right edge, so the
+       row reads as scrollable before the user touches it. */
+    flex: 0 0 82%;
+    width: 82% !important;
+    max-width: 82% !important;
     scroll-snap-align: start;
     scroll-snap-stop: always;
+  }
+
+  .home .sft-bestsellers .sft-slider-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .home .sft-bestsellers .sft-slider-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex: 0 0 auto;
+    padding: 0;
+    border: 1px solid #e2e6ec;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #0f172a;
+    cursor: pointer;
+    transition: opacity .18s ease, border-color .18s ease;
+  }
+
+  .home .sft-bestsellers .sft-slider-arrow:disabled {
+    opacity: .32;
+    cursor: default;
+  }
+
+  .home .sft-bestsellers .sft-slider-arrow:focus-visible {
+    outline: 2px solid #dc2626;
+    outline-offset: 2px;
+  }
+
+  .home .sft-bestsellers .sft-slider-dots {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .home .sft-bestsellers .sft-slider-dot {
+    width: 7px;
+    height: 7px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: #d3d8e0;
+    cursor: pointer;
+    transition: width .18s ease, background-color .18s ease;
+  }
+
+  .home .sft-bestsellers .sft-slider-dot.is-active {
+    width: 20px;
+    background: #dc2626;
+  }
+
+  .home .sft-bestsellers .sft-slider-dot:focus-visible {
+    outline: 2px solid #dc2626;
+    outline-offset: 2px;
   }
 
   .home .sft-bestsellers .sft-product-card {
@@ -5715,6 +5827,15 @@ a.sft-contact-item:focus-visible {
 
   .home .sft-bestsellers .sft-product-card__price {
     font-size: 16px;
+  }
+}
+
+/* Motion-sensitive users still get the active-dot width change, just without
+   the animation. */
+@media (prefers-reduced-motion: reduce) {
+  .home .sft-bestsellers .sft-slider-dot,
+  .home .sft-bestsellers .sft-slider-arrow {
+    transition: none;
   }
 }
 
