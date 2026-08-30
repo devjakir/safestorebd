@@ -10,6 +10,13 @@
 <?php
 wp_body_open();
 $cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/cart/');
+
+/* WooCommerce may be inactive (local installs without the plugin), so the cart
+   object is not guaranteed. Fall back to an empty cart instead of fataling. */
+$sft_wc         = function_exists('WC') ? WC() : null;
+$sft_wc_cart    = ($sft_wc && isset($sft_wc->cart) && $sft_wc->cart) ? $sft_wc->cart : null;
+$sft_cart_count = $sft_wc_cart ? (int) $sft_wc_cart->get_cart_contents_count() : 0;
+$sft_cart_total = $sft_wc_cart ? $sft_wc_cart->get_cart_total() : '';
 ?>
 
 <header class="sft-header" role="banner">
@@ -126,11 +133,11 @@ $cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/
             <a class="sft-header-action sft-header-action--cart" href="<?php echo esc_url($cart_url); ?>">
                 <span class="sft-header-cart-icon">
                     <svg class="sft-header-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/><path d="M3 4h2l2.4 11.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.5L21 8H6"/></svg>
-                    <span class="sft-header-cart-badge"><?php echo WC()->cart->get_cart_contents_count(); ?></span>
+                    <span class="sft-header-cart-badge"><?php echo esc_html($sft_cart_count); ?></span>
                 </span>
                 <span class="sft-header-action-text">
                     <span class="sft-header-action-eyebrow">Cart</span>
-                    <span class="sft-header-action-label sft-header-cart-total"><?php echo WC()->cart->get_cart_total(); ?></span>
+                    <span class="sft-header-action-label sft-header-cart-total"><?php echo wp_kses_post($sft_cart_total); ?></span>
                 </span>
             </a>
         </div>
