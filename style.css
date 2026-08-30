@@ -5423,8 +5423,7 @@ a.sft-contact-item:focus-visible {
 
 /* ----- Responsive ----- */
 
-/* Shop grid steps 5 -> 4 -> 3 -> 2. Unlike the home row this is paginated, so
-   never hide overflow cards; a short last row is correct here. */
+/* Shop grid: 5 -> 4 -> 3 -> 2. Paginated, so never hide overflow cards. */
 @media (max-width: 1280px) {
 
   .sft-shop .woocommerce ul.products,
@@ -5659,15 +5658,12 @@ a.sft-contact-item:focus-visible {
   transform: scale(1.03);
 }
 
-/* Featured Products slider chrome (arrows + dots). Injected by
-   js/home-products-slider.js and revealed only in the mobile block below. */
+/* Slider chrome, injected by JS. Shown only in the mobile block below. */
 .sft-slider-controls {
   display: none;
 }
 
-/* Featured products steps 5 -> 4 -> 3 -> 2 -> swipe carousel.
-   Every product the shortcode returns stays visible at every width; a short
-   last row is preferred over hiding cards. */
+/* Featured products: 5 -> 4 -> 3 -> 2 -> swipe carousel. */
 @media (max-width: 1280px) {
 
   .home .sft-bestsellers ul.products,
@@ -5735,8 +5731,7 @@ a.sft-contact-item:focus-visible {
     scroll-padding-inline: 0;
     -webkit-overflow-scrolling: touch;
     padding-bottom: 2px;
-    /* Dots below the track communicate position; the thin native bar was too
-       faint to read as one and is hidden in favour of them. */
+    /* Dots replace the native scrollbar as the position cue. */
     scrollbar-width: none;
   }
 
@@ -5747,8 +5742,7 @@ a.sft-contact-item:focus-visible {
 
   .home .sft-bestsellers ul.products li.product,
   .home .sft-bestsellers ul.products li.sft-product-card {
-    /* 82% leaves a sliver of the next card visible at the right edge, so the
-       row reads as scrollable before the user touches it. */
+    /* Peek the next card so the row reads as scrollable. */
     flex: 0 0 82%;
     width: 82% !important;
     max-width: 82% !important;
@@ -5830,8 +5824,7 @@ a.sft-contact-item:focus-visible {
   }
 }
 
-/* Motion-sensitive users still get the active-dot width change, just without
-   the animation. */
+/* Keep the active-dot change, drop the animation. */
 @media (prefers-reduced-motion: reduce) {
   .home .sft-bestsellers .sft-slider-dot,
   .home .sft-bestsellers .sft-slider-arrow {
@@ -7482,11 +7475,19 @@ input.button:hover {
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
     z-index: 999999;
     transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    /* Closed drawer leaves the tab order. Mirrors css/mobile-nav.css. */
+    visibility: hidden;
+    transition:
+      transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+      visibility 0s linear 0.3s;
   }
 
   #offcanvas-menu.is-active {
     transform: translateX(0);
+    visibility: visible;
+    transition:
+      transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+      visibility 0s;
   }
 
   .menu-overlay {
@@ -7890,8 +7891,7 @@ input.button:hover {
     align-items: center !important;
   }
 
-  /* Primary tier spacing lives on the link, not the item: padding keeps the
-     gap inside the hover / focus target instead of as dead space beside it. */
+  /* Spacing on the link, not the item, so the gap is part of the target. */
   .sft-header-nav-list>.menu-item {
     position: relative !important;
     display: inline-block !important;

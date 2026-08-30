@@ -127,24 +127,55 @@ document.addEventListener('DOMContentLoaded', () => {
   const slidePanel = document.getElementById('offcanvas-menu');
   const screenOverlay = document.getElementById('menu-overlay');
 
+  // Above 1024px this element is the desktop nav, not a drawer.
+  const drawerMQ = window.matchMedia('(max-width: 1024px)');
+
+  // inert removes the closed drawer from the tab order and the a11y tree.
+  function setDrawerHidden(hidden) {
+    if (!slidePanel) return;
+
+    if (!drawerMQ.matches) {
+      // Desktop: clear anything mobile left behind.
+      slidePanel.removeAttribute('aria-hidden');
+      slidePanel.inert = false;
+      return;
+    }
+
+    slidePanel.inert = hidden;
+    if (hidden) {
+      slidePanel.setAttribute('aria-hidden', 'true');
+    } else {
+      slidePanel.removeAttribute('aria-hidden');
+    }
+  }
+
   // Open/Close Drawer Toggle Function
   function handleMenuToggle() {
     const isCurrentlyOpen = slidePanel.classList.toggle('is-active');
     screenOverlay.classList.toggle('is-active');
     triggerBtn.classList.toggle('is-open', isCurrentlyOpen);
     triggerBtn.setAttribute('aria-expanded', isCurrentlyOpen);
-    slidePanel.setAttribute('aria-hidden', isCurrentlyOpen ? 'false' : 'true');
+    setDrawerHidden(!isCurrentlyOpen);
 
     // Prevent the background page from scrolling behind the menu overlay
     document.body.style.overflow = isCurrentlyOpen ? 'hidden' : '';
 
-    // Return focus to the trigger when closing (a11y)
-    if (!isCurrentlyOpen) triggerBtn.focus({ preventScroll: true });
+    // Focus into the panel on open, back to the trigger on close.
+    if (isCurrentlyOpen) {
+      if (closeBtn) closeBtn.focus({ preventScroll: true });
+    } else {
+      triggerBtn.focus({ preventScroll: true });
+    }
   }
 
   // Closed by default for assistive tech on small screens
-  if (slidePanel && window.matchMedia('(max-width: 1024px)').matches) {
-    slidePanel.setAttribute('aria-hidden', 'true');
+  setDrawerHidden(!(slidePanel && slidePanel.classList.contains('is-active')));
+
+  // Re-sync on breakpoint change, or the desktop nav keeps aria-hidden.
+  if (slidePanel && drawerMQ.addEventListener) {
+    drawerMQ.addEventListener('change', function () {
+      setDrawerHidden(!slidePanel.classList.contains('is-active'));
+    });
   }
 
   if (triggerBtn && closeBtn && screenOverlay && slidePanel) {

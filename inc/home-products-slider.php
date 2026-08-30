@@ -1,20 +1,7 @@
 <?php
 /**
- * Home — Featured Products mobile slider.
- *
- * Adds prev/next arrows and a dot indicator over the CSS scroll-snap track, so
- * the row reads as a slider rather than a strip that happens to scroll.
- *
- * Progressive enhancement, deliberately: the same `<ul class="products">` is
- * the desktop grid and the mobile track (style.css owns that switch), and this
- * only appends one controls row on top. No duplicate markup, and the row still
- * scrolls if the script never runs.
- *
- * Kept cheap on purpose:
- *   - Inlined in the footer, so mobile pays no request round-trip for ~1KB.
- *   - Printed only on the home page, and only when WooCommerce can render the
- *     row at all.
- *   - Exits at the media-query check on desktop, before touching the DOM.
+ * Home — Featured Products mobile slider: arrows + dots over the scroll-snap
+ * track. Inlined in the footer, home page only, inert above the breakpoint.
  *
  * @package SafeStore_Minimal
  */
@@ -23,12 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Viewport the slider is active at.
- *
- * Must stay in sync with the `@media (max-width: 480px)` block that turns the
- * Featured Products grid into a scroll-snap track in style.css.
- */
+/** Must match the max-width: 480px block in style.css. */
 const SAFESTORE_HOME_SLIDER_MQ = '(max-width: 480px)';
 
 /**
@@ -41,14 +23,14 @@ function safestore_home_slider_active() {
 		return false;
 	}
 
-	// No WooCommerce means no [products] output, so there is nothing to enhance.
+	// No WooCommerce means no [products] output.
 	return class_exists( 'WooCommerce' );
 }
 
 /**
- * Slider behaviour, with translated labels and the breakpoint injected.
+ * Slider behaviour, with labels and breakpoint injected.
  *
- * @return string JavaScript source, ready to inline.
+ * @return string
  */
 function safestore_home_slider_js() {
 	$text = array(
@@ -92,7 +74,7 @@ function safestore_home_slider_js() {
 		built = true;
 		var smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-		// A scrollable region has to be focusable, and announced for what it is.
+		// A scrollable region must be focusable and announced.
 		track.tabIndex = 0;
 		track.setAttribute('role', 'group');
 		track.setAttribute('aria-roledescription', 'carousel');
@@ -121,8 +103,7 @@ function safestore_home_slider_js() {
 		controls.appendChild(next);
 		track.parentNode.insertBefore(controls, track.nextSibling);
 
-		// Card nearest the track's left edge — the one scroll-snap settles on,
-		// so the dots never disagree with what the user is looking at.
+		// Card nearest the left edge — where scroll-snap settles.
 		function currentIndex() {
 			var origin = track.scrollLeft + track.offsetLeft;
 			var best = 0;
@@ -156,8 +137,7 @@ function safestore_home_slider_js() {
 					dot.removeAttribute('aria-current');
 				}
 			});
-			// 1px tolerance: sub-pixel track widths leave scrollLeft just short
-			// of the theoretical maximum at the end of the row.
+			// 1px tolerance for sub-pixel track widths.
 			prev.disabled = track.scrollLeft <= 1;
 			next.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 1;
 		}
@@ -181,7 +161,7 @@ function safestore_home_slider_js() {
 
 	build();
 
-	// Also covers a desktop window dragged narrow, or a tablet rotated.
+	// Covers a window dragged narrow, or a tablet rotated.
 	if (MQ.addEventListener) {
 		MQ.addEventListener('change', build);
 	} else if (MQ.addListener) {
@@ -209,7 +189,7 @@ function safestore_home_slider_print() {
 
 	$js = safestore_home_slider_js();
 
-	// wp_print_inline_script_tag() lets security plugins add a CSP nonce.
+	// wp_print_inline_script_tag() allows a CSP nonce.
 	if ( function_exists( 'wp_print_inline_script_tag' ) ) {
 		wp_print_inline_script_tag( $js, array( 'id' => 'safestore-home-slider-js' ) );
 		return;

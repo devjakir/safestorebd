@@ -43,8 +43,7 @@
 		dots.forEach(function (dot, i) {
 			const active = i === current;
 			dot.classList.toggle('is-active', active);
-			// aria-current, not aria-selected: these are buttons in a group,
-			// not tabs owning tabpanels.
+			// aria-current: these are buttons in a group, not tabs.
 			if (active) {
 				dot.setAttribute('aria-current', 'true');
 			} else {

@@ -212,9 +212,7 @@
 .sfx-org__line {
   margin: 0 0 10px;
   font-size: 13.5px;
-  /* 13.5px x 1.8 = 24.3px, so the inline mailto: / tel: links clear the 24px
-     touch-target floor without becoming inline-block (which would stop long
-     addresses wrapping on narrow screens). */
+  /* 13.5px x 1.8 = 24.3px: inline links clear the 24px touch-target floor. */
   line-height: 1.8;
   overflow-wrap: anywhere;
 }
