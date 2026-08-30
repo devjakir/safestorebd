@@ -11,6 +11,8 @@
   align-items: center;
   justify-content: center;
   padding: 0;
+  min-width: 24px;
+  min-height: 24px;
   border: 1px solid #e2e8f0;
   border-radius: 5px;
   background: #ffffff;
@@ -132,6 +134,7 @@
 .sft-copy-btn--inline {
   border-radius: 5px;
   vertical-align: middle;
+  margin-left: 2px;
   background: transparent;
   border-color: transparent;
   color: #94a3b8;

@@ -212,7 +212,10 @@
 .sfx-org__line {
   margin: 0 0 10px;
   font-size: 13.5px;
-  line-height: 1.6;
+  /* 13.5px x 1.8 = 24.3px, so the inline mailto: / tel: links clear the 24px
+     touch-target floor without becoming inline-block (which would stop long
+     addresses wrapping on narrow screens). */
+  line-height: 1.8;
   overflow-wrap: anywhere;
 }
 
@@ -314,7 +317,7 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   white-space: nowrap;
-  color: rgba(255, 255, 255, 0.45);
+  color: #98a2b6;
 }
 
 .sfx-pills {

@@ -5254,7 +5254,7 @@ a.sft-contact-item:focus-visible {
 
 .sft-product-card__price del,
 .sft-product-card__price del .woocommerce-Price-amount {
-  color: #9aa3b2;
+  color: #545961;
   font-weight: 500;
   text-decoration: line-through;
   font-size: 13px;
