@@ -43,7 +43,13 @@
 		dots.forEach(function (dot, i) {
 			const active = i === current;
 			dot.classList.toggle('is-active', active);
-			dot.setAttribute('aria-selected', active ? 'true' : 'false');
+			// aria-current, not aria-selected: these are buttons in a group,
+			// not tabs owning tabpanels.
+			if (active) {
+				dot.setAttribute('aria-current', 'true');
+			} else {
+				dot.removeAttribute('aria-current');
+			}
 		});
 		prefetchNeighbors(current);
 	}
@@ -77,7 +83,7 @@
 		if (document.hidden) stop(); else start();
 	});
 
-	// Keyboard navigation on the dot tablist (WAI-ARIA carousel pattern)
+	// Arrow-key navigation across the slide-picker buttons.
 	const dotList = slider.querySelector('.hero-slider-dots');
 	if (dotList) {
 		dotList.addEventListener('keydown', function (e) {

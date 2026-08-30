@@ -145,7 +145,7 @@ $safestore_hero_proof_icon = static function ( string $name ): string {
 			}
 			$is_first = ( 0 === $index );
 			?>
-			<article class="hero-slide<?php echo $is_first ? ' is-active' : ''; ?>"
+			<div class="hero-slide<?php echo $is_first ? ' is-active' : ''; ?>"
 				role="group"
 				aria-roledescription="slide"
 				aria-label="<?php echo esc_attr( sprintf( '%d of %d', $index + 1, count( $hero_slides ) ) ); ?>"
@@ -222,16 +222,15 @@ $safestore_hero_proof_icon = static function ( string $name ): string {
 						<?php echo $overlay_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					</div>
 				</div>
-			</article>
+			</div>
 		<?php endforeach; ?>
 
-		<div class="hero-slider-dots" role="tablist" aria-label="Select slide">
+		<div class="hero-slider-dots" role="group" aria-label="<?php esc_attr_e( 'Select slide', 'safestore-minimal' ); ?>">
 			<?php foreach ( $hero_slides as $index => $slide ) : ?>
 				<button type="button"
 					class="hero-dot<?php echo 0 === $index ? ' is-active' : ''; ?>"
-					role="tab"
 					data-slide="<?php echo (int) $index; ?>"
-					aria-selected="<?php echo 0 === $index ? 'true' : 'false'; ?>"
+					<?php echo 0 === $index ? 'aria-current="true"' : ''; ?>
 					aria-label="<?php echo esc_attr( sprintf( 'Go to slide %d', $index + 1 ) ); ?>"></button>
 			<?php endforeach; ?>
 		</div>
