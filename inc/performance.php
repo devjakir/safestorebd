@@ -213,9 +213,10 @@ function safestore_perf_jquery_loading() {
 	wp_dequeue_script( 'jquery-migrate' );
 	wp_deregister_script( 'jquery-migrate' );
 
+	// Only jquery-core carries a src. `jquery` is a dependency-only alias, and
+	// WP 6.3+ emits a _doing_it_wrong notice if a strategy is set on it.
 	if ( version_compare( get_bloginfo( 'version' ), '6.3', '>=' ) ) {
 		wp_script_add_data( 'jquery-core', 'strategy', 'defer' );
-		wp_script_add_data( 'jquery', 'strategy', 'defer' );
 	}
 }
 add_action( 'wp_enqueue_scripts', 'safestore_perf_jquery_loading', 1 );
