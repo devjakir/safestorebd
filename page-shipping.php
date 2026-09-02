@@ -103,48 +103,7 @@ while ( have_posts() ) :
 			</div>
 		</section>
 
-		<aside class="sft-ship-page-footer" aria-label="<?php esc_attr_e( 'Shipping help', 'safestore-minimal' ); ?>">
-			<div class="sft-ship-page-footer-inner">
-				<div class="sft-ship-page-footer-grid">
-					<div class="sft-ship-page-footer-col">
-						<h3 class="sft-ship-page-footer-heading"><?php esc_html_e( 'Quick links', 'safestore-minimal' ); ?></h3>
-						<ul class="sft-ship-page-footer-links">
-							<li><a href="<?php echo esc_url( $track_url ); ?>"><?php esc_html_e( 'Track order', 'safestore-minimal' ); ?></a></li>
-							<li><a href="<?php echo esc_url( $faq_url ); ?>"><?php esc_html_e( 'FAQ', 'safestore-minimal' ); ?></a></li>
-							<li><a href="<?php echo esc_url( $returns_url ); ?>"><?php esc_html_e( 'Returns', 'safestore-minimal' ); ?></a></li>
-						</ul>
-					</div>
-					<div class="sft-ship-page-footer-col">
-						<h3 class="sft-ship-page-footer-heading"><?php esc_html_e( 'Before delivery', 'safestore-minimal' ); ?></h3>
-						<ul class="sft-ship-page-footer-tips">
-							<li><?php esc_html_e( 'Confirm COD orders when we call or message.', 'safestore-minimal' ); ?></li>
-							<li><?php esc_html_e( 'Inspect the parcel before paying the courier.', 'safestore-minimal' ); ?></li>
-							<li><?php esc_html_e( 'Sat–Thu dispatch; closed Fridays.', 'safestore-minimal' ); ?></li>
-						</ul>
-					</div>
-					<div class="sft-ship-page-footer-col sft-ship-page-footer-col--pay">
-						<h3 class="sft-ship-page-footer-heading"><?php esc_html_e( 'On delivery', 'safestore-minimal' ); ?></h3>
-						<ul class="sft-payment-pills sft-ship-page-footer-pills" aria-label="<?php esc_attr_e( 'Payment on delivery', 'safestore-minimal' ); ?>">
-							<li class="sft-pay sft-pay--cod" title="Cash on Delivery"><span class="sft-ship-pay-label"><?php esc_html_e( 'Cash on Delivery', 'safestore-minimal' ); ?></span></li>
-							<li class="sft-pay sft-pay--bkash" title="bKash"><span class="sft-ship-pay-label">bKash</span></li>
-							<li class="sft-pay sft-pay--nagad" title="Nagad"><span class="sft-ship-pay-label">Nagad</span></li>
-						</ul>
-						<p class="sft-ship-page-footer-pay-note"><?php esc_html_e( 'Prepaid via wallet or pay COD to the courier where offered.', 'safestore-minimal' ); ?></p>
-					</div>
-				</div>
-
-				<div class="sft-ship-page-footer-cta">
-					<div class="sft-ship-page-footer-cta-copy">
-						<h2 class="sft-ship-page-footer-cta-title"><?php esc_html_e( 'Question about your shipment?', 'safestore-minimal' ); ?></h2>
-						<p><?php esc_html_e( 'Message us with your order number for tracking or delivery changes.', 'safestore-minimal' ); ?></p>
-					</div>
-					<div class="sft-ship-page-footer-cta-actions">
-						<?php echo safestore_wa_cta_link( $wa_href, $wa_phone, 'sft-about-btn sft-about-btn--primary sft-about-btn--light' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-						<a class="sft-about-btn sft-about-btn--ghost sft-about-btn--light" href="<?php echo esc_url( $contact_url ); ?>"><?php esc_html_e( 'Contact', 'safestore-minimal' ); ?></a>
-					</div>
-				</div>
-			</div>
-		</aside>
+		<?php safestore_render_page_cta(); ?>
 	</main>
 	<?php
 endwhile;

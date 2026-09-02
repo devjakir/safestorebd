@@ -1,0 +1,277 @@
+
+
+/* Order Table */
+.shop_table {
+  border: none !important;
+}
+
+.shop_table th,
+.shop_table td {
+  padding: 15px 0 !important;
+  border-bottom: 1px solid #eee !important;
+}
+
+/* Total */
+.order-total td,
+.order-total th {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ss-c-d6001c);
+}
+
+/* ==========================
+   Modern Cart Design
+=========================== */
+body.woocommerce-cart {
+  background: #f6f7fb;
+}
+
+.woocommerce-cart .woocommerce {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin: -20px 0px;
+}
+
+.woocommerce-cart-form {
+  flex: 2;
+}
+
+.cart-collaterals {
+  flex: 1;
+}
+
+.woocommerce .cart-collaterals .cart_totals,
+.woocommerce-page .cart-collaterals .cart_totals {
+  width: 100%;
+}
+
+/* Card */
+.woocommerce-cart-form,
+.cart_totals {
+  background: var(--ss-white);
+  border-radius: var(--ss-radius);
+  padding: 30px;
+  border: 1px solid #ececec;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .05);
+}
+
+/* Table */
+
+.shop_table {
+  border: none !important;
+  margin: 0;
+}
+
+.shop_table th {
+  border: none !important;
+  padding: 20px 15px !important;
+  color: #444;
+  font-size: var(--ss-text-md);
+  font-weight: 700;
+  text-transform: uppercase;
+  /*     background:#fafafa; */
+}
+
+.shop_table td {
+  border-top: 1px solid #f1f1f1 !important;
+  padding: 22px 15px !important;
+  vertical-align: middle;
+}
+
+/* Product */
+
+.product-thumbnail img {
+  width: 80px;
+  min-width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: var(--ss-radius);
+  transition: .3s;
+}
+
+.product-thumbnail img:hover {
+  transform: scale(1.05);
+}
+
+.product-name a {
+  color: #222;
+  font-size: 17px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.product-name a:hover {
+  color: var(--ss-c-d6001c);
+}
+
+/* Price */
+
+.product-price,
+.product-subtotal {
+  font-size: 17px;
+  font-weight: 600;
+  color: #111;
+}
+
+/* Remove */
+
+.product-remove a {
+  color: var(--ss-c-d6001c) !important;
+  font-size: 24px;
+  transition: .3s;
+}
+
+.product-remove a:hover {
+  transform: rotate(90deg);
+}
+
+/* Coupon */
+
+.coupon {
+  display: flex;
+  gap: 12px;
+}
+
+.coupon input {
+  height: 50px;
+  border-radius: var(--ss-radius);
+  border: 1px solid var(--ss-c-dddddd);
+  padding: 0 15px;
+}
+
+/* Cart Totals */
+.cart_totals {
+
+  position: sticky;
+  top: 20px;
+}
+
+.cart_totals h2 {
+  font-size: 30px;
+  margin-bottom: 25px;
+}
+
+.cart_totals table {
+  border: none;
+}
+
+.cart_totals td,
+.cart_totals th {
+  padding: 18px 0 !important;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.order-total td,
+.order-total th {
+  color: var(--ss-ink);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* Checkout Button */
+.wc-proceed-to-checkout {
+  margin-top: 25px;
+}
+
+.wc-proceed-to-checkout .checkout-button {
+  width: 100%;
+  padding: 18px !important;
+  border-radius: var(--ss-radius);
+  font-size: 18px;
+  font-weight: 700;
+  background: var(--ss-brand) !important;
+  color: var(--ss-white) !important;
+  transition: background .2s ease;
+}
+
+.wc-proceed-to-checkout .checkout-button:hover {
+  background: var(--ss-brand-dark) !important;
+  color: var(--ss-white) !important;
+}
+
+/* Empty Cart */
+.return-to-shop .button {
+  padding: 16px 30px !important;
+}
+
+@media (min-width: 320px) and (max-width:767px) {
+
+  .woocommerce-cart .woocommerce {
+    display: block;
+    margin: 0;
+    padding: 0;
+  }
+
+  .cart_totals h2 {
+    font-size: 22px;
+  }
+
+  .shop_table tr {
+    padding: 0px 10px;
+  }
+
+  .shop_table td {
+    border: 0px !important;
+  }
+
+  .woocommerce table.shop_table_responsive tr:nth-child(2n) td,
+  .woocommerce-page table.shop_table_responsive tr:nth-child(2n) td {
+    background-color: var(--ss-white);
+  }
+
+  .cart-collaterals {
+    margin-top: 30px;
+  }
+
+  .woocommerce-cart-form,
+  .cart_totals {
+    padding: 20px;
+  }
+
+  .shop_table th {
+    display: none;
+  }
+
+  .shop_table tr {
+    display: block;
+    margin-bottom: 20px;
+    border: 1px solid #eee;
+    border-radius: var(--ss-radius);
+    overflow: hidden;
+  }
+
+  .shop_table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .shop_table tr {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .shop_table th {
+    display: flex;
+    align-items: center;
+  }
+
+  .order-total td,
+  .order-total th {
+    font-size: 18px;
+    font-weight: 600;
+  }
+}
+
+/* Cart & checkout page title card (page-cart.css loads on cart, checkout
+   and account, so both halves of this rule are always present). */
+.woocommerce-cart h1,
+.woocommerce-checkout h1 {
+  background: var(--ss-white);
+  padding: 0px 20px;
+  border-radius: var(--ss-radius);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, .05);
+  border: 1px solid #ececec;
+  margin: -30px 0px 30px 0px;
+}

@@ -82,47 +82,7 @@ while ( have_posts() ) :
 			</div>
 		</section>
 
-		<aside class="sft-terms-page-footer" aria-label="<?php esc_attr_e( 'Related policies', 'safestore-minimal' ); ?>">
-			<div class="sft-terms-page-footer-inner">
-				<div class="sft-terms-page-footer-grid">
-					<div class="sft-terms-page-footer-col">
-						<h3 class="sft-terms-page-footer-heading"><?php esc_html_e( 'Policies', 'safestore-minimal' ); ?></h3>
-						<ul class="sft-terms-page-footer-links">
-							<li><a href="<?php echo esc_url( $privacy_url ); ?>"><?php esc_html_e( 'Privacy policy', 'safestore-minimal' ); ?></a></li>
-							<li><a href="<?php echo esc_url( $returns_url ); ?>"><?php esc_html_e( 'Return & refund', 'safestore-minimal' ); ?></a></li>
-							<li><a href="<?php echo esc_url( $shipping_url ); ?>"><?php esc_html_e( 'Shipping', 'safestore-minimal' ); ?></a></li>
-						</ul>
-					</div>
-					<div class="sft-terms-page-footer-col">
-						<h3 class="sft-terms-page-footer-heading"><?php esc_html_e( 'Before you order', 'safestore-minimal' ); ?></h3>
-						<ul class="sft-terms-page-footer-tips">
-							<li><?php esc_html_e( 'PPE is sourced from China — check sizing and specs on each product.', 'safestore-minimal' ); ?></li>
-							<li><?php esc_html_e( 'Prices in BDT; shipping shown at checkout.', 'safestore-minimal' ); ?></li>
-							<li><?php esc_html_e( 'COD: inspect the parcel before paying the courier.', 'safestore-minimal' ); ?></li>
-						</ul>
-					</div>
-					<div class="sft-terms-page-footer-col">
-						<h3 class="sft-terms-page-footer-heading"><?php esc_html_e( 'Your protection', 'safestore-minimal' ); ?></h3>
-						<ul class="sft-terms-page-footer-tips">
-							<li><?php esc_html_e( 'Bangladesh consumer law applies to your purchase.', 'safestore-minimal' ); ?></li>
-							<li><?php esc_html_e( '7-day returns on unused items — contact us first.', 'safestore-minimal' ); ?></li>
-							<li><?php esc_html_e( 'Workplace safety compliance is the buyer’s responsibility.', 'safestore-minimal' ); ?></li>
-						</ul>
-					</div>
-				</div>
-
-				<div class="sft-terms-page-footer-cta">
-					<div class="sft-terms-page-footer-cta-copy">
-						<h2 class="sft-terms-page-footer-cta-title"><?php esc_html_e( 'Questions about these terms?', 'safestore-minimal' ); ?></h2>
-						<p><?php esc_html_e( 'WhatsApp or email us before placing a bulk or corporate order.', 'safestore-minimal' ); ?></p>
-					</div>
-					<div class="sft-terms-page-footer-cta-actions">
-						<?php echo safestore_wa_cta_link( $wa_href, $wa_phone, 'sft-about-btn sft-about-btn--primary sft-about-btn--light' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-						<a class="sft-about-btn sft-about-btn--ghost sft-about-btn--light" href="<?php echo esc_url( $contact_url ); ?>"><?php esc_html_e( 'Contact', 'safestore-minimal' ); ?></a>
-					</div>
-				</div>
-			</div>
-		</aside>
+		<?php safestore_render_page_cta(); ?>
 	</main>
 	<?php
 endwhile;

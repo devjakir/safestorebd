@@ -26,6 +26,8 @@ $sfx_about_links = array(
 $sfx_service_links = array(
 	array( 'Shipping', home_url( '/shipping-delivery/' ) ),
 	array( 'Return and Refund Policy', home_url( '/return-refund-policy/' ) ),
+	array( 'Privacy Policy', home_url( '/privacy-policy/' ) ),
+	array( 'Terms of Service', home_url( '/terms-of-service/' ) ),
 	array( 'Track Order', home_url( '/track-order/' ) ),
 	array( 'FAQ', home_url( '/faqs/' ) ),
 );
@@ -194,8 +196,6 @@ function sfx_footer_icon( $name ) {
 				?>
 			</p>
 			<nav class="sfx-legal" aria-label="<?php esc_attr_e( 'Legal', 'safestore-minimal' ); ?>">
-				<a href="<?php echo esc_url( home_url( '/privacy-policy/' ) ); ?>"><?php esc_html_e( 'Privacy Policy', 'safestore-minimal' ); ?></a>
-				<a href="<?php echo esc_url( home_url( '/terms-of-service/' ) ); ?>"><?php esc_html_e( 'Terms of Service', 'safestore-minimal' ); ?></a>
 				<a href="<?php echo esc_url( home_url( '/sitemap/' ) ); ?>"><?php esc_html_e( 'Sitemap', 'safestore-minimal' ); ?></a>
 			</nav>
 		</div>

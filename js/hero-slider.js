@@ -95,6 +95,119 @@
 		});
 	}
 
+	// ------------------------------------------------------------------
+	// Touch / pen / mouse-drag swipe.
+	//
+	// Slides cross-fade from an absolutely-positioned stack, so the slide
+	// cannot follow the finger without rebuilding the slider as a translate
+	// track. The gesture therefore commits to next/prev and lets the existing
+	// fade run.
+	//
+	// Vertical scrolling is protected two ways: the viewport declares
+	// `touch-action: pan-y`, so the browser keeps owning vertical panning and
+	// these listeners can stay passive (no preventDefault, no scroll jank);
+	// and the gesture direction-locks on the first ~10px of movement, so a
+	// mostly-vertical drag never navigates.
+	// ------------------------------------------------------------------
+	const viewport = slider.querySelector('.hero-slider-viewport') || slider;
+
+	const LOCK_PX = 10;      // movement before we decide the axis
+	const DISTANCE_PX = 45;  // committed swipe distance
+	const VELOCITY = 0.35;   // px/ms — a fast flick wins on a shorter distance
+
+	let tracking = false;
+	let axisDecided = false;
+	let isHorizontal = false;
+	let startX = 0;
+	let startY = 0;
+	let startTime = 0;
+	let lastX = 0;
+	let suppressClick = false;
+
+	function pointFrom(e) {
+		if (e.touches && e.touches.length) return e.touches[0];
+		if (e.changedTouches && e.changedTouches.length) return e.changedTouches[0];
+		return e;
+	}
+
+	function dragStart(e) {
+		// Ignore multi-touch (pinch/zoom) and secondary mouse buttons.
+		if (e.touches && e.touches.length > 1) return;
+		if (e.pointerType === 'mouse' && e.button !== 0) return;
+
+		const p = pointFrom(e);
+		tracking = true;
+		axisDecided = false;
+		isHorizontal = false;
+		startX = lastX = p.clientX;
+		startY = p.clientY;
+		startTime = Date.now();
+		stop();
+	}
+
+	function dragMove(e) {
+		if (!tracking) return;
+		const p = pointFrom(e);
+		const dx = p.clientX - startX;
+		const dy = p.clientY - startY;
+		lastX = p.clientX;
+
+		if (!axisDecided && (Math.abs(dx) > LOCK_PX || Math.abs(dy) > LOCK_PX)) {
+			axisDecided = true;
+			isHorizontal = Math.abs(dx) > Math.abs(dy);
+			// A vertical drag is the user scrolling the page — let go of it.
+			if (!isHorizontal) tracking = false;
+		}
+	}
+
+	function dragEnd() {
+		if (!tracking) return;
+		tracking = false;
+
+		const dx = lastX - startX;
+		const elapsed = Math.max(1, Date.now() - startTime);
+		const speed = Math.abs(dx) / elapsed;
+		const committed = isHorizontal && (Math.abs(dx) >= DISTANCE_PX || speed >= VELOCITY);
+
+		if (committed) {
+			// Swipe left => next slide, swipe right => previous.
+			go(current + (dx < 0 ? 1 : -1));
+			// The drag started on a slide that is usually one big link —
+			// stop the browser turning this gesture into a navigation.
+			suppressClick = true;
+			window.setTimeout(function () { suppressClick = false; }, 0);
+		}
+
+		start();
+	}
+
+	function dragCancel() {
+		if (!tracking) return;
+		tracking = false;
+		start();
+	}
+
+	if (window.PointerEvent) {
+		viewport.addEventListener('pointerdown', dragStart, { passive: true });
+		viewport.addEventListener('pointermove', dragMove, { passive: true });
+		viewport.addEventListener('pointerup', dragEnd, { passive: true });
+		viewport.addEventListener('pointercancel', dragCancel, { passive: true });
+		viewport.addEventListener('pointerleave', dragCancel, { passive: true });
+	} else {
+		viewport.addEventListener('touchstart', dragStart, { passive: true });
+		viewport.addEventListener('touchmove', dragMove, { passive: true });
+		viewport.addEventListener('touchend', dragEnd, { passive: true });
+		viewport.addEventListener('touchcancel', dragCancel, { passive: true });
+	}
+
+	// Swallow the click that follows a committed swipe, so swiping over a CTA
+	// never opens the product page.
+	viewport.addEventListener('click', function (e) {
+		if (!suppressClick) return;
+		e.preventDefault();
+		e.stopPropagation();
+	}, true);
+
 	// Warm the next slide after first paint so autoplay does not hitch.
 	const warm = function () {
 		prefetchNeighbors(0);

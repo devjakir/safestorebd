@@ -82,19 +82,7 @@ while ( have_posts() ) :
 			</div>
 		</section>
 
-		<section class="sft-about-cta sft-privacy-cta" aria-label="<?php esc_attr_e( 'Related policies', 'safestore-minimal' ); ?>">
-			<div class="sft-about-inner sft-about-cta-inner">
-				<div class="sft-about-cta-copy">
-					<h2 class="sft-about-cta-title"><?php esc_html_e( 'See also', 'safestore-minimal' ); ?></h2>
-					<p><?php esc_html_e( 'Terms of service and return policy for orders placed in Bangladesh.', 'safestore-minimal' ); ?></p>
-				</div>
-				<div class="sft-about-cta-actions">
-					<a class="sft-about-btn sft-about-btn--primary sft-about-btn--light" href="<?php echo esc_url( $terms_url ); ?>"><?php esc_html_e( 'Terms', 'safestore-minimal' ); ?></a>
-					<a class="sft-about-btn sft-about-btn--ghost sft-about-btn--light" href="<?php echo esc_url( $returns_url ); ?>"><?php esc_html_e( 'Returns', 'safestore-minimal' ); ?></a>
-					<a class="sft-about-btn sft-about-btn--ghost sft-about-btn--light" href="<?php echo esc_url( $contact_url ); ?>"><?php esc_html_e( 'Contact', 'safestore-minimal' ); ?></a>
-				</div>
-			</div>
-		</section>
+		<?php safestore_render_page_cta(); ?>
 	</main>
 	<?php
 endwhile;

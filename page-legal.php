@@ -94,46 +94,7 @@ while ( have_posts() ) :
 			</div>
 		</section>
 
-		<aside class="sft-legal-page-footer" aria-label="<?php esc_attr_e( 'Legal footer', 'safestore-minimal' ); ?>">
-			<div class="sft-legal-page-footer-inner">
-				<div class="sft-legal-page-footer-grid">
-					<div class="sft-legal-page-footer-col">
-						<h3 class="sft-legal-page-footer-heading"><?php esc_html_e( 'Documents', 'safestore-minimal' ); ?></h3>
-						<ul class="sft-legal-page-footer-links">
-							<?php foreach ( array_slice( $documents, 0, 4 ) as $doc ) : ?>
-								<li><a href="<?php echo esc_url( $doc['url'] ); ?>"><?php echo esc_html( $doc['label'] ); ?></a></li>
-							<?php endforeach; ?>
-						</ul>
-					</div>
-					<div class="sft-legal-page-footer-col">
-						<h3 class="sft-legal-page-footer-heading"><?php esc_html_e( 'Business', 'safestore-minimal' ); ?></h3>
-						<ul class="sft-legal-page-footer-tips">
-							<li><?php esc_html_e( 'PPE sourced from China; sold in Bangladesh.', 'safestore-minimal' ); ?></li>
-							<li><?php esc_html_e( 'Pallabi, Dhaka — nationwide courier delivery.', 'safestore-minimal' ); ?></li>
-							<li><?php esc_html_e( 'We do not issue formal product certifications.', 'safestore-minimal' ); ?></li>
-						</ul>
-					</div>
-					<div class="sft-legal-page-footer-col">
-						<h3 class="sft-legal-page-footer-heading"><?php esc_html_e( 'Navigate', 'safestore-minimal' ); ?></h3>
-						<ul class="sft-legal-page-footer-links">
-							<li><a href="<?php echo esc_url( $sitemap_url ); ?>"><?php esc_html_e( 'Full sitemap', 'safestore-minimal' ); ?></a></li>
-							<li><a href="<?php echo esc_url( $contact_url ); ?>"><?php esc_html_e( 'Contact', 'safestore-minimal' ); ?></a></li>
-						</ul>
-					</div>
-				</div>
-
-				<div class="sft-legal-page-footer-cta">
-					<div class="sft-legal-page-footer-cta-copy">
-						<h2 class="sft-legal-page-footer-cta-title"><?php esc_html_e( 'Need a specific policy?', 'safestore-minimal' ); ?></h2>
-						<p><?php esc_html_e( 'Open the document links above or browse all pages on our sitemap.', 'safestore-minimal' ); ?></p>
-					</div>
-					<div class="sft-legal-page-footer-cta-actions">
-						<a class="sft-about-btn sft-about-btn--primary sft-about-btn--light" href="<?php echo esc_url( $sitemap_url ); ?>"><?php esc_html_e( 'Sitemap', 'safestore-minimal' ); ?></a>
-						<a class="sft-about-btn sft-about-btn--ghost sft-about-btn--light" href="<?php echo esc_url( $contact_url ); ?>"><?php esc_html_e( 'Contact', 'safestore-minimal' ); ?></a>
-					</div>
-				</div>
-			</div>
-		</aside>
+		<?php safestore_render_page_cta(); ?>
 	</main>
 	<?php
 endwhile;

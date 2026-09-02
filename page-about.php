@@ -76,18 +76,32 @@ while ( have_posts() ) :
 			</div>
 		</section>
 
-		<section class="sft-about-cta" aria-labelledby="sft-about-cta-heading">
-			<div class="sft-about-inner sft-about-cta-inner">
-				<div class="sft-about-cta-copy">
-					<h2 class="sft-about-cta-title" id="sft-about-cta-heading"><?php esc_html_e( 'Need a quote or bulk order?', 'safestore-minimal' ); ?></h2>
-					<p><?php esc_html_e( 'Share your requirements — we will respond with options and lead times.', 'safestore-minimal' ); ?></p>
-				</div>
-				<div class="sft-about-cta-actions">
-					<a class="sft-about-btn sft-about-btn--primary sft-about-btn--light" href="<?php echo esc_url( $bulk_url ); ?>"><?php esc_html_e( 'Bulk / corporate', 'safestore-minimal' ); ?></a>
-					<a class="sft-about-btn sft-about-btn--ghost sft-about-btn--light" href="<?php echo esc_url( $contact ); ?>"><?php esc_html_e( 'Contact form', 'safestore-minimal' ); ?></a>
-				</div>
-			</div>
-		</section>
+		<?php
+		$cta_actions = '';
+		$cta_actions .= safestore_page_cta_btn(
+			array(
+				'href'    => $bulk_url,
+				'label'   => __( 'Bulk / corporate', 'safestore-minimal' ),
+				'variant' => 'primary',
+			)
+		);
+		$cta_actions .= safestore_page_cta_btn(
+			array(
+				'href'    => $contact,
+				'label'   => __( 'Contact form', 'safestore-minimal' ),
+				'variant' => 'secondary',
+			)
+		);
+
+		safestore_render_page_cta(
+			array(
+				'title'   => __( 'Need a quote or bulk order?', 'safestore-minimal' ),
+				'text'    => __( 'Share your requirements — we will respond with options and lead times.', 'safestore-minimal' ),
+				'label'   => __( 'Request a quote', 'safestore-minimal' ),
+				'actions' => $cta_actions,
+			)
+		);
+		?>
 	</main>
 	<?php
 endwhile;

@@ -1,0 +1,16 @@
+
+
+.sft-contact-body {
+  padding-bottom: clamp(32px, 4vw, 44px);
+}
+
+.sft-contact-inner {
+  max-width: 640px;
+}
+
+.sft-contact-required-note {
+  margin: 0 0 18px;
+  font-size: var(--ss-text-sm);
+  line-height: 1.5;
+  color: var(--ss-muted-alt);
+}

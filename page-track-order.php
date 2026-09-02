@@ -96,47 +96,7 @@ while ( have_posts() ) :
 			</div>
 		</section>
 
-		<aside class="sft-track-page-footer" aria-label="<?php esc_attr_e( 'Order tracking help', 'safestore-minimal' ); ?>">
-			<div class="sft-track-page-footer-inner">
-				<div class="sft-track-page-footer-grid">
-					<div class="sft-track-page-footer-col">
-						<h3 class="sft-track-page-footer-heading"><?php esc_html_e( 'Quick links', 'safestore-minimal' ); ?></h3>
-						<ul class="sft-track-page-footer-links">
-							<li><a href="<?php echo esc_url( $shipping_url ); ?>"><?php esc_html_e( 'Shipping & delivery', 'safestore-minimal' ); ?></a></li>
-							<li><a href="<?php echo esc_url( $faq_url ); ?>"><?php esc_html_e( 'FAQ', 'safestore-minimal' ); ?></a></li>
-							<li><a href="<?php echo esc_url( $returns_url ); ?>"><?php esc_html_e( 'Returns', 'safestore-minimal' ); ?></a></li>
-						</ul>
-					</div>
-					<div class="sft-track-page-footer-col">
-						<h3 class="sft-track-page-footer-heading"><?php esc_html_e( 'Can’t find your order?', 'safestore-minimal' ); ?></h3>
-						<ul class="sft-track-page-footer-tips">
-							<li><?php esc_html_e( 'Use the order number from your confirmation email or SMS.', 'safestore-minimal' ); ?></li>
-							<li><?php esc_html_e( 'Billing email must match checkout (same as bKash/Nagad receipt name if used).', 'safestore-minimal' ); ?></li>
-							<li><?php esc_html_e( 'COD not yet delivered? The courier may call first — keep your line open.', 'safestore-minimal' ); ?></li>
-						</ul>
-					</div>
-					<div class="sft-track-page-footer-col">
-						<h3 class="sft-track-page-footer-heading"><?php esc_html_e( 'Dispatch hours', 'safestore-minimal' ); ?></h3>
-						<ul class="sft-track-page-footer-tips">
-							<li><?php esc_html_e( 'Packed and handed to courier Sat–Thu from our Pallabi office.', 'safestore-minimal' ); ?></li>
-							<li><?php esc_html_e( 'Closed Fridays — updates resume Saturday.', 'safestore-minimal' ); ?></li>
-							<li><?php esc_html_e( 'Outside Dhaka: allow 2–3 business days after dispatch.', 'safestore-minimal' ); ?></li>
-						</ul>
-					</div>
-				</div>
-
-				<div class="sft-track-page-footer-cta">
-					<div class="sft-track-page-footer-cta-copy">
-						<h2 class="sft-track-page-footer-cta-title"><?php esc_html_e( 'Still waiting for an update?', 'safestore-minimal' ); ?></h2>
-						<p><?php esc_html_e( 'WhatsApp your order number — we will check with the warehouse and courier.', 'safestore-minimal' ); ?></p>
-					</div>
-					<div class="sft-track-page-footer-cta-actions">
-						<?php echo safestore_wa_cta_link( $wa_href, $wa_phone, 'sft-about-btn sft-about-btn--primary sft-about-btn--light' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-						<a class="sft-about-btn sft-about-btn--ghost sft-about-btn--light" href="<?php echo esc_url( $contact_url ); ?>"><?php esc_html_e( 'Contact', 'safestore-minimal' ); ?></a>
-					</div>
-				</div>
-			</div>
-		</aside>
+		<?php safestore_render_page_cta(); ?>
 	</main>
 	<?php
 endwhile;
