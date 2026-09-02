@@ -91,6 +91,12 @@ require get_template_directory() . '/inc/hero-category-imagery.php';
 require get_template_directory() . '/inc/mobile-nav.php';
 
 /**
+ * Product category permalinks resolved from the term, so homepage links
+ * cannot 404 on a slug rename. See inc/category-links.php.
+ */
+require get_template_directory() . '/inc/category-links.php';
+
+/**
  * Product reviews — keep the WooCommerce Reviews tab on the PDP by forcing
  * comments open on products. Ported from the "Re-add WooCommerce Reviews tab"
  * Code Snippets entry; deactivate that snippet on live after deploying.
