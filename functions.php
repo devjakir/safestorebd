@@ -987,7 +987,7 @@ function safestore_minimal_get_address_parts() {
 		array(
 			'street'       => __( '17/5/1 Alabdirtek, Pallabi', 'safestore-minimal' ),
 			'locality'     => __( 'Dhaka', 'safestore-minimal' ),
-			'postal_code'  => '1207',
+			'postal_code'  => '1216',
 			'country'      => 'BD',
 			'country_name' => __( 'Bangladesh', 'safestore-minimal' ),
 		)
