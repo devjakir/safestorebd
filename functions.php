@@ -91,6 +91,24 @@ require get_template_directory() . '/inc/hero-category-imagery.php';
 require get_template_directory() . '/inc/mobile-nav.php';
 
 /**
+ * Page-scoped CSS loading — style.css holds the global shell only;
+ * css/page-*.css sheets load per template. See inc/page-css.php.
+ */
+require get_template_directory() . '/inc/page-css.php';
+
+/**
+ * Unified pre-footer CTA banner + single source of truth for the primary
+ * contact number. See inc/page-cta.php.
+ */
+require get_template_directory() . '/inc/page-cta.php';
+
+/**
+ * Product category permalinks resolved from the term, so homepage links
+ * cannot 404 on a slug rename. See inc/category-links.php.
+ */
+require get_template_directory() . '/inc/category-links.php';
+
+/**
  * Product reviews — keep the WooCommerce Reviews tab on the PDP by forcing
  * comments open on products. Ported from the "Re-add WooCommerce Reviews tab"
  * Code Snippets entry; deactivate that snippet on live after deploying.
@@ -205,11 +223,14 @@ function safestore_minimal_enqueue_assets() {
     );
 
     if (is_page_template('page-home.php')) {
+        // filemtime, not $version: the theme version rarely changes, so a JS
+        // edit would otherwise stay cached in visitors' browsers.
+        $hero_slider_js = get_template_directory() . '/js/hero-slider.js';
         wp_enqueue_script(
             'safestore-minimal-hero-slider',
             get_template_directory_uri() . '/js/hero-slider.js',
             array(),
-            $version,
+            file_exists($hero_slider_js) ? (string) filemtime($hero_slider_js) : $version,
             function_exists('safestore_perf_script_args') ? safestore_perf_script_args(true) : true
         );
     }

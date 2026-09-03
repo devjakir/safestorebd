@@ -55,19 +55,39 @@ while ( have_posts() ) :
 			</div>
 		</section>
 
-		<section class="sft-about-cta sft-contact-cta" aria-labelledby="sft-contact-cta-heading">
-			<div class="sft-about-inner sft-about-cta-inner">
-				<div class="sft-about-cta-copy">
-					<h2 class="sft-about-cta-title" id="sft-contact-cta-heading"><?php esc_html_e( 'Looking for something else?', 'safestore-minimal' ); ?></h2>
-					<p><?php esc_html_e( 'Track an order, read shipping times, or browse common questions.', 'safestore-minimal' ); ?></p>
-				</div>
-				<div class="sft-about-cta-actions">
-					<a class="sft-about-btn sft-about-btn--primary sft-about-btn--light" href="<?php echo esc_url( $track_url ); ?>"><?php esc_html_e( 'Track order', 'safestore-minimal' ); ?></a>
-					<a class="sft-about-btn sft-about-btn--ghost sft-about-btn--light" href="<?php echo esc_url( $faq_url ); ?>"><?php esc_html_e( 'FAQ', 'safestore-minimal' ); ?></a>
-					<a class="sft-about-btn sft-about-btn--ghost sft-about-btn--light" href="<?php echo esc_url( $shipping_url ); ?>"><?php esc_html_e( 'Shipping', 'safestore-minimal' ); ?></a>
-				</div>
-			</div>
-		</section>
+		<?php
+		$cta_actions = '';
+		$cta_actions .= safestore_page_cta_btn(
+			array(
+				'href'    => $track_url,
+				'label'   => __( 'Track order', 'safestore-minimal' ),
+				'variant' => 'primary',
+			)
+		);
+		$cta_actions .= safestore_page_cta_btn(
+			array(
+				'href'    => $faq_url,
+				'label'   => __( 'FAQ', 'safestore-minimal' ),
+				'variant' => 'secondary',
+			)
+		);
+		$cta_actions .= safestore_page_cta_btn(
+			array(
+				'href'    => $shipping_url,
+				'label'   => __( 'Shipping', 'safestore-minimal' ),
+				'variant' => 'secondary',
+			)
+		);
+
+		safestore_render_page_cta(
+			array(
+				'title'   => __( 'Looking for something else?', 'safestore-minimal' ),
+				'text'    => __( 'Track an order, read shipping times, or browse common questions.', 'safestore-minimal' ),
+				'label'   => __( 'Other help', 'safestore-minimal' ),
+				'actions' => $cta_actions,
+			)
+		);
+		?>
 	</main>
 	<?php
 endwhile;

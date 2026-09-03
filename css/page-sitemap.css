@@ -1,0 +1,55 @@
+
+
+/* Sitemap page */
+.sft-sitemap-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(24px, 3vw, 32px);
+}
+
+
+.sft-sitemap-group {
+  border: 1px solid var(--ss-border);
+  border-radius: var(--ss-radius);
+  padding: 20px 22px;
+  background: var(--ss-white);
+}
+
+
+.sft-sitemap-group-title {
+  margin: 0 0 14px;
+  font-size: var(--ss-text-lg);
+  font-weight: 600;
+  color: var(--ss-ink);
+}
+
+
+.sft-sitemap-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+
+.sft-sitemap-links a {
+  font-size: var(--ss-text-base);
+  font-weight: 500;
+  color: var(--ss-ink-soft);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+
+.sft-sitemap-links a:hover {
+  color: var(--ss-brand);
+}
+
+@media (max-width: 720px) {
+
+  .sft-sitemap-grid {
+    grid-template-columns: 1fr;
+  }
+}

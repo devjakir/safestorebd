@@ -16,7 +16,7 @@
 
 /* Lift WhatsApp FAB when the compare bar is open */
 html.sft-compare-bar-open .sft-wa {
-  bottom: max(108px, calc(env(safe-area-inset-bottom, 0px) + 96px));
+  bottom: max(86px, calc(env(safe-area-inset-bottom, 0px) + 74px));
 }
 
 .sft-compare-live {
@@ -41,7 +41,7 @@ html.sft-compare-bar-open .sft-wa {
   right: 0;
   bottom: 0;
   z-index: var(--sft-cmp-bar-z);
-  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  padding: 8px 16px calc(8px + env(safe-area-inset-bottom, 0px));
   background: var(--sft-cmp-surface);
   border-top: 1px solid var(--sft-cmp-line);
   box-shadow: 0 -8px 28px rgba(15, 23, 42, 0.1);
@@ -56,7 +56,7 @@ html.sft-compare-bar-open .sft-wa {
 .sft-compare-bar__inner {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   max-width: 1120px;
   margin: 0 auto;
 }
@@ -70,21 +70,21 @@ html.sft-compare-bar-open .sft-wa {
 }
 
 .sft-compare-bar__title {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--sft-cmp-ink);
   line-height: 1.2;
 }
 
 .sft-compare-bar__count {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--sft-cmp-muted);
 }
 
 .sft-compare-bar__slots {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex: 1 1 auto;
   min-width: 0;
   margin: 0;
@@ -97,14 +97,14 @@ html.sft-compare-bar-open .sft-wa {
 .sft-compare-bar__slot {
   position: relative;
   flex: 0 0 auto;
-  width: 56px;
-  height: 56px;
+  width: 42px;
+  height: 42px;
 }
 
 .sft-compare-bar__thumb {
   display: block;
-  width: 56px;
-  height: 56px;
+  width: 42px;
+  height: 42px;
   border: 1px solid var(--sft-cmp-line);
   border-radius: var(--sft-cmp-radius);
   overflow: hidden;
@@ -122,12 +122,12 @@ html.sft-compare-bar-open .sft-wa {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 56px;
-  height: 56px;
+  width: 42px;
+  height: 42px;
   border: 1px dashed #cbd5e1;
   border-radius: var(--sft-cmp-radius);
   color: #94a3b8;
-  font-size: 22px;
+  font-size: 17px;
   font-weight: 400;
   line-height: 1;
   background: #f8fafc;
@@ -135,10 +135,10 @@ html.sft-compare-bar-open .sft-wa {
 
 .sft-compare-bar__remove {
   position: absolute;
-  top: -6px;
-  right: -6px;
-  width: 22px;
-  height: 22px;
+  top: -5px;
+  right: -5px;
+  width: 18px;
+  height: 18px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -167,12 +167,12 @@ html.sft-compare-bar-open .sft-wa {
 
 .sft-compare-bar__clear {
   margin: 0;
-  padding: 8px 4px;
+  padding: 6px 4px;
   border: 0;
   background: transparent;
   color: var(--sft-cmp-muted);
   font: inherit;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   cursor: pointer;
   text-decoration: underline;
@@ -189,12 +189,12 @@ html.sft-compare-bar-open .sft-wa {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 42px;
-  padding: 0 18px;
+  min-height: 34px;
+  padding: 0 14px;
   border-radius: var(--sft-cmp-radius);
   background: var(--sft-cmp-accent);
   color: #fff !important;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.02em;
   text-decoration: none !important;
@@ -224,21 +224,21 @@ html.sft-compare-bar-open .sft-wa {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 28px;
+  height: 28px;
   margin: 0;
   padding: 0;
   border: 0;
   border-radius: var(--sft-cmp-radius);
   background: transparent;
-  color: #94a3b8;
+  color: var(--sft-cmp-accent);
   cursor: pointer;
 }
 
 .sft-compare-bar__close:hover,
 .sft-compare-bar__close:focus-visible {
-  background: #f1f5f9;
-  color: var(--sft-cmp-ink);
+  background: #fef2f2;
+  color: var(--sft-cmp-accent-hover);
   outline: none;
 }
 
@@ -595,7 +595,7 @@ html.sft-compare-bar-open .sft-wa {
 
 @media (max-width: 768px) {
   html.sft-compare-bar-open .sft-wa {
-    bottom: max(148px, calc(env(safe-area-inset-bottom, 0px) + 136px));
+    bottom: max(118px, calc(env(safe-area-inset-bottom, 0px) + 106px));
   }
 
   .sft-compare-bar__inner {

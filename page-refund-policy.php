@@ -79,6 +79,7 @@ while ( have_posts() ) :
 				</aside>
 			</div>
 		</section>
+		<?php safestore_render_page_cta(); ?>
 	</main>
 	<?php
 endwhile;

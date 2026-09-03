@@ -9,11 +9,11 @@
 
 $home_url    = home_url( '/' );
 $shop_url    = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
-$shoe_url    = home_url( '/product-category/safety-shoe/' );
-$helmet_url  = home_url( '/product-category/protective-helmet/' );
-$vest_url    = home_url( '/product-category/safety-vest/' );
-$glove_url   = home_url( '/product-category/safety-glove/' );
-$goggle_url  = home_url( '/product-category/safety-goggle/' );
+$shoe_url    = safestore_home_category_url( 'shoe' );
+$helmet_url  = safestore_home_category_url( 'helmet' );
+$vest_url    = safestore_home_category_url( 'vest' );
+$glove_url   = safestore_home_category_url( 'glove' );
+$goggle_url  = safestore_home_category_url( 'goggle' );
 $about_url   = home_url( '/about/' );
 $contact_url = home_url( '/contact/' );
 $bulk_url    = home_url( '/bulk-orders/' );

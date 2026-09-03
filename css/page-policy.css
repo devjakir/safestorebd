@@ -1,0 +1,144 @@
+
+
+.sft-about-editor-wrap {
+  padding: clamp(28px, 4vw, 40px) 16px;
+  background: var(--ss-surface);
+}
+
+.sft-about-editor {
+  max-width: 680px;
+  margin: 0 auto;
+  background: var(--ss-white);
+  border: 1px solid var(--ss-border);
+  border-radius: var(--ss-radius);
+  padding: clamp(22px, 3vw, 36px);
+}
+
+.sft-about-editor p:first-of-type {
+  margin-top: 0;
+}
+
+.sft-about-editor p:last-of-type {
+  margin-bottom: 0;
+}
+
+/* Refund & policy page (About-style layout) */
+.sft-policy-section {
+  margin-bottom: 28px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid #eef0f3;
+}
+
+.sft-policy-section:last-of-type {
+  margin-bottom: 20px;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.sft-policy-note {
+  padding: 14px 16px;
+  background: var(--ss-surface);
+  border-left: 3px solid #fb923c;
+  border-radius: 0 5px 5px 0;
+  font-size: var(--ss-text-base);
+}
+
+/* Privacy policy page */
+.sft-privacy-hero {
+  padding-top: clamp(32px, 5vw, 48px);
+  padding-bottom: clamp(28px, 4vw, 40px);
+}
+
+.sft-privacy-updated {
+  margin: 0;
+  font-size: var(--ss-text-sm);
+  color: var(--ss-muted);
+}
+
+.sft-privacy-body {
+  padding-bottom: clamp(32px, 4vw, 44px);
+}
+
+.sft-privacy-content .sft-policy-section:last-of-type {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+.sft-privacy-content a:hover {
+  color: var(--ss-brand);
+}
+
+/* Terms of service page */
+.sft-terms-hero {
+  padding-top: clamp(32px, 5vw, 48px);
+  padding-bottom: clamp(28px, 4vw, 40px);
+}
+
+.sft-terms-updated {
+  margin: 0;
+  font-size: var(--ss-text-sm);
+  color: var(--ss-muted);
+}
+
+.sft-terms-body {
+  padding-bottom: clamp(32px, 4vw, 44px);
+}
+
+.sft-terms-content .sft-policy-section:last-of-type {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+.sft-terms-content a:hover {
+  color: var(--ss-brand);
+}@media (max-width: 720px) {}
+
+.sft-legal-page-updated {
+  margin: 0;
+  font-size: var(--ss-text-sm);
+  color: var(--ss-muted);
+}
+
+.sft-legal-doc-list {
+  list-style: none;
+  margin: 0 0 28px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sft-legal-doc-list li {
+  border: 1px solid var(--ss-border);
+  border-radius: var(--ss-radius);
+  padding: 14px 16px;
+  background: var(--ss-surface);
+}
+
+.sft-legal-doc-list a {
+  font-size: var(--ss-text-md);
+  font-weight: 600;
+  color: var(--ss-ink);
+  text-decoration: none;
+}
+
+.sft-legal-doc-list a:hover {
+  color: var(--ss-brand);
+}
+
+.sft-legal-doc-desc {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--ss-text-sm);
+  color: var(--ss-muted-alt);
+}
+
+.sft-legal-page-content a {
+  color: #0f7a3d;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.sft-legal-page-content a:hover {
+  color: var(--ss-brand);
+}

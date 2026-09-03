@@ -36,9 +36,9 @@ $safestore_hero_srcset = static function ( string $base ) use ( $safestore_hero_
 /** UTF-8 narrow no-break space — keeps two-line headline layout stable */
 $nbsp = "\xC2\xA0";
 
-$helmet_cat    = home_url( '/product-category/protective-helmet/' );
-$vest_cat      = home_url( '/product-category/safety-vest/' );
-$shoe_cat      = home_url( '/product-category/safety-shoe/' );
+$helmet_cat    = safestore_home_category_url( 'helmet' );
+$vest_cat      = safestore_home_category_url( 'vest' );
+$shoe_cat      = safestore_home_category_url( 'shoe' );
 $browse_anchor = home_url( '/#browse-categories' );
 
 $hero_slides = array(

@@ -5,11 +5,11 @@
 
 $shop_url   = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
 $assets_url = get_template_directory_uri() . '/assets/images';
-$helmet_cat = home_url( '/product-category/protective-helmet/' );
-$vest_cat = home_url( '/product-category/safety-vest/' );
-$gloves_cat = home_url( '/product-category/safety-glove/' );
-$goggle_cat = home_url( '/product-category/safety-goggle/' );
-$shoe_cat = home_url( '/product-category/safety-shoe/' );
+$helmet_cat = safestore_home_category_url( 'helmet' );
+$vest_cat = safestore_home_category_url( 'vest' );
+$gloves_cat = safestore_home_category_url( 'glove' );
+$goggle_cat = safestore_home_category_url( 'goggle' );
+$shoe_cat = safestore_home_category_url( 'shoe' );
 
 /**
  * @param string $filename File name as stored in assets/images (spaces & special chars OK).

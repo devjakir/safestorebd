@@ -1,0 +1,115 @@
+
+
+.sft-careers-body {
+  padding-bottom: clamp(32px, 4vw, 44px);
+}
+
+.sft-careers-list {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sft-careers-card {
+  border: 1px solid var(--ss-border);
+  border-radius: var(--ss-radius);
+  padding: 18px 20px;
+  background: var(--ss-white);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sft-careers-card:hover {
+  border-color: #fecaca;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+}
+
+.sft-careers-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 8px;
+}
+
+.sft-careers-card-title {
+  margin: 0;
+  font-size: var(--ss-text-lg);
+  font-weight: 600;
+  color: var(--ss-ink);
+}
+
+.sft-careers-card-meta {
+  font-size: var(--ss-text-xs);
+  font-weight: 600;
+  color: var(--ss-muted-alt);
+  white-space: nowrap;
+}
+
+.sft-careers-card-summary {
+  margin: 0;
+  font-size: var(--ss-text-base);
+  line-height: 1.55;
+  color: var(--ss-c-4b5563);
+}
+
+.sft-careers-general {
+  margin: 0;
+  font-size: var(--ss-text-base);
+  line-height: 1.55;
+  color: var(--ss-muted-alt);
+}
+
+.sft-careers-location {
+  margin: 0 0 16px;
+  font-size: var(--ss-text-sm);
+  line-height: 1.5;
+  color: var(--ss-muted-alt);
+}
+
+.sft-careers-location strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--ss-ink-soft);
+}@media (max-width: 720px) {}
+
+/* Applicant guidance — moved out of the old three-column pre-footer into the
+   sidebar, where it sits beside "How to apply" instead of below the fold. */
+.sft-careers-notes {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--ss-border-cool);
+}
+
+.sft-careers-notes__title {
+  margin: 0 0 8px;
+  font-size: var(--ss-text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ss-muted-soft);
+}
+
+.sft-careers-notes__title + .sft-careers-notes__list {
+  margin-bottom: 14px;
+}
+
+.sft-careers-notes__list {
+  margin: 0;
+  padding: 0 0 0 1.1em;
+  list-style: disc;
+}
+
+.sft-careers-notes__list li {
+  margin-bottom: 6px;
+  font-size: var(--ss-text-sm);
+  line-height: 1.5;
+  color: var(--ss-muted);
+}
+
+.sft-careers-notes__list li:last-child {
+  margin-bottom: 0;
+}

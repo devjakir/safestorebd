@@ -55,49 +55,7 @@ while ( have_posts() ) :
 			</div>
 		</section>
 
-		<aside class="sft-sitemap-page-footer" aria-label="<?php esc_attr_e( 'Sitemap footer', 'safestore-minimal' ); ?>">
-			<div class="sft-sitemap-page-footer-inner">
-				<div class="sft-sitemap-page-footer-grid">
-					<div class="sft-sitemap-page-footer-col">
-						<h3 class="sft-sitemap-page-footer-heading"><?php esc_html_e( 'Shop', 'safestore-minimal' ); ?></h3>
-						<ul class="sft-sitemap-page-footer-links">
-							<?php
-							$shop_group = $groups[0]['links'] ?? array();
-							foreach ( array_slice( $shop_group, 0, 4 ) as $link ) :
-								?>
-								<li><a href="<?php echo esc_url( $link['url'] ); ?>"><?php echo esc_html( $link['label'] ); ?></a></li>
-							<?php endforeach; ?>
-						</ul>
-					</div>
-					<div class="sft-sitemap-page-footer-col">
-						<h3 class="sft-sitemap-page-footer-heading"><?php esc_html_e( 'Support', 'safestore-minimal' ); ?></h3>
-						<ul class="sft-sitemap-page-footer-tips">
-							<li><?php esc_html_e( 'Track orders, shipping, returns, and FAQ.', 'safestore-minimal' ); ?></li>
-							<li><?php esc_html_e( 'WhatsApp support for Bangladesh customers.', 'safestore-minimal' ); ?></li>
-						</ul>
-					</div>
-					<div class="sft-sitemap-page-footer-col">
-						<h3 class="sft-sitemap-page-footer-heading"><?php esc_html_e( 'Legal', 'safestore-minimal' ); ?></h3>
-						<ul class="sft-sitemap-page-footer-links">
-							<li><a href="<?php echo esc_url( $legal_url ); ?>"><?php esc_html_e( 'Legal hub', 'safestore-minimal' ); ?></a></li>
-							<li><a href="<?php echo esc_url( home_url( '/privacy-policy/' ) ); ?>"><?php esc_html_e( 'Privacy', 'safestore-minimal' ); ?></a></li>
-							<li><a href="<?php echo esc_url( home_url( '/terms-of-service/' ) ); ?>"><?php esc_html_e( 'Terms', 'safestore-minimal' ); ?></a></li>
-						</ul>
-					</div>
-				</div>
-
-				<div class="sft-sitemap-page-footer-cta">
-					<div class="sft-sitemap-page-footer-cta-copy">
-						<h2 class="sft-sitemap-page-footer-cta-title"><?php esc_html_e( 'Can’t find a page?', 'safestore-minimal' ); ?></h2>
-						<p><?php esc_html_e( 'Search the shop or contact us — we sell industrial safety gear nationwide from Dhaka.', 'safestore-minimal' ); ?></p>
-					</div>
-					<div class="sft-sitemap-page-footer-cta-actions">
-						<a class="sft-about-btn sft-about-btn--primary sft-about-btn--light" href="<?php echo esc_url( $contact_url ); ?>"><?php esc_html_e( 'Contact', 'safestore-minimal' ); ?></a>
-						<?php echo safestore_wa_cta_link( $wa_href, $phone, 'sft-about-btn sft-about-btn--ghost sft-about-btn--light' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-					</div>
-				</div>
-			</div>
-		</aside>
+		<?php safestore_render_page_cta(); ?>
 	</main>
 	<?php
 endwhile;

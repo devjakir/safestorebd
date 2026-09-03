@@ -1,0 +1,294 @@
+
+
+.sft-about-eyebrow {
+  margin: 0 0 10px;
+  font-size: var(--ss-text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #fb923c;
+}
+
+.sft-about-hero-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.sft-about-btn--light {
+  background: var(--ss-white);
+  color: var(--ss-ink);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+}
+
+.sft-about-btn--light:hover {
+  background: var(--ss-surface);
+  color: var(--ss-ink);
+}
+
+.sft-about-btn--light.sft-about-btn--ghost {
+  background: transparent;
+  color: var(--ss-white);
+  border-color: rgba(255, 255, 255, 0.45);
+  box-shadow: none;
+}
+
+.sft-about-btn--light.sft-about-btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--ss-white);
+}
+
+.sft-about-body {
+  padding: clamp(40px, 5vw, 56px) 16px;
+  background: var(--ss-white);
+}
+
+.sft-about-body-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+  gap: clamp(28px, 4vw, 40px);
+  align-items: start;
+}
+
+.sft-about-h2 {
+  margin: 0 0 12px;
+  font-size: clamp(20px, 2.2vw, 26px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ss-ink);
+}
+
+.sft-about-h3 {
+  margin: 0 0 10px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ss-ink);
+}
+
+.sft-about-summary-text {
+  margin: 0 0 18px;
+  font-size: var(--ss-text-lg);
+  line-height: 1.65;
+  color: var(--ss-c-4b5563);
+}
+
+.sft-about-highlights {
+  margin: 0 0 24px;
+  padding: 0 0 0 1.15em;
+  color: var(--ss-ink-soft);
+  font-size: var(--ss-text-md);
+  line-height: 1.55;
+}
+
+.sft-about-highlights li {
+  margin-bottom: 8px;
+}
+
+.sft-about-highlights li:last-child {
+  margin-bottom: 0;
+}
+
+.sft-about-contact-card {
+  background: var(--ss-surface);
+  border: 1px solid var(--ss-border);
+  border-radius: var(--ss-radius);
+  padding: 24px 22px;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+}
+
+.sft-about-contact-lead {
+  margin: 0 0 16px;
+  font-size: var(--ss-text-base);
+  line-height: 1.5;
+  color: var(--ss-muted-alt);
+}
+
+.sft-about-contact-list {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 0;
+}
+
+.sft-about-contact-list li {
+  margin-bottom: 10px;
+}
+
+.sft-about-contact-label {
+  display: block;
+  margin-bottom: 2px;
+  font-size: var(--ss-text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+.sft-about-contact-list li:last-child {
+  margin-bottom: 0;
+}
+
+.sft-about-contact-list a {
+  font-size: var(--ss-text-md);
+  font-weight: 500;
+  color: var(--ss-ink);
+  text-decoration: none;
+}
+
+.sft-about-contact-list a:hover {
+  color: var(--ss-brand);
+}
+
+.sft-about-contact-list a.sft-about-contact-wa {
+  color: #15803d;
+}
+
+.sft-about-contact-list a.sft-about-contact-wa:hover {
+  color: var(--ss-success);
+}
+
+.sft-wa-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.sft-wa-cta-icon {
+  width: 1.05em;
+  height: 1.05em;
+  flex: none;
+}
+
+.sft-about-contact-shop {
+  width: 100%;
+}@media (max-width: 720px) {
+
+  .sft-about-body-grid {
+    grid-template-columns: 1fr;
+  }}
+
+/* Legal page */
+.sft-legal-page-hero,
+.sft-sitemap-hero {
+  padding-top: clamp(32px, 5vw, 48px);
+  padding-bottom: clamp(28px, 4vw, 40px);
+}
+
+.sft-legal-page-body,
+.sft-sitemap-body {
+  padding-bottom: clamp(32px, 4vw, 44px);
+}@media (max-width: 720px) {}
+
+/* ==========================================================================
+   Unified pre-footer CTA banner (.sft-page-cta)
+
+   Sits directly on the site footer as its top shelf. Two dark bands may only
+   read as intentional if they touch — a light strip between them looks like a
+   rendering fault — so the page wrapper's bottom padding is removed here and
+   the band uses the footer's own --sfx-bg-alt tone one step above #081621.
+   ========================================================================== */
+
+/* The page wrapper pads its own bottom; that padding is what put a light
+   strip between this band and the footer. Drop it when the banner is last. */
+.sft-about:has(> .sft-page-cta) {
+  padding-bottom: 0;
+}
+
+.sft-page-cta {
+  margin: clamp(36px, 5vw, 60px) 0 0;
+  padding: clamp(30px, 3.6vw, 42px) 0;
+  background: #0c1e2c;   /* = .sfx-footer --sfx-bg-alt, one step above #081621 */
+  color: var(--ss-border-cool);
+}
+
+.sft-page-cta__inner {
+  /* mirrors .sfx-footer__inner so the heading aligns with the footer columns */
+  width: var(--ss-container-flush);
+  margin: 0 auto;
+  padding: 0 26px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(16px, 2.4vw, 28px);
+}
+
+.sft-page-cta__copy { min-width: 0; }
+
+.sft-page-cta__title {
+  margin: 0 0 4px;
+  font-size: clamp(19px, 2.1vw, 23px);
+  line-height: 1.25;
+  font-weight: 700;
+  color: var(--ss-white);
+}
+
+.sft-page-cta__text {
+  margin: 0;
+  font-size: var(--ss-text-base);
+  line-height: 1.55;
+  color: rgba(226, 232, 240, 0.72);
+}
+
+.sft-page-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.sft-page-cta__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border-radius: var(--ss-radius);
+  border: 1px solid transparent;
+  font-size: var(--ss-text-base);
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.sft-page-cta__icon { flex: none; }
+
+.sft-page-cta__btn--wa,
+.sft-page-cta__btn--primary { background: var(--ss-white); color: var(--ss-ink); }
+
+.sft-page-cta__btn--wa:hover,
+.sft-page-cta__btn--wa:focus-visible,
+.sft-page-cta__btn--primary:hover,
+.sft-page-cta__btn--primary:focus-visible { background: var(--ss-border-cool); color: var(--ss-ink); }
+
+.sft-page-cta__btn--call,
+.sft-page-cta__btn--secondary {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.28);
+  color: var(--ss-white);
+}
+
+.sft-page-cta__btn--call:hover,
+.sft-page-cta__btn--call:focus-visible,
+.sft-page-cta__btn--secondary:hover,
+.sft-page-cta__btn--secondary:focus-visible {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.sft-page-cta__btn:focus-visible { outline: 2px solid #f87171; outline-offset: 2px; }
+
+@media (max-width: 1024px) {
+  .sft-page-cta__inner { padding: 0 20px; }   /* matches .sfx-footer__inner */
+}
+
+@media (max-width: 767px) {
+  .sft-page-cta__inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sft-page-cta__actions { width: 100%; }
+
+  .sft-page-cta__btn { flex: 1 1 auto; justify-content: center; }
+}

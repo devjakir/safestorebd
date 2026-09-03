@@ -1,0 +1,125 @@
+
+
+/* Track order page */
+.sft-track-hero {
+  padding-top: clamp(32px, 5vw, 48px);
+  padding-bottom: clamp(28px, 4vw, 40px);
+}
+
+.sft-track-body {
+  padding-bottom: clamp(32px, 4vw, 44px);
+}
+
+.sft-track-form {
+  margin-bottom: 28px;
+  padding: 22px 20px;
+  border: 1px solid var(--ss-border);
+  border-radius: var(--ss-radius);
+  background: var(--ss-surface);
+}
+
+.sft-track-form .woocommerce-form-track-order>p:first-of-type {
+  margin-top: 0;
+  font-size: var(--ss-text-base);
+  line-height: 1.55;
+  color: var(--ss-muted-alt);
+}
+
+.sft-track-form .form-row {
+  margin-bottom: 14px;
+}
+
+.sft-track-form label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: var(--ss-text-sm);
+  font-weight: 600;
+  color: var(--ss-ink-soft);
+}
+
+.sft-track-form .input-text {
+  width: 100%;
+  max-width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: var(--ss-radius);
+  font-size: var(--ss-text-md);
+  background: var(--ss-white);
+  box-sizing: border-box;
+}
+
+.sft-track-form .input-text:focus {
+  outline: none;
+  border-color: var(--ss-brand);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.sft-track-form .button,
+.sft-track-form button[type="submit"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 24px;
+  border: 0;
+  border-radius: var(--ss-radius);
+  background: var(--ss-brand);
+  color: var(--ss-white) !important;
+  font-size: var(--ss-text-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.sft-track-form .button:hover,
+.sft-track-form button[type="submit"]:hover {
+  background: var(--ss-brand-dark);
+}
+
+.sft-track-notices {
+  margin-bottom: 16px;
+}
+
+.sft-track-steps-heading {
+  margin: 0 0 14px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ss-ink);
+}
+
+.sft-track-steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sft-track-steps li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--ss-border);
+  border-radius: var(--ss-radius);
+  background: var(--ss-white);
+  font-size: var(--ss-text-base);
+  line-height: 1.5;
+  color: var(--ss-c-4b5563);
+}
+
+.sft-track-steps li strong {
+  grid-column: 1 / -1;
+  color: var(--ss-ink);
+  font-size: var(--ss-text-base);
+}
+
+.sft-track-steps li span {
+  grid-column: 1 / -1;
+}@media (max-width: 720px) {
+
+  .sft-track-form .form-row-first,
+  .sft-track-form .form-row-last {
+    width: 100%;
+    float: none;
+  }}

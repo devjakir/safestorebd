@@ -65,19 +65,7 @@ while ( have_posts() ) :
 			</div>
 		</section>
 
-		<section class="sft-about-cta sft-faq-cta" aria-label="<?php esc_attr_e( 'Get help', 'safestore-minimal' ); ?>">
-			<div class="sft-about-inner sft-about-cta-inner">
-				<div class="sft-about-cta-copy">
-					<h2 class="sft-about-cta-title"><?php esc_html_e( 'Need more help?', 'safestore-minimal' ); ?></h2>
-					<p><?php esc_html_e( 'WhatsApp us with your order number, or see our return policy.', 'safestore-minimal' ); ?></p>
-				</div>
-				<div class="sft-about-cta-actions">
-					<?php echo safestore_wa_cta_link( $wa_href, $wa_phone, 'sft-about-btn sft-about-btn--primary sft-about-btn--light' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-					<a class="sft-about-btn sft-about-btn--ghost sft-about-btn--light" href="<?php echo esc_url( $returns_url ); ?>"><?php esc_html_e( 'Return policy', 'safestore-minimal' ); ?></a>
-					<a class="sft-about-btn sft-about-btn--ghost sft-about-btn--light" href="<?php echo esc_url( $contact_url ); ?>"><?php esc_html_e( 'Contact', 'safestore-minimal' ); ?></a>
-				</div>
-			</div>
-		</section>
+		<?php safestore_render_page_cta(); ?>
 	</main>
 	<?php
 endwhile;

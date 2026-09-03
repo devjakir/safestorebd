@@ -1,0 +1,31 @@
+
+
+.sft-about-trust {
+  list-style: none;
+  margin: 0 0 26px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+}
+
+
+.sft-about-trust li {
+  font-size: var(--ss-text-sm);
+  font-weight: 500;
+  color: var(--ss-muted);
+  padding-left: 14px;
+  position: relative;
+}
+
+
+.sft-about-trust li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ss-brand);
+}
