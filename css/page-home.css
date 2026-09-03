@@ -71,7 +71,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 28px 36px 28px 12px;
+  padding: 44px 36px 44px 12px;
   min-height: 0;
   height: 100%;
   container-type: size;
@@ -96,7 +96,7 @@
 @supports not (width: 1cqh) {
 
   .home .hero-slide-stage {
-    width: min(100%, 464px);
+    width: min(100%, 432px);
     height: auto;
     max-height: 100%;
   }
