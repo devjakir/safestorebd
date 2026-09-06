@@ -1,0 +1,48 @@
+Follow the safety-shoes -> safety-shoe category rename
+
+The product categories were renamed from plural to singular on production
+(safety-shoe, protective-helmet, safety-glove, safety-goggle, safety-vest;
+verified against the live Store API). Three separate features still had the
+plural spelling hardcoded and each failed silently rather than erroring, so
+the breakage was only visible as missing UI.
+
+Size selector gone from Safety Shoe PDPs
+  Every gate in inc/footwear-sizing.php runs through
+  safestore_is_footwear_product(), which matched the single hardcoded slug
+  'safety-shoes'. After the rename it returned false for all 14 shoe
+  products, taking the PDP size grid, the quick-add size matrix, the
+  "choose a size" cart validation and the sft-pdp-footwear body class with
+  it. Both spellings are now listed: has_term() is false for a slug that
+  does not exist, so the extra candidate costs nothing and a rename in
+  either direction can no longer switch the feature off.
+
+Hero overlay cards resolving to nothing
+  templates/home/hero-slider.php passed 'protective-helmets',
+  'safety-vests' and 'safety-shoes' to safestore_hero_overlay_for_category(),
+  which looks the term up by slug — so all three hero slides lost their live
+  price and rating card. The slugs now come from the same candidate map as
+  the category links via a new safestore_home_category_slug().
+
+Admin tool reporting an empty category
+  safestore_size_category_slug() drives the WooCommerce -> Size Variations
+  product query, so a stale slug made the screen claim there were no Safety
+  Shoes products at all. It now resolves the live term.
+
+Also 301s renamed category URLs
+  /product-category/safety-shoes/ returns a hard 404 on production —
+  WordPress's fuzzy URL guessing does not cover a rename — which breaks
+  Google's indexed URLs, old campaign links and a link inside the DINGGU
+  SS5 product description. safestore_redirect_renamed_category_urls() runs
+  only on requests that have already 404'd and only redirects once the
+  target term is confirmed to exist, so a genuine 404 stays a 404. Child
+  terms, pagination and query strings are preserved; a custom WooCommerce
+  category base is respected.
+
+Verified on the local site (which still carries the old plural slugs, so it
+exercises the resolver in the opposite direction): PDP renders the 39-44
+grid with the footwear body class, the three hero cards show real prices,
+renamed URLs 301 to the surviving term, and made-up slugs still 404.
+php -l clean on all four files.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01M891qjvQ9Gso2bMeN4FwfD

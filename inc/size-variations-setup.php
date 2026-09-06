@@ -27,10 +27,20 @@ function safestore_size_terms() {
 /**
  * Category slug for Safety Shoes.
  *
+ * Resolved from the term rather than hardcoded: this slug drives the admin
+ * tool's product query, so a stale spelling makes the screen report
+ * "No products found in the Safety Shoes category" on a shop that has them.
+ *
  * @return string
  */
 function safestore_size_category_slug() {
-	return 'safety-shoes';
+	$candidates = array( 'safety-shoe', 'safety-shoes' );
+
+	if ( function_exists( 'safestore_category_slug' ) ) {
+		return safestore_category_slug( $candidates );
+	}
+
+	return $candidates[0];
 }
 
 /**
