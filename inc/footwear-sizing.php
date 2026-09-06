@@ -38,10 +38,18 @@ function safestore_footwear_allowed_sizes() {
 /**
  * Category slugs treated as footwear (show size UI / filters).
  *
+ * The category was renamed safety-shoes -> safety-shoe, which switched the
+ * whole size feature off without any error: every gate in this file runs
+ * through safestore_is_footwear_product(), so the PDP size selector, the
+ * size matrix and the "choose a size" cart validation all just stopped
+ * appearing. Both spellings are listed so a rename in either direction can
+ * never do that again — has_term() simply returns false for a slug that
+ * does not exist, so the extra candidate costs nothing.
+ *
  * @return string[]
  */
 function safestore_footwear_category_slugs() {
-	$slugs = array( 'safety-shoes' );
+	$slugs = array( 'safety-shoe', 'safety-shoes' );
 
 	/**
 	 * Filter footwear category slugs.
