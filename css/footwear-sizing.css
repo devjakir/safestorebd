@@ -22,7 +22,8 @@
   border: 0 !important;
 }
 
-.sft-variations-form--footwear table.sft-variations--size-native {
+/* Matches WooCommerce's own .woocommerce div.product form.cart .variations, which is specific enough to keep its margin-bottom: 1em otherwise. */
+.woocommerce div.product form.cart table.variations.sft-variations--size-native {
   margin: 0;
   border: 0;
 }
