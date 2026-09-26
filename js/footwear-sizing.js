@@ -44,6 +44,19 @@
     });
   }
 
+  // WooCommerce rebuilds the size <select> and disables sold-out options; mirror that onto the swatches.
+  function syncSwatchAvailability($panel, $select) {
+    $panel.find('.sft-size-swatch').each(function () {
+      var $btn = $(this);
+      var $opt = $select.find('option[value="' + String($btn.data('value')) + '"]');
+      // A size whose option WooCommerce dropped has no variation left to buy.
+      var disabled = !$opt.length || !!$opt.prop('disabled');
+      $btn.toggleClass('is-oos', disabled);
+      $btn.prop('disabled', disabled);
+      $btn.attr('aria-disabled', disabled ? 'true' : 'false');
+    });
+  }
+
   function clearError($panel) {
     $panel.removeClass('is-invalid sft-size-error');
   }
@@ -146,6 +159,7 @@
 
     // Keep swatches in sync if WooCommerce resets the form.
     $form.on('woocommerce_update_variation_values reset_data hide_variation', function () {
+      syncSwatchAvailability($panel, $select);
       setActiveSwatch($panel, String($select.val() || ''));
       if (!hasSizeSelected($form)) {
         clearError($panel);
@@ -156,6 +170,8 @@
       setActiveSwatch($panel, String($select.val() || ''));
       clearError($panel);
     });
+
+    syncSwatchAvailability($panel, $select);
 
     return $panel;
   }

@@ -316,7 +316,12 @@ function safestore_footwear_variation_is_active( $active, $variation ) {
 		return $active;
 	}
 
-	return safestore_footwear_is_allowed_size( $attrs['pa_size'] );
+	if ( ! safestore_footwear_is_allowed_size( $attrs['pa_size'] ) ) {
+		return false;
+	}
+
+	// WooCommerce disables every option whose variation is not active, which is what greys out a sold-out size.
+	return $variation->is_in_stock() && $variation->is_purchasable();
 }
 add_filter( 'woocommerce_variation_is_active', 'safestore_footwear_variation_is_active', 10, 2 );
 
@@ -381,6 +386,90 @@ function safestore_footwear_available_variation( $data, $product, $variation ) {
 }
 add_filter( 'woocommerce_available_variation', 'safestore_footwear_available_variation', 20, 3 );
 
+/** Per-size availability for a footwear product: size slug => bool selectable. */
+function safestore_footwear_size_availability( $product ) {
+	if ( ! $product instanceof WC_Product ) {
+		$product = wc_get_product( $product );
+	}
+
+	if ( ! $product instanceof WC_Product || ! $product->is_type( 'variable' ) ) {
+		return apply_filters( 'safestore_footwear_size_availability', array(), $product );
+	}
+
+	static $cache = array();
+
+	$key = $product->get_id();
+	if ( isset( $cache[ $key ] ) ) {
+		return $cache[ $key ];
+	}
+
+	$availability = array();
+
+	foreach ( $product->get_children() as $child_id ) {
+		$variation = wc_get_product( $child_id );
+		if ( ! $variation instanceof WC_Product_Variation ) {
+			continue;
+		}
+
+		$attrs = $variation->get_attributes();
+		if ( empty( $attrs['pa_size'] ) ) {
+			continue;
+		}
+
+		$size = safestore_footwear_normalize_size_option( $attrs['pa_size'] );
+		if ( '' === $size ) {
+			continue;
+		}
+
+		// is_in_stock() already accounts for backorders and the stock status field.
+		$selectable = $variation->variation_is_visible() && $variation->is_purchasable() && $variation->is_in_stock();
+
+		$availability[ $size ] = ! empty( $availability[ $size ] ) || $selectable;
+	}
+
+	$cache[ $key ] = apply_filters( 'safestore_footwear_size_availability', $availability, $product );
+
+	return $cache[ $key ];
+}
+
+/** Mark <option>s whose size has no purchasable, in-stock variation as disabled. */
+function safestore_footwear_disable_unavailable_options( $html, $product ) {
+	$availability = safestore_footwear_size_availability( $product );
+
+	// No map means we cannot tell which sizes are stocked; never disable on a guess.
+	if ( empty( $availability ) ) {
+		return $html;
+	}
+
+	return preg_replace_callback(
+		'/<option\b[^>]*>/i',
+		static function ( $matches ) use ( $availability ) {
+			$tag = $matches[0];
+
+			if ( preg_match( '/\sdisabled(\s|=|>)/i', $tag ) ) {
+				return $tag;
+			}
+
+			if ( ! preg_match( '/\svalue\s*=\s*(["\'])(.*?)\1/i', $tag, $value_match ) ) {
+				return $tag;
+			}
+
+			$value = html_entity_decode( $value_match[2], ENT_QUOTES, 'UTF-8' );
+			if ( '' === $value ) {
+				return $tag;
+			}
+
+			$size = safestore_footwear_normalize_size_option( $value );
+			if ( ! empty( $availability[ $size ] ) ) {
+				return $tag;
+			}
+
+			return substr( $tag, 0, -1 ) . ' disabled>';
+		},
+		$html
+	);
+}
+
 /**
  * Render Size as button swatches (39–44) on footwear PDPs.
  *
@@ -413,6 +502,9 @@ function safestore_footwear_size_swatches_html( $html, $args ) {
 	} else {
 		$html = preg_replace( '/<select\b/', '<select class="sft-size-dropdown"', $html, 1 );
 	}
+
+	// WooCommerce only cross-disables options across several attributes, never a size-only product.
+	$html = safestore_footwear_disable_unavailable_options( $html, $product );
 
 	return $html;
 }
