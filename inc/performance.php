@@ -236,7 +236,6 @@ function safestore_perf_defer_script_handles() {
 		'safestore-whatsapp-chat',
 		'safestore-cart-toast',
 		'safestore-footwear-sizing',
-		'safestore-pdp-shoe-size',
 		'safestore-pdp-actions',
 		'safestore-product-compare',
 	);
