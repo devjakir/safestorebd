@@ -565,6 +565,7 @@
 
 .sft-pdp .stock {
   display: inline-block;
+  margin-top: 0;
   margin-bottom: 12px;
   padding: 6px 10px;
   border-radius: var(--ss-radius);
