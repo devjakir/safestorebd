@@ -22,7 +22,7 @@ while ( have_posts() ) :
 	?>
 	<main class="sft-about sft-careers" id="main-content" itemscope itemtype="https://schema.org/WebPage">
 		<meta itemprop="name" content="<?php echo esc_attr( get_the_title() ); ?>" />
-		<meta itemprop="description" content="<?php echo esc_attr( __( 'Join SafeStoreBD — industrial PPE supply, warehouse, sales, and support roles in Dhaka, Bangladesh.', 'safestore-minimal' ) ); ?>" />
+		<meta itemprop="description" content="<?php echo esc_attr( __( 'Join SafeStoreBD — digital marketing and SEO roles at an industrial PPE supplier in Pallabi, Dhaka, Bangladesh.', 'safestore-minimal' ) ); ?>" />
 
 		<section class="sft-about-hero sft-careers-hero" aria-labelledby="sft-careers-title">
 			<div class="sft-about-hero-inner">
@@ -53,7 +53,7 @@ while ( have_posts() ) :
 				<div class="sft-careers-main">
 					<h2 class="sft-about-h2" id="sft-careers-openings-heading"><?php esc_html_e( 'Open roles', 'safestore-minimal' ); ?></h2>
 					<p class="sft-about-summary-text">
-						<?php esc_html_e( 'We are a growing industrial safety supplier. Roles are based in Pallabi, Dhaka unless noted. Bengali and English both used day to day.', 'safestore-minimal' ); ?>
+						<?php esc_html_e( 'We are a growing industrial safety supplier. Both roles are based at our Pallabi, Dhaka office. Bengali and English are used day to day.', 'safestore-minimal' ); ?>
 					</p>
 
 					<ul class="sft-careers-list">
@@ -64,6 +64,18 @@ while ( have_posts() ) :
 									<span class="sft-careers-card-meta"><?php echo esc_html( $job['type'] ); ?></span>
 								</div>
 								<p class="sft-careers-card-summary"><?php echo esc_html( $job['summary'] ); ?></p>
+								<?php if ( ! empty( $job['education'] ) || ! empty( $job['experience'] ) ) : ?>
+									<dl class="sft-careers-card-reqs">
+										<?php if ( ! empty( $job['education'] ) ) : ?>
+											<dt><?php esc_html_e( 'Education', 'safestore-minimal' ); ?></dt>
+											<dd><?php echo esc_html( $job['education'] ); ?></dd>
+										<?php endif; ?>
+										<?php if ( ! empty( $job['experience'] ) ) : ?>
+											<dt><?php esc_html_e( 'Experience', 'safestore-minimal' ); ?></dt>
+											<dd><?php echo esc_html( $job['experience'] ); ?></dd>
+										<?php endif; ?>
+									</dl>
+								<?php endif; ?>
 							</li>
 						<?php endforeach; ?>
 					</ul>

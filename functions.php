@@ -1645,24 +1645,18 @@ function safestore_minimal_get_career_openings() {
 		'safestore_minimal_career_openings',
 		array(
 			array(
-				'title'   => __( 'Warehouse & packing associate', 'safestore-minimal' ),
-				'type'    => __( 'Full-time · Pallabi, Dhaka', 'safestore-minimal' ),
-				'summary' => __( 'Receive stock, check PPE against orders, pack for courier, and keep the store organised. Experience in warehouse or retail is a plus.', 'safestore-minimal' ),
+				'title'      => __( 'Digital Marketer', 'safestore-minimal' ),
+				'type'       => __( 'Full-time · Pallabi, Dhaka', 'safestore-minimal' ),
+				'summary'    => __( 'Run our Facebook and Google Ads, plan campaigns around the PPE catalogue, grow the social pages, and report on what actually brings orders.', 'safestore-minimal' ),
+				'education'  => __( 'Bachelor’s degree from a Bangladeshi university — BBA or Marketing preferred.', 'safestore-minimal' ),
+				'experience' => __( '2+ years running paid campaigns for a Bangladeshi e-commerce or retail brand, with hands-on Meta Ads Manager and Google Ads.', 'safestore-minimal' ),
 			),
 			array(
-				'title'   => __( 'Delivery & logistics coordinator', 'safestore-minimal' ),
-				'type'    => __( 'Full-time · Pallabi, Dhaka', 'safestore-minimal' ),
-				'summary' => __( 'Book couriers, share tracking with customers, and follow up on failed deliveries — common in Bangladesh e-commerce. Must be comfortable on the phone.', 'safestore-minimal' ),
-			),
-			array(
-				'title'   => __( 'B2B sales executive', 'safestore-minimal' ),
-				'type'    => __( 'Full-time · Dhaka (field visits)', 'safestore-minimal' ),
-				'summary' => __( 'Quote PPE for factories, construction sites, and workshops. Build relationships with safety officers and procurement teams.', 'safestore-minimal' ),
-			),
-			array(
-				'title'   => __( 'Customer support (WhatsApp & phone)', 'safestore-minimal' ),
-				'type'    => __( 'Full-time · Pallabi, Dhaka', 'safestore-minimal' ),
-				'summary' => __( 'Answer product, order, and delivery questions in Bengali and English. Clear writing on WhatsApp is essential.', 'safestore-minimal' ),
+				'title'      => __( 'SEO Specialist', 'safestore-minimal' ),
+				'type'       => __( 'Full-time · Pallabi, Dhaka', 'safestore-minimal' ),
+				'summary'    => __( 'Own keyword research, on-page SEO for product and category pages, technical fixes, and content planning so we rank for PPE searches across Bangladesh.', 'safestore-minimal' ),
+				'education'  => __( 'Bachelor’s degree from a Bangladeshi university — any discipline, provided the SEO work speaks for itself.', 'safestore-minimal' ),
+				'experience' => __( '2+ years of hands-on SEO on a live e-commerce site, comfortable with WordPress / WooCommerce, Google Search Console, and GA4.', 'safestore-minimal' ),
 			),
 		)
 	);
