@@ -56,6 +56,44 @@
   color: var(--ss-c-4b5563);
 }
 
+.sft-careers-card-reqs {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  margin: 12px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--ss-border);
+  font-size: var(--ss-text-sm);
+  line-height: 1.5;
+}
+
+.sft-careers-card-reqs dt {
+  margin: 0;
+  font-weight: 600;
+  color: var(--ss-ink);
+  white-space: nowrap;
+}
+
+.sft-careers-card-reqs dd {
+  margin: 0;
+  color: var(--ss-c-4b5563);
+}
+
+@media (max-width: 520px) {
+  .sft-careers-card-reqs {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .sft-careers-card-reqs dd {
+    margin-bottom: 8px;
+  }
+
+  .sft-careers-card-reqs dd:last-child {
+    margin-bottom: 0;
+  }
+}
+
 .sft-careers-general {
   margin: 0;
   font-size: var(--ss-text-base);
