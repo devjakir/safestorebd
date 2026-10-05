@@ -205,6 +205,15 @@
     show(nameFromButton($btn));
   });
 
+  // Buy now must reach PHP as a normal submit so it can redirect to checkout;
+  // remember which button was pressed for browsers without event.submitter.
+  $(document).on('click', 'form.cart .sft-pdp-buy-now', function () {
+    $(this).closest('form').data('sftBuyNow', true);
+  });
+  $(document).on('click', 'form.cart .single_add_to_cart_button', function () {
+    $(this).closest('form').removeData('sftBuyNow');
+  });
+
   // 2) Single-product form → add via AJAX so there is no page reload.
   $(document).on('submit', 'form.cart', function (e) {
     if (!AJAX_URL || REDIRECT) {
@@ -229,6 +238,12 @@
     var variationId = $form.find('[name="variation_id"]').val();
     if ($form.hasClass('variations_form') && (!variationId || variationId === '0')) {
       return; // no variation chosen yet — let WooCommerce show its own validation
+    }
+
+    var submitter = e.originalEvent && e.originalEvent.submitter;
+    if ((submitter && $(submitter).hasClass('sft-pdp-buy-now')) || $form.data('sftBuyNow')) {
+      $form.removeData('sftBuyNow');
+      return; // Buy now: native submit → PHP adds to cart and redirects to checkout
     }
 
     e.preventDefault();
