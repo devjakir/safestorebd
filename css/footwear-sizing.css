@@ -89,9 +89,12 @@
     transform 0.1s ease;
 }
 
+/* Hover previews the selected look so the size stays readable. */
 .sft-size-swatch:hover:not(:disabled) {
-  border-color: #0f172a;
-  background: #f8fafc;
+  border-color: #b91c1c;
+  background: #b91c1c;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(185, 28, 28, 0.25);
   transform: translateY(-1px);
 }
 
