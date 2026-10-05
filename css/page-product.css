@@ -292,6 +292,7 @@
 
 .sft-pdp-contact {
   display: flex;
+  flex-wrap: wrap; /* Call unit drops to the next line instead of being squeezed */
   align-items: flex-start;
   gap: 8px;
   margin: 0 0 16px;
@@ -311,9 +312,9 @@
 
 .sft-pdp-contact__unit {
   display: inline-flex;
+  flex: 0 0 auto;
   align-items: stretch;
   gap: 4px;
-  min-width: 0;
   max-width: 100%;
 }
 
@@ -346,8 +347,7 @@
 }
 
 .sft-pdp-contact__unit .sft-pdp-contact__btn {
-  flex: 0 1 auto;
-  min-width: 0;
+  flex: 0 0 auto;
 }
 
 .sft-pdp-contact__btn:hover {
@@ -924,7 +924,7 @@
   }
 
   .sft-pdp-contact__unit--call .sft-pdp-contact__btn {
-    flex: 0 1 auto;
+    flex: 0 0 auto;
   }
 
   .sft-pdp-actions {
