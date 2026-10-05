@@ -240,7 +240,7 @@
     lastTrigger = $btn.get(0);
 
     var data = {
-      product_id: productId,
+      product_id: (variationId && variationId !== '0') ? variationId : productId,
       quantity: $form.find('[name="quantity"]').val() || 1
     };
     if (variationId) {
