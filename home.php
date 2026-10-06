@@ -14,9 +14,9 @@ get_template_part(
 	'templates/blog-list',
 	null,
 	array(
-		'title'   => safestore_blog_title(),
+		'title'   => __( 'Safety & PPE Guides', 'safestore-minimal' ),
 		'eyebrow' => __( 'SafeStoreBD Journal', 'safestore-minimal' ),
-		'lede'    => '' !== $intro ? $intro : __( 'Practical guides on choosing and using safety shoes, helmets, gloves and PPE — written for factories, construction sites and warehouses in Bangladesh.', 'safestore-minimal' ),
+		'lede'    => '' !== $intro ? $intro : __( 'Practical guides on safety shoes, helmets, gloves and PPE — helping workers and businesses make better choices for factories, construction sites, warehouses and industrial workplaces in Bangladesh.', 'safestore-minimal' ),
 	)
 );
 
