@@ -15,7 +15,11 @@ $shoe_cat = safestore_home_category_url( 'shoe' );
  * @param string $filename File name as stored in assets/images (spaces & special chars OK).
  */
 $safestore_cat_img = static function ( string $filename ) use ( $assets_url ): string {
-	return $assets_url . '/' . rawurlencode( $filename );
+	// Version by file mtime so browsers/CDN fetch a replaced image immediately.
+	$path = get_template_directory() . '/assets/images/' . $filename;
+	$ver  = file_exists( $path ) ? (string) filemtime( $path ) : '';
+	$url  = $assets_url . '/' . rawurlencode( $filename );
+	return '' !== $ver ? $url . '?ver=' . $ver : $url;
 };
 
 $categories = array(
