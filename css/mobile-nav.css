@@ -731,3 +731,18 @@
     transition: none;
   }
 }
+
+/* Lock page scroll while the mobile drawer is open. html carries
+   overflow-x: clip, which stops body overflow reaching the viewport, so the
+   lock has to sit on the root element as well. */
+html.sft-menu-open,
+html.sft-menu-open body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+@media (max-width: 1024px) {
+  html.sft-menu-open #menu-overlay {
+    touch-action: none;
+  }
+}
