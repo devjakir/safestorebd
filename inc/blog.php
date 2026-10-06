@@ -171,9 +171,9 @@ add_action(
 		if ( is_admin() || ! $query->is_main_query() ) {
 			return;
 		}
-		// Index: a wide lead card + a 3×3 grid on every page. Archives: 3×3.
+		// Index and archives: a 3×3 grid of cards on every page.
 		if ( $query->is_home() ) {
-			$query->set( 'posts_per_page', 10 );
+			$query->set( 'posts_per_page', 9 );
 			// WordPress adds sticky posts on top of posts_per_page, breaking the
 			// grid. Sort them first in SQL instead (see posts_orderby below).
 			$query->set( 'ignore_sticky_posts', true );
@@ -308,6 +308,33 @@ function safestore_blog_meta( $post = null ) {
 			?>
 		</span>
 	</span>
+	<?php
+}
+
+/**
+ * Card meta row: the date on the left, the reading time on the right, each
+ * behind a small icon. Separate from safestore_blog_meta(), which runs inline
+ * in the article hero.
+ *
+ * @param int|WP_Post|null $post Post.
+ */
+function safestore_blog_card_meta( $post = null ) {
+	$post    = get_post( $post );
+	$minutes = safestore_blog_reading_minutes( $post );
+	?>
+	<div class="sft-blog-card__meta">
+		<span class="sft-blog-card__meta-item">
+			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+			<time datetime="<?php echo esc_attr( get_the_date( DATE_W3C, $post ) ); ?>"><?php echo esc_html( get_the_date( '', $post ) ); ?></time>
+		</span>
+		<span class="sft-blog-card__meta-item">
+			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+			<?php
+			/* translators: %d: minutes */
+			echo esc_html( sprintf( _n( '%d min read', '%d min read', $minutes, 'safestore-minimal' ), $minutes ) );
+			?>
+		</span>
+	</div>
 	<?php
 }
 
