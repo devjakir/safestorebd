@@ -17,7 +17,6 @@ get_template_part(
 		'title'   => safestore_blog_title(),
 		'eyebrow' => __( 'SafeStoreBD Journal', 'safestore-minimal' ),
 		'lede'    => '' !== $intro ? $intro : __( 'Practical guides on choosing and using safety shoes, helmets, gloves and PPE — written for factories, construction sites and warehouses in Bangladesh.', 'safestore-minimal' ),
-		'lead'    => true,
 	)
 );
 

@@ -3,7 +3,7 @@
  * Blog list body shared by home.php, archive.php and search.php:
  * hero, category chips, card grid, pagination, empty state.
  *
- * Args: 'title', 'lede', 'eyebrow', 'empty_title', 'empty_text', 'lead' (bool).
+ * Args: 'title', 'lede', 'eyebrow', 'empty_title', 'empty_text'.
  *
  * @package safestore-minimal
  */
@@ -16,7 +16,6 @@ $a = wp_parse_args(
 		'eyebrow'     => '',
 		'empty_title' => __( 'No articles yet', 'safestore-minimal' ),
 		'empty_text'  => __( 'Our team is writing practical guides on safety shoes, helmets, gloves and workplace PPE in Bangladesh. Check back soon — meanwhile, browse the shop or ask us on WhatsApp.', 'safestore-minimal' ),
-		'lead'        => false,
 	)
 );
 
@@ -43,12 +42,9 @@ $shop_url = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 
 		<?php if ( have_posts() ) : ?>
 			<div class="sft-blog-grid">
 				<?php
-				$i = 0;
 				while ( have_posts() ) :
 					the_post();
-					$is_lead = $a['lead'] && 0 === $i;
-					get_template_part( 'templates/blog-card', null, array( 'featured' => $is_lead ) );
-					++$i;
+					get_template_part( 'templates/blog-card' );
 				endwhile;
 				?>
 			</div>
