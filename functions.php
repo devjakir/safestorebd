@@ -212,7 +212,8 @@ function safestore_minimal_enqueue_assets() {
         'safestore-minimal-header-search-cat',
         get_template_directory_uri() . '/js/header-search-cat.js',
         array(),
-        $version,
+        // filemtime so edits bust the browser/Cloudflare cache.
+        (string) filemtime( get_template_directory() . '/js/header-search-cat.js' ),
         function_exists('safestore_perf_script_args') ? safestore_perf_script_args(true) : true
     );
 

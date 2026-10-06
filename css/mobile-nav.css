@@ -746,3 +746,13 @@ html.sft-menu-open body {
     touch-action: none;
   }
 }
+
+/* CSS-only fallback (works even if a cached script lacks the class). Kept as
+   its own rule so browsers without :has() still apply the one above. */
+@media (max-width: 1024px) {
+  html:has(#offcanvas-menu.is-active),
+  html:has(#offcanvas-menu.is-active) body {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+}
