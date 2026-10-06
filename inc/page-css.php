@@ -41,7 +41,7 @@ add_action( 'wp_enqueue_scripts', function () {
 	// is_woocommerce() = is_shop() || is_product_taxonomy() || is_product().
 	if ( $wc && is_woocommerce() ) {
 		safestore_page_css( 'shop', 'page-shop.css' );
-	} elseif ( is_search() || is_post_type_archive( 'product' ) ) {
+	} elseif ( ( is_search() && 'post' !== get_query_var( 'post_type' ) ) || is_post_type_archive( 'product' ) ) {
 		safestore_page_css( 'shop', 'page-shop.css' );
 	}
 
@@ -55,7 +55,9 @@ add_action( 'wp_enqueue_scripts', function () {
 	}
 
 	// --- homepage ---------------------------------------------------------
-	if ( is_front_page() || is_home() || is_page_template( 'page-home.php' ) ) {
+	// Not is_home(): with a static front page that is the blog (/blog/),
+	// which has its own sheet (css/page-blog.css via inc/blog.php).
+	if ( is_front_page() || is_page_template( 'page-home.php' ) ) {
 		safestore_page_css( 'home', 'page-home.css' );
 	}
 
