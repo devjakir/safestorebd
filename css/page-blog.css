@@ -10,7 +10,6 @@
   --sft-blog-radius: 10px;
   --sft-blog-accent: var(--ss-brand);
   --sft-blog-accent-soft: #fef2f2;
-  padding-bottom: clamp(32px, 5vw, 56px);
 }
 
 .screen-reader-text {
