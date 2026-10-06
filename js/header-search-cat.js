@@ -157,11 +157,10 @@ document.addEventListener('DOMContentLoaded', () => {
     triggerBtn.setAttribute('aria-expanded', isCurrentlyOpen);
     setDrawerHidden(!isCurrentlyOpen);
 
-    // Prevent the background page from scrolling behind the menu overlay
-    // html has overflow-x: clip, so body overflow alone no longer locks the
-    // viewport; lock the root element too (see css/mobile-nav.css).
+    // Prevent the background page from scrolling behind the menu overlay.
+    // Lock the root element only (see css/mobile-nav.css): overflow on body
+    // breaks the sticky header and leaves a gap above the drawer.
     document.documentElement.classList.toggle('sft-menu-open', isCurrentlyOpen);
-    document.body.style.overflow = isCurrentlyOpen ? 'hidden' : '';
 
     // Focus into the panel on open, back to the trigger on close.
     if (isCurrentlyOpen) {

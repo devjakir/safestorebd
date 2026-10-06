@@ -734,10 +734,12 @@
 
 /* Lock page scroll while the mobile drawer is open. html carries
    overflow-x: clip, which stops body overflow reaching the viewport, so the
-   lock has to sit on the root element as well. */
-html.sft-menu-open,
-html.sft-menu-open body {
-  overflow: hidden;
+   lock sits on the root element. Only the root: overflow on body would turn
+   body into its own scroll box, the sticky header would anchor to it and jump
+   off-screen, leaving a gap above a drawer opened mid-page. */
+html.sft-menu-open {
+  overflow-x: clip;
+  overflow-y: hidden;
   overscroll-behavior: none;
 }
 
@@ -750,9 +752,9 @@ html.sft-menu-open body {
 /* CSS-only fallback (works even if a cached script lacks the class). Kept as
    its own rule so browsers without :has() still apply the one above. */
 @media (max-width: 1024px) {
-  html:has(#offcanvas-menu.is-active),
-  html:has(#offcanvas-menu.is-active) body {
-    overflow: hidden;
+  html:has(#offcanvas-menu.is-active) {
+    overflow-x: clip;
+    overflow-y: hidden;
     overscroll-behavior: none;
   }
 }
