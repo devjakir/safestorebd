@@ -212,7 +212,8 @@ function safestore_minimal_enqueue_assets() {
         'safestore-minimal-header-search-cat',
         get_template_directory_uri() . '/js/header-search-cat.js',
         array(),
-        $version,
+        // filemtime so edits bust the browser/Cloudflare cache.
+        (string) filemtime( get_template_directory() . '/js/header-search-cat.js' ),
         function_exists('safestore_perf_script_args') ? safestore_perf_script_args(true) : true
     );
 
@@ -949,7 +950,7 @@ function safestore_minimal_get_address_parts() {
 		array(
 			'street'       => __( '17/5/1 Alabdirtek, Pallabi', 'safestore-minimal' ),
 			'locality'     => __( 'Dhaka', 'safestore-minimal' ),
-			'postal_code'  => '1207',
+			'postal_code'  => '1216',
 			'country'      => 'BD',
 			'country_name' => __( 'Bangladesh', 'safestore-minimal' ),
 		)
