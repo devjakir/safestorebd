@@ -125,6 +125,12 @@ require get_template_directory() . '/inc/shop-filter.php';
  */
 require get_template_directory() . '/inc/home-products-slider.php';
 
+/**
+ * Blog: /blog/ posts page, blog templates' helpers and assets.
+ * Templates: home.php, single.php, archive.php, search.php, comments.php.
+ */
+require get_template_directory() . '/inc/blog.php';
+
 function safestore_minimal_enqueue_assets() {
     $version = wp_get_theme()->get('Version');
 

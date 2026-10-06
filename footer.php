@@ -12,7 +12,7 @@ $sfx_tel_label  = function_exists( 'safestore_wa_format_number' )
 	: trim( preg_replace( '/^\+?880/', '+880 ', (string) $sfx_tel_raw ) );
 $sfx_address    = function_exists( 'safestore_minimal_get_pickup_address' )
 	? safestore_minimal_get_pickup_address()
-	: '17/5/1 Alabdirtek, Pallabi, Dhaka 1207, Bangladesh';
+	: '17/5/1 Alabdirtek, Pallabi, Dhaka 1216, Bangladesh';
 $sfx_emails     = function_exists( 'safestore_contact_email_addresses' )
 	? safestore_contact_email_addresses()
 	: array( 'contact@safestorebd.com' );
@@ -20,6 +20,7 @@ $sfx_about_links = array(
 	array( 'About Us', home_url( '/about/' ) ),
 	array( 'Careers', home_url( '/careers/' ) ),
 	array( 'Contact', home_url( '/contact/' ) ),
+	array( 'Blog', function_exists( 'safestore_blog_url' ) ? safestore_blog_url() : home_url( '/blog/' ) ),
 	array( 'Legal', home_url( '/legal/' ) ),
 );
 
