@@ -92,22 +92,33 @@
   display: none;
 }
 
+/* One row on every device: swatches share the width, and a long size run scrolls instead of wrapping. */
 .sft-size-swatches {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 0;
+  flex-wrap: nowrap;
+  gap: 6px;
+  margin: -3px -3px -5px;
+  padding: 3px 3px 5px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sft-size-swatches::-webkit-scrollbar {
+  display: none;
 }
 
 .sft-size-swatch {
-  min-width: 48px;
-  height: 44px;
-  padding: 0 14px;
+  flex: 1 1 0;
+  min-width: 36px;
+  max-width: 48px;
+  height: 38px;
+  padding: 0 4px;
   border: 1.5px solid #d1d5db;
   border-radius: 8px;
   background: #fff;
   color: #0f172a;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   line-height: 1;
   cursor: pointer;
@@ -268,11 +279,16 @@
 }
 
 @media (max-width: 640px) {
+  /* 32px swatches + 5px gaps keep a six-size run on one line in a 320px phone's ~224px panel. */
+  .sft-size-swatches {
+    gap: 5px;
+  }
+
   .sft-size-swatch {
-    min-width: 44px;
-    height: 42px;
-    font-size: 14px;
-    padding: 0 12px;
+    min-width: 32px;
+    height: 36px;
+    font-size: 13px;
+    border-radius: 7px;
   }
 
   .sft-size-swatches-panel {
