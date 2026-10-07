@@ -59,11 +59,16 @@
 
   function clearError($panel) {
     $panel.removeClass('is-invalid sft-size-error');
+    $panel.find('[data-sft-size-error]').attr('hidden', true).text('');
+    $panel.find('[data-sft-size-hint]').removeAttr('hidden');
   }
 
+  // Inline message in the panel header, where the hint sits — no browser alert.
   function showError($panel) {
     $panel.addClass('is-invalid sft-size-error');
-    window.alert(ALERT_MSG);
+    $panel.find('[data-sft-size-hint]').attr('hidden', true);
+    // Emptying first makes role="alert" announce again on a repeated click.
+    $panel.find('[data-sft-size-error]').text('').text(ALERT_MSG).removeAttr('hidden');
     $panel.find('.sft-size-swatch:not(:disabled)').first().trigger('focus');
   }
 
@@ -100,7 +105,8 @@
       '<div class="sft-size-swatches-panel" data-sft-size-panel>' +
         '<div class="sft-size-swatches-panel__header">' +
           '<span class="sft-size-swatches-panel__label">Size</span>' +
-          '<span class="sft-size-swatches-panel__hint">Select a size</span>' +
+          '<span class="sft-size-swatches-panel__hint" data-sft-size-hint>Select a size</span>' +
+          '<span class="sft-size-swatches-panel__error" data-sft-size-error role="alert" hidden></span>' +
         '</div>' +
         '<div class="sft-size-swatches" role="listbox" aria-label="Select size"></div>' +
       '</div>'

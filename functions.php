@@ -786,7 +786,7 @@ function safestore_minimal_get_faq_sections() {
 			'items' => array(
 				array(
 					'q' => __( 'Which payment methods do you accept?', 'safestore-minimal' ),
-					'a' => __( '<strong>bKash</strong>, <strong>Nagad</strong>, <strong>Rocket</strong>, <strong>Upay</strong>, bank transfer, and <strong>COD</strong> (where available). For wallet payments, send your transaction ID and order number on WhatsApp.', 'safestore-minimal' ),
+					'a' => __( '<strong>Cash on delivery</strong> anywhere in Bangladesh, and <strong>bKash</strong> or <strong>Nagad</strong> merchant payment. Choose bKash/Nagad at checkout: we send the merchant number and the exact amount on WhatsApp, you reply with the transaction ID, and the order ships once it is confirmed. Outside Dhaka we may ask for the delivery charge in advance.', 'safestore-minimal' ),
 				),
 				array(
 					'q' => __( 'How does cash on delivery work?', 'safestore-minimal' ),
@@ -2033,7 +2033,7 @@ function safestore_minimal_get_terms_sections() {
 				'list'       => array(
 					__( 'Prices are in <strong>BDT (৳)</strong> unless stated otherwise. We may correct listing errors before accepting an order.', 'safestore-minimal' ),
 					__( 'An order is confirmed when we accept it and (if required) verify payment or COD details.', 'safestore-minimal' ),
-					__( 'Payment options include bKash, Nagad, Rocket, Upay, bank transfer, and COD where available.', 'safestore-minimal' ),
+					__( 'Payment options are cash on delivery and bKash or Nagad merchant payment confirmed by transaction ID. Outside Dhaka the delivery charge may be requested in advance.', 'safestore-minimal' ),
 					__( 'You must provide a correct phone number and delivery address — couriers in Bangladesh often call before delivery.', 'safestore-minimal' ),
 					__( 'We may cancel or refuse orders suspected of fraud or abuse.', 'safestore-minimal' ),
 				),

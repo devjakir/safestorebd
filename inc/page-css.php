@@ -62,6 +62,13 @@ add_action( 'wp_enqueue_scripts', function () {
 	}
 
 	// --- content pages ----------------------------------------------------
+	// Bulk orders: the page is matched by slug (page-bulk-orders.php in the
+	// template hierarchy) as well as by an assigned template.
+	if ( is_page_template( 'page-bulk-orders.php' ) || is_page( 'bulk-orders' ) ) {
+		safestore_page_css( 'pages-shared', 'page-pages-shared.css' );
+		safestore_page_css( 'bulk', 'page-bulk.css' );
+	}
+
 	$map = array(
 		'page-about.php'            => 'about',
 		'page-contact.php'          => 'contact',

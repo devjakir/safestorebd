@@ -1,0 +1,151 @@
+/* ==========================================================================
+   Bulk & corporate orders page (page-bulk-orders.php).
+   Builds on page-pages-shared.css: hero, body grid, contact card, CTA band.
+   ========================================================================== */
+
+.sft-bulk-segments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sft-bulk-segments li {
+  padding: 5px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: var(--ss-text-sm);
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.sft-bulk-body {
+  padding-bottom: clamp(32px, 4vw, 44px);
+}
+
+.sft-bulk-main {
+  min-width: 0;
+  scroll-margin-top: 96px;
+}
+
+.sft-bulk-form {
+  margin-bottom: 32px;
+}
+
+.sft-bulk-form--fallback {
+  padding: 18px 20px;
+  border: 1px dashed var(--ss-border-cool);
+  border-radius: var(--ss-radius);
+  background: var(--ss-surface);
+  color: var(--ss-ink-soft);
+  font-size: var(--ss-text-md);
+  line-height: 1.6;
+}
+
+.sft-bulk-form--fallback p {
+  margin: 0;
+}
+
+.sft-bulk-steps-title {
+  margin-top: 8px;
+}
+
+.sft-bulk-steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: none;
+}
+
+.sft-bulk-steps li {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 14px;
+  padding: 16px 0;
+  border-top: 1px solid var(--ss-border);
+}
+
+.sft-bulk-steps li:first-child {
+  border-top: 0;
+  padding-top: 4px;
+}
+
+.sft-bulk-steps__num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--ss-ink);
+  color: var(--ss-white);
+  font-size: var(--ss-text-base);
+  font-weight: 700;
+}
+
+.sft-bulk-steps strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--ss-ink);
+  font-size: var(--ss-text-lg);
+}
+
+.sft-bulk-steps p {
+  margin: 0;
+  color: var(--ss-muted);
+  font-size: var(--ss-text-md);
+  line-height: 1.6;
+}
+
+.sft-bulk-card__title {
+  margin: 26px 0 10px;
+  font-size: var(--ss-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ss-muted-alt);
+}
+
+.sft-bulk-card__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sft-bulk-card__list li {
+  position: relative;
+  padding: 7px 0 7px 22px;
+  border-top: 1px solid var(--ss-border);
+  color: var(--ss-ink-soft);
+  font-size: var(--ss-text-base);
+  line-height: 1.5;
+}
+
+.sft-bulk-card__list li:first-child {
+  border-top: 0;
+}
+
+.sft-bulk-card__list li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 13px;
+  width: 10px;
+  height: 6px;
+  border-left: 2px solid var(--ss-success);
+  border-bottom: 2px solid var(--ss-success);
+  transform: rotate(-45deg);
+}
+
+@media (max-width: 720px) {
+  .sft-bulk-segments li {
+    white-space: normal;
+  }
+
+  .sft-bulk-card {
+    order: -1;
+  }
+}

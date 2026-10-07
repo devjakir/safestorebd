@@ -842,6 +842,15 @@
   color: #c2410c;
 }
 
+/* One line under the badges: how the wallet payment actually happens. */
+.sft-pdp-pay__note {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: var(--ss-text-sm);
+  line-height: 1.5;
+  color: var(--ss-muted-alt);
+}
+
 /* Product tabs & reviews: see css/pdp-tabs.css (enqueued on single product). */
 
 .sft-pdp table.shop_attributes {
