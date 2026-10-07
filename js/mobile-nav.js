@@ -65,6 +65,52 @@
 		observer.observe(drawer, { attributes: true, attributeFilter: ['class'] });
 	}
 
+	// Bottom-bar tooltips: labels are hidden, so a long-press reveals them.
+
+	var tipItems = document.querySelectorAll('.sft-bottomnav__item');
+	var tipTimer = null;
+	var tipHideTimer = null;
+	var tipItem = null;
+	var tipShown = false;
+
+	function clearTip() {
+		window.clearTimeout(tipTimer);
+		window.clearTimeout(tipHideTimer);
+		if (tipItem) {
+			tipItem.classList.remove('is-tip');
+		}
+		tipItem = null;
+	}
+
+	Array.prototype.forEach.call(tipItems, function (item) {
+		item.addEventListener('touchstart', function () {
+			clearTip();
+			tipShown = false;
+			tipItem = item;
+			tipTimer = window.setTimeout(function () {
+				tipShown = true;
+				item.classList.add('is-tip');
+			}, 350);
+		}, { passive: true });
+
+		item.addEventListener('touchend', function (event) {
+			window.clearTimeout(tipTimer);
+			if (tipShown) {
+				// A long-press is for reading the label, not for navigating.
+				event.preventDefault();
+				tipHideTimer = window.setTimeout(clearTip, 900);
+			} else {
+				clearTip();
+			}
+		});
+
+		item.addEventListener('touchmove', clearTip, { passive: true });
+		item.addEventListener('touchcancel', clearTip, { passive: true });
+		item.addEventListener('contextmenu', function (event) {
+			event.preventDefault();
+		});
+	});
+
 	/* ------------------------------------------------------------------
 	 * Icon-triggered search.
 	 * ---------------------------------------------------------------- */
