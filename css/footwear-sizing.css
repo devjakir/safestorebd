@@ -62,6 +62,36 @@
   color: #64748b;
 }
 
+/* Takes the hint's place when Add to Cart / Buy now is clicked with no size. */
+.sft-size-swatches-panel__error {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #dc2626;
+  text-align: right;
+}
+
+.sft-size-swatches-panel__error::before {
+  content: '!';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #dc2626;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.sft-size-swatches-panel__error[hidden] {
+  display: none;
+}
+
 .sft-size-swatches {
   display: flex;
   flex-wrap: wrap;
