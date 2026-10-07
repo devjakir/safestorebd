@@ -92,7 +92,7 @@ $hero_proof = array(
 	),
 	array(
 		'icon' => 'pay',
-		'html' => __( 'bKash · Nagad · <strong>COD</strong>', 'safestore-minimal' ),
+		'html' => __( '<strong>Cash on delivery</strong> · bKash · Nagad', 'safestore-minimal' ),
 	),
 );
 
