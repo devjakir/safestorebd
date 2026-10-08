@@ -571,10 +571,13 @@ function safestore_minimal_pdp_buy_now_button() {
     }
 
     if ($product->is_type('simple')) {
-        $url = add_query_arg('add-to-cart', $product->get_id(), wc_get_checkout_url());
+        // Submit the cart form so the chosen quantity is kept, then
+        // safestore_minimal_buy_now_redirect() lands the shopper on a clean
+        // /checkout/ URL. (A GET ?add-to-cart link re-added the item on refresh.)
         printf(
-            '<a class="button sft-pdp-buy-now" href="%s" role="button">%s</a>',
-            esc_url($url),
+            '<button type="submit" name="add-to-cart" value="%1$d" formaction="%2$s" class="button sft-pdp-buy-now">%3$s</button>',
+            absint($product->get_id()),
+            esc_url(add_query_arg('safestore_buy_now', '1', $product->get_permalink())),
             esc_html__('Buy now', 'safestore-minimal')
         );
         return;
@@ -597,6 +600,15 @@ function safestore_minimal_pdp_buy_now_button() {
 function safestore_minimal_buy_now_redirect($url) {
     if (isset($_REQUEST['safestore_buy_now'])) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         return wc_get_checkout_url();
+    }
+    // Old or shared /checkout/?add-to-cart=ID links: drop the query string so a
+    // refresh of the checkout page cannot add the item again.
+    if (isset($_GET['add-to-cart'], $_SERVER['REQUEST_URI'])) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $request_path  = (string) wp_parse_url(wp_unslash($_SERVER['REQUEST_URI']), PHP_URL_PATH); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $checkout_path = (string) wp_parse_url(wc_get_checkout_url(), PHP_URL_PATH);
+        if ('' !== $checkout_path && untrailingslashit($request_path) === untrailingslashit($checkout_path)) {
+            return wc_get_checkout_url();
+        }
     }
     return $url;
 }
@@ -2455,6 +2467,96 @@ function safestorebd_checkout_fields( $fields ) {
     return $fields;
 }
 // ACR Checkout Page customize End
+
+// Checkout smoothing (Bangladesh-only store) Start
+/**
+ * The country field is removed from checkout, so pin the customer to BD.
+ * Without this an account with an empty saved country gets
+ * "No shipping options available" and cannot order.
+ */
+function safestorebd_checkout_force_country() {
+    if ( ! function_exists( 'WC' ) || ! WC()->customer ) {
+        return;
+    }
+    if ( 'BD' !== WC()->customer->get_billing_country() ) {
+        WC()->customer->set_billing_country( 'BD' );
+    }
+    if ( 'BD' !== WC()->customer->get_shipping_country() ) {
+        WC()->customer->set_shipping_country( 'BD' );
+    }
+}
+add_action( 'woocommerce_checkout_update_order_review', 'safestorebd_checkout_force_country', 5 );
+add_action(
+    'template_redirect',
+    static function () {
+        if ( function_exists( 'is_checkout' ) && is_checkout() ) {
+            safestorebd_checkout_force_country();
+        }
+    },
+    5
+);
+
+/**
+ * Normalise a Bangladeshi mobile number to 01XXXXXXXXX.
+ * Accepts Bangla digits, spaces, dashes and a +880 / 880 prefix.
+ *
+ * @param string $phone Raw input.
+ * @return string Digits only.
+ */
+function safestorebd_normalize_bd_phone( $phone ) {
+    $bangla = array( "\u{09E6}", "\u{09E7}", "\u{09E8}", "\u{09E9}", "\u{09EA}", "\u{09EB}", "\u{09EC}", "\u{09ED}", "\u{09EE}", "\u{09EF}" );
+    $phone  = str_replace( $bangla, array( '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ), (string) $phone );
+    $digits = (string) preg_replace( '/\D+/', '', $phone );
+    if ( 0 === strpos( $digits, '8801' ) ) {
+        $digits = substr( $digits, 2 );
+    } elseif ( 10 === strlen( $digits ) && '1' === $digits[0] ) {
+        $digits = '0' . $digits;
+    }
+    return $digits;
+}
+
+add_filter(
+    'woocommerce_checkout_posted_data',
+    static function ( $data ) {
+        $data['billing_country'] = 'BD';
+        if ( ! empty( $data['billing_phone'] ) ) {
+            $data['billing_phone'] = safestorebd_normalize_bd_phone( $data['billing_phone'] );
+        }
+        return $data;
+    }
+);
+
+add_action(
+    'woocommerce_after_checkout_validation',
+    static function ( $data, $errors ) {
+        $phone = isset( $data['billing_phone'] ) ? (string) $data['billing_phone'] : '';
+        if ( '' === $phone ) {
+            return; // WooCommerce already reports the empty required field.
+        }
+        if ( ! preg_match( '/^01[3-9]\d{8}$/', $phone ) ) {
+            $errors->add(
+                'billing_phone_validation',
+                __( 'Please enter a valid 11-digit mobile number, e.g. 01712345678.', 'safestore-minimal' ),
+                array( 'id' => 'billing_phone' )
+            );
+        }
+    },
+    10,
+    2
+);
+
+add_filter(
+    'woocommerce_checkout_fields',
+    static function ( $fields ) {
+        if ( isset( $fields['billing']['billing_phone'] ) ) {
+            $fields['billing']['billing_phone']['placeholder']       = '01XXXXXXXXX';
+            $fields['billing']['billing_phone']['custom_attributes'] = array( 'inputmode' => 'tel' );
+        }
+        return $fields;
+    },
+    20
+);
+// Checkout smoothing (Bangladesh-only store) End
 
 // Header cart count/total fragments live in inc/cart-toast.php
 // (safestore_cart_toast_fragments) — keyed to .sft-header-cart-total only,
