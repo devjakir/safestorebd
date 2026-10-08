@@ -2497,6 +2497,20 @@ add_action(
 );
 
 /**
+ * WooCommerce's checkout script posts an empty country when the field is
+ * absent, which blanks the customer country again on every totals refresh.
+ * Reading an empty country as BD keeps shipping zones matching.
+ *
+ * @param string $country Stored country code.
+ * @return string
+ */
+function safestorebd_default_country_bd( $country ) {
+    return $country ? $country : 'BD';
+}
+add_filter( 'woocommerce_customer_get_billing_country', 'safestorebd_default_country_bd' );
+add_filter( 'woocommerce_customer_get_shipping_country', 'safestorebd_default_country_bd' );
+
+/**
  * Normalise a Bangladeshi mobile number to 01XXXXXXXXX.
  * Accepts Bangla digits, spaces, dashes and a +880 / 880 prefix.
  *
