@@ -167,6 +167,18 @@ function safestore_minimal_enqueue_assets() {
             );
         }
 
+        // Quantity − / + stepper buttons around the PDP qty input.
+        $pdp_qty_path = get_template_directory() . '/js/pdp-qty.js';
+        if (file_exists($pdp_qty_path)) {
+            wp_enqueue_script(
+                'safestore-minimal-pdp-qty',
+                get_template_directory_uri() . '/js/pdp-qty.js',
+                array(),
+                (string) filemtime($pdp_qty_path),
+                function_exists('safestore_perf_script_args') ? safestore_perf_script_args(true) : true
+            );
+        }
+
         // Side-by-side image zoom (lens + flyout). Desktop-only; the asset pair
         // self-gates at 992px so it stays inert on touch devices.
         $pdp_zoom_css = get_template_directory() . '/css/pdp-zoom.css';
@@ -427,6 +439,8 @@ add_action(
         add_action('woocommerce_single_product_summary', 'safestore_minimal_pdp_contact_row', 26);
         add_action('woocommerce_single_product_summary', 'safestore_minimal_pdp_trust_line', 27);
         add_action('woocommerce_after_add_to_cart_button', 'safestore_minimal_pdp_buy_now_button');
+        add_action('woocommerce_before_quantity_input_field', 'safestore_minimal_pdp_qty_minus');
+        add_action('woocommerce_after_quantity_input_field', 'safestore_minimal_pdp_qty_plus');
         // After add-to-cart (priority 30): Compare / Wishlist | Share icon.
         add_action('woocommerce_single_product_summary', 'safestore_minimal_pdp_action_bar', 35);
 
@@ -557,6 +571,15 @@ function safestore_minimal_pdp_trust_line() {
         return;
     }
     echo '<p class="sft-pdp-trust">' . esc_html($line) . '</p>';
+}
+
+// PDP quantity stepper buttons; js/pdp-qty.js wires the clicks.
+function safestore_minimal_pdp_qty_minus() {
+    echo '<button type="button" class="sft-qty-btn sft-qty-btn--minus" aria-label="' . esc_attr__('Decrease quantity', 'safestore-minimal') . '">&minus;</button>';
+}
+
+function safestore_minimal_pdp_qty_plus() {
+    echo '<button type="button" class="sft-qty-btn sft-qty-btn--plus" aria-label="' . esc_attr__('Increase quantity', 'safestore-minimal') . '">+</button>';
 }
 
 /**

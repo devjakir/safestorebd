@@ -626,26 +626,80 @@
 }
 
 .sft-pdp form.cart .quantity {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: stretch;
+  height: 36px;
   margin: 0;
+  border: 1px solid var(--sft-pdp-border);
+  border-radius: var(--ss-radius);
+  background: var(--sft-pdp-surface);
+  overflow: hidden;
+}
+
+.sft-pdp form.cart .quantity:focus-within {
+  border-color: var(--ss-muted);
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.06);
+}
+
+/* Sold-individually products render a hidden qty input — drop the stepper. */
+.sft-pdp form.cart .quantity:has(input[type="hidden"]) {
+  display: none;
 }
 
 .sft-pdp form.cart .quantity input.qty {
-  height: 36px;
-  min-height: 36px;
-  width: 64px;
-  border-radius: var(--ss-radius);
-  border: 1px solid var(--sft-pdp-border);
+  height: 100%;
+  min-height: 0;
+  width: 40px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   text-align: center;
   font-weight: 700;
   font-size: 12.5px;
   letter-spacing: 0.02em;
   color: var(--sft-pdp-ink);
+  box-shadow: none;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.sft-pdp form.cart .quantity input.qty::-webkit-outer-spin-button,
+.sft-pdp form.cart .quantity input.qty::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .sft-pdp form.cart .quantity input.qty:focus {
   outline: none;
-  border-color: var(--ss-muted);
-  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.06);
+}
+
+.sft-pdp form.cart .sft-qty-btn {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--sft-pdp-ink);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background 0.15s ease;
+}
+
+.sft-pdp form.cart .sft-qty-btn:hover {
+  background: rgba(15, 23, 42, 0.06);
 }
 
 .sft-pdp form.cart .single_add_to_cart_button,
@@ -665,6 +719,7 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   line-height: 1.1;
+  white-space: nowrap;
   text-transform: uppercase;
   text-decoration: none;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
