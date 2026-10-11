@@ -213,6 +213,11 @@ function safestore_perf_jquery_loading() {
 	wp_dequeue_script( 'jquery-migrate' );
 	wp_deregister_script( 'jquery-migrate' );
 
+	// HUSKY prints its chosen / ion.rangeSlider scripts without a jquery dependency, so a deferred jQuery leaves the price slider dead on filter pages.
+	if ( function_exists( 'safestore_minimal_shop_filter_enabled' ) && safestore_minimal_shop_filter_enabled() && shortcode_exists( 'woof' ) ) {
+		return;
+	}
+
 	// Only jquery-core carries a src. `jquery` is a dependency-only alias, and
 	// WP 6.3+ emits a _doing_it_wrong notice if a strategy is set on it.
 	if ( version_compare( get_bloginfo( 'version' ), '6.3', '>=' ) ) {
