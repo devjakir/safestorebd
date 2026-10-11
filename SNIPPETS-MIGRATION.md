@@ -32,7 +32,7 @@ until HUSKY is installed there. The reviews tab works locally with no extra plug
 | File | Was | Does |
 |---|---|---|
 | `inc/product-reviews.php` | Snippet *"Re-add WooCommerce Reviews tab (custom theme)"* | Forces `comments_open()` true for `product` posts, plus a late `woocommerce_product_tabs` fallback that re-adds a `reviews` tab if one is missing. |
-| `inc/shop-filter.php` | Snippet *"Show product filter (HUSKY) above shop grid"* | Renders `[woof]` on `woocommerce_before_shop_loop` (priority 15), wrapped in `.sft-shop-filter`. Enqueues the stylesheet on shop / category / tag archives only. |
+| `inc/shop-filter.php` | Snippet *"Show product filter (HUSKY) above shop grid"* | Renders `[woof]` wrapped in `.sft-shop-filter`, as a left sidebar. `woocommerce.php` calls `safestore_minimal_shop_filter_render()` inside `.sft-shop-layout`, outside HUSKY's `#woof_results_by_ajax` wrapper. Enqueues the stylesheet on shop / category / tag archives only. |
 | `css/shop-filter.css` | Inline `<style>` printed into `wp_head` by the same snippet | The same rules, now a cacheable stylesheet with a `filemtime()` cache-buster. |
 | `functions.php` | — | Two `require` lines for the files above. |
 
@@ -52,9 +52,12 @@ Changes made while porting, all behaviour-neutral:
   registers `woocommerce_sort_product_tabs` at 99 — a tab added at 99 or later
   lands after the sort and its `priority` value is ignored. The tab's own
   `priority` stays **40**; it sorts last, after description (10), specifications
-  (20) and delivery (25). `safestore_minimal_shop_filter_render()` stays on
-  `woocommerce_before_shop_loop` at **15**, i.e. after WooCommerce notices (10)
-  and before the catalog ordering dropdown (30).
+  (20) and delivery (25).
+- The filter is no longer hooked to `woocommerce_before_shop_loop`. HUSKY opens
+  its AJAX results wrapper on that hook at priority 2, so a filter rendered there
+  sat inside the region HUSKY redraws. It now renders from `woocommerce.php` as a
+  sidebar. HUSKY's active-filter chips (`.woof_products_top_panel`, with its own
+  "Clear all") stay above the grid and are styled in `css/shop-filter.css`.
 
 ### Why the reviews tab was missing in the first place
 
@@ -167,8 +170,9 @@ The theme side unhooks cleanly, because everything is a named function:
 remove_filter( 'comments_open', 'safestore_minimal_products_comments_open', 20 );
 remove_filter( 'woocommerce_product_tabs', 'safestore_minimal_restore_reviews_tab', 98 );
 
-// Shop filter bar
-remove_action( 'woocommerce_before_shop_loop', 'safestore_minimal_shop_filter_render', 15 );
+// Shop filter sidebar: woocommerce.php renders it only when
+// safestore_minimal_shop_filter_available() is true (HUSKY active), so
+// deactivating HUSKY falls back to the plain full-width grid.
 remove_action( 'wp_enqueue_scripts', 'safestore_minimal_shop_filter_assets', 24 );
 ```
 

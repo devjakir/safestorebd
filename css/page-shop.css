@@ -38,17 +38,85 @@
 }
 
 .sft-shop-desc {
+  max-width: 960px;
+  margin: 0 auto;
   color: var(--ss-muted-alt);
   font-size: var(--ss-text-base);
   line-height: 1.6;
 }
 
+.sft-shop-desc > :last-child {
+  margin-bottom: 0;
+}
+
+/* Long SEO intros: clamped from first paint (no layout shift); js/shop-filter.js unclamps short text or adds "Read more". */
+.sft-shop-desc.is-clamped .sft-shop-desc__text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+@media (max-width: 767px) {
+  .sft-shop-desc.is-clamped .sft-shop-desc__text {
+    -webkit-line-clamp: 3;
+  }
+}
+
+.sft-shop-desc__text > :last-child {
+  margin-bottom: 0;
+}
+
+.sft-shop-desc__more {
+  margin-top: 6px;
+  padding: 2px 4px;
+  border: 0;
+  background: none;
+  color: #dc2626;
+  font: inherit;
+  font-size: var(--ss-text-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sft-shop-desc__more:hover {
+  color: #b91c1c;
+  text-decoration: underline;
+}
+
 /* Catalog sorting (result count removed — pagination is after the grid) */
 .sft-shop .woocommerce-ordering,
 .sft-shop-main .woocommerce-ordering {
-  margin: 0 0 20px;
+  margin: 0 0 16px;
   float: right;
   clear: none;
+}
+
+/* Sorting select matches the filter toolbar controls: 42px, 10px radius, slate chevron. */
+.sft-shop .woocommerce-ordering select {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 42px;
+  min-width: 200px;
+  padding: 0 38px 0 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #fff url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2364748b' d='M1.4.6 6 5.2 10.6.6 12 2 6 8 0 2z'/%3E%3C/svg%3E") no-repeat right 14px center;
+  color: #0f172a;
+  font-size: 14px;
+  line-height: 40px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  cursor: pointer;
+}
+
+.sft-shop .woocommerce-ordering select:hover {
+  border-color: #cbd5e1;
+}
+
+.sft-shop .woocommerce-ordering select:focus {
+  outline: none;
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
 }
 
 /* Override default WC products grid */
@@ -210,4 +278,12 @@
 .sft-shop-breadcrumb a {
   color: var(--ss-c-4b5563);
   text-decoration: none;
+}
+
+/* The separator class is styled in page-product.css, which is not loaded on archives. */
+.sft-shop-breadcrumb .sft-pdp-breadcrumb__sep {
+  display: inline-block;
+  margin: 0 8px;
+  color: #cbd5e1;
+  font-weight: 300;
 }

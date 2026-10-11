@@ -44,6 +44,101 @@ function safestore_minimal_shop_filter_enabled() {
 }
 
 /**
+ * StarTech-style sidebar display types, kept in code so a deploy carries them.
+ *
+ * Only *how* a filter is drawn changes; which filters exist, AJAX and autosubmit
+ * stay in wp-admin. Brands: multi-select drop-down → checkbox list (still
+ * multi-select). Categories: drop-down → radio list (still single-select).
+ * Price slider gains HUSKY's own from/to number inputs (synced by HUSKY's JS).
+ * wp-admin screens read the stored values, so the HUSKY settings page is untouched.
+ *
+ * @param mixed $settings Stored woof_settings.
+ * @return mixed
+ */
+function safestore_minimal_woof_display_settings( $settings ) {
+	if ( ! is_array( $settings ) || ( is_admin() && ! wp_doing_ajax() ) ) {
+		return $settings;
+	}
+
+	if ( ! empty( $settings['tax']['product_brand'] ) ) {
+		$settings['tax_type']['product_brand'] = 'checkbox';
+	}
+	if ( ! empty( $settings['tax']['product_cat'] ) ) {
+		$settings['tax_type']['product_cat'] = 'radio';
+	}
+	if ( isset( $settings['by_price'] ) && is_array( $settings['by_price'] ) ) {
+		$settings['by_price']['show_text_input'] = 1;
+	}
+
+	return $settings;
+}
+add_filter( 'option_woof_settings', 'safestore_minimal_woof_display_settings' );
+
+// HUSKY caches woof_settings in its constructor (before the theme loads), so patch the cached copy too — before its own init (priority 1).
+function safestore_minimal_woof_patch_cached_settings() {
+	if ( function_exists( 'woof' ) && is_object( woof() ) && isset( woof()->settings ) ) {
+		woof()->settings = safestore_minimal_woof_display_settings( woof()->settings );
+	}
+}
+add_action( 'init', 'safestore_minimal_woof_patch_cached_settings', 0 );
+
+/**
+ * Whether HUSKY's front-end assets are needed on this request.
+ *
+ * HUSKY enqueues its JS/CSS on every page. Off the filter pages jQuery is
+ * deferred (inc/performance.php), so those scripts ran first and threw
+ * "jQuery is not defined" on every page — and nothing there uses them.
+ * A page/post that embeds [woof] in its content keeps them.
+ *
+ * @return bool
+ */
+function safestore_minimal_husky_assets_needed() {
+	if ( is_admin() || safestore_minimal_shop_filter_enabled() ) {
+		return true;
+	}
+
+	$post = is_singular() ? get_post() : null;
+	return $post instanceof WP_Post && has_shortcode( $post->post_content, 'woof' );
+}
+
+// Drop HUSKY's script/style tags where no filter renders (tags are filtered at print time, so late enqueues are caught too).
+function safestore_minimal_strip_husky_tag( $tag, $handle, $src ) {
+	unset( $handle );
+	if ( false === strpos( (string) $src, '/plugins/woocommerce-products-filter/' ) || safestore_minimal_husky_assets_needed() ) {
+		return $tag;
+	}
+	return '';
+}
+add_filter( 'script_loader_tag', 'safestore_minimal_strip_husky_tag', 20, 3 );
+
+function safestore_minimal_strip_husky_style_tag( $tag, $handle, $href ) {
+	return safestore_minimal_strip_husky_tag( $tag, $handle, $href );
+}
+add_filter( 'style_loader_tag', 'safestore_minimal_strip_husky_style_tag', 20, 3 );
+
+/**
+ * The archive term the visitor is browsing, even on HUSKY's /swoof/ filter URLs.
+ *
+ * WordPress resolves /product-category/x/swoof/.../ as the shop page, so
+ * is_product_taxonomy() is false there; HUSKY still knows the real term.
+ *
+ * @return WP_Term|null
+ */
+function safestore_minimal_shop_current_term() {
+	if ( function_exists( 'is_product_taxonomy' ) && is_product_taxonomy() ) {
+		$term = get_queried_object();
+		return $term instanceof WP_Term ? $term : null;
+	}
+
+	if ( function_exists( 'woof' ) && is_object( woof() ) && method_exists( woof(), 'is_really_current_term_exists' ) && woof()->is_really_current_term_exists() ) {
+		$term = woof()->get_really_current_term();
+		return $term instanceof WP_Term ? $term : null;
+	}
+
+	return null;
+}
+
+/**
  * Load the filter bar stylesheet on shop and product archives only.
  *
  * Replaces the inline <style> block the snippet printed into wp_head, so the
@@ -72,7 +167,8 @@ add_action( 'wp_enqueue_scripts', 'safestore_minimal_shop_filter_assets', 24 );
  * Load the toolbar behaviour script (mobile toggle + stray-bar dedupe).
  */
 function safestore_minimal_shop_filter_script() {
-	if ( ! safestore_minimal_shop_filter_enabled() ) {
+	// Also needed on brand archives: woocommerce.php clamps every archive intro and this script adds its Read more toggle.
+	if ( ! safestore_minimal_shop_filter_enabled() && ! ( function_exists( 'is_product_taxonomy' ) && is_product_taxonomy() ) ) {
 		return;
 	}
 
@@ -104,64 +200,43 @@ function safestore_minimal_remove_core_archive_description() {
 add_action( 'init', 'safestore_minimal_remove_core_archive_description' );
 
 /**
- * URL that clears every active filter for the current catalog view.
+ * Whether woocommerce.php should use the sidebar layout and render the filter.
  *
- * @return string
+ * @return bool
  */
-function safestore_minimal_shop_filter_reset_url() {
-	if ( is_product_taxonomy() ) {
-		$term = get_queried_object();
-		if ( $term instanceof WP_Term ) {
-			$link = get_term_link( $term );
-			if ( ! is_wp_error( $link ) ) {
-				return $link;
-			}
-		}
-	}
-
-	return function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
+function safestore_minimal_shop_filter_available() {
+	return safestore_minimal_shop_filter_enabled() && shortcode_exists( 'woof' );
 }
 
 /**
- * Render the [woof] filter as a compact toolbar above the product grid.
+ * Render the [woof] filter as the left sidebar card (called from woocommerce.php).
  *
- * The static guard stops a second bar if HUSKY's own auto-insert option is ever
- * switched on, or if the hook fires twice on one request. A stray copy printed
- * by the legacy Code Snippets entry is additionally hidden by CSS
- * (.sft-shop-filter ~ .sft-shop-filter) and removed by js/shop-filter.js.
+ * Active filters and "Clear all" live in HUSKY's own chip panel above the grid
+ * (.woof_products_top_panel), which updates on AJAX — so the card has no reset link.
+ * The static guard stops a second card if this is ever called twice; a stray copy
+ * printed by the legacy Code Snippets entry is hidden by CSS and removed by
+ * js/shop-filter.js.
  */
 function safestore_minimal_shop_filter_render() {
 	static $rendered = false;
 
-	if ( $rendered ) {
-		return;
-	}
-
-	if ( ! safestore_minimal_shop_filter_enabled() ) {
-		return;
-	}
-
-	if ( ! shortcode_exists( 'woof' ) ) {
+	if ( $rendered || ! safestore_minimal_shop_filter_available() ) {
 		return;
 	}
 
 	$rendered = true;
-
-	$has_active_filters = ! empty( $_GET['swoof'] ) || ! empty( $_GET['min_price'] ) || ! empty( $_GET['max_price'] ) || ! empty( $_GET['stock'] ) || ! empty( $_GET['sales'] ) || ! empty( $_GET['product_brand'] ) || ! empty( $_GET['product_cat'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	?>
-	<div class="sft-shop-filter<?php echo $has_active_filters ? ' sft-shop-filter--active' : ''; ?>">
+	<div class="sft-shop-filter">
 		<div class="sft-shop-filter__head">
 			<button type="button" class="sft-shop-filter__toggle" aria-expanded="false" aria-controls="sft-shop-filter-panel">
 				<svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M2 4.5h16v1.8l-6.2 6.2v4.6l-3.6-1.8v-2.8L2 6.3z"/></svg>
 				<span><?php esc_html_e( 'Filters', 'safestore-minimal' ); ?></span>
+				<svg class="sft-shop-filter__chev" viewBox="0 0 12 8" width="12" height="8" aria-hidden="true" focusable="false"><path fill="currentColor" d="M1.4.6 6 5.2 10.6.6 12 2 6 8 0 2z"/></svg>
 			</button>
-			<span class="sft-shop-filter__label" aria-hidden="true">
+			<h2 class="sft-shop-filter__label">
 				<svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M2 4.5h16v1.8l-6.2 6.2v4.6l-3.6-1.8v-2.8L2 6.3z"/></svg>
-				<?php esc_html_e( 'Filter', 'safestore-minimal' ); ?>
-			</span>
-			<?php if ( $has_active_filters ) : ?>
-				<a class="sft-shop-filter__reset" href="<?php echo esc_url( safestore_minimal_shop_filter_reset_url() ); ?>"><?php esc_html_e( 'Clear all', 'safestore-minimal' ); ?></a>
-			<?php endif; ?>
+				<?php esc_html_e( 'Filters', 'safestore-minimal' ); ?>
+			</h2>
 		</div>
 		<div class="sft-shop-filter__panel" id="sft-shop-filter-panel">
 			<?php echo do_shortcode( '[woof]' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -169,7 +244,6 @@ function safestore_minimal_shop_filter_render() {
 	</div>
 	<?php
 }
-add_action( 'woocommerce_before_shop_loop', 'safestore_minimal_shop_filter_render', 15 );
 
 /**
  * Full SEO welcome text below the product grid (shop page 1 only).

@@ -1,58 +1,138 @@
 /*
- * Shop filter toolbar — HUSKY / WOOF filter above the shop & category grid.
+ * Shop filter — HUSKY / WOOF filter as a StarTech-style left sidebar.
  *
  * Loaded by inc/shop-filter.php on the shop page and product category / tag
- * archives only. Redesigned as a compact horizontal toolbar: category and
- * brand dropdowns, price slider, In stock / On sale pill toggles. Collapses
- * behind a "Filters" button on small screens (js/shop-filter.js).
+ * archives only. woocommerce.php wraps the page in .sft-shop-layout: a sidebar
+ * of separate section cards (Product categories, Product brands, Price range,
+ * Availability) beside the results column, which opens with a white toolbar bar
+ * (title + Sort By). HUSKY's active-filter chips sit under the bar.
+ * Sections collapse via buttons added by js/shop-filter.js. Below 960px the
+ * sidebar stacks above the grid behind a "Filters" button.
  *
  * Palette matches the theme: slate neutrals + #dc2626 accent.
  */
 
-/* ---------- Card ---------- */
+/* ---------- Page layout: sidebar + results ---------- */
+
+@media (min-width: 961px) {
+  .sft-shop-layout {
+    display: grid;
+    grid-template-columns: 272px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+  }
+
+  /* Grid loses ~300px to the sidebar — one column fewer than full width. */
+  .sft-shop-layout ul.products {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 24px 18px !important;
+  }
+}
+
+@media (min-width: 961px) and (max-width: 1280px) {
+  .sft-shop-layout ul.products {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+.sft-shop-results {
+  position: relative;
+  min-width: 0;
+}
+
+/* ---------- Results toolbar (title + Sort By) ---------- */
+
+.sft-shop-toolbar {
+  display: flex;
+  align-items: center;
+  min-height: 58px;
+  margin: 0 0 16px;
+  padding: 0 260px 0 20px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.sft-shop-toolbar__title {
+  margin: 0;
+  overflow: hidden;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #0f172a;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* WooCommerce prints the sort form inside the loop (and HUSKY's AJAX region); pin it into the toolbar bar. */
+.sft-shop-results .woof_shortcode_output,
+.sft-shop-results #woof_results_by_ajax {
+  position: static;
+}
+
+.sft-shop-results .woocommerce-ordering {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 !important;
+  float: none !important;
+}
+
+.sft-shop-results .woocommerce-ordering::before {
+  content: "Sort By:";
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.sft-shop-results .woocommerce-ordering select {
+  min-width: 170px;
+  box-shadow: none;
+}
+
+/* ---------- Sidebar: separate section cards ---------- */
 
 .sft-shop-filter {
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 14px 18px;
-  margin: 0 0 24px;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  box-shadow: none;
   clear: both;
 }
 
-/* Safety net: if the legacy Code Snippets entry ever prints a second bar,
- * never show more than one (js/shop-filter.js removes the node as well). */
-.sft-shop-filter ~ .sft-shop-filter {
+/* Safety net: if the legacy Code Snippets entry ever prints a second bar, never show more than one. */
+.sft-shop-filter ~ .sft-shop-filter,
+.sft-shop-results .sft-shop-filter {
   display: none !important;
 }
 
-/* Safety net for cached pages: core's duplicate archive description
- * (removed in PHP) stays hidden if an old cached copy still prints it. */
+/* Safety net for cached pages: core's duplicate archive description stays hidden. */
 .sft-shop .page-description {
   display: none !important;
 }
 
-/* ---------- Head row ---------- */
-
+/* Desktop needs no head row — each section card carries its own title. */
 .sft-shop-filter__head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  display: none;
 }
 
 .sft-shop-filter__label {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  font-size: 13px;
-  font-weight: 600;
+  gap: 8px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
   color: #0f172a;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
 }
 
-.sft-shop-filter__label svg {
+.sft-shop-filter__label svg,
+.sft-shop-filter__toggle svg {
   color: #dc2626;
 }
 
@@ -60,37 +140,26 @@
   display: none;
   align-items: center;
   gap: 8px;
-  padding: 9px 16px;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  background: #f8fafc;
+  width: 100%;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 8px;
+  background: #fff;
   color: #0f172a;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
   cursor: pointer;
 }
 
-.sft-shop-filter__toggle svg {
-  color: #dc2626;
-}
-
-.sft-shop-filter__reset {
+.sft-shop-filter__toggle .sft-shop-filter__chev {
   margin-left: auto;
-  font-size: 13px;
-  font-weight: 600;
-  color: #dc2626;
-  text-decoration: none;
+  color: #64748b;
+  transition: transform 0.15s ease;
 }
 
-.sft-shop-filter__reset:hover {
-  text-decoration: underline;
-  color: #b91c1c;
-}
-
-/* ---------- Panel / HUSKY layout ---------- */
-
-.sft-shop-filter__panel {
-  margin-top: 12px;
+.sft-shop-filter.is-open .sft-shop-filter__chev {
+  transform: rotate(180deg);
 }
 
 .sft-shop-filter .woof {
@@ -99,16 +168,20 @@
 
 .sft-shop-filter .woof_redraw_zone {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px 14px;
+  flex-direction: column;
+  gap: 14px;
 }
 
+/* Each HUSKY container is one card. */
 .sft-shop-filter .woof_container {
+  position: relative;
   margin: 0;
   padding: 0;
   float: none;
   width: auto;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
 }
 
 .sft-shop-filter .woof_container_inner {
@@ -116,197 +189,294 @@
   padding: 0;
 }
 
-/* HUSKY prints h4 titles per block — the controls speak for themselves. */
+/* Card header: HUSKY's own h4 for taxonomies, CSS titles for price / availability. */
 .sft-shop-filter .woof_container h4,
-.sft-shop-filter .woof_container_inner h4 {
+.sft-shop-filter .woof_price3_search_container::before,
+.sft-shop-filter .woof_checkbox_instock_container::before {
+  display: block;
+  margin: 0;
+  padding: 15px 44px 15px 20px;
+  border-bottom: 1px solid #eef2f6;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #0f172a;
+}
+
+.sft-shop-filter .woof_price3_search_container::before {
+  content: "Price Range";
+}
+
+.sft-shop-filter .woof_checkbox_instock_container::before {
+  content: "Availability";
+}
+
+/* Collapse button (js/shop-filter.js) covers the 51px header strip; chevron on the right. */
+.sft-fsec-toggle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  height: 51px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 8px 8px 0 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.sft-fsec-toggle::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  width: 12px;
+  height: 8px;
+  margin-top: -4px;
+  background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23334155' d='M1.4 7.4 6 2.8l4.6 4.6L12 6 6 0 0 6z'/%3E%3C/svg%3E") no-repeat center;
+  transition: transform 0.15s ease;
+}
+
+.sft-fsec-toggle:focus-visible {
+  outline: 2px solid rgba(220, 38, 38, 0.45);
+  outline-offset: -2px;
+}
+
+.sft-shop-filter .woof_container.is-collapsed .sft-fsec-toggle::after {
+  transform: rotate(180deg);
+}
+
+.sft-shop-filter .woof_container.is-collapsed h4,
+.sft-shop-filter .woof_checkbox_instock_container.is-collapsed::before {
+  border-bottom-color: transparent;
+}
+
+.sft-shop-filter .woof_container.is-collapsed .woof_block_html_items,
+.sft-shop-filter .woof_checkbox_instock_container.is-collapsed .woof_container_inner,
+.sft-shop-filter .woof_checkbox_instock_container.is-collapsed ~ .woof_checkbox_sales_container {
   display: none;
 }
 
-/* Free-text search is handled by the header search, not the filter bar. */
-.sft-shop-filter .woof_text_search_container {
-  display: none;
-}
-
-/* Autosubmit is on — no submit button to show. */
+/* Free-text search is handled by the header search; autosubmit means no submit button. */
+.sft-shop-filter .woof_text_search_container,
 .sft-shop-filter .woof_submit_search_form_container {
   display: none;
 }
 
-/* ---------- Toolbar order: category, brand, price, toggles ---------- */
+/* ---------- Section order (StarTech): price, availability, brand, category ---------- */
 
-.sft-shop-filter .woof_container_product_cat { order: 1; }
-.sft-shop-filter .woof_container_product_brand { order: 2; }
-.sft-shop-filter .woof_price3_search_container { order: 3; }
-.sft-shop-filter .woof_checkbox_instock_container { order: 4; }
-.sft-shop-filter .woof_checkbox_sales_container { order: 5; }
+.sft-shop-filter .woof_price3_search_container { order: 1; }
+.sft-shop-filter .woof_checkbox_instock_container { order: 2; }
+.sft-shop-filter .woof_checkbox_sales_container { order: 3; }
+.sft-shop-filter .woof_container_product_brand { order: 4; }
+.sft-shop-filter .woof_container_product_cat { order: 5; }
 
-/* ---------- Dropdowns (Chosen widgets for category + brand) ---------- */
+/* ---------- Checkbox / radio lists (brands, categories) ---------- */
 
-.sft-shop-filter select,
-.sft-shop-filter .woof_container select {
-  -webkit-appearance: none;
-  appearance: none;
-  min-width: 190px;
-  max-width: 240px;
-  height: 42px;
-  padding: 0 36px 0 14px;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  background-color: #fff;
-  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2364748b' d='M1.4.6 6 5.2 10.6.6 12 2 6 8 0 2z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  color: #0f172a;
-  font-size: 14px;
-  line-height: 40px;
+.sft-shop-filter .woof_block_html_items {
+  padding: 10px 8px 12px 12px;
+}
+
+.sft-shop-filter ul.woof_list {
+  max-height: 280px;
+  margin: 0;
+  padding: 0 4px 0 0;
+  overflow-y: auto;
+  list-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.sft-shop-filter ul.woof_list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sft-shop-filter ul.woof_list::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+.sft-shop-filter ul.woof_list li {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 12px;
+  margin: 0;
+  padding: 0 0 0 8px;
+  border-radius: 6px;
+  list-style: none;
+  transition: background 0.12s ease;
+}
+
+.sft-shop-filter ul.woof_list li:hover {
+  background: #f8fafc;
+}
+
+.sft-shop-filter ul.woof_list label {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+  padding: 9px 0;
+  color: #1e293b;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.35;
   cursor: pointer;
 }
 
-.sft-shop-filter select:focus,
-.sft-shop-filter input:focus {
-  outline: 2px solid rgba(220, 38, 38, 0.35);
-  outline-offset: 1px;
-  border-color: #dc2626;
-}
-
-/* HUSKY swaps the selects for Chosen widgets and sets an inline width —
- * pin it back to toolbar size. */
-.sft-shop-filter .chosen-container {
-  width: 220px !important;
-  font-size: 14px;
-}
-
-.sft-shop-filter .chosen-container .chosen-single,
-.sft-shop-filter .chosen-container .chosen-choices {
-  display: flex;
-  align-items: center;
-  min-height: 42px;
-  height: auto;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  background: #fff none;
-  box-shadow: none;
-  padding: 4px 34px 4px 14px;
-  color: #0f172a;
-  position: relative;
-}
-
-.sft-shop-filter .chosen-container .chosen-single span {
-  margin: 0;
-  color: #0f172a;
-  line-height: 32px;
-}
-
-/* Replace Chosen's sprite arrow with a clean chevron. */
-.sft-shop-filter .chosen-container .chosen-single div {
-  width: 34px;
-}
-
-.sft-shop-filter .chosen-container .chosen-single div b {
-  background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2364748b' d='M1.4.6 6 5.2 10.6.6 12 2 6 8 0 2z'/%3E%3C/svg%3E") no-repeat center !important;
-}
-
-.sft-shop-filter .chosen-container .chosen-choices::after {
-  content: "";
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  width: 12px;
-  height: 8px;
-  margin-top: -4px;
-  background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2364748b' d='M1.4.6 6 5.2 10.6.6 12 2 6 8 0 2z'/%3E%3C/svg%3E") no-repeat center;
-  pointer-events: none;
-}
-
-.sft-shop-filter .chosen-container .chosen-choices li.search-field input.chosen-search-input {
-  height: 32px;
-  margin: 0;
-  padding: 0;
-  color: #64748b;
-  font-family: inherit;
-  font-size: 14px;
-}
-
-.sft-shop-filter .chosen-container .chosen-choices li.search-choice {
-  display: inline-flex;
-  align-items: center;
-  margin: 3px 6px 3px 0;
-  padding: 4px 22px 4px 9px;
-  border: 1px solid #fecaca;
-  border-radius: 999px;
-  background: #fff5f3;
-  color: #b91c1c;
+.sft-shop-filter ul.woof_list .woof_checkbox_count,
+.sft-shop-filter ul.woof_list .woof_radio_count {
+  color: #94a3b8;
   font-size: 13px;
-  line-height: 1.2;
-  box-shadow: none;
 }
 
-.sft-shop-filter .chosen-container .chosen-drop {
-  border: 1px solid #e2e8f0;
-  border-radius: 0 0 10px 10px;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.1);
-  margin-top: 2px;
+/* Child categories (radio tree). */
+.sft-shop-filter ul.woof_childs_list {
+  flex: 0 0 100%;
+  margin: 0 0 4px;
+  padding: 0 0 0 18px;
+  list-style: none;
 }
 
-.sft-shop-filter .chosen-container .chosen-results {
-  margin: 4px;
-  padding: 0;
-}
-
-.sft-shop-filter .chosen-container .chosen-results li {
-  padding: 9px 12px;
-  border-radius: 8px;
-  font-size: 14px;
-  color: #334155;
-  line-height: 1.35;
-}
-
-.sft-shop-filter .chosen-container .chosen-results li.highlighted {
-  background: #dc2626;
-  color: #fff;
-}
-
-.sft-shop-filter .chosen-container .chosen-search input.chosen-search-input {
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 7px 10px;
-  font-family: inherit;
-  font-size: 14px;
-  background-position: right 10px center;
-}
-
-.sft-shop-filter .chosen-container-active .chosen-single,
-.sft-shop-filter .chosen-container-active .chosen-choices {
-  border-color: #dc2626;
-  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.15);
-}
-
-/* ---------- In stock / On sale pill toggles ----------
- * HUSKY runs the checkboxes through iCheck: the input sits inside
- * div.icheckbox_square-blue (which gets a .checked class), and the visible
- * <label> is a sibling. The whole inner container becomes the pill. */
-
-.sft-shop-filter .woof_checkbox_instock_container,
-.sft-shop-filter .woof_checkbox_sales_container {
+.sft-shop-filter .woof_childs_list_opener {
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-right: 4px;
+  border-radius: 6px;
+}
+
+.sft-shop-filter .woof_childs_list_opener:hover {
+  background: #eef2f6;
+}
+
+.sft-shop-filter .woof_childs_list_opener span {
+  width: 12px;
+  height: 12px;
+  background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath stroke='%2364748b' stroke-width='1.8' stroke-linecap='round' d='M6 2v8M2 6h8'/%3E%3C/svg%3E") no-repeat center !important;
+}
+
+.sft-shop-filter .woof_childs_list_opener span.woof_is_opened {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath stroke='%2364748b' stroke-width='1.8' stroke-linecap='round' d='M2 6h8'/%3E%3C/svg%3E") !important;
+}
+
+/* Radio "clear" link next to the chosen category. */
+.sft-shop-filter .woof_radio_term_reset {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: #fee2e2 url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 10 10'%3E%3Cpath stroke='%23b91c1c' stroke-width='1.8' stroke-linecap='round' d='M2 2l6 6M8 2 2 8'/%3E%3C/svg%3E") no-repeat center;
+}
+
+.sft-shop-filter .woof_radio_term_reset img {
+  display: none;
+}
+
+.sft-shop-filter .woof_open_hidden_li {
+  padding: 6px 8px;
+}
+
+/* ---------- iCheck boxes (checkbox square / radio circle) ---------- */
+
+.sft-shop-filter .icheckbox_square-blue,
+.sft-shop-filter .iradio_square-blue {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  border: 1.5px solid #94a3b8;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.sft-shop-filter .iradio_square-blue {
+  border-radius: 50%;
+}
+
+.sft-shop-filter .icheckbox_square-blue.hover,
+.sft-shop-filter .iradio_square-blue.hover {
+  border-color: #dc2626;
+}
+
+.sft-shop-filter .icheckbox_square-blue.checked {
+  border-color: #dc2626;
+  background: #dc2626 url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='8' viewBox='0 0 10 8'%3E%3Cpath fill='%23fff' d='M3.5 7.6 0 4.1l1.3-1.3 2.2 2.2L8.7 0 10 1.3z'/%3E%3C/svg%3E") no-repeat center;
+}
+
+.sft-shop-filter .iradio_square-blue.checked {
+  border: 5px solid #dc2626;
+  background: #fff;
+}
+
+.sft-shop-filter .icheckbox_square-blue.disabled,
+.sft-shop-filter .iradio_square-blue.disabled {
+  opacity: 0.45;
+}
+
+.sft-shop-filter ul.woof_list li:has(.checked) > label {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* Plain-input fallback if iCheck is disabled. */
+.sft-shop-filter input[type="checkbox"],
+.sft-shop-filter input[type="radio"] {
+  accent-color: #dc2626;
+}
+
+/* ---------- Availability (In stock + On sale share one card) ---------- */
+
+.sft-shop-filter .woof_checkbox_instock_container {
+  border-radius: 8px 8px 0 0;
+}
+
+.sft-shop-filter .woof_checkbox_sales_container {
+  margin-top: -14px;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 2px 2px -1px rgba(15, 23, 42, 0.06);
+}
+
+.sft-shop-filter .woof_checkbox_instock_container.is-collapsed {
+  border-radius: 8px;
 }
 
 .sft-shop-filter .woof_checkbox_instock_container .woof_container_inner,
 .sft-shop-filter .woof_checkbox_sales_container .woof_container_inner {
-  position: relative;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 8px;
-  height: 42px;
-  padding: 0 16px;
-  border: 1px solid #e2e8f0;
-  border-radius: 999px;
-  background: #fff;
-  color: #334155;
-  font-size: 14px;
-  font-weight: 500;
+  gap: 12px;
+  margin: 0 8px 0 12px;
+  padding: 0 0 0 8px;
+  border-radius: 6px;
+  font-size: 0;
   white-space: nowrap;
-  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  transition: background 0.12s ease;
+}
+
+.sft-shop-filter .woof_checkbox_instock_container .woof_container_inner {
+  margin-top: 10px;
+}
+
+.sft-shop-filter .woof_checkbox_sales_container .woof_container_inner {
+  margin-bottom: 12px;
+}
+
+.sft-shop-filter .woof_checkbox_instock_container .woof_container_inner:hover,
+.sft-shop-filter .woof_checkbox_sales_container .woof_container_inner:hover {
+  background: #f8fafc;
 }
 
 .sft-shop-filter .woof_checkbox_instock_container .woof_container_inner br,
@@ -316,59 +486,100 @@
 
 .sft-shop-filter .woof_checkbox_instock_container label,
 .sft-shop-filter .woof_checkbox_sales_container label {
-  cursor: pointer;
+  flex: 1 1 auto;
   margin: 0;
-  font-weight: 500;
+  padding: 9px 0;
+  color: #1e293b;
+  font-size: 15px;
+  font-weight: 400;
+  cursor: pointer;
 }
 
-/* iCheck's wrapper becomes our 16px checkbox square (its sprite is unused). */
-.sft-shop-filter .icheckbox_square-blue {
-  width: 16px;
-  height: 16px;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 5px;
+.sft-shop-filter .woof_checkbox_instock_container .woof_container_inner:has(.icheckbox_square-blue.checked) label,
+.sft-shop-filter .woof_checkbox_sales_container .woof_container_inner:has(.icheckbox_square-blue.checked) label {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* ---------- Price range: slider + from / to inputs ---------- */
+
+.sft-shop-filter .woof_price3_search_container .woof_container_inner {
+  display: flex;
+  flex-direction: column;
+  padding: 6px 20px 18px;
+}
+
+/* HUSKY prints the inputs above the slider — StarTech shows the bar first. */
+.sft-shop-filter .woof_price_filter_txt_slider {
+  order: 2;
+  margin: 6px 0 0;
+}
+
+.sft-shop-filter .woof_price_filter_txt_slider_inputs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0;
+}
+
+.sft-shop-filter .woof_price_filter_txt_slider .woof_float_none {
+  display: none;
+}
+
+.sft-shop-filter input.woof_price_filter_txt {
+  -moz-appearance: textfield;
+  appearance: textfield;
+  width: 100%;
+  max-width: 104px;
+  height: 40px;
+  margin: 0;
+  padding: 0 8px;
+  border: 1px solid #dbe1e8;
+  border-radius: 4px;
   background: #fff;
-  flex: 0 0 auto;
-  cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  color: #0f172a;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: center;
+  box-shadow: none;
 }
 
-.sft-shop-filter .icheckbox_square-blue.checked {
-  border-color: #dc2626;
-  background: #dc2626 url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='8' viewBox='0 0 10 8'%3E%3Cpath fill='%23fff' d='M3.5 7.6 0 4.1l1.3-1.3 2.2 2.2L8.7 0 10 1.3z'/%3E%3C/svg%3E") no-repeat center;
-}
-
-/* Whole pill lights up when its box is checked (browsers with :has). */
-.sft-shop-filter .woof_container_inner:has(.icheckbox_square-blue.checked) {
-  border-color: #dc2626;
-  background: #fff5f3;
-  color: #b91c1c;
-}
-
-/* Plain-checkbox fallback if iCheck is disabled. */
-.sft-shop-filter input.woof_checkbox_instock,
-.sft-shop-filter input.woof_checkbox_sales {
-  accent-color: #dc2626;
+.sft-shop-filter input.woof_price_filter_txt::-webkit-outer-spin-button,
+.sft-shop-filter input.woof_price_filter_txt::-webkit-inner-spin-button {
+  -webkit-appearance: none;
   margin: 0;
-  cursor: pointer;
 }
 
-/* ---------- Price slider (ion.rangeSlider) ---------- */
-
-.sft-shop-filter .woof_price3_search_container {
-  flex: 1 1 260px;
-  min-width: 230px;
-  max-width: 360px;
-  padding: 0 10px;
+.sft-shop-filter input.woof_price_filter_txt:focus {
+  outline: none;
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
 }
 
 .sft-shop-filter .irs {
   font-family: inherit;
 }
 
+/* Clean bar: from/to values live in the inputs, so drop tooltips, min/max and the grid. */
+.sft-shop-filter .irs--round.irs-with-grid {
+  height: 40px;
+}
+
+.sft-shop-filter .irs-from,
+.sft-shop-filter .irs-to,
+.sft-shop-filter .irs-single,
+.sft-shop-filter .irs-min,
+.sft-shop-filter .irs-max,
+.sft-shop-filter .irs-grid {
+  display: none !important;
+}
+
 .sft-shop-filter .irs--round .irs-line,
 .sft-shop-filter .irs-line {
-  height: 4px;
+  top: 18px;
+  height: 6px;
   background: #e2e8f0;
   border: 0;
   border-radius: 999px;
@@ -376,7 +587,8 @@
 
 .sft-shop-filter .irs--round .irs-bar,
 .sft-shop-filter .irs-bar {
-  height: 4px;
+  top: 18px;
+  height: 6px;
   background: #dc2626;
   border: 0;
   border-radius: 999px;
@@ -386,9 +598,9 @@
 .sft-shop-filter .irs--round .irs-handle,
 .sft-shop-filter .irs-handle,
 .sft-shop-filter .irs-slider {
-  width: 18px;
-  height: 18px;
-  top: 29px;
+  top: 10px;
+  width: 22px;
+  height: 22px;
   border: 3px solid #dc2626;
   border-radius: 50%;
   background: #fff;
@@ -396,45 +608,142 @@
   cursor: grab;
 }
 
+.sft-shop-filter .irs--round .irs-handle i {
+  display: none;
+}
+
+.sft-shop-filter .irs--round .irs-handle::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: #dc2626;
+}
+
 .sft-shop-filter .irs--round .irs-handle.state_hover,
 .sft-shop-filter .irs--round .irs-handle:hover {
   background: #fff5f3;
 }
 
-.sft-shop-filter .irs--round .irs-from,
-.sft-shop-filter .irs--round .irs-to,
-.sft-shop-filter .irs--round .irs-single,
-.sft-shop-filter .irs-from,
-.sft-shop-filter .irs-to,
-.sft-shop-filter .irs-single {
-  background: #0f172a;
-  color: #fff;
+/* ---------- Active filters (HUSKY chip panel under the toolbar) ----------
+ * HUSKY rebuilds this markup in JS: ul > li(button.woof_reset_button_2) +
+ * li > ul[data-container] > li(title) + li > a > span.woof_remove_ppi. */
+
+.sft-shop .woof_products_top_panel_content:empty,
+.sft-shop .woof_products_top_panel:empty {
+  display: none;
+}
+
+.sft-shop .woof_products_top_panel {
+  margin: 0 0 16px;
+  padding: 0;
+}
+
+.sft-shop .woof_products_top_panel ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sft-shop .woof_products_top_panel li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  float: none;
+}
+
+.sft-shop .woof_products_top_panel_ul {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* "Clear all" reads as the last action in the row, not the first. */
+.sft-shop .woof_products_top_panel_ul > li:first-child {
+  order: 99;
+}
+
+.sft-shop .woof_products_top_panel_ul ul[data-container] {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Group title, e.g. "Product brands:" */
+.sft-shop .woof_products_top_panel_ul ul[data-container] > li:first-child {
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.sft-shop .woof_products_top_panel a {
+  text-decoration: none;
+}
+
+.sft-shop .woof_products_top_panel li span,
+.sft-shop .woof_products_top_panel2 li span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 10px 0 12px !important;
+  border: 1px solid #fecaca;
+  border-radius: 999px;
+  background: #fff !important;
+  color: #b91c1c;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: capitalize;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.sft-shop .woof_products_top_panel li span::after {
+  content: "";
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fee2e2 url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 10 10'%3E%3Cpath stroke='%23b91c1c' stroke-width='1.8' stroke-linecap='round' d='M2 2l6 6M8 2 2 8'/%3E%3C/svg%3E") no-repeat center;
+  transition: background-color 0.15s ease;
+}
+
+.sft-shop .woof_products_top_panel a:hover span {
+  border-color: #f87171;
+  background: #fff5f3 !important;
+}
+
+.sft-shop .woof_products_top_panel a:hover span::after {
+  background-color: #fecaca;
+}
+
+.sft-shop .woof_products_top_panel .woof_reset_button_2 {
+  height: 32px;
+  margin: 0;
+  padding: 0 6px;
+  border: 0;
   border-radius: 6px;
-  font-size: 11px;
-  padding: 2px 6px;
+  background: none;
+  color: #475569;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: #cbd5e1;
+  cursor: pointer;
+  box-shadow: none;
 }
 
-/* Kill the tooltip's skin-colored pointer arrow. */
-.sft-shop-filter .irs--round .irs-from::before,
-.sft-shop-filter .irs--round .irs-to::before,
-.sft-shop-filter .irs--round .irs-single::before {
-  border-top-color: #0f172a;
-}
-
-.sft-shop-filter .irs-min,
-.sft-shop-filter .irs-max {
-  background: transparent;
-  color: #94a3b8;
-  font-size: 10px;
-}
-
-.sft-shop-filter .irs-grid-text {
-  color: #94a3b8;
-  font-size: 10px;
-}
-
-.sft-shop-filter .irs-grid-pol {
-  background: #e2e8f0;
+.sft-shop .woof_products_top_panel .woof_reset_button_2:hover {
+  color: #dc2626;
+  text-decoration-color: currentColor;
 }
 
 /* ---------- SEO content below the grid ---------- */
@@ -461,14 +770,18 @@
 /* ---------- Loading state while HUSKY refreshes via AJAX ---------- */
 
 .sft-shop-filter .woof_container_overlay_item {
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
-/* ---------- Mobile ---------- */
+/* ---------- Tablet & mobile: sidebar stacks and collapses ---------- */
 
-@media (max-width: 860px) {
-  .sft-shop-filter {
-    padding: 10px 14px;
+@media (max-width: 960px) {
+  .sft-shop-sidebar {
+    margin: 0 0 14px;
+  }
+
+  .sft-shop-filter__head {
+    display: block;
   }
 
   .sft-shop-filter__label {
@@ -476,50 +789,43 @@
   }
 
   .sft-shop-filter__toggle {
-    display: inline-flex;
+    display: flex;
   }
 
   .sft-shop-filter__panel {
     display: none;
-    margin-top: 14px;
+    margin-top: 12px;
   }
 
   .sft-shop-filter.is-open .sft-shop-filter__panel {
     display: block;
   }
 
-  .sft-shop-filter .woof_redraw_zone {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
+  .sft-shop-filter .woof_container {
+    box-shadow: 0 0 0 1px #e2e8f0;
+  }
+}
+
+@media (max-width: 600px) {
+  .sft-shop-toolbar {
+    padding-right: 196px;
+    padding-left: 14px;
   }
 
-  .sft-shop-filter select,
-  .sft-shop-filter .woof_container select {
-    width: 100%;
-    max-width: none;
+  .sft-shop-toolbar__title {
+    font-size: 15px;
   }
 
-  .sft-shop-filter .chosen-container {
-    width: 100% !important;
+  .sft-shop-results .woocommerce-ordering {
+    right: 8px;
   }
 
-  .sft-shop-filter .woof_checkbox_instock_container,
-  .sft-shop-filter .woof_checkbox_sales_container,
-  .sft-shop-filter .woof_checkbox_instock_container .woof_container_inner,
-  .sft-shop-filter .woof_checkbox_sales_container .woof_container_inner {
-    display: flex;
-    width: 100%;
+  .sft-shop-results .woocommerce-ordering::before {
+    display: none;
   }
 
-  .sft-shop-filter input.woof_checkbox_instock + label,
-  .sft-shop-filter input.woof_checkbox_sales + label {
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .sft-shop-filter .woof_price3_search_container {
-    max-width: none;
-    padding: 4px 8px 0;
+  .sft-shop-results .woocommerce-ordering select {
+    min-width: 0;
+    width: 180px;
   }
 }

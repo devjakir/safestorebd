@@ -23,20 +23,24 @@ get_header(); ?>
                 );
             }
             ?>
+            <?php
+            // HUSKY /swoof/ URLs resolve as the shop page; keep the category's own title and intro there.
+            $sft_term = function_exists('safestore_minimal_shop_current_term') ? safestore_minimal_shop_current_term() : null;
+            ?>
             <header class="sft-shop-header">
                 <h1 class="sft-shop-title">
                     <?php
-                    if (is_product_taxonomy()) {
-                        single_term_title();
+                    if ($sft_term) {
+                        echo esc_html($sft_term->name);
                     } else {
                         echo esc_html__('Safety Equipment in Bangladesh', 'safestore-minimal');
                     }
                     ?>
                 </h1>
                 <?php
-                if (is_product_taxonomy()) {
+                if ($sft_term) {
                     // Term descriptions are short — keep them in the header.
-                    $description = term_description();
+                    $description = term_description($sft_term->term_id);
                 } else {
                     // Shop page: short tagline only. The full SEO content now
                     // renders below the product grid (inc/shop-filter.php),
@@ -48,12 +52,28 @@ get_header(); ?>
                         : '';
                 }
                 if ($description) : ?>
-                    <div class="sft-shop-desc"><?php echo wp_kses_post($description); ?></div>
+                    <div class="sft-shop-desc is-clamped"><div class="sft-shop-desc__text" id="sft-shop-desc-text"><?php echo wp_kses_post($description); ?></div></div>
                 <?php endif; ?>
             </header>
         <?php endif; ?>
 
-        <?php woocommerce_content(); ?>
+        <?php if (function_exists('safestore_minimal_shop_filter_available') && safestore_minimal_shop_filter_available()) : ?>
+            <?php // Filter sits outside HUSKY's #woof_results_by_ajax wrapper so AJAX redraws of the grid never wipe it. ?>
+            <div class="sft-shop-layout">
+                <aside class="sft-shop-sidebar" aria-label="<?php esc_attr_e('Product filters', 'safestore-minimal'); ?>">
+                    <?php safestore_minimal_shop_filter_render(); ?>
+                </aside>
+                <div class="sft-shop-results">
+                    <?php // Toolbar bar: the sort form stays in WooCommerce's loop (inside HUSKY's AJAX region) and is positioned into this bar by css/shop-filter.css. ?>
+                    <div class="sft-shop-toolbar">
+                        <h2 class="sft-shop-toolbar__title"><?php echo esc_html(!empty($sft_term) ? $sft_term->name : __('All products', 'safestore-minimal')); ?></h2>
+                    </div>
+                    <?php woocommerce_content(); ?>
+                </div>
+            </div>
+        <?php else : ?>
+            <?php woocommerce_content(); ?>
+        <?php endif; ?>
 
     </div>
 </main>
