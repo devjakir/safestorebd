@@ -1,21 +1,9 @@
 <?php
-/**
- * PDP social support, action bar (compare / wishlist / share), and OG meta.
- *
- * Lightweight: inline SVG, one tiny deferred script, no third-party SDKs.
- *
- * @package SafeStore_Minimal
- */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Brand / support profile URLs used on the product page.
- *
- * @return array{messenger:string,telegram:string,facebook:string,instagram:string,pinterest:string}
- */
 function safestore_pdp_social_profiles() {
 	$profiles = array(
 		'messenger' => 'https://m.me/safestorebd',
@@ -25,20 +13,9 @@ function safestore_pdp_social_profiles() {
 		'pinterest' => 'https://www.pinterest.com/safestorebd/',
 	);
 
-	/**
-	 * Filter PDP messaging / social profile URLs.
-	 * Return an empty string for a key to hide that button.
-	 *
-	 * @param array $profiles Profile URLs keyed by network.
-	 */
 	return apply_filters( 'safestore_pdp_social_profiles', $profiles );
 }
 
-/**
- * Current product share payload (URL, title, image).
- *
- * @return array{url:string,title:string,image:string,id:int}|null
- */
 function safestore_pdp_share_payload() {
 	if ( ! function_exists( 'is_product' ) || ! is_product() ) {
 		return null;
@@ -75,9 +52,6 @@ function safestore_pdp_share_payload() {
 	);
 }
 
-/**
- * Enqueue the PDP action-bar script on single products only.
- */
 function safestore_pdp_actions_enqueue() {
 	if ( ! function_exists( 'is_product' ) || ! is_product() ) {
 		return;
@@ -133,12 +107,6 @@ function safestore_pdp_actions_enqueue() {
 }
 add_action( 'wp_enqueue_scripts', 'safestore_pdp_actions_enqueue', 25 );
 
-/**
- * PDP action bar: Compare + Wishlist (left), Share icon + menu (right).
- *
- * Replaces the old full-width share button row with a standard e-commerce
- * toolbar pattern. Social targets live in a disclosure menu to stay light.
- */
 function safestore_minimal_pdp_action_bar() {
 	$share = safestore_pdp_share_payload();
 	if ( ! $share ) {
@@ -286,18 +254,10 @@ function safestore_minimal_pdp_action_bar() {
 	<?php
 }
 
-/**
- * Back-compat alias — older hooks / docs referenced the share row.
- */
 function safestore_minimal_pdp_share_row() {
 	safestore_minimal_pdp_action_bar();
 }
 
-/**
- * Whether a dedicated SEO plugin already owns social meta.
- *
- * @return bool
- */
 function safestore_pdp_seo_plugin_handles_meta() {
 	if ( defined( 'WPSEO_VERSION' ) || defined( 'RANK_MATH_VERSION' ) || defined( 'AIOSEO_VERSION' ) ) {
 		return true;
@@ -305,17 +265,9 @@ function safestore_pdp_seo_plugin_handles_meta() {
 	if ( defined( 'THE_SEO_FRAMEWORK_VERSION' ) || class_exists( 'SQ_Classes_ObjController', false ) ) {
 		return true;
 	}
-	/**
-	 * Force-disable theme OG output (e.g. when another plugin owns the tags).
-	 *
-	 * @param bool $skip Whether to skip theme social meta.
-	 */
 	return (bool) apply_filters( 'safestore_pdp_skip_social_meta', false );
 }
 
-/**
- * Open Graph + Twitter Card tags for single products.
- */
 function safestore_pdp_social_meta() {
 	if ( is_admin() || safestore_pdp_seo_plugin_handles_meta() ) {
 		return;

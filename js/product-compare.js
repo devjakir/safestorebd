@@ -1,7 +1,3 @@
-/**
- * SafeStoreBD — Product compare (floating bar + compare page).
- * Shared localStorage key with PDP toggle: sft_compare.
- */
 (function () {
   'use strict';
 

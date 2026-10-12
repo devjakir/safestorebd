@@ -1,18 +1,3 @@
-/**
- * SafeStoreBD — Add to Cart success toast.
- *
- * One singleton toast confirms every add to cart:
- *   • Archive/shop AJAX adds  → WooCommerce fires `added_to_cart`.
- *   • Single-product adds     → the form is intercepted and sent over AJAX
- *                               (no page reload), then `added_to_cart` is
- *                               triggered so the same path runs.
- *   • Standard non-AJAX adds  → PHP flags the product name in the session and
- *                               the toast shows once on the next page load.
- *
- * The header cart count/total stay in sync through WooCommerce cart fragments.
- * Auto-dismisses after a few seconds (paused while hovered/focused), and can be
- * closed with the × button, "Continue shopping", or the Escape key.
- */
 (function () {
   'use strict';
 

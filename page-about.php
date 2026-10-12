@@ -1,9 +1,5 @@
 <?php
-/**
- * Template Name: About
- *
- * @package safestore-minimal
- */
+// Template Name: About
 get_header();
 
 $shop_url   = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );

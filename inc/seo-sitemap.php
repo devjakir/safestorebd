@@ -1,23 +1,9 @@
 <?php
-/**
- * SafeStoreBD — sitemap / crawl hygiene helpers.
- *
- * Complements Rank Math: keep WooCommerce utility pages out of the XML
- * sitemap, reinforce noindex, and stop edge caches from serving stale
- * sitemap responses after product/content updates.
- *
- * @package safestore-minimal
- */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * WooCommerce page IDs that should never be indexed or listed in XML sitemaps.
- *
- * @return int[]
- */
 function safestore_seo_utility_page_ids() {
 	$ids = array();
 	if ( ! function_exists( 'wc_get_page_id' ) ) {
@@ -41,20 +27,9 @@ function safestore_seo_utility_page_ids() {
 		$ids[] = (int) $compare->ID;
 	}
 
-	/**
-	 * Filter utility page IDs excluded from sitemaps / indexing.
-	 *
-	 * @param int[] $ids Page IDs.
-	 */
 	return array_values( array_unique( array_filter( array_map( 'intval', apply_filters( 'safestore_seo_utility_page_ids', $ids ) ) ) ) );
 }
 
-/**
- * Rank Math: merge utility pages into posts excluded from the XML sitemap.
- *
- * @param int[] $exclude Existing excluded IDs.
- * @return int[]
- */
 function safestore_seo_rank_math_posts_to_exclude( $exclude ) {
 	if ( ! is_array( $exclude ) ) {
 		$exclude = array();
@@ -64,14 +39,6 @@ function safestore_seo_rank_math_posts_to_exclude( $exclude ) {
 add_filter( 'rank_math/sitemap/posts_to_exclude', 'safestore_seo_rank_math_posts_to_exclude' );
 add_filter( 'rank_math/sitemap/exclude_post_ids', 'safestore_seo_rank_math_posts_to_exclude' );
 
-/**
- * Fallback exclusion if an older Rank Math build ignores exclude_post_ids.
- *
- * @param array|false $url    Sitemap URL entry.
- * @param string      $type   Entry type.
- * @param object      $object Object being added.
- * @return array|false
- */
 function safestore_seo_rank_math_sitemap_entry( $url, $type, $object ) {
 	if ( false === $url || 'post' !== $type || empty( $object->ID ) ) {
 		return $url;
@@ -83,11 +50,6 @@ function safestore_seo_rank_math_sitemap_entry( $url, $type, $object ) {
 }
 add_filter( 'rank_math/sitemap/entry', 'safestore_seo_rank_math_sitemap_entry', 10, 3 );
 
-/**
- * Whether the current request should be noindexed.
- *
- * @return bool
- */
 function safestore_seo_should_noindex_request() {
 	if ( function_exists( 'is_cart' ) && ( is_cart() || is_checkout() || is_account_page() ) ) {
 		return true;
@@ -110,12 +72,6 @@ function safestore_seo_should_noindex_request() {
 	return false;
 }
 
-/**
- * Reinforce noindex on cart / checkout / account / search / product tags.
- *
- * @param array $robots Robots directives.
- * @return array
- */
 function safestore_seo_rank_math_robots( $robots ) {
 	if ( safestore_seo_should_noindex_request() ) {
 		$robots['index']  = 'noindex';
@@ -125,12 +81,6 @@ function safestore_seo_rank_math_robots( $robots ) {
 }
 add_filter( 'rank_math/frontend/robots', 'safestore_seo_rank_math_robots' );
 
-/**
- * Core wp_robots fallback when Rank Math is inactive.
- *
- * @param array $robots Robots directives.
- * @return array
- */
 function safestore_seo_wp_robots( $robots ) {
 	if ( safestore_seo_should_noindex_request() ) {
 		$robots['noindex'] = true;
@@ -139,24 +89,6 @@ function safestore_seo_wp_robots( $robots ) {
 }
 add_filter( 'wp_robots', 'safestore_seo_wp_robots' );
 
-/**
- * Detect crawl-spam "path-style" query strings.
- *
- * Covers the original /?items/<ID> campaign AND every sibling pattern from
- * the same campaign (/?pw/, /?<token>/<ID>, trailing-slash variants, raw or
- * percent-encoded slashes). GSC validation for "Page with redirect" failed
- * on 2026-08-22 because only the `items` prefix returned 410 while e.g.
- * /?pw/ was still 301-encoded to /?pw%2F by redirect_canonical().
- *
- * A junk query string is one that contains a slash but no key=value pair.
- * Every legitimate query URL on this site (?s=, ?p=, ?add-to-cart=,
- * ?orderby=, ?wc-ajax=, ?preview=, UTM/fbclid, etc.) contains "=", and no
- * legitimate WordPress or theme URL puts a bare slash in the query string.
- * Does not match legitimate POST `items` arrays (footwear size AJAX)
- * because those are not query-string URLs.
- *
- * @return bool
- */
 function safestore_seo_is_junk_items_request() {
 	$qs = isset( $_SERVER['QUERY_STRING'] ) ? (string) wp_unslash( $_SERVER['QUERY_STRING'] ) : '';
 	if ( '' === $qs ) {
@@ -179,13 +111,6 @@ function safestore_seo_is_junk_items_request() {
 	return false;
 }
 
-/**
- * Keep WordPress from 301-encoding junk queries (/?items/X → /?items%2FX,
- * /?pw/ → /?pw%2F) — those 301s are what GSC reports as "Page with redirect".
- *
- * @param string|false $redirect_url Canonical redirect target.
- * @return string|false
- */
 function safestore_seo_disable_canonical_for_junk_items( $redirect_url ) {
 	if ( safestore_seo_is_junk_items_request() ) {
 		return false;
@@ -194,11 +119,6 @@ function safestore_seo_disable_canonical_for_junk_items( $redirect_url ) {
 }
 add_filter( 'redirect_canonical', 'safestore_seo_disable_canonical_for_junk_items', 0 );
 
-/**
- * Return HTTP 410 for junk crawl-spam URLs (/?items/..., /?pw/, etc.).
- *
- * Hooked on init so it runs before redirect_canonical (template_redirect:10).
- */
 function safestore_seo_gone_junk_item_urls() {
 	if ( is_admin() || wp_doing_ajax() || wp_doing_cron() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
 		return;
@@ -216,16 +136,6 @@ function safestore_seo_gone_junk_item_urls() {
 }
 add_action( 'init', 'safestore_seo_gone_junk_item_urls', 0 );
 
-/**
- * Ask crawlers not to fetch new /?items/ URLs.
- *
- * Existing GSC URLs still need a 410 recrawl to drop; robots.txt only
- * stops additional discovery. Google wildcard support: /*?items
- *
- * @param string $output Robots.txt body.
- * @param bool   $public Whether the site is public.
- * @return string
- */
 function safestore_seo_robots_txt( $output, $public ) {
 	if ( ! $public ) {
 		return $output;
@@ -241,9 +151,6 @@ function safestore_seo_robots_txt( $output, $public ) {
 }
 add_filter( 'robots_txt', 'safestore_seo_robots_txt', 99, 2 );
 
-/**
- * Send no-cache headers for Rank Math / WP sitemap responses.
- */
 function safestore_seo_sitemap_nocache_headers() {
 	if ( is_admin() || headers_sent() ) {
 		return;
@@ -261,11 +168,6 @@ function safestore_seo_sitemap_nocache_headers() {
 }
 add_action( 'template_redirect', 'safestore_seo_sitemap_nocache_headers', 0 );
 
-/**
- * Purge common Hostinger / LiteSpeed / Rank Math caches when catalog content changes.
- *
- * @param int $post_id Post ID.
- */
 function safestore_seo_purge_caches_on_content_change( $post_id ) {
 	$post_id = (int) $post_id;
 	if ( $post_id <= 0 || ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) ) {
@@ -306,11 +208,6 @@ add_action( 'woocommerce_variation_set_stock', function ( $product ) {
 	}
 }, 20 );
 
-/**
- * Organization + WebSite JSON-LD on the homepage (complements Rank Math).
- *
- * Skips when Rank Math already prints matching graph types to avoid duplicates.
- */
 function safestore_seo_home_structured_data() {
 	if ( is_admin() || ! ( is_front_page() || is_page_template( 'page-home.php' ) ) ) {
 		return;

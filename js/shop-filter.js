@@ -1,14 +1,3 @@
-/**
- * Shop filter toolbar behaviour.
- *
- * 1. Dedupe: if the legacy Code Snippets entry (or HUSKY auto-insert) prints a
- *    second filter bar, remove every bar after the first. CSS hides them too
- *    (.sft-shop-filter ~ .sft-shop-filter) — this removes the dead DOM.
- * 2. Mobile: toggle the panel behind the "Filters" button.
- * 3. Sidebar sections: add collapse buttons (state survives HUSKY redraws).
- *
- * Re-runs after HUSKY AJAX redraws (MutationObserver), which replace parts of the DOM.
- */
 (function () {
 	'use strict';
 

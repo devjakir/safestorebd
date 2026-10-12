@@ -1,13 +1,4 @@
 <?php
-/**
- * Product origin badge — Made in Bangladesh.
- *
- * Admin: checkbox on Product Data → General (`_safestore_origin_bd`).
- * Storefront: compact loop pill + PDP trust line. Unchecked products show
- * nothing by default; `safestore_product_origin` can opt in other origins.
- *
- * @package safestore-minimal
- */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -15,12 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 const SAFESTORE_ORIGIN_META = '_safestore_origin_bd';
 
-/**
- * Whether a product is marked Made in Bangladesh.
- *
- * @param WC_Product|int|null $product Product, ID, or current loop product.
- * @return bool
- */
 function safestore_product_is_made_in_bd( $product = null ) {
 	$product = safestore_origin_resolve_product( $product );
 	if ( ! $product ) {
@@ -30,13 +15,6 @@ function safestore_product_is_made_in_bd( $product = null ) {
 	return 'yes' === $product->get_meta( SAFESTORE_ORIGIN_META );
 }
 
-/**
- * Origin slug for a product: `bd` when the checkbox is on, otherwise empty
- * (or a filter-provided value such as `imported`).
- *
- * @param WC_Product|int|null $product Product, ID, or current loop product.
- * @return string
- */
 function safestore_product_origin( $product = null ) {
 	$product = safestore_origin_resolve_product( $product );
 	if ( ! $product ) {
@@ -45,20 +23,9 @@ function safestore_product_origin( $product = null ) {
 
 	$origin = safestore_product_is_made_in_bd( $product ) ? 'bd' : '';
 
-	/**
-	 * Filter the origin slug shown on cards / PDP.
-	 * Return '' to hide, or e.g. 'imported' for a China/Imported badge.
-	 *
-	 * @param string     $origin  Origin slug.
-	 * @param WC_Product $product Product.
-	 */
 	return (string) apply_filters( 'safestore_product_origin', $origin, $product );
 }
 
-/**
- * @param WC_Product|int|null $product Product or ID.
- * @return WC_Product|null
- */
 function safestore_origin_resolve_product( $product = null ) {
 	if ( $product instanceof WC_Product ) {
 		return $product;
@@ -73,9 +40,6 @@ function safestore_origin_resolve_product( $product = null ) {
 	return $product instanceof WC_Product ? $product : null;
 }
 
-/**
- * Product Data → General: Made in Bangladesh checkbox.
- */
 function safestore_origin_admin_field() {
 	if ( ! function_exists( 'woocommerce_wp_checkbox' ) ) {
 		return;
@@ -98,11 +62,6 @@ function safestore_origin_admin_field() {
 }
 add_action( 'woocommerce_product_options_general_product_data', 'safestore_origin_admin_field' );
 
-/**
- * Persist `_safestore_origin_bd` as yes/no.
- *
- * @param int $post_id Product ID.
- */
 function safestore_origin_save_field( $post_id ) {
 	$post_id = (int) $post_id;
 	if ( $post_id <= 0 || ! current_user_can( 'edit_post', $post_id ) ) {
@@ -125,10 +84,6 @@ function safestore_origin_save_field( $post_id ) {
 }
 add_action( 'woocommerce_process_product_meta', 'safestore_origin_save_field' );
 
-/**
- * Shop / loop card badge. Hooked for default WC loops; the theme card also
- * calls this directly because it does not fire title hooks.
- */
 function safestore_origin_badge_loop() {
     $origin = safestore_product_origin();
     if ( 'bd' !== $origin ) {
@@ -144,9 +99,6 @@ function safestore_origin_badge_loop() {
 }
 add_action( 'woocommerce_after_shop_loop_item_title', 'safestore_origin_badge_loop', 6 );
 
-/**
- * Single product trust line — after price (7), before rating (11).
- */
 function safestore_origin_badge_single() {
 	$origin = safestore_product_origin();
 	if ( 'bd' !== $origin ) {

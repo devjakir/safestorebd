@@ -1,11 +1,5 @@
 <?php
-/**
- * Template Name: Track Order
- *
- * Order tracking — Bangladesh market, WooCommerce.
- *
- * @package safestore-minimal
- */
+// Template Name: Track Order
 
 get_header();
 

@@ -1,19 +1,3 @@
-/**
- * PDP side-by-side image zoom (Daraz / Amazon pattern).
- *
- * A lens follows the cursor over the main gallery image while a flyout panel
- * to the right paints the high-resolution crop under the lens.
- *
- * Design notes:
- * - Desktop only. Gated on (min-width: 992px) AND a fine hover pointer, so
- *   touch devices never pay for it and never get a stuck lens.
- * - The active image is resolved on every hover, not cached at init. That is
- *   what makes variation swaps and flexslider slide changes work with no extra
- *   wiring — whatever is on screen when the cursor arrives is what we zoom.
- * - Theme CSS puts `object-fit: cover` on gallery images (style.css), so the
- *   visible area is a centred crop of the source. Geometry below maps cursor
- *   position through that crop; skipping it would offset the magnified view.
- */
 (function () {
   'use strict';
 
@@ -39,10 +23,6 @@
   var frame = 0;
   var cache = {};      // large-image url -> { ready, ok, w, h, waiting[] }
 
-  /* ----------------------------------------------------------------------
-     Helpers
-     ---------------------------------------------------------------------- */
-
   function clamp(value, min, max) {
     if (max < min) {
       return min;
@@ -60,23 +40,12 @@
     return slide ? slide.querySelector('img') : null;
   }
 
-  /**
-   * Element the lens is positioned against. Clipping to the image stage rather
-   * than the gallery root keeps the lens — and its dimming ring — off the
-   * thumbnail strip, which is a sibling inside the same gallery box.
-   * Flexslider wraps the gallery on init, so this is resolved per hover.
-   */
   function currentStage() {
     return gallery.querySelector('.flex-viewport') ||
       gallery.querySelector('.woocommerce-product-gallery__wrapper') ||
       gallery;
   }
 
-  /**
-   * Highest-resolution source for the image currently on screen.
-   * WooCommerce keeps this on data-large_image and refreshes it on variation
-   * change; the gallery anchor href is the fallback for older markup.
-   */
   function largeSource(img) {
     var link = img.closest('a');
 
@@ -140,11 +109,6 @@
     }
   }
 
-  /**
-   * Where the source image actually paints inside its box, given object-fit.
-   * Returns box-relative coordinates; for `cover` the rect is larger than the
-   * box (overflow is cropped), for `contain` it is smaller (letterboxed).
-   */
   function paintedRect(boxW, boxH, natW, natH, fit) {
     if (!natW || !natH || fit === 'fill') {
       return { x: 0, y: 0, w: boxW, h: boxH };
@@ -159,10 +123,6 @@
 
     return { x: (boxW - w) / 2, y: (boxH - h) / 2, w: w, h: h };
   }
-
-  /* ----------------------------------------------------------------------
-     Layer construction
-     ---------------------------------------------------------------------- */
 
   function build() {
     if (lens) {
@@ -179,10 +139,6 @@
     flyout.setAttribute('aria-hidden', 'true');
     media.appendChild(flyout);
   }
-
-  /* ----------------------------------------------------------------------
-     Geometry
-     ---------------------------------------------------------------------- */
 
   function measure(img, natural) {
     var imgRect = img.getBoundingClientRect();
@@ -340,10 +296,6 @@
     }
   }
 
-  /* ----------------------------------------------------------------------
-     Session lifecycle
-     ---------------------------------------------------------------------- */
-
   function start(img) {
     var url = largeSource(img);
 
@@ -392,10 +344,6 @@
     lens.classList.remove('is-active');
     flyout.classList.remove('is-active');
   }
-
-  /* ----------------------------------------------------------------------
-     Events
-     ---------------------------------------------------------------------- */
 
   function onPointerMove(event) {
     if (event.pointerType && event.pointerType !== 'mouse') {
@@ -500,10 +448,6 @@
       query.addListener(handler);
     }
   }
-
-  /* ----------------------------------------------------------------------
-     Boot
-     ---------------------------------------------------------------------- */
 
   function init() {
     media = document.querySelector('.sft-pdp__col--media');

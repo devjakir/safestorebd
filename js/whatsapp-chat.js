@@ -1,8 +1,3 @@
-/**
- * SafeStore WhatsApp Chat widget.
- * Vanilla JS, no dependencies, loaded deferred. Progressive enhancement:
- * without JS the floating button is a plain wa.me link that still works.
- */
 (function () {
 	'use strict';
 
@@ -24,11 +19,6 @@
 	} catch (e) {
 		config = {};
 	}
-
-	/* ------------------------------------------------------------------
-	 * Online/offline status from business hours, evaluated in the
-	 * business timezone so it is correct for every visitor worldwide.
-	 * ---------------------------------------------------------------- */
 
 	function businessNow() {
 		var tz = config.timezone || 'Asia/Dhaka';
@@ -108,10 +98,6 @@
 
 	refreshStatus();
 	window.setInterval(refreshStatus, 60000);
-
-	/* ------------------------------------------------------------------
-	 * Panel open/close behaviour.
-	 * ---------------------------------------------------------------- */
 
 	if (mode !== 'panel' || !panel || !fab) {
 		return; // Direct mode: the FAB is a plain link.

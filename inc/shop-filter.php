@@ -1,40 +1,9 @@
 <?php
-/**
- * Shop filter bar — render the HUSKY / WOOF product filter above the grid.
- *
- * Ported from the live Code Snippets entry "Show product filter (HUSKY) above
- * shop grid". Once this file is deployed that snippet MUST be deactivated in
- * wp-admin → Snippets, or both copies run and the bar renders twice.
- * See SNIPPETS-MIGRATION.md.
- *
- * Requires the plugin "HUSKY – Products Filter for WooCommerce"
- * (woocommerce-products-filter). Everything here is inert without it —
- * shortcode_exists( 'woof' ) is the guard.
- *
- * Filter *configuration* is not in code: it lives in wp_options under
- * woof_settings and friends (brands, categories, price slider, in-stock,
- * on-sale, ajax/autosubmit). A fresh install needs it set up by hand —
- * SNIPPETS-MIGRATION.md section C is the recipe.
- *
- * HUSKY's own "insert filter automatically" option (woof_set_automatically) is
- * off on purpose, because this file owns placement.
- *
- * @package SafeStore_Minimal
- */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Whether the filter bar should render on this request.
- *
- * Matches the live snippet's CSS gate exactly: the main shop page plus product
- * category and product tag archives. Brand archives (product_brand) are not
- * included — swap in is_product_taxonomy() if you want them covered.
- *
- * @return bool
- */
 function safestore_minimal_shop_filter_enabled() {
 	if ( ! function_exists( 'is_shop' ) ) {
 		return false;
@@ -43,18 +12,7 @@ function safestore_minimal_shop_filter_enabled() {
 	return is_shop() || is_product_category() || is_product_tag();
 }
 
-/**
- * StarTech-style sidebar display types, kept in code so a deploy carries them.
- *
- * Only *how* a filter is drawn changes; which filters exist, AJAX and autosubmit
- * stay in wp-admin. Brands: multi-select drop-down → checkbox list (still
- * multi-select). Categories: drop-down → radio list (still single-select).
- * Price slider gains HUSKY's own from/to number inputs (synced by HUSKY's JS).
- * wp-admin screens read the stored values, so the HUSKY settings page is untouched.
- *
- * @param mixed $settings Stored woof_settings.
- * @return mixed
- */
+// Sidebar display types in code (brands → checkboxes, categories → radios, price → +inputs); filter logic stays in wp-admin.
 function safestore_minimal_woof_display_settings( $settings ) {
 	if ( ! is_array( $settings ) || ( is_admin() && ! wp_doing_ajax() ) ) {
 		return $settings;
@@ -82,16 +40,7 @@ function safestore_minimal_woof_patch_cached_settings() {
 }
 add_action( 'init', 'safestore_minimal_woof_patch_cached_settings', 0 );
 
-/**
- * Whether HUSKY's front-end assets are needed on this request.
- *
- * HUSKY enqueues its JS/CSS on every page. Off the filter pages jQuery is
- * deferred (inc/performance.php), so those scripts ran first and threw
- * "jQuery is not defined" on every page — and nothing there uses them.
- * A page/post that embeds [woof] in its content keeps them.
- *
- * @return bool
- */
+// HUSKY assets only where a filter renders — elsewhere jQuery is deferred and its scripts threw "jQuery is not defined".
 function safestore_minimal_husky_assets_needed() {
 	if ( is_admin() || safestore_minimal_shop_filter_enabled() ) {
 		return true;
@@ -116,14 +65,7 @@ function safestore_minimal_strip_husky_style_tag( $tag, $handle, $href ) {
 }
 add_filter( 'style_loader_tag', 'safestore_minimal_strip_husky_style_tag', 20, 3 );
 
-/**
- * The archive term the visitor is browsing, even on HUSKY's /swoof/ filter URLs.
- *
- * WordPress resolves /product-category/x/swoof/.../ as the shop page, so
- * is_product_taxonomy() is false there; HUSKY still knows the real term.
- *
- * @return WP_Term|null
- */
+// Current archive term, also on /swoof/ URLs (WordPress resolves those as the shop page; HUSKY knows the real term).
 function safestore_minimal_shop_current_term() {
 	if ( function_exists( 'is_product_taxonomy' ) && is_product_taxonomy() ) {
 		$term = get_queried_object();
@@ -138,12 +80,6 @@ function safestore_minimal_shop_current_term() {
 	return null;
 }
 
-/**
- * Load the filter bar stylesheet on shop and product archives only.
- *
- * Replaces the inline <style> block the snippet printed into wp_head, so the
- * rules are cacheable and live with the rest of the theme CSS.
- */
 function safestore_minimal_shop_filter_assets() {
 	if ( ! safestore_minimal_shop_filter_enabled() ) {
 		return;
@@ -163,9 +99,6 @@ function safestore_minimal_shop_filter_assets() {
 }
 add_action( 'wp_enqueue_scripts', 'safestore_minimal_shop_filter_assets', 24 );
 
-/**
- * Load the toolbar behaviour script (mobile toggle + stray-bar dedupe).
- */
 function safestore_minimal_shop_filter_script() {
 	// Also needed on brand archives: woocommerce.php clamps every archive intro and this script adds its Read more toggle.
 	if ( ! safestore_minimal_shop_filter_enabled() && ! ( function_exists( 'is_product_taxonomy' ) && is_product_taxonomy() ) ) {
@@ -187,36 +120,18 @@ function safestore_minimal_shop_filter_script() {
 }
 add_action( 'wp_enqueue_scripts', 'safestore_minimal_shop_filter_script', 25 );
 
-/**
- * WooCommerce core prints the shop page content / term description again via
- * woocommerce_archive_description (the ".page-description" block), duplicating
- * the styled intro the theme renders in its own shop header. Remove both core
- * callbacks — the theme owns the description.
- */
 function safestore_minimal_remove_core_archive_description() {
 	remove_action( 'woocommerce_archive_description', 'woocommerce_taxonomy_archive_description', 10 );
 	remove_action( 'woocommerce_archive_description', 'woocommerce_product_archive_description', 10 );
 }
 add_action( 'init', 'safestore_minimal_remove_core_archive_description' );
 
-/**
- * Whether woocommerce.php should use the sidebar layout and render the filter.
- *
- * @return bool
- */
+// Whether woocommerce.php should use the sidebar layout and render the filter.
 function safestore_minimal_shop_filter_available() {
 	return safestore_minimal_shop_filter_enabled() && shortcode_exists( 'woof' );
 }
 
-/**
- * Render the [woof] filter as the left sidebar card (called from woocommerce.php).
- *
- * Active filters and "Clear all" live in HUSKY's own chip panel above the grid
- * (.woof_products_top_panel), which updates on AJAX — so the card has no reset link.
- * The static guard stops a second card if this is ever called twice; a stray copy
- * printed by the legacy Code Snippets entry is hidden by CSS and removed by
- * js/shop-filter.js.
- */
+// Left sidebar filter (called from woocommerce.php); "Clear all" lives in HUSKY's chip panel, the static guard blocks a second copy.
 function safestore_minimal_shop_filter_render() {
 	static $rendered = false;
 
@@ -245,13 +160,6 @@ function safestore_minimal_shop_filter_render() {
 	<?php
 }
 
-/**
- * Full SEO welcome text below the product grid (shop page 1 only).
- *
- * The shop header now shows a short tagline; the complete shop-page content
- * (edited in wp-admin on the Shop page) moves under the grid where it serves
- * SEO without pushing products below the fold.
- */
 function safestore_minimal_shop_seo_content() {
 	if ( ! is_shop() || is_paged() || is_search() ) {
 		return;

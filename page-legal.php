@@ -1,9 +1,5 @@
 <?php
-/**
- * Template Name: Legal
- *
- * @package safestore-minimal
- */
+// Template Name: Legal
 
 get_header();
 

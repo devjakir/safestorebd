@@ -1,41 +1,13 @@
 <?php
-/**
- * SafeStore WhatsApp Chat
- *
- * Floating WhatsApp chat widget with a branded mini chat panel,
- * online/offline status based on business hours, and an admin
- * settings page (Settings → WhatsApp Chat).
- *
- * Also the single source of truth for every WhatsApp number the theme
- * advertises. Templates must never hardcode a wa.me URL — call
- * safestore_wa_link() / safestore_wa_display() / safestore_wa_lines()
- * instead, so a blocked number is a one-field fix in the admin rather
- * than a hunt through a dozen files.
- *
- * Self-hosted: no third-party scripts, no external requests.
- * Assets are tiny and the JS is loaded deferred, so the widget has
- * no measurable impact on Core Web Vitals.
- *
- * @package SafeStore_Minimal
- */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-/**
- * Settings schema version. Bumped when the stored option shape changes so
- * safestore_wa_maybe_upgrade() can migrate an existing site exactly once.
- */
 if (!defined('SAFESTORE_WA_SCHEMA')) {
     define('SAFESTORE_WA_SCHEMA', 2);
 }
 
-/**
- * Default settings.
- *
- * @return array<string, mixed>
- */
 function safestore_wa_defaults() {
     return array(
         'enabled'      => 1,
@@ -62,11 +34,6 @@ function safestore_wa_defaults() {
     );
 }
 
-/**
- * Get merged settings.
- *
- * @return array<string, mixed>
- */
 function safestore_wa_get_settings() {
     $saved = get_option('safestore_whatsapp_chat', array());
     if (!is_array($saved)) {
@@ -75,15 +42,6 @@ function safestore_wa_get_settings() {
     return array_merge(safestore_wa_defaults(), $saved);
 }
 
-/**
- * One-time migration from the single-number schema (v1) to the two-line
- * schema (v2).
- *
- * A site that was already running stored one number. That number is kept —
- * demoted to the second line — and the new primary takes its place, so no
- * number the shop has already advertised silently disappears. Runs once;
- * afterwards both numbers are edited from Settings → WhatsApp Chat.
- */
 function safestore_wa_maybe_upgrade() {
     $saved = get_option('safestore_whatsapp_chat', null);
     if (!is_array($saved) || array() === $saved) {
@@ -120,22 +78,10 @@ function safestore_wa_maybe_upgrade() {
 }
 add_action('admin_init', 'safestore_wa_maybe_upgrade', 5);
 
-/**
- * Digits-only WhatsApp number in international format.
- *
- * @param string $raw Raw number.
- * @return string
- */
 function safestore_wa_clean_number($raw) {
     return preg_replace('/[^0-9]/', '', (string) $raw);
 }
 
-/**
- * Human-readable form of a digits-only number, e.g. "+880 1811-892291".
- *
- * @param string $digits Digits-only number.
- * @return string
- */
 function safestore_wa_format_number($digits) {
     $digits = safestore_wa_clean_number($digits);
     if ('' === $digits) {
@@ -150,14 +96,6 @@ function safestore_wa_format_number($digits) {
     return '+' . $digits;
 }
 
-/**
- * Every WhatsApp line the shop currently advertises, primary first.
- *
- * Single source of truth — filter `safestore_wa_lines` to change them.
- * Each entry: slot, number (digits), display, label.
- *
- * @return array<int, array<string, string>>
- */
 function safestore_wa_lines() {
     $o     = safestore_wa_get_settings();
     $lines = array();
@@ -184,21 +122,9 @@ function safestore_wa_lines() {
         }
     }
 
-    /**
-     * Filter the advertised WhatsApp lines.
-     *
-     * @param array<int, array<string, string>> $lines Ordered lines, primary first.
-     */
     return apply_filters('safestore_wa_lines', $lines);
 }
 
-/**
- * Resolve one line by slot, falling back to the first available line so the
- * site never renders a dead link when only one number is configured.
- *
- * @param string $slot 'primary' or 'backup'.
- * @return array<string, string>|null
- */
 function safestore_wa_line($slot = 'primary') {
     $lines = safestore_wa_lines();
     if (empty($lines)) {
@@ -212,35 +138,16 @@ function safestore_wa_line($slot = 'primary') {
     return $lines[0];
 }
 
-/**
- * Digits-only number for a slot.
- *
- * @param string $slot 'primary' or 'backup'.
- * @return string
- */
 function safestore_wa_number($slot = 'primary') {
     $line = safestore_wa_line($slot);
     return $line ? $line['number'] : '';
 }
 
-/**
- * Display number for a slot, e.g. "+880 1811-892291".
- *
- * @param string $slot 'primary' or 'backup'.
- * @return string
- */
 function safestore_wa_display($slot = 'primary') {
     $line = safestore_wa_line($slot);
     return $line ? $line['display'] : '';
 }
 
-/**
- * wa.me deep link for a slot.
- *
- * @param string $slot 'primary' or 'backup'.
- * @param string $text Optional pre-filled message. Empty = no prefill.
- * @return string
- */
 function safestore_wa_link($slot = 'primary', $text = '') {
     $number = safestore_wa_number($slot);
     if ('' === $number) {
@@ -253,21 +160,11 @@ function safestore_wa_link($slot = 'primary', $text = '') {
     return $url;
 }
 
-/**
- * The configured pre-filled message.
- *
- * @return string
- */
 function safestore_wa_prefill() {
     $o = safestore_wa_get_settings();
     return (string) $o['prefill'];
 }
 
-/**
- * Whether the widget should render on this request.
- *
- * @return bool
- */
 function safestore_wa_should_render() {
     if (is_admin()) {
         return false;
@@ -276,18 +173,9 @@ function safestore_wa_should_render() {
     if (empty($o['enabled']) || array() === safestore_wa_lines()) {
         return false;
     }
-    /**
-     * Allow hiding the widget on specific pages.
-     *
-     * @param bool $render Whether to render the widget.
-     */
     return (bool) apply_filters('safestore_wa_render', true);
 }
 
-/**
- * Feed the primary number into the existing PDP contact-row filter
- * (only when no other code has provided one).
- */
 add_filter('safestore_minimal_whatsapp_e164', function ($number) {
     if (!empty($number)) {
         return $number;
@@ -299,10 +187,6 @@ add_filter('safestore_minimal_whatsapp_e164', function ($number) {
     return safestore_wa_number('primary');
 });
 
-/**
- * Enqueue widget assets. CSS is a few KB; JS is deferred so it never
- * blocks rendering or delays LCP/INP.
- */
 function safestore_wa_enqueue_assets() {
     if (!safestore_wa_should_render()) {
         return;
@@ -336,25 +220,10 @@ function safestore_wa_enqueue_assets() {
 }
 add_action('wp_enqueue_scripts', 'safestore_wa_enqueue_assets', 20);
 
-/**
- * WhatsApp glyph SVG.
- *
- * @param string $class CSS class.
- * @return string
- */
 function safestore_wa_icon_svg($class) {
     return '<svg class="' . esc_attr($class) . '" viewBox="0 0 24 24" width="24" height="24" fill="currentColor" overflow="hidden" aria-hidden="true" focusable="false"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.075-.148-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>';
 }
 
-/**
- * Render an icon + phone-number WhatsApp CTA link, used in place of a bare
- * "WhatsApp" text label wherever the theme links out to wa.me.
- *
- * @param string $href       WhatsApp deep link (wa.me URL).
- * @param string $phone      Display phone number, e.g. "+880 1811-892291".
- * @param string $class      Extra classes for the anchor (space-separated).
- * @return string
- */
 function safestore_wa_cta_link($href, $phone, $class = '') {
     if ('' === (string) $href) {
         return '';
@@ -376,9 +245,6 @@ function safestore_wa_cta_link($href, $phone, $class = '') {
     );
 }
 
-/**
- * Render the widget in the footer.
- */
 function safestore_wa_render_widget() {
     if (!safestore_wa_should_render()) {
         return;
@@ -396,11 +262,6 @@ function safestore_wa_render_widget() {
         // WP timezone left at its default — fall back to the shop's timezone.
         $timezone = 'Asia/Dhaka';
     }
-    /**
-     * Timezone used to evaluate the business hours for the online badge.
-     *
-     * @param string $timezone IANA timezone name or ±HH:MM offset.
-     */
     $timezone = apply_filters('safestore_wa_timezone', $timezone);
 
     $config = array(
@@ -486,13 +347,6 @@ function safestore_wa_render_widget() {
 }
 add_action('wp_footer', 'safestore_wa_render_widget', 20);
 
-/* -------------------------------------------------------------------------
- * Admin settings (Settings → WhatsApp Chat)
- * ---------------------------------------------------------------------- */
-
-/**
- * Register the option.
- */
 function safestore_wa_register_settings() {
     register_setting(
         'safestore_whatsapp_chat',
@@ -506,12 +360,6 @@ function safestore_wa_register_settings() {
 }
 add_action('admin_init', 'safestore_wa_register_settings');
 
-/**
- * Sanitize settings.
- *
- * @param mixed $input Raw input.
- * @return array<string, mixed>
- */
 function safestore_wa_sanitize_settings($input) {
     $d = safestore_wa_defaults();
     if (!is_array($input)) {
@@ -570,9 +418,6 @@ function safestore_wa_sanitize_settings($input) {
     return $out;
 }
 
-/**
- * Add the settings page.
- */
 function safestore_wa_admin_menu() {
     add_options_page(
         __('WhatsApp Chat', 'safestore-minimal'),
@@ -584,9 +429,6 @@ function safestore_wa_admin_menu() {
 }
 add_action('admin_menu', 'safestore_wa_admin_menu');
 
-/**
- * Render the settings page.
- */
 function safestore_wa_settings_page() {
     if (!current_user_can('manage_options')) {
         return;

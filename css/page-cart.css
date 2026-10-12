@@ -19,9 +19,6 @@
   color: var(--ss-c-d6001c);
 }
 
-/* ==========================
-   Modern Cart Design
-=========================== */
 body.woocommerce-cart {
   background: #f6f7fb;
 }
@@ -264,8 +261,6 @@ body.woocommerce-cart {
   }
 }
 
-/* Cart & checkout page title card (page-cart.css loads on cart, checkout
-   and account, so both halves of this rule are always present). */
 .woocommerce-cart h1,
 .woocommerce-checkout h1 {
   background: var(--ss-white);

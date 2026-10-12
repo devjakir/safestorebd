@@ -1,8 +1,3 @@
-/**
- * SafeStoreBD — blog article enhancements (single post only).
- *   • Reading progress bar under the header.
- *   • "Copy link" button: native share sheet on phones, clipboard elsewhere.
- */
 (function () {
 	'use strict';
 

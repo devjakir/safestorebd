@@ -1,25 +1,3 @@
-/**
- * SafeStoreBD — Site-wide copy to clipboard.
- *
- * Two ways a value becomes copyable:
- *
- *   1. Explicit — any element carrying `data-sft-copy="<value>"` is handled by
- *      the delegated click listener below. The shared contact component
- *      (safestore_contact_item / safestore_contact_line) renders its buttons
- *      this way, so the footer and the homepage support bar are covered on
- *      every page.
- *   2. Automatic — plain `tel:` / `mailto:` / `wa.me` links anywhere in the
- *      page content (policy pages, contact page, careers, …) get a small copy
- *      button appended after them, so a contact detail is copyable site-wide
- *      without touching every template.
- *
- * Progressive enhancement: without JS the links keep working exactly as before.
- * Uses the async Clipboard API where available and falls back to a hidden
- * textarea + execCommand on insecure origins (plain-HTTP staging, older
- * in-app browsers).
- *
- * Vanilla JS, no dependencies.
- */
 (function () {
   'use strict';
 
@@ -43,13 +21,6 @@
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
     '<path d="M20 6 9 17l-5-5"/></svg>';
 
-  /**
-   * Translated string with an English fallback.
-   *
-   * @param {string} key
-   * @param {string} fallback
-   * @return {string}
-   */
   function t(key, fallback) {
     return typeof I18N[key] === 'string' && I18N[key] !== '' ? I18N[key] : fallback;
   }
@@ -60,17 +31,6 @@
     }
   }
 
-  /* ---------------------------------------------------------------------
-   * Clipboard write
-   * ------------------------------------------------------------------ */
-
-  /**
-   * Legacy copy path for insecure contexts, where navigator.clipboard is
-   * undefined. Restores the user's existing selection afterwards.
-   *
-   * @param {string} text
-   * @return {Promise}
-   */
   function legacyWrite(text) {
     return new Promise(function (resolve, reject) {
       var field = document.createElement('textarea');
@@ -113,10 +73,6 @@
     });
   }
 
-  /**
-   * @param {string} text
-   * @return {Promise}
-   */
   function writeText(text) {
     if (navigator.clipboard && window.isSecureContext && navigator.clipboard.writeText) {
       return navigator.clipboard.writeText(text).catch(function () {
@@ -127,16 +83,6 @@
     return legacyWrite(text);
   }
 
-  /* ---------------------------------------------------------------------
-   * Feedback — button state + one shared live region
-   * ------------------------------------------------------------------ */
-
-  /**
-   * The polite live region rendered in the footer. Created on demand so the
-   * script also works if the markup hook is filtered off.
-   *
-   * @return {HTMLElement}
-   */
   function liveRegion() {
     var node = document.getElementById('sft-copy-live');
     if (!node) {
@@ -160,11 +106,6 @@
     }, 60);
   }
 
-  /**
-   * Restore a trigger after its confirmation bubble is dismissed.
-   *
-   * @param {HTMLElement} trigger
-   */
   function clearFlash(trigger) {
     if (!trigger) {
       return;
@@ -181,19 +122,6 @@
     }
   }
 
-  /**
-   * Flip a trigger into its transient "Copied" / "Press Ctrl+C" state.
-   *
-   * The visible bubble uses a short confirmation. The live region keeps the
-   * longer “{value} copied” wording for screen readers. The native `title`
-   * attribute is removed for the duration — updating it on tap made mobile
-   * browsers flash their own tooltip and dismiss it as soon as the gesture
-   * ended, which looked like the confirmation disappearing immediately.
-   *
-   * @param {HTMLElement} trigger
-   * @param {boolean}     ok
-   * @param {string}      message
-   */
   function flash(trigger, ok, message) {
     var stateClass = ok ? 'is-copied' : 'is-copy-failed';
     var visual = ok ? t('copied', 'Copied!') : message;
@@ -225,18 +153,6 @@
     announce(message);
   }
 
-  /* ---------------------------------------------------------------------
-   * Copy trigger handling (event delegation — works for markup added later)
-   * ------------------------------------------------------------------ */
-
-  /**
-   * Value a trigger should place on the clipboard. Falls back to the text of
-   * the element referenced by `data-sft-copy-target` when the attribute is
-   * empty, so a value rendered elsewhere can be copied without duplicating it.
-   *
-   * @param {HTMLElement} trigger
-   * @return {string}
-   */
   function valueFor(trigger) {
     var value = trigger.getAttribute('data-sft-copy') || '';
     if (value !== '') {
@@ -326,18 +242,8 @@
     }
   });
 
-  /* ---------------------------------------------------------------------
-   * Automatic enhancement of plain contact links
-   * ------------------------------------------------------------------ */
-
   var AUTO_SELECTOR = 'a[href^="tel:"], a[href^="mailto:"], a[href*="wa.me/"], a[href*="api.whatsapp.com/send"]';
 
-  /**
-   * Copyable value + accessible wording for a contact link.
-   *
-   * @param {HTMLAnchorElement} link
-   * @return {{value: string, noun: string}|null}
-   */
   function describeLink(link) {
     var href = link.getAttribute('href') || '';
 
@@ -367,14 +273,6 @@
     return null;
   }
 
-  /**
-   * Build a copy button for a value.
-   *
-   * @param {string} value
-   * @param {string} noun    e.g. "Email address" — used for the accessible name.
-   * @param {string} variant Extra modifier class.
-   * @return {HTMLButtonElement}
-   */
   function buildButton(value, noun, variant) {
     var copyLabel = t('copy', 'Copy %s').replace('%s', noun.toLowerCase());
     var doneLabel = t('copiedNoun', '%s copied').replace('%s', noun);
@@ -395,12 +293,6 @@
     return btn;
   }
 
-  /**
-   * Append a copy button after every plain contact link in `root` that does
-   * not already have one.
-   *
-   * @param {ParentNode} root
-   */
   function enhance(root) {
     var links = root.querySelectorAll ? root.querySelectorAll(AUTO_SELECTOR) : [];
 
@@ -431,10 +323,6 @@
     });
   }
 
-  /**
-   * Watch for markup injected after load (WooCommerce fragments, AJAX
-   * templates) so late contact links get the same treatment.
-   */
   function observe() {
     if (!window.MutationObserver) {
       return;

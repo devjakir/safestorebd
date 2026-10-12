@@ -178,17 +178,7 @@
   padding-bottom: clamp(32px, 4vw, 44px);
 }@media (max-width: 720px) {}
 
-/* ==========================================================================
-   Unified pre-footer CTA banner (.sft-page-cta)
 
-   Sits directly on the site footer as its top shelf. Two dark bands may only
-   read as intentional if they touch — a light strip between them looks like a
-   rendering fault — so the page wrapper's bottom padding is removed here and
-   the band uses the footer's own --sfx-bg-alt tone one step above #081621.
-   ========================================================================== */
-
-/* The page wrapper pads its own bottom; that padding is what put a light
-   strip between this band and the footer. Drop it when the banner is last. */
 .sft-about:has(> .sft-page-cta) {
   padding-bottom: 0;
 }

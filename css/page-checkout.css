@@ -2,9 +2,6 @@
 
 /* ACR customizations start for WooCommerce */
 
-/* ===========================
-  Classic Checkout
-=============================*/
 form.checkout.woocommerce-checkout {
   display: flex;
   flex-direction: row;

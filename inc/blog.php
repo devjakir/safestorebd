@@ -1,29 +1,9 @@
 <?php
-/**
- * SafeStoreBD — Blog.
- *
- * Wires the WordPress posts into the theme: seeds the /blog/ posts page,
- * loads the blog stylesheet only on blog views, and provides the helpers the
- * templates use (breadcrumb, meta, reading time, share links, related posts,
- * pagination). Templates: home.php, single.php, archive.php, search.php,
- * comments.php, templates/blog-card.php.
- *
- * @package safestore-minimal
- */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/* --------------------------------------------------------------------------
- * Posts page (/blog/)
- * ----------------------------------------------------------------------- */
-
-/**
- * Create the Blog page once and make it the posts page — only when the site
- * uses a static front page and no posts page has been chosen yet, so an
- * admin's own Settings → Reading choice is never overwritten.
- */
 function safestore_blog_seed_page() {
 	if ( get_option( 'safestore_blog_page_v1' ) ) {
 		return;
@@ -85,11 +65,6 @@ add_action(
 	20
 );
 
-/**
- * URL of the blog index.
- *
- * @return string
- */
 function safestore_blog_url() {
 	$page_id = (int) get_option( 'page_for_posts' );
 	if ( $page_id && 'publish' === get_post_status( $page_id ) ) {
@@ -98,32 +73,18 @@ function safestore_blog_url() {
 	return home_url( '/blog/' );
 }
 
-/**
- * Title of the blog index (the posts page title, or "Blog").
- *
- * @return string
- */
 function safestore_blog_title() {
 	$page_id = (int) get_option( 'page_for_posts' );
 	$title   = $page_id ? get_the_title( $page_id ) : '';
 	return '' !== $title ? $title : __( 'Blog', 'safestore-minimal' );
 }
 
-/**
- * True on every blog view: index, single post, post archives, post search.
- *
- * @return bool
- */
 function safestore_is_blog_view() {
 	if ( is_home() || is_singular( 'post' ) || is_category() || is_tag() || is_author() || is_date() ) {
 		return true;
 	}
 	return is_search() && 'post' === get_query_var( 'post_type' );
 }
-
-/* --------------------------------------------------------------------------
- * Assets
- * ----------------------------------------------------------------------- */
 
 add_action(
 	'wp_enqueue_scripts',
@@ -158,13 +119,6 @@ add_action(
 	30
 );
 
-/* --------------------------------------------------------------------------
- * Query + excerpt tuning
- * ----------------------------------------------------------------------- */
-
-/**
- * Page sizes that fill the 3-column grid evenly.
- */
 add_action(
 	'pre_get_posts',
 	static function ( $query ) {
@@ -229,17 +183,6 @@ add_filter(
 	20
 );
 
-/* --------------------------------------------------------------------------
- * Template helpers
- * ----------------------------------------------------------------------- */
-
-/**
- * Estimated reading time in minutes. Counts whitespace-separated words so
- * Bangla text is measured correctly (str_word_count only knows Latin).
- *
- * @param int|WP_Post|null $post Post.
- * @return int
- */
 function safestore_blog_reading_minutes( $post = null ) {
 	$post = get_post( $post );
 	if ( ! $post ) {
@@ -250,12 +193,6 @@ function safestore_blog_reading_minutes( $post = null ) {
 	return max( 1, (int) ceil( $words / 200 ) );
 }
 
-/**
- * Primary category of a post (Rank Math primary term when set).
- *
- * @param int|WP_Post|null $post Post.
- * @return WP_Term|null
- */
 function safestore_blog_primary_category( $post = null ) {
 	$post = get_post( $post );
 	if ( ! $post ) {
@@ -272,11 +209,6 @@ function safestore_blog_primary_category( $post = null ) {
 	return ! empty( $cats ) ? $cats[0] : null;
 }
 
-/**
- * Category pill for a card/post.
- *
- * @param int|WP_Post|null $post Post.
- */
 function safestore_blog_category_pill( $post = null ) {
 	$cat = safestore_blog_primary_category( $post );
 	if ( ! $cat || 'uncategorized' === $cat->slug ) {
@@ -289,11 +221,6 @@ function safestore_blog_category_pill( $post = null ) {
 	);
 }
 
-/**
- * Date · reading time line.
- *
- * @param int|WP_Post|null $post Post.
- */
 function safestore_blog_meta( $post = null ) {
 	$post    = get_post( $post );
 	$minutes = safestore_blog_reading_minutes( $post );
@@ -311,13 +238,6 @@ function safestore_blog_meta( $post = null ) {
 	<?php
 }
 
-/**
- * Card meta row: the date on the left, the reading time on the right, each
- * behind a small icon. Separate from safestore_blog_meta(), which runs inline
- * in the article hero.
- *
- * @param int|WP_Post|null $post Post.
- */
 function safestore_blog_card_meta( $post = null ) {
 	$post    = get_post( $post );
 	$minutes = safestore_blog_reading_minutes( $post );
@@ -338,9 +258,6 @@ function safestore_blog_card_meta( $post = null ) {
 	<?php
 }
 
-/**
- * Visual breadcrumb: Home / Blog / [Category] / [Current].
- */
 function safestore_blog_breadcrumb() {
 	$items   = array();
 	$items[] = array( __( 'Home', 'safestore-minimal' ), home_url( '/' ) );
@@ -378,9 +295,6 @@ function safestore_blog_breadcrumb() {
 	<?php
 }
 
-/**
- * Category chips for the blog index / archives (only categories with posts).
- */
 function safestore_blog_category_nav() {
 	$cats = get_categories(
 		array(
@@ -406,9 +320,6 @@ function safestore_blog_category_nav() {
 	<?php
 }
 
-/**
- * Search form scoped to posts.
- */
 function safestore_blog_search_form() {
 	$value = ( is_search() && 'post' === get_query_var( 'post_type' ) ) ? get_search_query() : '';
 	?>
@@ -421,9 +332,6 @@ function safestore_blog_search_form() {
 	<?php
 }
 
-/**
- * Numbered pagination for blog lists.
- */
 function safestore_blog_pagination() {
 	the_posts_pagination(
 		array(
@@ -436,11 +344,6 @@ function safestore_blog_pagination() {
 	);
 }
 
-/**
- * Share links for the current post. No third-party scripts: plain share
- * URLs plus a copy-link button (js/blog.js uses the native share sheet on
- * phones when available).
- */
 function safestore_blog_share() {
 	$url   = rawurlencode( get_permalink() );
 	$title = rawurlencode( wp_strip_all_tags( get_the_title() ) );
@@ -465,12 +368,6 @@ function safestore_blog_share() {
 	<?php
 }
 
-/**
- * Related posts: same categories first, topped up with the latest posts.
- *
- * @param int $count Number of posts.
- * @return WP_Post[]
- */
 function safestore_blog_related_posts( $count = 3 ) {
 	$post_id = get_the_ID();
 	$cats    = wp_get_post_categories( $post_id );
@@ -507,10 +404,6 @@ function safestore_blog_related_posts( $count = 3 ) {
 
 	return $found;
 }
-
-/* --------------------------------------------------------------------------
- * Site wiring
- * ----------------------------------------------------------------------- */
 
 /** Blog link on the HTML sitemap page (Company group). */
 add_filter(

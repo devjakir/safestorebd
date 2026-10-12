@@ -1,13 +1,4 @@
 <?php
-/**
- * Search results.
- *
- * Article search (post_type=post, from the blog search box) gets the blog
- * layout. Every other search keeps the theme's existing behaviour (the
- * header search is product-only and is routed by WooCommerce).
- *
- * @package safestore-minimal
- */
 
 if ( 'post' !== get_query_var( 'post_type' ) ) {
 	require get_template_directory() . '/index.php';

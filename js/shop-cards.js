@@ -1,10 +1,3 @@
-/**
- * SafeStoreBD — Shop product-card enhancements.
- *
- * Category list: shown clamped to 2 lines with an ellipsis. When the full list
- * overflows, a "Show more / Show less" toggle is revealed so shoppers can
- * expand it without breaking the card layout. Pure vanilla JS, no dependencies.
- */
 (function () {
   'use strict';
 

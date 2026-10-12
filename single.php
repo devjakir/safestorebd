@@ -1,10 +1,4 @@
 <?php
-/**
- * Single blog post.
- * (Single products use woocommerce.php; pages use page templates.)
- *
- * @package safestore-minimal
- */
 
 get_header();
 

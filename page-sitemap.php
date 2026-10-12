@@ -1,9 +1,5 @@
 <?php
-/**
- * Template Name: Sitemap
- *
- * @package safestore-minimal
- */
+// Template Name: Sitemap
 
 get_header();
 

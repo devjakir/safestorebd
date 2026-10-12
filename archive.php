@@ -1,10 +1,4 @@
 <?php
-/**
- * Post archives: category, tag, author, date.
- * (WooCommerce product archives use woocommerce.php.)
- *
- * @package safestore-minimal
- */
 
 get_header();
 

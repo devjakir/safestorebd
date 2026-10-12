@@ -1,70 +1,23 @@
 <?php
-/**
- * Footwear sizing — Safety Shoes (EU 39–44)
- *
- * Storefront logic:
- * - Restrict Size options to 39–44 for footwear products
- * - Show Size archive filters only on footwear categories
- * - Validate cart quantity against per-size (variation) stock
- * - Retail vs B2B quantity limits for Bangladesh buyers
- *
- * Admin conversion / attribute creation stays in size-variations-setup.php.
- *
- * @package SafeStore_Minimal
- */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Allowed EU sizes for Safety Shoes.
- *
- * @return string[]
- */
 function safestore_footwear_allowed_sizes() {
 	$sizes = function_exists( 'safestore_size_terms' )
 		? safestore_size_terms()
 		: array( '39', '40', '41', '42', '43', '44' );
 
-	/**
-	 * Filter allowed footwear sizes.
-	 *
-	 * @param string[] $sizes Size labels/slugs.
-	 */
 	return apply_filters( 'safestore_footwear_allowed_sizes', $sizes );
 }
 
-/**
- * Category slugs treated as footwear (show size UI / filters).
- *
- * The category was renamed safety-shoes -> safety-shoe, which switched the
- * whole size feature off without any error: every gate in this file runs
- * through safestore_is_footwear_product(), so the PDP size selector, the
- * size matrix and the "choose a size" cart validation all just stopped
- * appearing. Both spellings are listed so a rename in either direction can
- * never do that again — has_term() simply returns false for a slug that
- * does not exist, so the extra candidate costs nothing.
- *
- * @return string[]
- */
 function safestore_footwear_category_slugs() {
 	$slugs = array( 'safety-shoe', 'safety-shoes' );
 
-	/**
-	 * Filter footwear category slugs.
-	 *
-	 * @param string[] $slugs Product category slugs.
-	 */
 	return apply_filters( 'safestore_footwear_category_slugs', $slugs );
 }
 
-/**
- * Whether a product belongs to a footwear category.
- *
- * @param int|WC_Product|null $product Product or ID.
- * @return bool
- */
 function safestore_is_footwear_product( $product = null ) {
 	if ( null === $product ) {
 		$product = wc_get_product( get_the_ID() );
@@ -90,11 +43,6 @@ function safestore_is_footwear_product( $product = null ) {
 	return (bool) apply_filters( 'safestore_is_footwear_product', false, $product );
 }
 
-/**
- * Whether the current archive is a footwear category (or child of one).
- *
- * @return bool
- */
 function safestore_is_footwear_archive() {
 	if ( ! function_exists( 'is_product_category' ) || ! is_product_category() ) {
 		return false;
@@ -121,11 +69,6 @@ function safestore_is_footwear_archive() {
 	return (bool) apply_filters( 'safestore_is_footwear_archive', false, $term );
 }
 
-/**
- * Whether the current customer should get B2B quantity limits.
- *
- * @return bool
- */
 function safestore_is_b2b_customer() {
 	$user = wp_get_current_user();
 	$roles = (array) $user->roles;
@@ -137,21 +80,9 @@ function safestore_is_b2b_customer() {
 
 	$is_b2b = (bool) array_intersect( $roles, $b2b_roles );
 
-	/**
-	 * Filter B2B customer detection (Bangladesh wholesale / corporate buyers).
-	 *
-	 * @param bool    $is_b2b Whether B2B rules apply.
-	 * @param WP_User $user   Current user.
-	 */
 	return (bool) apply_filters( 'safestore_is_b2b_customer', $is_b2b, $user );
 }
 
-/**
- * Quantity limits for a purchasable product/variation.
- *
- * @param WC_Product $product Product or variation.
- * @return array{min: int, max: int, step: int}
- */
 function safestore_footwear_quantity_limits( $product ) {
 	$is_b2b = safestore_is_b2b_customer();
 
@@ -179,12 +110,6 @@ function safestore_footwear_quantity_limits( $product ) {
 	);
 }
 
-/**
- * Normalize a size option to a comparable slug/label.
- *
- * @param mixed $option Term ID, slug, or name.
- * @return string
- */
 function safestore_footwear_normalize_size_option( $option ) {
 	$option = is_string( $option ) || is_numeric( $option ) ? (string) $option : '';
 	if ( '' === $option ) {
@@ -201,12 +126,6 @@ function safestore_footwear_normalize_size_option( $option ) {
 	return sanitize_title( $option );
 }
 
-/**
- * Whether a size value is in the allowed 39–44 set.
- *
- * @param mixed $option Size option.
- * @return bool
- */
 function safestore_footwear_is_allowed_size( $option ) {
 	$normalized = safestore_footwear_normalize_size_option( $option );
 	$allowed    = array_map( 'sanitize_title', safestore_footwear_allowed_sizes() );
@@ -215,16 +134,6 @@ function safestore_footwear_is_allowed_size( $option ) {
 		|| in_array( (string) $option, safestore_footwear_allowed_sizes(), true );
 }
 
-/* --------------------------------------------------------------------------
- * 1) Category display — prefer a clean primary category on cards
- * -------------------------------------------------------------------------- */
-
-/**
- * Plain category label for product cards (prefers footwear / primary term).
- *
- * @param int $product_id Product ID.
- * @return string Category name or empty.
- */
 function safestore_get_product_category_label( $product_id ) {
 	$product_id = (int) $product_id;
 	if ( ! $product_id ) {
@@ -259,16 +168,6 @@ function safestore_get_product_category_label( $product_id ) {
 	return $terms[0]->name;
 }
 
-/* --------------------------------------------------------------------------
- * 2) Restrict Size options to 39–44 on footwear products
- * -------------------------------------------------------------------------- */
-
-/**
- * Limit variation dropdown options to allowed sizes for footwear.
- *
- * @param array $args Dropdown args.
- * @return array
- */
 function safestore_footwear_restrict_dropdown_options( $args ) {
 	if ( empty( $args['attribute'] ) || 'pa_size' !== $args['attribute'] ) {
 		return $args;
@@ -294,13 +193,6 @@ function safestore_footwear_restrict_dropdown_options( $args ) {
 }
 add_filter( 'woocommerce_dropdown_variation_attribute_options_args', 'safestore_footwear_restrict_dropdown_options', 20 );
 
-/**
- * Hide variations whose size is outside 39–44 for footwear.
- *
- * @param bool                 $active    Whether variation is active.
- * @param WC_Product_Variation $variation Variation.
- * @return bool
- */
 function safestore_footwear_variation_is_active( $active, $variation ) {
 	if ( ! $active || ! $variation instanceof WC_Product_Variation ) {
 		return $active;
@@ -325,14 +217,6 @@ function safestore_footwear_variation_is_active( $active, $variation ) {
 }
 add_filter( 'woocommerce_variation_is_active', 'safestore_footwear_variation_is_active', 10, 2 );
 
-/**
- * Enrich available variation payload with stock + quantity limits.
- *
- * @param array                $data      Variation data for JS.
- * @param WC_Product_Variable  $product   Parent product.
- * @param WC_Product_Variation $variation Variation.
- * @return array
- */
 function safestore_footwear_available_variation( $data, $product, $variation ) {
 	if ( ! safestore_is_footwear_product( $product ) ) {
 		return $data;
@@ -470,21 +354,6 @@ function safestore_footwear_disable_unavailable_options( $html, $product ) {
 	);
 }
 
-/**
- * Render Size as button swatches (39–44) on footwear PDPs.
- *
- * @param string $html HTML.
- * @param array  $args Args.
- * @return string
- */
-/**
- * Keep WooCommerce's native Size <select> in the DOM (required for orders),
- * but mark it so CSS can hide it. Swatches are built in JS from its options.
- *
- * @param string $html Dropdown HTML.
- * @param array  $args Args.
- * @return string
- */
 function safestore_footwear_size_swatches_html( $html, $args ) {
 	$attribute_key = isset( $args['attribute'] ) ? sanitize_title( $args['attribute'] ) : '';
 	if ( ! in_array( $attribute_key, array( 'pa_size', 'size' ), true ) ) {
@@ -510,12 +379,6 @@ function safestore_footwear_size_swatches_html( $html, $args ) {
 }
 add_filter( 'woocommerce_dropdown_variation_attribute_options_html', 'safestore_footwear_size_swatches_html', 20, 2 );
 
-/**
- * Mark footwear PDPs for CSS/JS targeting.
- *
- * @param string[] $classes Body classes.
- * @return string[]
- */
 function safestore_footwear_body_class( $classes ) {
 	if ( function_exists( 'is_product' ) && is_product() && safestore_is_footwear_product() ) {
 		$classes[] = 'sft-pdp-footwear';
@@ -524,15 +387,6 @@ function safestore_footwear_body_class( $classes ) {
 }
 add_filter( 'body_class', 'safestore_footwear_body_class' );
 
-/* --------------------------------------------------------------------------
- * 3) Archive Size filter — removed (PDP-only size selection)
- * -------------------------------------------------------------------------- */
-
-/**
- * Selected size filters from the request.
- *
- * @return string[]
- */
 function safestore_footwear_requested_sizes() {
 	$raw = array();
 
@@ -563,11 +417,6 @@ function safestore_footwear_requested_sizes() {
 	return array_values( array_unique( $out ) );
 }
 
-/**
- * Apply pa_size tax query on footwear archives when filters are present.
- *
- * @param WP_Query $query Query.
- */
 function safestore_footwear_product_query( $query ) {
 	if ( is_admin() || ! $query->is_main_query() ) {
 		return;
@@ -595,13 +444,6 @@ function safestore_footwear_product_query( $query ) {
 // Archive size-filter UI + query hook removed — size is selected on the PDP only.
 // Helpers above remain available if a filter UI is reintroduced later.
 
-/**
- * Hide WooCommerce layered-nav / attribute filter widgets for Size on non-footwear views.
- *
- * @param array $instance Widget instance.
- * @param array $widget   Widget settings.
- * @return array|false
- */
 function safestore_footwear_hide_size_widgets( $instance, $widget ) {
 	if ( empty( $instance ) || ! is_array( $instance ) ) {
 		return $instance;
@@ -627,18 +469,6 @@ function safestore_footwear_hide_size_widgets( $instance, $widget ) {
 }
 add_filter( 'widget_display_callback', 'safestore_footwear_hide_size_widgets', 10, 2 );
 
-/* --------------------------------------------------------------------------
- * 4) Size-wise stock validation (cart / checkout)
- * -------------------------------------------------------------------------- */
-
-/**
- * Resolve the product used for stock checks (variation preferred).
- *
- * @param int   $product_id   Parent ID.
- * @param int   $variation_id Variation ID.
- * @param array $variation    Attribute array.
- * @return WC_Product|false
- */
 function safestore_footwear_resolvable_product( $product_id, $variation_id = 0, $variation = array() ) {
 	if ( $variation_id ) {
 		$product = wc_get_product( $variation_id );
@@ -659,16 +489,6 @@ function safestore_footwear_resolvable_product( $product_id, $variation_id = 0, 
 	return $product ? $product : false;
 }
 
-/**
- * Validate add-to-cart quantity against per-size stock + retail/B2B caps.
- *
- * @param bool  $passed       Whether validation passed.
- * @param int   $product_id   Product ID.
- * @param int   $quantity     Quantity.
- * @param int   $variation_id Variation ID.
- * @param array $variations   Variation attributes.
- * @return bool
- */
 function safestore_footwear_add_to_cart_validation( $passed, $product_id, $quantity, $variation_id = 0, $variations = array() ) {
 	if ( ! $passed ) {
 		return $passed;
@@ -729,15 +549,6 @@ function safestore_footwear_add_to_cart_validation( $passed, $product_id, $quant
 }
 add_filter( 'woocommerce_add_to_cart_validation', 'safestore_footwear_add_to_cart_validation', 20, 5 );
 
-/**
- * Validate cart updates against per-size stock.
- *
- * @param bool   $passed         Passed.
- * @param string $cart_item_key  Cart key.
- * @param array  $values         Cart item.
- * @param int    $quantity       New quantity.
- * @return bool
- */
 function safestore_footwear_update_cart_validation( $passed, $cart_item_key, $values, $quantity ) {
 	if ( ! $passed ) {
 		return $passed;
@@ -768,13 +579,6 @@ function safestore_footwear_update_cart_validation( $passed, $cart_item_key, $va
 }
 add_filter( 'woocommerce_update_cart_validation', 'safestore_footwear_update_cart_validation', 20, 4 );
 
-/**
- * Quantity input args — variation-aware max for footwear.
- *
- * @param array      $args    Input args.
- * @param WC_Product $product Product.
- * @return array
- */
 function safestore_footwear_quantity_input_args( $args, $product ) {
 	if ( ! $product instanceof WC_Product || ! safestore_is_footwear_product( $product ) ) {
 		return $args;
@@ -800,13 +604,6 @@ function safestore_footwear_quantity_input_args( $args, $product ) {
 }
 add_filter( 'woocommerce_quantity_input_args', 'safestore_footwear_quantity_input_args', 20, 2 );
 
-/**
- * Show size in cart line item name for clarity.
- *
- * @param string $name Name HTML.
- * @param array  $cart_item Cart item.
- * @return string
- */
 function safestore_footwear_cart_item_name( $name, $cart_item ) {
 	if ( empty( $cart_item['variation_id'] ) ) {
 		return $name;
@@ -833,13 +630,6 @@ function safestore_footwear_cart_item_name( $name, $cart_item ) {
 }
 add_filter( 'woocommerce_cart_item_name', 'safestore_footwear_cart_item_name', 20, 2 );
 
-/* --------------------------------------------------------------------------
- * 5) B2B multi-size quantity matrix on footwear PDPs
- * -------------------------------------------------------------------------- */
-
-/**
- * Output a size × quantity matrix for B2B / bulk footwear orders.
- */
 function safestore_footwear_b2b_size_matrix() {
 	global $product;
 
@@ -951,9 +741,6 @@ function safestore_footwear_b2b_size_matrix() {
 }
 add_action( 'woocommerce_after_single_product_summary', 'safestore_footwear_b2b_size_matrix', 6 );
 
-/**
- * AJAX: add multiple size variations in one request.
- */
 function safestore_footwear_ajax_add_sizes() {
 	check_ajax_referer( 'safestore_footwear_sizing', 'nonce' );
 
@@ -1033,13 +820,6 @@ function safestore_footwear_ajax_add_sizes() {
 add_action( 'wp_ajax_safestore_add_sizes', 'safestore_footwear_ajax_add_sizes' );
 add_action( 'wp_ajax_nopriv_safestore_add_sizes', 'safestore_footwear_ajax_add_sizes' );
 
-/* --------------------------------------------------------------------------
- * Assets
- * -------------------------------------------------------------------------- */
-
-/**
- * Enqueue footwear sizing CSS/JS when relevant.
- */
 function safestore_footwear_enqueue_assets() {
 	if ( ! class_exists( 'WooCommerce' ) ) {
 		return;

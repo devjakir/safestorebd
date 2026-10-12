@@ -1,9 +1,4 @@
 <?php
-/**
- * Product card used inside the shop / archive loops.
- *
- * @package safestore-minimal
- */
 
 defined('ABSPATH') || exit;
 
@@ -40,6 +35,8 @@ if ($product->is_on_sale()) {
     }
 }
 
+$is_hot = function_exists('safestore_product_is_hot') && safestore_product_is_hot($product);
+
 $category_text = function_exists('safestore_get_product_category_label')
     ? safestore_get_product_category_label($product_id)
     : trim(wp_strip_all_tags(wc_get_product_category_list($product_id, ', ', '', '')));
@@ -47,8 +44,15 @@ $category_text = function_exists('safestore_get_product_category_label')
 <li <?php wc_product_class('sft-product-card', $product); ?>>
 
     <div class="sft-product-card__media">
-        <?php if ('' !== $badge_text) : ?>
-            <span class="sft-product-card__badge"><?php echo esc_html($badge_text); ?></span>
+        <?php if ($is_hot || '' !== $badge_text) : ?>
+            <div class="sft-product-card__badges">
+                <?php if ($is_hot) : ?>
+                    <?php echo safestore_hot_badge_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                <?php endif; ?>
+                <?php if ('' !== $badge_text) : ?>
+                    <span class="sft-product-card__badge"><?php echo esc_html($badge_text); ?></span>
+                <?php endif; ?>
+            </div>
         <?php endif; ?>
 
         <a class="sft-product-card__media-link" href="<?php echo esc_url($permalink); ?>" aria-label="<?php echo esc_attr($product->get_name()); ?>">
@@ -113,11 +117,6 @@ $category_text = function_exists('safestore_get_product_category_label')
         ?>
 
         <?php
-        /**
-         * Loop add-to-cart — always visible, pinned to the bottom of the card.
-         *
-         * @hooked safestore_minimal_product_card_loop_add_to_cart — see functions.php
-         */
         ?>
         <div class="sft-product-card__footer">
             <?php do_action('safestore_minimal_product_card_footer'); ?>

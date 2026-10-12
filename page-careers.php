@@ -1,11 +1,5 @@
 <?php
-/**
- * Template Name: Careers
- *
- * Careers at SafeStoreBD — industrial safety products, Bangladesh.
- *
- * @package safestore-minimal
- */
+// Template Name: Careers
 
 get_header();
 

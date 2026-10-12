@@ -11,37 +11,6 @@ Text Domain: safestore-minimal
 Tags: custom-logo, custom-menu, featured-images, translation-ready, responsive-layout
 */
 
-/* ==========================================================================
-   CSS ARCHITECTURE — read this before adding styles
-   ==========================================================================
-
-   This file is the GLOBAL SHELL. It loads on every page and owns everything
-   that is shared: design tokens, base typography, header, nav, off-canvas,
-   buttons, forms, the product card, stars, badges and the quantity control.
-
-   Page-specific rules live in css/page-*.css and are enqueued per template by
-   inc/page-css.php. Nothing is duplicated between them — every rule has
-   exactly one home.
-
-   WHERE DOES A NEW RULE GO?
-     - Does the selector match on more than one template?  -> this file.
-     - Only ever on one template?                          -> that page module.
-   When in doubt put it here: a shared rule stranded in a page module is the
-   one failure mode this split can produce (the element renders unstyled on
-   every other template).
-
-   ORDER MATTERS. Page modules load AFTER this file. Do not reorder rules to
-   "tidy" the file — equal-specificity rules resolve by source order, so moving
-   a block can silently change the cascade.
-
-   TOKENS. Colours and the corner radius are defined once in :root above. Use
-   var(--ss-*) rather than repeating a literal.
-   ========================================================================== */
-
-/* ==========================================================================
-   Design tokens. Generated from the values already in use — nothing changed
-   visually; each repeated literal simply gained one home.
-   ========================================================================== */
 :root {
   --ss-white: #ffffff; /* 94 uses */
   --ss-ink: #0f172a; /* 60 uses */
@@ -76,19 +45,6 @@ Tags: custom-logo, custom-menu, featured-images, translation-ready, responsive-l
   --ss-container-flush: min(1440px, 100%);
   --ss-container-narrow: min(960px, calc(100% - 32px));
 }
-
-/*
-Theme Name: SafeStoreBD
-Theme URI: https://example.com
-Author: SafeStoreBD
-Author URI: https://example.com
-Description: Custom WordPress theme for SafeStoreBD — industrial PPE e-commerce in Bangladesh.
-Version: 1.2.0
-License: GNU General Public License v2 or later
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Text Domain: safestore-minimal
-Tags: custom-logo, custom-menu, featured-images, translation-ready, responsive-layout
-*/
 
 :root {
   color-scheme: light;
@@ -964,15 +920,6 @@ select {
   z-index: 6;
 }
 
-/* ============================================================
-   Reusable contact item — brand icon (left) + detail (right)
-   Shared by the footer contact column and the homepage support
-   section so icon size, spacing, alignment, and typography stay
-   identical site-wide. The icon colour is driven by the
-   --sft-contact-accent custom property: the base value below is the
-   default/fallback, and each method overrides it further down
-   (phone / whatsapp / email / help) with its own brand colour.
-   ============================================================ */
 .sft-contact-item {
   --sft-contact-accent: var(--ss-brand);
   /* default accent — overridden per method below */
@@ -986,9 +933,6 @@ select {
   border-radius: var(--ss-radius);
 }
 
-/* Copyable phone / WhatsApp / email rows follow:
-   [lead icon] [value + inline copy] … [action chip].
-   Address rows keep the simpler static + trailing copy layout. */
 .sft-contact-item--copyable {
   position: relative;
 }
@@ -996,8 +940,6 @@ select {
 .sft-contact-item--copyable .sft-contact-item__body {
   flex: 1 1 auto;
   min-width: 0;
-  /* Keep overflowing nowrap addresses from painting over the action chip
-     and stealing its clicks (common with two stacked emails + copy buttons). */
   overflow: hidden;
 }
 
@@ -1039,10 +981,6 @@ a.sft-contact-item__value:focus-visible {
   text-decoration: none;
 }
 
-/* Soft accent chip on the right — the primary call / chat / mail action.
-   Mobile WebKit paints tap-highlight on the inner SVG; filled WhatsApp
-   glyphs used the 300×150 replaced-element box, so the highlight must be
-   cleared on the SVG as well as the <a>, and the chip must clip overflow. */
 .sft-contact-item__action {
   flex: none;
   flex-shrink: 0;
@@ -1082,9 +1020,6 @@ a.sft-contact-item__value:focus-visible {
   transform: translateY(-1px);
 }
 
-/* Touch/mouse activation uses :focus, not :focus-visible — suppress the UA
-   ring so it cannot appear as a square box around the chip. Keyboard users
-   still get the outline below. */
 .sft-contact-item__action:focus {
   outline: none;
 }
@@ -1140,9 +1075,6 @@ a.sft-contact-item__value:focus-visible {
   line-height: 1.4;
 }
 
-/* Two contact emails stacked — each address on its own line, matching the
-   surrounding .sft-contact-item__value type. nowrap keeps a single address
-   from breaking mid-string; the column may scroll/overflow rather than wrap. */
 .sft-contact-item--emails .sft-contact-item__value {
   overflow-wrap: normal;
 }
@@ -1191,18 +1123,11 @@ a.sft-contact-item__value:focus-visible {
   border-radius: 2px;
 }
 
-/* Per-email copy control sits beside the address; keep it above any row
-   hit-area so the button stays clickable. */
 .sft-contact-emails__item .sft-copy-btn {
   position: relative;
   z-index: 2;
 }
 
-/* ============================================================
-   Multi-email chooser — replaces the ambiguous single mailto chip
-   when two or more addresses share a contact row. Native <details>
-   disclosure; panel lists one mailto option per address.
-   ============================================================ */
 .sft-contact-email-chooser {
   flex: none;
   flex-shrink: 0;
@@ -1333,8 +1258,6 @@ a.sft-contact-item__value:focus-visible {
   }
 }
 
-/* Clickable variant — hover & keyboard-focus states for plain anchor rows
-   (Help Center) and the value / action links inside copyable rows. */
 a.sft-contact-item {
   transition: color 0.18s ease, background-color 0.18s ease;
 }
@@ -1382,12 +1305,6 @@ a.sft-contact-item:focus-visible {
   color: var(--ss-muted);
 }
 
-/* Per-method brand / semantic icon colours.
-   Each method re-points --sft-contact-accent (glyph + hover fill) and its
-   soft chip tint; the shared layout, sizing, and hover/focus logic above are
-   untouched, so all icons stay visually consistent while carrying their own
-   identity. The label beside every icon conveys the method in text, so the
-   icon is never the sole indicator (WCAG 1.4.11). */
 .sft-contact-item--phone {
   --sft-contact-accent: var(--ss-brand);
   /* primary theme colour — call / action */
@@ -1697,6 +1614,47 @@ a.sft-contact-item:focus-visible {
   box-shadow: 0 6px 14px -4px rgba(21, 128, 61, 0.42);
 }
 
+/* Top-left badge stack: HOT above the savings badge. */
+.sft-product-card__badges {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  max-width: calc(100% - 24px);
+  pointer-events: none;
+}
+
+.sft-product-card__badges .sft-product-card__badge {
+  position: static;
+  max-width: 100%;
+}
+
+/* HOT badge — shared by shop cards and the product gallery (inc/hot-badge.php). */
+.sft-hot-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 11px 5px 9px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: var(--ss-white);
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  white-space: nowrap;
+  box-shadow: 0 6px 14px -4px rgba(220, 38, 38, 0.5);
+}
+
+.sft-hot-badge__icon {
+  flex: 0 0 auto;
+  color: #fde68a;
+}
+
 /* ----- Card footer: Add to cart over image (WooCommerce loop hook), bottom-left ----- */
 
 .sft-product-card__footer {
@@ -1964,10 +1922,6 @@ a.sft-contact-item:focus-visible {
 
 /* ----- Title (max 2 lines, ellipsis, full name in title tooltip) ----- */
 
-/* The first selector out-specifies WooCommerce's
-   `.woocommerce ul.products li.product h3 { padding: .5em 0; font-size: 1em }`
-   (0,3,3) so its padding/font-size can't shrink the text box and clip a line.
-   Two-line clamp with a clean ellipsis, in a fixed two-line box. */
 .woocommerce ul.products li.product .sft-product-card__title,
 .sft-product-card__title {
   margin: 0;
@@ -2085,6 +2039,18 @@ a.sft-contact-item:focus-visible {
     padding: 4px 8px;
   }
 
+  .sft-product-card__badges {
+    top: 8px;
+    left: 8px;
+    gap: 4px;
+    max-width: calc(100% - 16px);
+  }
+
+  .sft-product-card__badges .sft-hot-badge {
+    padding: 4px 8px 4px 7px;
+    font-size: 10.5px;
+  }
+
   .sft-product-card__title {
     font-size: var(--ss-text-sm);
   }
@@ -2098,8 +2064,6 @@ a.sft-contact-item:focus-visible {
   .woocommerce ul.products li.product.sft-product-card .sft-product-card__footer a.button.sft-product-card__cart-btn,
   .sft-product-card__footer a.button.sft-product-card__cart-btn {
     min-height: 40px;
-    /* width: 100%;
-    max-width: 100%; */
     font-size: var(--ss-text-2xs);
     padding: 10px 12px;
     letter-spacing: 0.06em;
@@ -2259,9 +2223,6 @@ input.button:hover {
     font-weight: 600 !important;
   }
 
-  /* =============================
-   SafeStoreBD Footer
-=============================*/
   .sft-brand-logo {
     width: 140px;
   }
@@ -3008,12 +2969,6 @@ input.button:hover {
   max-width: 100%;
 }
 
-/* ==========================================================================
-   Shared commerce components pulled back to the global sheet.
-   These match on shop, category AND single-product pages (related products),
-   so they cannot live in a single page module.
-   ========================================================================== */
-
 /* Quantity input — cart, checkout and the PDP add-to-cart form. */
 .quantity .qty {
   width: 5em !important;
@@ -3037,11 +2992,6 @@ input.button:hover {
     transform: none;
   }
 }
-
-/* ==========================================================================
-   Shared component groups — identical declaration sets that were repeated
-   under different page-prefixed names. One rule now serves all of them.
-   ========================================================================== */
 
 /* Shared page hero */
 .sft-careers-hero,

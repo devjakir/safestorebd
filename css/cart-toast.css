@@ -1,9 +1,3 @@
-/**
- * SafeStoreBD — Add to Cart success toast.
- *
- * Branded, accessible confirmation toast. Colours, radius, shadows, and type
- * follow the theme's design system. Recolour via the custom properties below.
- */
 
 .sft-cart-toast {
   --sft-toast-bg: #ffffff;
@@ -207,14 +201,10 @@
   to { transform: scaleX(0); }
 }
 
-/* WooCommerce appends its own "View cart" link to archive buttons after an
-   AJAX add — redundant now that the toast confirms the action. */
 .sft-product-card a.added_to_cart.wc-forward {
   display: none !important;
 }
 
-/* Subtle loading state for the single-product button while our AJAX runs
-   (WooCommerce core also styles .loading with a spinner). */
 .single_add_to_cart_button.loading {
   opacity: 0.75;
   pointer-events: none;

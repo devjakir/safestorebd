@@ -1,9 +1,5 @@
 <?php
-/**
- * Template Name: Terms of Service
- *
- * @package safestore-minimal
- */
+// Template Name: Terms of Service
 
 get_header();
 

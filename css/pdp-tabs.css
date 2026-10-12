@@ -1,10 +1,4 @@
-/**
- * Product page tabs & reviews — loads after WooCommerce so overrides win.
- */
 
-/* --------------------------------------------------------------------------
-   Tab shell
-   -------------------------------------------------------------------------- */
 .woocommerce div.product.sft-pdp .sft-pdp-tabs,
 .woocommerce div.product.sft-pdp .woocommerce-tabs.sft-pdp-tabs {
   margin: 0 0 40px;
@@ -28,9 +22,6 @@
   box-shadow: none !important;
 }
 
-/* --------------------------------------------------------------------------
-   Pill tab navigation
-   -------------------------------------------------------------------------- */
 .woocommerce div.product.sft-pdp .sft-pdp-tabs ul.tabs,
 .woocommerce div.product.sft-pdp .sft-pdp-tabs ul.tabs.wc-tabs,
 .woocommerce div.product.sft-pdp .sft-pdp-tabs__list {
@@ -95,9 +86,6 @@
   box-shadow: 0 2px 8px rgba(220, 38, 38, 0.18) !important;
 }
 
-/* --------------------------------------------------------------------------
-   Tab panels
-   -------------------------------------------------------------------------- */
 .woocommerce div.product.sft-pdp .sft-pdp-tabs .sft-pdp-tabs__panel,
 .woocommerce div.product.sft-pdp .sft-pdp-tabs .woocommerce-Tabs-panel,
 .woocommerce div.product.sft-pdp .sft-pdp-tabs .panel {
@@ -164,9 +152,6 @@
   border-radius: 5px;
 }
 
-/* --------------------------------------------------------------------------
-   Delivery & returns tab
-   -------------------------------------------------------------------------- */
 .woocommerce div.product.sft-pdp .sft-pdp-delivery {
   max-width: 72ch;
 }
@@ -266,9 +251,6 @@
   font-weight: 400;
 }
 
-/* --------------------------------------------------------------------------
-   Reviews tab
-   -------------------------------------------------------------------------- */
 .woocommerce div.product.sft-pdp .sft-pdp-reviews {
   width: 100%;
 }

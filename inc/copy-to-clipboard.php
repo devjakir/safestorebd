@@ -1,51 +1,15 @@
 <?php
-/**
- * SafeStoreBD — Site-wide copy to clipboard.
- *
- * Loads one small stylesheet + script on every front-end request and exposes
- * safestore_copy_button() so any template can mark a value as copyable.
- *
- * Coverage:
- *   - the shared contact component (safestore_contact_item() /
- *     safestore_contact_line() / safestore_contact_emails_row()) renders a
- *     copy button next to the phone, WhatsApp, each email address, and the
- *     address value — so the footer is covered on every page. Multi-email
- *     rows also expose a choose-email disclosure whose mailto options are
- *     marked data-sft-copy-init so this script does not inject a second
- *     copy control into the menu;
- *   - the script additionally attaches an inline copy button to plain
- *     tel: / mailto: / wa.me links found in page content (contact, careers,
- *     policy, track-order, …), so no per-template markup is needed.
- *
- * Progressive enhancement throughout: with JS disabled the links behave
- * exactly as they do today and no buttons are shown.
- *
- * @package safestore-minimal
- */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Whether copy-to-clipboard should load on this request.
- *
- * @return bool
- */
 function safestore_copy_to_clipboard_enabled() {
 	$enabled = ! is_admin();
 
-	/**
-	 * Toggle the site-wide copy-to-clipboard feature.
-	 *
-	 * @param bool $enabled Whether the feature loads on this request.
-	 */
 	return (bool) apply_filters( 'safestore_copy_to_clipboard_enabled', $enabled );
 }
 
-/**
- * Enqueue the copy-to-clipboard assets and the strings the script announces.
- */
 function safestore_copy_to_clipboard_enqueue() {
 	if ( ! safestore_copy_to_clipboard_enabled() ) {
 		return;
@@ -98,10 +62,6 @@ function safestore_copy_to_clipboard_enqueue() {
 }
 add_action( 'wp_enqueue_scripts', 'safestore_copy_to_clipboard_enqueue', 20 );
 
-/**
- * Render the shared polite live region once per page, so every successful copy
- * is announced to screen readers without each button needing its own region.
- */
 function safestore_copy_to_clipboard_live_region() {
 	if ( ! safestore_copy_to_clipboard_enabled() ) {
 		return;
@@ -112,19 +72,6 @@ function safestore_copy_to_clipboard_live_region() {
 }
 add_action( 'wp_footer', 'safestore_copy_to_clipboard_live_region', 30 );
 
-/**
- * Copy button markup. Returns trusted, self-authored markup (the SVGs are
- * hard-coded; all dynamic parts are escaped), safe for callers to echo.
- *
- * @param array $args {
- *     @type string $value   The exact text placed on the clipboard. Required.
- *     @type string $noun    What is being copied, e.g. "Phone number" — used to
- *                           build the accessible name and the confirmation.
- *                           Default "Value".
- *     @type string $class   Extra classes on the button.
- * }
- * @return string Markup, or '' when the feature is off or no value was given.
- */
 function safestore_copy_button( $args = array() ) {
 	if ( ! safestore_copy_to_clipboard_enabled() ) {
 		return '';
@@ -169,18 +116,6 @@ function safestore_copy_button( $args = array() ) {
 	);
 }
 
-/**
- * The clipboard value and wording for a contact method.
- *
- * Phone and WhatsApp are copied in dial-ready E.164 form (+8801811892291)
- * rather than the spaced display form, so the value pastes cleanly into a
- * dialer or messaging app. Email and address are copied exactly as shown.
- *
- * @param string $type  phone|whatsapp|email|location.
- * @param string $value Display value.
- * @return array{value: string, noun: string} Empty value when the method is
- *                                            not copyable (e.g. help links).
- */
 function safestore_copy_contact_value( $type, $value ) {
 	$value = trim( (string) $value );
 	$none  = array(

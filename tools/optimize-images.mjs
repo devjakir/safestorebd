@@ -1,7 +1,3 @@
-/**
- * One-shot image optimizer for theme marketing assets.
- * Recompresses WebP/PNG and writes responsive -480w / -720w variants for heroes.
- */
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';

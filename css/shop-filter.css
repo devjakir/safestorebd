@@ -1,16 +1,4 @@
-/*
- * Shop filter — HUSKY / WOOF filter as a StarTech-style left sidebar.
- *
- * Loaded by inc/shop-filter.php on the shop page and product category / tag
- * archives only. woocommerce.php wraps the page in .sft-shop-layout: a sidebar
- * of separate section cards (Product categories, Product brands, Price range,
- * Availability) beside the results column, which opens with a white toolbar bar
- * (title + Sort By). HUSKY's active-filter chips sit under the bar.
- * Sections collapse via buttons added by js/shop-filter.js. Below 960px the
- * sidebar stacks above the grid behind a "Filters" button.
- *
- * Palette matches the theme: slate neutrals + #dc2626 accent.
- */
+/* Shop filter — HUSKY sidebar of section cards + results toolbar (shop / category / tag archives; loaded by inc/shop-filter.php). */
 
 /* ---------- Page layout: sidebar + results ---------- */
 
@@ -629,9 +617,7 @@
   background: #fff5f3;
 }
 
-/* ---------- Active filters (HUSKY chip panel under the toolbar) ----------
- * HUSKY rebuilds this markup in JS: ul > li(button.woof_reset_button_2) +
- * li > ul[data-container] > li(title) + li > a > span.woof_remove_ppi. */
+/* ---------- Active filters (HUSKY chip panel, rebuilt by HUSKY's JS) ---------- */
 
 .sft-shop .woof_products_top_panel_content:empty,
 .sft-shop .woof_products_top_panel:empty {
