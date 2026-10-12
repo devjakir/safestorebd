@@ -42,6 +42,22 @@ $categories = array(
 	array( 'fire', __( 'Fire safety', 'safestore-minimal' ), __( 'Fire extinguishers and fire safety gear', 'safestore-minimal' ), '' ),
 );
 
+// Clients: name, location, what they do. Shown as a trust strip under "Who we are".
+$clients = array(
+	array(
+		'name'     => 'Rosabel Garment Limited',
+		'location' => __( 'Ashulia, Dhaka', 'safestore-minimal' ),
+		'tag'      => __( 'Garment manufacturer', 'safestore-minimal' ),
+		'initials' => 'RG',
+	),
+	array(
+		'name'     => 'Shahriar Garments (G.A.B. Ltd.)',
+		'location' => __( 'Baipayl, Ashulia, Dhaka', 'safestore-minimal' ),
+		'tag'      => __( 'Gildan group facility', 'safestore-minimal' ),
+		'initials' => 'GAB',
+	),
+);
+
 $promises = array(
 	__( 'We list the brand, material and specs as they are, with real photos.', 'safestore-minimal' ),
 	__( 'We share the manufacturer\'s standard markings and test reports on request, where the product has them.', 'safestore-minimal' ),
@@ -122,6 +138,29 @@ while ( have_posts() ) :
 						</p>
 						<p class="sft-about-summary-text">
 							<?php esc_html_e( 'Our approach is simple: clear information, fair prices and dependable service — for every customer, every order.', 'safestore-minimal' ); ?>
+						</p>
+					</section>
+
+					<section class="sft-about-section sft-about-clients" aria-labelledby="sft-about-clients-heading">
+						<p class="sft-about-clients__eyebrow" id="sft-about-clients-heading"><?php esc_html_e( 'Trusted by factories in Ashulia and beyond', 'safestore-minimal' ); ?></p>
+						<ul class="sft-about-clients__list" role="list">
+							<?php foreach ( $clients as $client ) : ?>
+								<li class="sft-about-client">
+									<span class="sft-about-client__mark" aria-hidden="true"><?php echo esc_html( $client['initials'] ); ?></span>
+									<span class="sft-about-client__body">
+										<span class="sft-about-client__name"><?php echo esc_html( $client['name'] ); ?></span>
+										<span class="sft-about-client__meta">
+											<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+											<?php echo esc_html( $client['location'] ); ?>
+										</span>
+									</span>
+									<span class="sft-about-client__tag"><?php echo esc_html( $client['tag'] ); ?></span>
+								</li>
+							<?php endforeach; ?>
+						</ul>
+						<p class="sft-about-clients__note">
+							<?php esc_html_e( 'Supplying PPE for garment floors, with VAT invoice and delivery challan on every order.', 'safestore-minimal' ); ?>
+							<a href="<?php echo esc_url( $bulk_url ); ?>"><?php esc_html_e( 'Ask for a bulk quote', 'safestore-minimal' ); ?></a>
 						</p>
 					</section>
 
