@@ -102,10 +102,16 @@ while ( have_posts() ) :
 					<section class="sft-about-section">
 						<h2 class="sft-about-h2" id="sft-about-summary-heading"><?php esc_html_e( 'Who we are', 'safestore-minimal' ); ?></h2>
 						<p class="sft-about-summary-text">
-							<?php esc_html_e( 'SafeStoreBD was founded on 17 October 2025 by Md Jakir Hossain, a BSc engineer, with a simple idea: a site supervisor or factory buyer should be able to see the real price of a safety shoe or helmet without making five phone calls.', 'safestore-minimal' ); ?>
+							<?php esc_html_e( 'SafeStoreBD was founded on 17 October 2025 by Md Jakir Hossain with a simple goal: make industrial safety products easier to find, understand and buy at transparent prices.', 'safestore-minimal' ); ?>
 						</p>
 						<p class="sft-about-summary-text">
-							<?php esc_html_e( 'Today we supply single pairs to individual workers and full kits to factories, construction sites and warehouses. A single pair and a pallet go through the same queue, with the same care.', 'safestore-minimal' ); ?>
+							<?php esc_html_e( 'We believe buying safety equipment should be straightforward. Whether you need a single pair of safety shoes for personal use or bulk supplies for a factory, construction site or warehouse, we aim to make the process simple and convenient.', 'safestore-minimal' ); ?>
+						</p>
+						<p class="sft-about-summary-text">
+							<?php esc_html_e( 'From safety shoes and helmets to gloves, goggles, reflective vests, fire safety equipment and other PPE, we help individuals and businesses across Bangladesh find the products they need, with clear product information, competitive pricing and nationwide delivery.', 'safestore-minimal' ); ?>
+						</p>
+						<p class="sft-about-summary-text">
+							<?php esc_html_e( 'Our approach is simple: clear information, fair prices and dependable service — for every customer, every order.', 'safestore-minimal' ); ?>
 						</p>
 					</section>
 
