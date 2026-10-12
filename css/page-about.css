@@ -93,3 +93,109 @@
   color: var(--ss-ink);
   line-height: 1.5;
 }
+
+
+/* What we supply — category cards */
+.sft-about-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.sft-about-card {
+  margin: 0;
+}
+
+.sft-about-card__link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 100%;
+  padding: 16px 16px;
+  border: 1px solid var(--ss-border);
+  border-radius: var(--ss-radius);
+  background: var(--ss-white);
+  text-decoration: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.sft-about-card__link:hover,
+.sft-about-card__link:focus-visible {
+  border-color: var(--ss-brand);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.sft-about-card__icon {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  color: var(--ss-brand);
+  background: var(--ss-surface);
+  background: color-mix(in srgb, var(--ss-brand) 10%, transparent);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.sft-about-card__link:hover .sft-about-card__icon,
+.sft-about-card__link:focus-visible .sft-about-card__icon {
+  color: var(--ss-white);
+  background: var(--ss-brand);
+}
+
+.sft-about-card__icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.sft-about-card__body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sft-about-card__title {
+  font-size: var(--ss-text-md);
+  font-weight: 600;
+  color: var(--ss-ink);
+  line-height: 1.3;
+}
+
+.sft-about-card__text {
+  font-size: var(--ss-text-sm);
+  color: var(--ss-muted);
+  line-height: 1.45;
+}
+
+.sft-about-card__arrow {
+  flex: none;
+  margin-left: auto;
+  color: #cbd5e1;
+  display: grid;
+  place-items: center;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.sft-about-card__arrow svg {
+  width: 18px;
+  height: 18px;
+}
+
+.sft-about-card__link:hover .sft-about-card__arrow,
+.sft-about-card__link:focus-visible .sft-about-card__arrow {
+  color: var(--ss-brand);
+  transform: translateX(2px);
+}
+
+@media (max-width: 560px) {
+  .sft-about-cards {
+    grid-template-columns: 1fr;
+  }
+}

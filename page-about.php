@@ -23,13 +23,23 @@ $trust = array(
 	__( '7-day returns', 'safestore-minimal' ),
 );
 
-// What we supply: label, description, product category slug.
+// What we supply: icon key, label, description, product category slug ('' = link to shop).
+$icons = array(
+	'helmet' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 18a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1Z"/><path d="M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5"/><path d="M4 15v-3a6 6 0 0 1 6-6"/><path d="M14 6a6 6 0 0 1 6 6v3"/></svg>',
+	'boot'   => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 17h14a4 4 0 0 0 4-4 1 1 0 0 0-.6-.92l-7-3L10.5 6H4a2 2 0 0 0-2 2Z"/><path d="M2 13.5h18"/></svg>',
+	'glove'  => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 11V6a2 2 0 0 0-4 0v5"/><path d="M14 10V4a2 2 0 0 0-4 0v6"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 0 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>',
+	'goggle' => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="15" r="4"/><circle cx="18" cy="15" r="4"/><path d="M14 15a2 2 0 0 0-2-2 2 2 0 0 0-2 2"/><path d="M2.5 13 5 7c.7-1.3 1.4-2 3-2"/><path d="M21.5 13 19 7c-.7-1.3-1.5-2-3-2"/></svg>',
+	'vest'   => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3 4 6l2 3 2-1.2V21h8V7.8L18 9l2-3-4-3-4 4Z"/><path d="M12 3v4"/></svg>',
+	'fire'   => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5Z"/></svg>',
+);
+
 $categories = array(
-	array( __( 'Head protection', 'safestore-minimal' ), __( 'safety helmets and hard hats', 'safestore-minimal' ), 'protective-helmet' ),
-	array( __( 'Foot protection', 'safestore-minimal' ), __( 'steel-toe safety shoes and PVC gumboots', 'safestore-minimal' ), 'safety-shoe' ),
-	array( __( 'Hand protection', 'safestore-minimal' ), __( 'industrial and oil-resistant gloves', 'safestore-minimal' ), 'safety-glove' ),
-	array( __( 'Eye protection', 'safestore-minimal' ), __( 'safety goggles and glasses', 'safestore-minimal' ), 'safety-goggle' ),
-	array( __( 'Visibility', 'safestore-minimal' ), __( 'hi-vis reflective vests', 'safestore-minimal' ), 'safety-vest' ),
+	array( 'helmet', __( 'Head protection', 'safestore-minimal' ), __( 'Safety helmets and hard hats', 'safestore-minimal' ), 'protective-helmet' ),
+	array( 'boot', __( 'Foot protection', 'safestore-minimal' ), __( 'Steel-toe safety shoes and PVC gumboots', 'safestore-minimal' ), 'safety-shoe' ),
+	array( 'glove', __( 'Hand protection', 'safestore-minimal' ), __( 'Industrial and oil-resistant gloves', 'safestore-minimal' ), 'safety-glove' ),
+	array( 'goggle', __( 'Eye protection', 'safestore-minimal' ), __( 'Safety goggles and glasses', 'safestore-minimal' ), 'safety-goggle' ),
+	array( 'vest', __( 'Visibility', 'safestore-minimal' ), __( 'Hi-vis reflective vests', 'safestore-minimal' ), 'safety-vest' ),
+	array( 'fire', __( 'Fire safety', 'safestore-minimal' ), __( 'Fire extinguishers and fire safety gear', 'safestore-minimal' ), '' ),
 );
 
 $promises = array(
@@ -117,15 +127,32 @@ while ( have_posts() ) :
 
 					<section class="sft-about-section" aria-labelledby="sft-about-supply-heading">
 						<h2 class="sft-about-h2" id="sft-about-supply-heading"><?php esc_html_e( 'What we supply', 'safestore-minimal' ); ?></h2>
-						<ul class="sft-about-highlights">
+						<ul class="sft-about-cards" role="list">
 							<?php
 							foreach ( $categories as $cat ) :
-								$link = function_exists( 'get_term_link' ) ? get_term_link( $cat[2], 'product_cat' ) : '';
-								if ( ! is_string( $link ) || '' === $link ) {
-									$link = home_url( '/product-category/' . $cat[2] . '/' );
+								list( $icon_key, $label, $desc, $slug ) = $cat;
+								if ( '' === $slug ) {
+									$link = $shop_url;
+								} else {
+									$link = function_exists( 'get_term_link' ) ? get_term_link( $slug, 'product_cat' ) : '';
+									if ( ! is_string( $link ) || '' === $link ) {
+										$link = home_url( '/product-category/' . $slug . '/' );
+									}
 								}
+								$svg = isset( $icons[ $icon_key ] ) ? $icons[ $icon_key ] : '';
 								?>
-								<li><a href="<?php echo esc_url( $link ); ?>"><strong><?php echo esc_html( $cat[0] ); ?></strong></a>: <?php echo esc_html( $cat[1] ); ?></li>
+								<li class="sft-about-card">
+									<a class="sft-about-card__link" href="<?php echo esc_url( $link ); ?>">
+										<span class="sft-about-card__icon" aria-hidden="true"><?php echo $svg; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+										<span class="sft-about-card__body">
+											<span class="sft-about-card__title"><?php echo esc_html( $label ); ?></span>
+											<span class="sft-about-card__text"><?php echo esc_html( $desc ); ?></span>
+										</span>
+										<span class="sft-about-card__arrow" aria-hidden="true">
+											<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+										</span>
+									</a>
+								</li>
 							<?php endforeach; ?>
 						</ul>
 					</section>
