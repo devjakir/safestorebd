@@ -42,8 +42,8 @@ $categories = array(
 	array( 'fire', __( 'Fire safety', 'safestore-minimal' ), __( 'Fire extinguishers and fire safety gear', 'safestore-minimal' ), '' ),
 );
 
-// Clients: name, location, what they do. Shown as a trust strip under "Who we are".
-$clients = array(
+// Companies we supply to: name, location, what they do. Shown under "Who we are".
+$supplied = array(
 	array(
 		'name'     => 'Rosabel Garment Limited',
 		'location' => __( 'Ashulia, Dhaka', 'safestore-minimal' ),
@@ -144,7 +144,7 @@ while ( have_posts() ) :
 					<section class="sft-about-section sft-about-clients" aria-labelledby="sft-about-clients-heading">
 						<p class="sft-about-clients__eyebrow" id="sft-about-clients-heading"><?php esc_html_e( 'Trusted by factories in Ashulia and beyond', 'safestore-minimal' ); ?></p>
 						<ul class="sft-about-clients__list" role="list">
-							<?php foreach ( $clients as $client ) : ?>
+							<?php foreach ( $supplied as $client ) : ?>
 								<li class="sft-about-client">
 									<span class="sft-about-client__mark" aria-hidden="true"><?php echo esc_html( $client['initials'] ); ?></span>
 									<span class="sft-about-client__body">
