@@ -29,3 +29,67 @@
   border-radius: 50%;
   background: var(--ss-brand);
 }
+
+
+/* About page sections (left column) */
+.sft-about-section {
+  margin: 0 0 clamp(28px, 4vw, 40px);
+}
+
+.sft-about-section:last-child {
+  margin-bottom: 0;
+}
+
+.sft-about-section .sft-about-summary-text:last-child,
+.sft-about-section .sft-about-highlights:last-child {
+  margin-bottom: 0;
+}
+
+.sft-about-highlights a {
+  color: var(--ss-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.sft-about-highlights a:hover,
+.sft-about-note a:hover {
+  color: var(--ss-brand);
+}
+
+.sft-about-note {
+  margin: 0;
+  font-size: var(--ss-text-md);
+  line-height: 1.55;
+  color: var(--ss-muted);
+}
+
+.sft-about-note a {
+  color: var(--ss-ink);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.sft-about-segments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sft-about-segments li {
+  padding: 6px 12px;
+  border: 1px solid var(--ss-border);
+  border-radius: 999px;
+  background: var(--ss-surface);
+  color: var(--ss-ink-soft);
+  font-size: var(--ss-text-sm);
+  line-height: 1.4;
+}
+
+.sft-about-contact-list li {
+  font-size: var(--ss-text-md);
+  color: var(--ss-ink);
+  line-height: 1.5;
+}
