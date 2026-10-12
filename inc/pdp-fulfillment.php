@@ -1,22 +1,9 @@
 <?php
-/**
- * PDP fulfillment: compact buy-box trust badges + Delivery & returns tab.
- *
- * Long shipping/returns copy lives in the product tab and on the canonical
- * /shipping-delivery/ and /return-refund-policy/ pages — not above the fold.
- *
- * @package SafeStore_Minimal
- */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Shared fulfillment rows (badges + tab). Filter to change copy or hide items.
- *
- * @return array<int, array<string, string>>
- */
 function safestore_minimal_pdp_fulfillment_items() {
 	$pickup = function_exists( 'safestore_minimal_get_pickup_address' )
 		? safestore_minimal_get_pickup_address()
@@ -65,13 +52,6 @@ function safestore_minimal_pdp_fulfillment_items() {
 	);
 }
 
-/**
- * Inline SVG for a fulfillment icon key.
- *
- * @param string $icon Icon key: home|courier|globe|returns.
- * @param int    $size Pixel size.
- * @return string
- */
 function safestore_minimal_pdp_fulfillment_icon( $icon, $size = 18 ) {
 	$size = max( 12, (int) $size );
 	$paths = array(
@@ -90,9 +70,6 @@ function safestore_minimal_pdp_fulfillment_icon( $icon, $size = 18 ) {
 	);
 }
 
-/**
- * Compact 2×2 trust badges in the buy box (after ATC / action bar).
- */
 function safestore_minimal_pdp_trust_badges() {
 	$items = safestore_minimal_pdp_fulfillment_items();
 	if ( empty( $items ) ) {
@@ -132,10 +109,6 @@ function safestore_minimal_pdp_trust_badges() {
 	safestore_minimal_pdp_payment_methods();
 }
 
-/**
- * Compact payment trust strip under the buy-box fulfillment badges.
- * Shows methods customers already use (COD / bKash / Nagad) — logos BD buyers scan for legitimacy.
- */
 function safestore_minimal_pdp_payment_methods() {
 	?>
 	<div class="sft-pdp-pay" aria-label="<?php esc_attr_e( 'Payment methods', 'safestore-minimal' ); ?>">
@@ -150,12 +123,6 @@ function safestore_minimal_pdp_payment_methods() {
 	<?php
 }
 
-/**
- * WooCommerce tab: delivery/returns summary + links to canonical policy pages.
- *
- * @param array<string, array<string, mixed>> $tabs Tabs.
- * @return array<string, array<string, mixed>>
- */
 function safestore_minimal_pdp_delivery_tab( $tabs ) {
 	$tabs['delivery'] = array(
 		'title'    => __( 'Delivery & returns', 'safestore-minimal' ),
@@ -165,9 +132,6 @@ function safestore_minimal_pdp_delivery_tab( $tabs ) {
 	return $tabs;
 }
 
-/**
- * Tab panel markup.
- */
 function safestore_minimal_pdp_delivery_tab_content() {
 	$items        = safestore_minimal_pdp_fulfillment_items();
 	$shipping_url = home_url( '/shipping-delivery/' );

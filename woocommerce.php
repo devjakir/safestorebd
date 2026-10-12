@@ -1,8 +1,4 @@
 <?php
-/**
- * The template for displaying all WooCommerce pages (shop, archives, single product).
- * Wraps the WooCommerce content with the theme's header/footer and shop container.
- */
 get_header(); ?>
 
 <main id="content" class="sft-main sft-shop-main" role="main">

@@ -1,12 +1,4 @@
 <?php
-/**
- * Blog list body shared by home.php, archive.php and search.php:
- * hero, category chips, card grid, pagination, empty state.
- *
- * Args: 'title', 'lede', 'eyebrow', 'empty_title', 'empty_text'.
- *
- * @package safestore-minimal
- */
 
 $a = wp_parse_args(
 	$args,

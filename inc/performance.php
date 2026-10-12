@@ -1,20 +1,9 @@
 <?php
-/**
- * SafeStoreBD — front-end performance helpers.
- *
- * Focus: mobile Core Web Vitals (LCP, FCP, CLS, TBT) without changing
- * branding, URLs, or storefront functionality.
- *
- * @package safestore-minimal
- */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Strip emoji detection scripts/styles (unused on this theme).
- */
 function safestore_perf_disable_emojis() {
 	remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
 	remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
@@ -27,9 +16,6 @@ function safestore_perf_disable_emojis() {
 }
 add_action( 'init', 'safestore_perf_disable_emojis' );
 
-/**
- * Drop unused front-end chrome that adds request/parse cost.
- */
 function safestore_perf_clean_head() {
 	remove_action( 'wp_head', 'wp_generator' );
 	remove_action( 'wp_head', 'wlwmanifest_link' );
@@ -38,9 +24,6 @@ function safestore_perf_clean_head() {
 }
 add_action( 'after_setup_theme', 'safestore_perf_clean_head' );
 
-/**
- * Hide Dashicons for anonymous visitors (admins still need them).
- */
 function safestore_perf_dequeue_dashicons() {
 	if ( is_admin() || is_user_logged_in() ) {
 		return;
@@ -49,12 +32,6 @@ function safestore_perf_dequeue_dashicons() {
 }
 add_action( 'wp_enqueue_scripts', 'safestore_perf_dequeue_dashicons', 100 );
 
-/**
- * Dequeue WooCommerce *styles* on templates that never render shop UI.
- *
- * Cart-fragment scripts stay loaded so the header badge can sync.
- * Home, shop, product, cart, checkout, and account keep shop CSS.
- */
 function safestore_perf_maybe_dequeue_woocommerce_styles() {
 	if ( is_admin() || ! class_exists( 'WooCommerce' ) ) {
 		return;
@@ -66,11 +43,6 @@ function safestore_perf_maybe_dequeue_woocommerce_styles() {
 		|| is_account_page()
 		|| is_page_template( 'page-home.php' );
 
-	/**
-	 * Force-keep WooCommerce styles on specific requests.
-	 *
-	 * @param bool $needs_wc_styles Whether WC styles should stay enqueued.
-	 */
 	$needs_wc_styles = (bool) apply_filters( 'safestore_perf_needs_woocommerce_styles', $needs_wc_styles );
 
 	if ( $needs_wc_styles ) {
@@ -91,15 +63,6 @@ function safestore_perf_maybe_dequeue_woocommerce_styles() {
 }
 add_action( 'wp_enqueue_scripts', 'safestore_perf_maybe_dequeue_woocommerce_styles', 99 );
 
-/**
- * Stylesheets that are safe to load non-blocking (widgets / below-fold / WC
- * sheets the theme already overrides for first paint).
- *
- * Cart, checkout, and account keep WooCommerce CSS render-blocking so forms
- * do not flash unstyled.
- *
- * @return string[]
- */
 function safestore_perf_async_style_handles() {
 	$handles = array(
 		'safestore-whatsapp-chat',
@@ -125,26 +88,9 @@ function safestore_perf_async_style_handles() {
 		);
 	}
 
-	/**
-	 * Filter async (non-render-blocking) style handles.
-	 *
-	 * @param string[] $handles Style handles.
-	 */
 	return array_values( array_unique( (array) apply_filters( 'safestore_perf_async_style_handles', $handles ) ) );
 }
 
-/**
- * Load selected stylesheets without blocking first paint.
- *
- * Uses media="print" + onload swap (with noscript fallback). Visual styles
- * still apply; only the critical path is shortened.
- *
- * @param string $html   Link tag HTML.
- * @param string $handle Style handle.
- * @param string $href   Stylesheet URL.
- * @param string $media  Media attribute.
- * @return string
- */
 function safestore_perf_style_loader_tag( $html, $handle, $href, $media ) {
 	unset( $media );
 
@@ -191,13 +137,6 @@ function safestore_perf_style_loader_tag( $html, $handle, $href, $media ) {
 }
 add_filter( 'style_loader_tag', 'safestore_perf_style_loader_tag', 10, 4 );
 
-/**
- * Drop jquery-migrate and defer jquery-core on the storefront.
- *
- * PSI listed both as render-blocking. Theme + modern WooCommerce scripts do
- * not need migrate; defer keeps add-to-cart / fragments working via WP 6.3+
- * script strategies and dependency order.
- */
 function safestore_perf_jquery_loading() {
 	if ( is_admin() ) {
 		return;
@@ -226,11 +165,6 @@ function safestore_perf_jquery_loading() {
 }
 add_action( 'wp_enqueue_scripts', 'safestore_perf_jquery_loading', 1 );
 
-/**
- * Theme script handles that are safe to defer (no document.write / sync deps).
- *
- * @return string[]
- */
 function safestore_perf_defer_script_handles() {
 	return array(
 		'safestore-minimal-header-search-cat',
@@ -246,14 +180,6 @@ function safestore_perf_defer_script_handles() {
 	);
 }
 
-/**
- * Mark theme scripts as deferred to cut TBT / improve FCP.
- *
- * @param string $tag    Script tag HTML.
- * @param string $handle Script handle.
- * @param string $src    Script URL.
- * @return string
- */
 function safestore_perf_script_loader_tag( $tag, $handle, $src ) {
 	unset( $src );
 
@@ -273,12 +199,6 @@ function safestore_perf_script_loader_tag( $tag, $handle, $src ) {
 }
 add_filter( 'script_loader_tag', 'safestore_perf_script_loader_tag', 10, 3 );
 
-/**
- * Prefer WP 6.3+ defer strategy when available (cleaner than tag filtering).
- *
- * @param string|array|bool $args Enqueue args / in_footer flag.
- * @return array
- */
 function safestore_perf_script_args( $args = true ) {
 	if ( ! is_array( $args ) ) {
 		$args = array( 'in_footer' => (bool) $args );
@@ -289,9 +209,6 @@ function safestore_perf_script_args( $args = true ) {
 	return $args;
 }
 
-/**
- * Preload the LCP candidate: hero 720w WebP on home, logo WebP elsewhere.
- */
 function safestore_perf_preload_lcp() {
 	if ( is_admin() ) {
 		return;
@@ -332,9 +249,6 @@ function safestore_perf_preload_lcp() {
 }
 add_action( 'wp_head', 'safestore_perf_preload_lcp', 2 );
 
-/**
- * Defer heavy WooCommerce / cookie helpers that are not needed for first paint.
- */
 function safestore_perf_defer_vendor_scripts() {
 	if ( is_admin() || version_compare( get_bloginfo( 'version' ), '6.3', '<' ) ) {
 		return;
@@ -359,12 +273,6 @@ function safestore_perf_defer_vendor_scripts() {
 }
 add_action( 'wp_enqueue_scripts', 'safestore_perf_defer_vendor_scripts', 100 );
 
-/**
- * Whether a script URL looks like delayed marketing / analytics.
- *
- * @param string $src Script URL.
- * @return bool
- */
 function safestore_perf_is_delayed_third_party_src( $src ) {
 	if ( ! is_string( $src ) || '' === $src ) {
 		return false;
@@ -376,14 +284,6 @@ function safestore_perf_is_delayed_third_party_src( $src ) {
 	);
 }
 
-/**
- * Rewrite marketing pixels to type=text/plain so they do not compete with LCP.
- *
- * @param string $tag    Script tag.
- * @param string $handle Handle.
- * @param string $src    Source URL.
- * @return string
- */
 function safestore_perf_delay_third_party_script_tag( $tag, $handle, $src ) {
 	unset( $handle );
 
@@ -402,9 +302,6 @@ function safestore_perf_delay_third_party_script_tag( $tag, $handle, $src ) {
 }
 add_filter( 'script_loader_tag', 'safestore_perf_delay_third_party_script_tag', 40, 3 );
 
-/**
- * Boot loader: inject delayed marketing scripts after idle / first interaction.
- */
 function safestore_perf_delay_third_party_boot() {
 	if ( is_admin() ) {
 		return;
@@ -440,14 +337,6 @@ function safestore_perf_delay_third_party_boot() {
 }
 add_action( 'wp_footer', 'safestore_perf_delay_third_party_boot', 1 );
 
-/**
- * Ensure product loop / thumbnail images carry CLS-safe attrs on mobile.
- *
- * @param array        $attr       Image attributes.
- * @param WP_Post      $attachment Attachment post.
- * @param string|int[] $size       Image size.
- * @return array
- */
 function safestore_perf_attachment_image_attributes( $attr, $attachment, $size ) {
 	unset( $attachment, $size );
 
@@ -475,15 +364,6 @@ function safestore_perf_attachment_image_attributes( $attr, $attachment, $size )
 }
 add_filter( 'wp_get_attachment_image_attributes', 'safestore_perf_attachment_image_attributes', 20, 3 );
 
-/**
- * Soften WooCommerce cart-fragment polling pressure on non-cart pages.
- *
- * Keeps fragments available (header badge sync + toast) but stops the
- * constant cart.js heartbeat that hurts TBT on mobile.
- *
- * @param array|false $params Cart fragment params.
- * @return array|false
- */
 function safestore_perf_cart_fragment_params( $params ) {
 	if ( ! is_array( $params ) ) {
 		return $params;
@@ -499,9 +379,6 @@ add_filter( 'woocommerce_get_script_data', function ( $params, $handle ) {
 	return $params;
 }, 20, 2 );
 
-/**
- * Reduce motion cost for users who prefer it (also helps INP on low-end phones).
- */
 function safestore_perf_reduced_motion_hint() {
 	echo "<style id=\"sft-perf-reduced-motion\">@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}</style>\n";
 }

@@ -1,12 +1,3 @@
-/**
- * Custom size swatches for WooCommerce variable products (Safety Shoes).
- *
- * 1) Hide the native Size dropdown (kept in DOM for order processing)
- * 2) Build clickable swatches from that dropdown's options
- * 3) Sync selection back into the hidden dropdown
- * 4) Block Add to Cart / Buy now until a size is selected
- * 5) Styled via css/footwear-sizing.css
- */
 (function ($) {
   'use strict';
 
@@ -72,9 +63,6 @@
     $panel.find('.sft-size-swatch:not(:disabled)').first().trigger('focus');
   }
 
-  /**
-   * Step 2: read options from the hidden dropdown and build swatch buttons.
-   */
   function buildSwatches($form) {
     var $select = getSizeSelect($form);
     if (!$select.length) {
@@ -182,9 +170,6 @@
     return $panel;
   }
 
-  /**
-   * Step 4: mandatory validation on Add to Cart / Buy now.
-   */
   function bindValidation($form, $panel) {
     function guard(e) {
       if (hasSizeSelected($form)) {

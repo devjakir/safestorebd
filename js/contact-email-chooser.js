@@ -1,12 +1,3 @@
-/**
- * SafeStoreBD — Multi-email contact chooser.
- *
- * Markup is a native <details> disclosure (works without JS). This script adds:
- *   - one open chooser at a time
- *   - close on outside click / Escape
- *   - arrow-key focus between mailto options
- *   - drop-up vs drop-down based on available viewport space
- */
 (function () {
   'use strict';
 
@@ -18,19 +9,10 @@
   var ROOT_SEL = '[data-sft-email-chooser]';
   var OPTION_SEL = '.sft-contact-email-chooser__option';
 
-  /**
-   * @param {HTMLDetailsElement} root
-   * @return {HTMLElement[]}
-   */
   function optionsOf(root) {
     return Array.prototype.slice.call(root.querySelectorAll(OPTION_SEL));
   }
 
-  /**
-   * Keep aria-expanded in sync for AT that does not expose <details> state.
-   *
-   * @param {HTMLDetailsElement} root
-   */
   function syncExpanded(root) {
     var trigger = root && root.querySelector('.sft-contact-email-chooser__trigger');
     if (trigger) {
@@ -38,10 +20,6 @@
     }
   }
 
-  /**
-   * @param {HTMLDetailsElement} root
-   * @param {boolean} open
-   */
   function setOpen(root, open) {
     if (!root) {
       return;
@@ -53,11 +31,6 @@
     }
   }
 
-  /**
-   * Flip the panel above or below the trigger so it stays in view.
-   *
-   * @param {HTMLDetailsElement} root
-   */
   function placePanel(root) {
     var panel = root.querySelector('.sft-contact-email-chooser__panel');
     var trigger = root.querySelector('.sft-contact-email-chooser__trigger');
@@ -77,9 +50,6 @@
     });
   }
 
-  /**
-   * @param {HTMLDetailsElement} except
-   */
   function closeOthers(except) {
     var all = document.querySelectorAll(ROOT_SEL);
     for (var i = 0; i < all.length; i++) {
@@ -89,10 +59,6 @@
     }
   }
 
-  /**
-   * @param {HTMLDetailsElement} root
-   * @param {number} index
-   */
   function focusOption(root, index) {
     var items = optionsOf(root);
     if (!items.length) {

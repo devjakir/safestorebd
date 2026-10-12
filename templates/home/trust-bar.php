@@ -1,7 +1,4 @@
 <?php
-/**
- * Home — Trust Bar (4 feature highlights)
- */
 
 $trust_items = array(
 	array(

@@ -1,14 +1,4 @@
 <?php
-/**
- * Home hero category imagery — live price + review overlays.
- *
- * Hero media, price, and reviews come from a real WooCommerce product in the
- * category (term meta, then the best visible product with a photo / price /
- * sale / ratings). Static theme assets are only a fallback when that product
- * has no image. Sale percent and stars are never invented.
- *
- * @package safestore-minimal
- */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -18,22 +8,10 @@ const SAFESTORE_HERO_PRODUCT_META = '_sft_hero_product_id';
 const SAFESTORE_HERO_OVERLAY_TTL  = 10 * MINUTE_IN_SECONDS;
 const SAFESTORE_HERO_OVERLAY_CACHE = 'sft_hero_overlay_v3_';
 
-/**
- * Transient key for a category overlay payload.
- *
- * @param string $category_slug product_cat slug.
- * @return string
- */
 function safestore_hero_overlay_cache_key( $category_slug ) {
 	return SAFESTORE_HERO_OVERLAY_CACHE . sanitize_title( (string) $category_slug );
 }
 
-/**
- * Overlay payload for a product category slug.
- *
- * @param string $category_slug product_cat slug.
- * @return array{product_id:int,price:?array,reviews:?array,image:?array}
- */
 function safestore_hero_overlay_for_category( $category_slug ) {
 	$slug = sanitize_title( (string) $category_slug );
 	$empty = array(
@@ -71,15 +49,6 @@ function safestore_hero_overlay_for_category( $category_slug ) {
 	return $payload;
 }
 
-/**
- * Pick the product that feeds hero overlays for a category.
- *
- * Order: filter → category term meta → highest-scoring visible product
- * (photo, live price, real sale, real ratings — never invented).
- *
- * @param string $category_slug product_cat slug.
- * @return int
- */
 function safestore_hero_resolve_category_product_id( $category_slug ) {
 	$term = get_term_by( 'slug', $category_slug, 'product_cat' );
 	if ( ! $term instanceof WP_Term ) {
@@ -129,12 +98,6 @@ function safestore_hero_resolve_category_product_id( $category_slug ) {
 	return $best_id;
 }
 
-/**
- * Rank a candidate for the hero. Higher is better. Does not invent sale or rating.
- *
- * @param WC_Product $product Product.
- * @return int
- */
 function safestore_hero_product_score( $product ) {
 	$score = 0;
 
@@ -180,11 +143,6 @@ function safestore_hero_product_score( $product ) {
 	return $score;
 }
 
-/**
- * @param int     $product_id Product ID.
- * @param WP_Term $term       Category term.
- * @return bool
- */
 function safestore_hero_product_is_usable( $product_id, $term ) {
 	$product = wc_get_product( $product_id );
 	if ( ! $product instanceof WC_Product || 'publish' !== $product->get_status() ) {
@@ -194,12 +152,6 @@ function safestore_hero_product_is_usable( $product_id, $term ) {
 	return has_term( (int) $term->term_id, 'product_cat', $product_id );
 }
 
-/**
- * Featured image data for the hero media column.
- *
- * @param WC_Product $product Product.
- * @return array<string,mixed>|null
- */
 function safestore_hero_product_image_payload( $product ) {
 	$image_id = (int) $product->get_image_id();
 	if ( $image_id <= 0 ) {
@@ -232,12 +184,6 @@ function safestore_hero_product_image_payload( $product ) {
 	);
 }
 
-/**
- * Display current + regular prices for overlay math (tax-aware).
- *
- * @param WC_Product $product Product.
- * @return array{current:float,regular:float,from:bool}
- */
 function safestore_hero_product_display_prices( $product ) {
 	$from    = false;
 	$current = 0.0;
@@ -282,12 +228,6 @@ function safestore_hero_product_display_prices( $product ) {
 	);
 }
 
-/**
- * Whole-percent off, or 0 when the product is not actually discounted.
- *
- * @param WC_Product $product Product.
- * @return int
- */
 function safestore_hero_product_save_pct( $product ) {
 	$prices  = safestore_hero_product_display_prices( $product );
 	$current = $prices['current'];
@@ -301,10 +241,6 @@ function safestore_hero_product_save_pct( $product ) {
 	return $save >= 1 ? $save : 0;
 }
 
-/**
- * @param WC_Product $product Product.
- * @return array<string,mixed>|null
- */
 function safestore_hero_product_price_payload( $product ) {
 	$prices  = safestore_hero_product_display_prices( $product );
 	$current = $prices['current'];
@@ -324,10 +260,6 @@ function safestore_hero_product_price_payload( $product ) {
 	);
 }
 
-/**
- * @param WC_Product $product Product.
- * @return array<string,mixed>|null
- */
 function safestore_hero_product_reviews_payload( $product ) {
 	$count = max( (int) $product->get_rating_count(), (int) $product->get_review_count() );
 	$avg   = (float) $product->get_average_rating();
@@ -343,12 +275,6 @@ function safestore_hero_product_reviews_payload( $product ) {
 	);
 }
 
-/**
- * Markup for floating price + review cards. Empty string when there is no data.
- *
- * @param array $overlay Overlay payload.
- * @return string
- */
 function safestore_hero_overlay_markup( $overlay ) {
 	if ( ! is_array( $overlay ) ) {
 		return '';
@@ -407,11 +333,6 @@ function safestore_hero_overlay_markup( $overlay ) {
 	return $html;
 }
 
-/**
- * Category admin: optional hero product ID.
- *
- * @param WP_Term $term Term.
- */
 function safestore_hero_category_field( $term ) {
 	$current = ( $term instanceof WP_Term ) ? (int) get_term_meta( $term->term_id, SAFESTORE_HERO_PRODUCT_META, true ) : 0;
 	?>
@@ -426,9 +347,6 @@ function safestore_hero_category_field( $term ) {
 }
 add_action( 'product_cat_edit_form_fields', 'safestore_hero_category_field', 20 );
 
-/**
- * @param int $term_id Term ID.
- */
 function safestore_hero_category_field_save( $term_id ) {
 	$term_id = (int) $term_id;
 	if ( $term_id <= 0 || ! current_user_can( 'edit_term', $term_id ) ) {
@@ -449,9 +367,6 @@ function safestore_hero_category_field_save( $term_id ) {
 }
 add_action( 'edited_product_cat', 'safestore_hero_category_field_save' );
 
-/**
- * @param int $product_id Product ID.
- */
 function safestore_hero_overlay_flush_product( $product_id ) {
 	$product_id = (int) $product_id;
 	if ( $product_id <= 0 ) {
@@ -472,9 +387,6 @@ function safestore_hero_overlay_flush_product( $product_id ) {
 add_action( 'woocommerce_update_product', 'safestore_hero_overlay_flush_product' );
 add_action( 'woocommerce_delete_product', 'safestore_hero_overlay_flush_product' );
 
-/**
- * @param int $comment_id Comment ID.
- */
 function safestore_hero_overlay_flush_comment( $comment_id ) {
 	$comment = get_comment( $comment_id );
 	if ( ! $comment || 'product' !== get_post_type( (int) $comment->comment_post_ID ) ) {

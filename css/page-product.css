@@ -1,9 +1,4 @@
 
-
-/* ==========================================================================
-   Single product (PDP)
-   ========================================================================== */
-
 .sft-pdp {
   --sft-pdp-accent: var(--ss-brand);
   --sft-pdp-ink: var(--ss-ink);
@@ -173,6 +168,26 @@
   color: var(--ss-brand);
   border: 1px solid rgba(220, 38, 38, 0.25);
   box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+}
+
+/* HOT badge over the gallery; the sale flash drops below it on hot products. */
+.sft-pdp .sft-hot-badge--pdp {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 9;
+  padding: 7px 14px 7px 11px;
+  font-size: var(--ss-text-xs);
+  pointer-events: none;
+}
+
+.sft-pdp .sft-hot-badge--pdp .sft-hot-badge__icon {
+  width: 14px;
+  height: 14px;
+}
+
+.sft-pdp.sft-is-hot span.onsale {
+  top: 54px !important;
 }
 
 .sft-pdp__summary {
@@ -958,8 +973,9 @@
     gap: 28px;
   }
 
+  /* Not sticky on one column, but still the anchor for the HOT / sale badges. */
   .sft-pdp__col--media {
-    position: static;
+    position: relative;
   }
 }
 

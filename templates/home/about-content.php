@@ -1,11 +1,4 @@
 <?php
-/**
- * Home — SEO copy block (Star Tech–style: full-width H2 / H3 article).
- *
- * H1 lives in the hero. Inline links use real shop, category, and policy URLs.
- *
- * @package safestore-minimal
- */
 
 $home_url    = home_url( '/' );
 $shop_url    = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );

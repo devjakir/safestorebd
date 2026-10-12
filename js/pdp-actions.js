@@ -1,8 +1,3 @@
-/**
- * SafeStoreBD — PDP action bar (compare, wishlist, share menu).
- * Vanilla JS, deferred. Wishlist/compare use localStorage.
- * Compare syncs with js/product-compare.js via SftCompare + sft:compare-change.
- */
 (function () {
   'use strict';
 

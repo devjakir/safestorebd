@@ -1,11 +1,5 @@
 <?php
-/**
- * Template Name: Contact
- *
- * Contact page — Fluent Forms.
- *
- * @package safestore-minimal
- */
+// Template Name: Contact
 
 get_header();
 

@@ -1,46 +1,15 @@
 <?php
-/**
- * SafeStoreBD — Add to Cart success toast.
- *
- * A branded, accessible "Added to cart" toast shown for:
- *   - AJAX archive adds (WooCommerce fires `added_to_cart`),
- *   - single-product adds (the form is intercepted and sent over AJAX so there
- *     is no page reload), and
- *   - standard non-AJAX adds (a one-time session flag shows the toast on the
- *     next page load — the graceful fallback when JS/AJAX is unavailable).
- *
- * The header cart count and total stay in sync via WooCommerce cart fragments,
- * so nothing here requires a page refresh.
- *
- * Self-contained: no third-party libraries. Everything is filterable/gated via
- * `safestore_cart_toast_enabled` for easy maintenance.
- *
- * @package safestore-minimal
- */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-/**
- * Whether the cart toast should load on this request.
- *
- * @return bool
- */
 function safestore_cart_toast_enabled() {
     $enabled = class_exists('WooCommerce') && !is_admin();
 
-    /**
-     * Toggle the Add to Cart toast.
-     *
-     * @param bool $enabled Whether the toast loads on this request.
-     */
     return (bool) apply_filters('safestore_cart_toast_enabled', $enabled);
 }
 
-/**
- * Enqueue the toast assets and pass the runtime data the script needs.
- */
 function safestore_cart_toast_enqueue() {
     if (!safestore_cart_toast_enabled()) {
         return;
@@ -111,9 +80,6 @@ function safestore_cart_toast_enqueue() {
 }
 add_action('wp_enqueue_scripts', 'safestore_cart_toast_enqueue', 20);
 
-/**
- * Render the toast container once in the footer (hidden until an add happens).
- */
 function safestore_cart_toast_markup() {
     if (!safestore_cart_toast_enabled()) {
         return;
@@ -143,13 +109,6 @@ function safestore_cart_toast_markup() {
 }
 add_action('wp_footer', 'safestore_cart_toast_markup', 30);
 
-/**
- * Keep the header cart count + total in sync via WooCommerce cart fragments,
- * so every AJAX add updates the header without a page refresh.
- *
- * @param array<string, string> $fragments
- * @return array<string, string>
- */
 function safestore_cart_toast_fragments($fragments) {
     if (!function_exists('WC') || !WC() || !WC()->cart) {
         return $fragments;
@@ -167,15 +126,6 @@ function safestore_cart_toast_fragments($fragments) {
 }
 add_filter('woocommerce_add_to_cart_fragments', 'safestore_cart_toast_fragments');
 
-/**
- * Remember the product name for standard (non-AJAX) adds so the toast can be
- * shown on the next page load. AJAX adds are handled entirely client-side.
- *
- * @param string $cart_item_key
- * @param int    $product_id
- * @param int    $quantity
- * @param int    $variation_id
- */
 function safestore_cart_toast_remember($cart_item_key, $product_id, $quantity, $variation_id) {
     if (wp_doing_ajax()) {
         return;

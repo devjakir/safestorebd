@@ -1,16 +1,8 @@
 
-
-/* ==========================================================================
-   Shop / WooCommerce — product grid
-   ========================================================================== */
-
 .sft-shop-main {
   background: var(--ss-white);
 }
 
-/* Shop + product archives sit on a tinted grey so the pure-white product cards
-   clearly lift off the background. Single product, cart, and checkout keep the
-   white background above. */
 .woocommerce-shop .sft-shop-main,
 .post-type-archive-product .sft-shop-main,
 .tax-product_cat .sft-shop-main,

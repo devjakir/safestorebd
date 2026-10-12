@@ -1,9 +1,5 @@
 <?php
-/**
- * Template Name: Privacy Policy
- *
- * @package safestore-minimal
- */
+// Template Name: Privacy Policy
 
 get_header();
 

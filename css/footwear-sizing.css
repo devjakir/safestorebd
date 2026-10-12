@@ -1,12 +1,3 @@
-/**
- * Footwear sizing — Safety Shoes EU 39–44 (PDP swatches)
- */
-
-/* --------------------------------------------------------------------------
- * Custom size swatches (PDP)
- * 1) Hide native WC Size dropdown (kept in DOM)
- * 2–4) Swatch UI + selection + error state
- * -------------------------------------------------------------------------- */
 
 /* Step 1: hide native Size dropdown + its table row (still in DOM) */
 .sft-variations-form--footwear .sft-size-dropdown-row,

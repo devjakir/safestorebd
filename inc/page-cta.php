@@ -1,47 +1,15 @@
 <?php
-/**
- * Unified pre-footer CTA banner.
- *
- * Replaces the six near-identical `.sft-*-page-footer` blocks (policy columns
- * + bullet lists + per-page CTA) that duplicated links already present in the
- * main footer's Customer Service column.
- *
- * Also the single source of truth for the primary contact number, so the
- * banner, the footer and the schema markup can never drift apart again.
- *
- * @package safestore-minimal
- */
 
 defined( 'ABSPATH' ) || exit;
 
-/**
- * Primary contact number in E.164 form (dial-ready).
- *
- * @return string
- */
 function safestore_primary_phone_e164() {
 	return (string) apply_filters( 'safestore_primary_phone_e164', '+8801811892291' );
 }
 
-/**
- * Primary contact number, human readable.
- *
- * @return string
- */
 function safestore_primary_phone_display() {
 	return (string) apply_filters( 'safestore_primary_phone_display', '+880 1811-892291' );
 }
 
-/**
- * wa.me deep link for the primary number.
- *
- * Deliberately NOT safestore_wa_link(): that reads the WhatsApp widget's
- * slot-1 setting, which is what made the CTA buttons show a different number
- * from the rest of the footer.
- *
- * @param string $text Optional pre-filled message.
- * @return string
- */
 function safestore_primary_wa_link( $text = '' ) {
 	$digits = preg_replace( '/\D/', '', safestore_primary_phone_e164() );
 	if ( '' === $digits ) {
@@ -54,20 +22,6 @@ function safestore_primary_wa_link( $text = '' ) {
 	return $url;
 }
 
-/**
- * Force every WhatsApp surface onto the primary number.
- *
- * safestore_wa_lines() is the theme's documented single source of truth for
- * the advertised WhatsApp lines. Filtering it here means the floating widget,
- * the PDP contact buttons and every safestore_wa_link() / safestore_wa_display()
- * call resolve to safestore_primary_phone_e164() — regardless of what is stored
- * in the safestore_whatsapp_chat option.
- *
- * NOTE: while this filter is active the number in
- * Settings -> WhatsApp Chat is ignored. Change the number in
- * safestore_primary_phone_e164() above, or remove this filter to hand control
- * back to the admin screen.
- */
 add_filter(
 	'safestore_wa_lines',
 	function ( $lines ) {
@@ -95,20 +49,6 @@ add_filter(
 );
 
 
-/**
- * Build one CTA button with the banner's shared styling.
- *
- * @param array $args {
- *     @type string $href    Required.
- *     @type string $label   Visible text.
- *     @type string $icon    Inline SVG markup (already trusted).
- *     @type string $variant 'primary' (solid) or 'secondary' (outline).
- *                          'wa' / 'call' still accepted.
- *     @type bool   $blank   Open in a new tab.
- *     @type string $aria    aria-label.
- * }
- * @return string
- */
 function safestore_page_cta_btn( $args ) {
 	$a = wp_parse_args(
 		$args,
@@ -131,19 +71,6 @@ function safestore_page_cta_btn( $args ) {
 	);
 }
 
-/**
- * Render the slim, single-row pre-footer CTA banner.
- *
- * @param array $args {
- *     @type string $title Heading. Defaults to the unified copy.
- *     @type string $text  Subtext. Defaults to the unified copy.
- *     @type string $label   aria-label for the section.
- *     @type string $actions  Optional pre-escaped markup replacing the default
- *                            WhatsApp + Call pair. Use safestore_page_cta_btn()
- *                            so the buttons keep the shared styling.
- * }
- * @return void
- */
 function safestore_render_page_cta( $args = array() ) {
 	$a = wp_parse_args(
 		$args,

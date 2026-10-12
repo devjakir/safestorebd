@@ -1,9 +1,5 @@
 <?php
-/**
- * Template Name: FAQ
- *
- * @package safestore-minimal
- */
+// Template Name: FAQ
 
 get_header();
 

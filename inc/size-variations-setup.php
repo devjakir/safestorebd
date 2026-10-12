@@ -1,38 +1,13 @@
 <?php
-/**
- * Safety Shoes size variations setup
- *
- * Admin tool (WooCommerce → Size Variations) that:
- * 1. Creates the global Size attribute (pa_size)
- * 2. Adds terms 39–44
- * 3. Converts simple products in the Safety Shoes category into
- *    variable products with one variation per size
- *
- * @package SafeStore_Minimal
- */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Size values used for Safety Shoes.
- *
- * @return string[]
- */
 function safestore_size_terms() {
 	return array( '39', '40', '41', '42', '43', '44' );
 }
 
-/**
- * Category slug for Safety Shoes.
- *
- * Resolved from the term rather than hardcoded: this slug drives the admin
- * tool's product query, so a stale spelling makes the screen report
- * "No products found in the Safety Shoes category" on a shop that has them.
- *
- * @return string
- */
 function safestore_size_category_slug() {
 	$candidates = array( 'safety-shoe', 'safety-shoes' );
 
@@ -43,9 +18,6 @@ function safestore_size_category_slug() {
 	return $candidates[0];
 }
 
-/**
- * Register admin submenu under WooCommerce.
- */
 function safestore_size_admin_menu() {
 	if ( ! class_exists( 'WooCommerce' ) ) {
 		return;
@@ -62,11 +34,6 @@ function safestore_size_admin_menu() {
 }
 add_action( 'admin_menu', 'safestore_size_admin_menu' );
 
-/**
- * Ensure pa_size exists and register it for the current request.
- *
- * @return int|WP_Error Attribute ID on success.
- */
 function safestore_size_ensure_attribute() {
 	if ( ! function_exists( 'wc_create_attribute' ) ) {
 		return new WP_Error( 'no_wc', __( 'WooCommerce is not active.', 'safestore-minimal' ) );
@@ -119,11 +86,6 @@ function safestore_size_ensure_attribute() {
 	return (int) $attribute_id;
 }
 
-/**
- * Ensure Size terms 39–44 exist.
- *
- * @return array{term_ids: int[], created: string[], existing: string[]}|WP_Error
- */
 function safestore_size_ensure_terms() {
 	$attr = safestore_size_ensure_attribute();
 	if ( is_wp_error( $attr ) ) {
@@ -159,11 +121,6 @@ function safestore_size_ensure_terms() {
 	);
 }
 
-/**
- * Resolve Size term slugs (creates missing terms first).
- *
- * @return string[]|WP_Error
- */
 function safestore_size_get_term_slugs() {
 	$ensured = safestore_size_ensure_terms();
 	if ( is_wp_error( $ensured ) ) {
@@ -189,11 +146,6 @@ function safestore_size_get_term_slugs() {
 	return $slugs;
 }
 
-/**
- * Product IDs in the Safety Shoes category.
- *
- * @return int[]
- */
 function safestore_size_get_safety_shoe_product_ids() {
 	if ( ! taxonomy_exists( 'product_cat' ) ) {
 		return array();
@@ -220,12 +172,6 @@ function safestore_size_get_safety_shoe_product_ids() {
 	return array_map( 'intval', $ids );
 }
 
-/**
- * Whether a product already has Size used for variations with all expected terms.
- *
- * @param WC_Product $product Product.
- * @return bool
- */
 function safestore_size_product_has_size_variations( $product ) {
 	if ( ! $product || ! $product->is_type( 'variable' ) ) {
 		return false;
@@ -265,12 +211,6 @@ function safestore_size_product_has_size_variations( $product ) {
 	return count( $children ) >= count( $needed );
 }
 
-/**
- * Convert a simple (or incomplete variable) product to Size variations.
- *
- * @param int $product_id Product ID.
- * @return array{product_id: int, variation_ids: int[], skipped?: bool, message: string}|WP_Error
- */
 function safestore_size_convert_product( $product_id ) {
 	$product_id = (int) $product_id;
 	$product    = wc_get_product( $product_id );
@@ -448,12 +388,6 @@ function safestore_size_convert_product( $product_id ) {
 	);
 }
 
-/**
- * Enable managed stock on existing Size variations (idempotent).
- *
- * @param int $product_id Parent product ID.
- * @return array{product_id: int, updated: int, message: string}|WP_Error
- */
 function safestore_size_enable_variation_stock( $product_id ) {
 	$product_id = (int) $product_id;
 	$product    = wc_get_product( $product_id );
@@ -504,9 +438,6 @@ function safestore_size_enable_variation_stock( $product_id ) {
 	);
 }
 
-/**
- * Handle admin form actions.
- */
 function safestore_size_handle_actions() {
 	if ( ! is_admin() || ! current_user_can( 'manage_woocommerce' ) ) {
 		return;
@@ -620,9 +551,6 @@ function safestore_size_handle_actions() {
 }
 add_action( 'admin_init', 'safestore_size_handle_actions' );
 
-/**
- * Render admin page.
- */
 function safestore_size_admin_page() {
 	if ( ! current_user_can( 'manage_woocommerce' ) ) {
 		return;

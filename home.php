@@ -1,9 +1,4 @@
 <?php
-/**
- * Blog index (Settings → Reading → Posts page, /blog/).
- *
- * @package safestore-minimal
- */
 
 get_header();
 

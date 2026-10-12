@@ -1,12 +1,5 @@
 <?php
-/**
- * Template Name: Compare products
- *
- * Side-by-side product comparison. Product IDs come from localStorage
- * (`sft_compare`); the table is rendered by js/product-compare.js.
- *
- * @package safestore-minimal
- */
+// Template Name: Compare products
 
 get_header();
 

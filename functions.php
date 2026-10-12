@@ -1,134 +1,48 @@
 <?php
 
-/**
- * Front-end performance helpers (defer, preload, emoji/CSS cleanup).
- */
 require get_template_directory() . '/inc/performance.php';
 
-/**
- * Sitemap / crawl hygiene (Rank Math exclusions, noindex, cache busting).
- */
 require get_template_directory() . '/inc/seo-sitemap.php';
 
-/**
- * WhatsApp chat widget — floating button, chat panel, admin settings
- * (Settings → WhatsApp Chat).
- */
 require get_template_directory() . '/inc/whatsapp-chat.php';
 
-/**
- * Add to Cart success toast — branded confirmation, header cart sync, AJAX
- * single-product add. See inc/cart-toast.php.
- */
 require get_template_directory() . '/inc/cart-toast.php';
 
-/**
- * Site-wide copy to clipboard — copy buttons on contact details everywhere
- * they appear, plus automatic buttons on plain tel:/mailto:/wa.me links in
- * page content. See inc/copy-to-clipboard.php.
- */
 require get_template_directory() . '/inc/copy-to-clipboard.php';
 
-/**
- * Hostinger SMTP enforcement (WP Mail SMTP / phpmailer).
- * Password comes from WPMS_SMTP_PASS in wp-config or inc/smtp-secret.php.
- * See deploy/wp-config-smtp-snippet.php.
- */
 require get_template_directory() . '/inc/smtp.php';
 
-/**
- * Safety Shoes size variations setup — admin tool under
- * WooCommerce → Size Variations (pa_size 39–44).
- */
 require get_template_directory() . '/inc/size-variations-setup.php';
 
-/**
- * Footwear storefront logic — PDP size swatches 39–44, per-size stock
- * validation, retail/B2B qty rules.
- */
 require get_template_directory() . '/inc/footwear-sizing.php';
 
-/**
- * PDP social support/share buttons + product Open Graph / Twitter Card meta.
- * See inc/pdp-social.php.
- */
 require get_template_directory() . '/inc/pdp-social.php';
 
-/**
- * Product comparison — floating bar, REST payload, /compare/ page seed.
- * Complements the PDP Compare toggle (localStorage key sft_compare).
- */
 require get_template_directory() . '/inc/product-compare.php';
 
-/**
- * Made in Bangladesh origin badge — Product Data checkbox, shop cards, PDP.
- * See inc/origin-badge.php.
- */
 require get_template_directory() . '/inc/origin-badge.php';
 
-/**
- * PDP compact trust badges + Delivery & returns product tab.
- * See inc/pdp-fulfillment.php.
- */
+// HOT product badge — Product Data checkbox, shop cards, PDP gallery (needs origin-badge.php above).
+require get_template_directory() . '/inc/hot-badge.php';
+
 require get_template_directory() . '/inc/pdp-fulfillment.php';
 
-/**
- * Home hero — live price/review overlays from a category hero product.
- * See inc/hero-category-imagery.php.
- */
 require get_template_directory() . '/inc/hero-category-imagery.php';
 
-/**
- * Mobile & tablet navigation — sticky bottom bar, header quick links,
- * hide-on-scroll header. Renders below 1025px only.
- */
 require get_template_directory() . '/inc/mobile-nav.php';
 
-/**
- * Page-scoped CSS loading — style.css holds the global shell only;
- * css/page-*.css sheets load per template. See inc/page-css.php.
- */
 require get_template_directory() . '/inc/page-css.php';
 
-/**
- * Unified pre-footer CTA banner + single source of truth for the primary
- * contact number. See inc/page-cta.php.
- */
 require get_template_directory() . '/inc/page-cta.php';
 
-/**
- * Product category permalinks resolved from the term, so homepage links
- * cannot 404 on a slug rename. See inc/category-links.php.
- */
 require get_template_directory() . '/inc/category-links.php';
 
-/**
- * Product reviews — keep the WooCommerce Reviews tab on the PDP by forcing
- * comments open on products. Ported from the "Re-add WooCommerce Reviews tab"
- * Code Snippets entry; deactivate that snippet on live after deploying.
- * See SNIPPETS-MIGRATION.md.
- */
 require get_template_directory() . '/inc/product-reviews.php';
 
-/**
- * Shop filter bar — renders the HUSKY / WOOF [woof] filter above the shop and
- * category grid. Needs the woocommerce-products-filter plugin; inert without
- * it. Ported from the "Show product filter (HUSKY)" Code Snippets entry;
- * deactivate that snippet on live after deploying. See SNIPPETS-MIGRATION.md.
- */
 require get_template_directory() . '/inc/shop-filter.php';
 
-/**
- * Home Featured Products mobile slider: arrows + dot indicator over the
- * scroll-snap track. Inlined in the footer (no extra request) and inert
- * outside the mobile breakpoint.
- */
 require get_template_directory() . '/inc/home-products-slider.php';
 
-/**
- * Blog: /blog/ posts page, blog templates' helpers and assets.
- * Templates: home.php, single.php, archive.php, search.php, comments.php.
- */
 require get_template_directory() . '/inc/blog.php';
 
 function safestore_minimal_enqueue_assets() {
@@ -284,13 +198,6 @@ function safestore_minimal_setup() {
 }
 add_action('after_setup_theme', 'safestore_minimal_setup');
 
-/**
- * Square catalog thumbnails so mixed source photos share one grid cell.
- * Existing files need a thumbnail regen; CSS aspect-ratio is the display lock.
- *
- * @param array<string,mixed> $size Image size args.
- * @return array<string,mixed>
- */
 function safestore_square_catalog_image_size( $size ) {
     if ( ! is_array( $size ) ) {
         $size = array();
@@ -303,19 +210,8 @@ function safestore_square_catalog_image_size( $size ) {
 add_filter( 'woocommerce_get_image_size_thumbnail', 'safestore_square_catalog_image_size' );
 add_filter( 'woocommerce_get_image_size_woocommerce_thumbnail', 'safestore_square_catalog_image_size' );
 
-/**
- * Turn off WooCommerce's in-place magnifier (jquery-zoom).
- *
- * js/pdp-zoom.js replaces it with a side-by-side lens + flyout; running both
- * puts two magnifiers on the same hover. Theme support stays declared so the
- * lightbox and gallery slider are untouched — flip this back to __return_true
- * to restore core behaviour.
- */
 add_filter('woocommerce_single_product_zoom_enabled', '__return_false');
 
-/**
- * Strip WooCommerce's default page wrappers and sidebar — the theme provides its own layout.
- */
 add_action('init', function () {
     remove_action('woocommerce_before_main_content', 'woocommerce_output_content_wrapper', 10);
     remove_action('woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end', 10);
@@ -331,9 +227,6 @@ add_action('init', function () {
     remove_action('woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart', 10);
 });
 
-/**
- * Product grid card footer — WooCommerce loop add to cart (same callback as core loop).
- */
 function safestore_minimal_product_card_loop_add_to_cart() {
     if (!function_exists('woocommerce_template_loop_add_to_cart')) {
         return;
@@ -344,11 +237,6 @@ function safestore_minimal_product_card_loop_add_to_cart() {
 }
 add_action('safestore_minimal_product_card_footer', 'safestore_minimal_product_card_loop_add_to_cart', 10);
 
-/**
- * @param array<string, mixed> $args    Loop add to cart args.
- * @param WC_Product           $product Product.
- * @return array<string, mixed>
- */
 function safestore_minimal_loop_add_to_cart_args($args, $product) {
     if (empty($GLOBALS['safestore_minimal_loop_cart_context'])) {
         return $args;
@@ -358,11 +246,6 @@ function safestore_minimal_loop_add_to_cart_args($args, $product) {
 }
 add_filter('woocommerce_loop_add_to_cart_args', 'safestore_minimal_loop_add_to_cart_args', 10, 2);
 
-/**
- * @param string     $link    Anchor HTML.
- * @param WC_Product $product Product.
- * @param array      $args    Args.
- */
 function safestore_minimal_loop_add_to_cart_link($link, $product, $args) {
     if (empty($GLOBALS['safestore_minimal_loop_cart_context'])) {
         return $link;
@@ -385,15 +268,9 @@ function safestore_minimal_loop_add_to_cart_link($link, $product, $args) {
 }
 add_filter('woocommerce_loop_add_to_cart_link', 'safestore_minimal_loop_add_to_cart_link', 10, 3);
 
-/**
- * Shop loop: 5 columns, 15 products per page (grid scales 5→4→3→2 in CSS).
- */
 add_filter('loop_shop_columns', function () { return 5; }, 99);
 add_filter('loop_shop_per_page', function () { return 15; }, 99);
 
-/**
- * Single product (PDP): breadcrumb, summary order, contact/delivery blocks.
- */
 function safestore_minimal_is_product_page() {
     return function_exists('is_product') && is_product();
 }
@@ -454,10 +331,6 @@ add_action(
     }
 );
 
-/**
- * Hide SKU, category, and tag rows in the PDP meta box only.
- * Brand remains. Taxonomies and SKU stay in wp-admin and elsewhere.
- */
 function safestore_minimal_pdp_hide_meta_terms($terms, $post_id, $taxonomy) {
     if ($taxonomy === 'product_cat' || $taxonomy === 'product_tag') {
         return false;
@@ -475,9 +348,6 @@ function safestore_minimal_pdp_restore_meta_taxonomies() {
     remove_filter('wc_product_sku_enabled', '__return_false');
 }
 
-/**
- * WhatsApp + Messenger + Telegram + phone row (filterable URLs / numbers).
- */
 function safestore_minimal_pdp_contact_row() {
     $wa = apply_filters('safestore_minimal_whatsapp_e164', '');
     $wa = preg_replace('/[^0-9]/', '', (string) $wa);
@@ -559,9 +429,6 @@ function safestore_minimal_pdp_contact_row() {
     <?php
 }
 
-/**
- * Subtle trust line (avoid fake “viewers”; override via filter).
- */
 function safestore_minimal_pdp_trust_line() {
     $line = apply_filters(
         'safestore_minimal_pdp_trust_line',
@@ -582,11 +449,6 @@ function safestore_minimal_pdp_qty_plus() {
     echo '<button type="button" class="sft-qty-btn sft-qty-btn--plus" aria-label="' . esc_attr__('Increase quantity', 'safestore-minimal') . '">+</button>';
 }
 
-/**
- * Secondary checkout CTA — simple products link straight to checkout;
- * variable products (e.g. Safety Shoes sizes) submit the variations form
- * then redirect to checkout once a size is chosen.
- */
 function safestore_minimal_pdp_buy_now_button() {
     global $product;
     if (!$product || !$product->is_purchasable() || !$product->is_in_stock()) {
@@ -614,12 +476,6 @@ function safestore_minimal_pdp_buy_now_button() {
     }
 }
 
-/**
- * After a Buy now submit on a variable product, go to checkout.
- *
- * @param string $url Redirect URL.
- * @return string
- */
 function safestore_minimal_buy_now_redirect($url) {
     if (isset($_REQUEST['safestore_buy_now'])) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         return wc_get_checkout_url();
@@ -637,12 +493,6 @@ function safestore_minimal_buy_now_redirect($url) {
 }
 add_filter('woocommerce_add_to_cart_redirect', 'safestore_minimal_buy_now_redirect', 20);
 
-/**
- * PDP tabs: clearer labels for long-form storytelling (reference site style).
- *
- * @param array<string, array<string, mixed>> $tabs Tabs.
- * @return array<string, array<string, mixed>>
- */
 function safestore_minimal_product_tabs_labels($tabs) {
     if (isset($tabs['description'])) {
         $tabs['description']['title'] = __('Why choose this product', 'safestore-minimal');
@@ -654,9 +504,6 @@ function safestore_minimal_product_tabs_labels($tabs) {
 }
 add_filter('woocommerce_product_tabs', 'safestore_minimal_product_tabs_labels', 98);
 
-/**
- * Hide redundant in-tab headings (tab labels already describe the section).
- */
 add_filter('woocommerce_product_description_heading', '__return_false');
 add_filter(
     'woocommerce_reviews_title',
@@ -670,12 +517,6 @@ add_filter(
     2
 );
 
-/**
- * Remove WooCommerce sample "Photography by @cottonbro." credit from product copy.
- *
- * @param string $content Post content.
- * @return string
- */
 function safestore_minimal_strip_sample_photo_credit($content) {
     if (!is_string($content) || $content === '') {
         return $content;
@@ -689,9 +530,6 @@ function safestore_minimal_strip_sample_photo_credit($content) {
 
 add_filter('the_content', 'safestore_minimal_strip_sample_photo_credit', 25);
 
-/**
- * One-time DB cleanup for demo product descriptions (WooCommerce sample data).
- */
 function safestore_minimal_cleanup_sample_photo_credit() {
     if (get_option('safestore_stripped_cottonbro_v1')) {
         return;
@@ -727,9 +565,6 @@ function safestore_minimal_cleanup_sample_photo_credit() {
 }
 add_action('init', 'safestore_minimal_cleanup_sample_photo_credit', 99);
 
-/**
- * Create Return & Refund Policy page if missing (footer link: /return-refund-policy/).
- */
 function safestore_minimal_seed_refund_policy_page() {
 	if ( get_option( 'safestore_refund_policy_page_v1' ) ) {
 		return;
@@ -770,9 +605,6 @@ add_action(
 	20
 );
 
-/**
- * SEO meta for Refund & Policy template (when no SEO plugin).
- */
 function safestore_minimal_is_refund_policy_page() {
 	return is_page_template( 'page-refund-policy.php' );
 }
@@ -803,11 +635,6 @@ add_filter(
 	}
 );
 
-/**
- * FAQ sections for page-faq.php (Bangladesh market: payments, COD, courier, PPE).
- *
- * @return array<int, array{id: string, title: string, intro?: string, items: array<int, array{q: string, a: string}>}>
- */
 function safestore_minimal_get_faq_sections() {
 	$returns_url  = home_url( '/return-refund-policy/' );
 	$shipping_url = home_url( '/shipping-delivery/' );
@@ -882,9 +709,6 @@ function safestore_minimal_get_faq_sections() {
 	);
 }
 
-/**
- * Create FAQ page if missing (footer link: /faqs/).
- */
 function safestore_minimal_seed_faq_page() {
 	if ( get_option( 'safestore_faq_page_v1' ) ) {
 		return;
@@ -975,16 +799,6 @@ add_filter(
 	}
 );
 
-/**
- * Structured office / pickup address — single source of truth.
- *
- * Both the human-readable address string and the PostalAddress structured
- * data derive from these parts, so the footer copy and the schema can never
- * drift apart when the address changes. Filter individual parts via
- * `safestore_minimal_address_parts`.
- *
- * @return array{street:string, locality:string, postal_code:string, country:string, country_name:string}
- */
 function safestore_minimal_get_address_parts() {
 	return apply_filters(
 		'safestore_minimal_address_parts',
@@ -998,9 +812,6 @@ function safestore_minimal_get_address_parts() {
 	);
 }
 
-/**
- * Office / pickup address as a single display string (shared site-wide).
- */
 function safestore_minimal_get_pickup_address() {
 	$parts   = safestore_minimal_get_address_parts();
 	$address = sprintf(
@@ -1015,9 +826,6 @@ function safestore_minimal_get_pickup_address() {
 	return apply_filters( 'safestore_minimal_pdp_pickup_address', $address );
 }
 
-/**
- * Short office area label for dispatch copy (e.g. Pallabi, Dhaka).
- */
 function safestore_minimal_get_office_location_short() {
 	return apply_filters(
 		'safestore_minimal_office_location_short',
@@ -1025,23 +833,6 @@ function safestore_minimal_get_office_location_short() {
 	);
 }
 
-/* -------------------------------------------------------------------------
- * Reusable contact component
- *
- * A single icon-left / detail-right contact row used everywhere contact
- * information appears (footer, homepage support section, …) so the icon,
- * spacing, alignment, and typography stay identical site-wide. All icons
- * inherit `currentColor`, so the brand colour is applied purely in CSS via
- * the `--sft-contact-accent` custom property.
- * ---------------------------------------------------------------------- */
-
-/**
- * Inline SVG glyph for a contact method. Returns trusted, self-authored
- * markup (no user input), safe to echo without escaping.
- *
- * @param string $type phone|whatsapp|email|location|clock|help.
- * @return string SVG markup, or '' for an unknown type.
- */
 function safestore_contact_icon_svg( $type ) {
 	if ( 'whatsapp' === $type && function_exists( 'safestore_wa_icon_svg' ) ) {
 		return safestore_wa_icon_svg( 'sft-contact-item__glyph' );
@@ -1058,16 +849,6 @@ function safestore_contact_icon_svg( $type ) {
 	return isset( $icons[ $type ] ) ? $icons[ $type ] : '';
 }
 
-/**
- * Inner markup shared by the clickable and static contact rows.
- *
- * @param string $icon   Trusted SVG markup for the icon chip.
- * @param string $label  Method label; rendered but visually hidden (CSS), so it
- *                       stays available to screen readers (optional).
- * @param string $value  Primary contact value.
- * @param string $detail Small line below the value (optional).
- * @return string
- */
 function safestore_contact_item_markup( $icon, $label, $value, $detail ) {
 	$body = '';
 	if ( '' !== (string) $label ) {
@@ -1082,12 +863,6 @@ function safestore_contact_item_markup( $icon, $label, $value, $detail ) {
 		. '<span class="sft-contact-item__body">' . $body . '</span>';
 }
 
-/**
- * The site's public contact email addresses, in display order (primary first).
- * Single source of truth — filter `safestore_contact_emails` to change them.
- *
- * @return string[]
- */
 function safestore_contact_email_addresses() {
 	$emails = apply_filters(
 		'safestore_contact_emails',
@@ -1099,14 +874,6 @@ function safestore_contact_email_addresses() {
 	return array_values( array_filter( array_map( 'trim', (array) $emails ) ) );
 }
 
-/**
- * Build a safe mailto: href for a contact email. Falls back to esc_attr if a
- * protocol filter empties esc_url() — keeps the action working under strict
- * URL sanitizers.
- *
- * @param string $email Raw email address.
- * @return string Escaped href ready for an attribute, or '' when invalid.
- */
 function safestore_contact_mailto_href( $email ) {
 	$safe = sanitize_email( (string) $email );
 	if ( '' === $safe || ! is_email( $safe ) ) {
@@ -1122,19 +889,6 @@ function safestore_contact_mailto_href( $email ) {
 	return $href;
 }
 
-/**
- * Stacked mailto links for the site contact emails (one address per line;
- * .sft-contact-emails CSS keeps each address from wrapping mid-string).
- * When copy-to-clipboard is enabled, each address gets its own copy button.
- * Reusable anywhere the contact email is shown. Returns trusted markup.
- *
- * @param array $args {
- *     @type string $class      Root span class.
- *     @type bool   $copy       Whether to render a per-email copy button. Default true.
- *     @type string $copy_class Extra classes on each copy button.
- * }
- * @return string
- */
 function safestore_contact_email_links( $args = array() ) {
 	$args   = wp_parse_args(
 		$args,
@@ -1205,13 +959,6 @@ function safestore_contact_email_links( $args = array() ) {
 		. '</span>';
 }
 
-/**
- * Direct mailto action chip for a single email (mirrors phone / WhatsApp).
- *
- * @param string $email Email address.
- * @param string $icon  Trusted SVG markup.
- * @return string
- */
 function safestore_contact_email_action_link( $email, $icon ) {
 	$href = safestore_contact_mailto_href( $email );
 	$safe = sanitize_email( $email );
@@ -1233,15 +980,6 @@ function safestore_contact_email_action_link( $email, $icon ) {
 	);
 }
 
-/**
- * Multi-email action: disclosure that lets the user choose which address to open.
- * Uses <details> so the menu works without JS; the companion script adds Escape,
- * outside-click close, one-open-at-a-time, and arrow-key focus.
- *
- * @param string[] $emails Validated email addresses.
- * @param string   $icon   Trusted SVG markup for the trigger chip.
- * @return string
- */
 function safestore_contact_email_chooser( $emails, $icon ) {
 	$emails = array_values( array_filter( array_map( 'sanitize_email', (array) $emails ) ) );
 	$emails = array_values( array_filter( $emails, 'is_email' ) );
@@ -1300,15 +1038,6 @@ function safestore_contact_email_chooser( $emails, $icon ) {
 	);
 }
 
-/**
- * Full contact row for the email addresses — lead icon, stacked addresses with
- * inline copy, and a clear action: direct mailto when there is one address, or
- * a choose-email disclosure when there are two or more. Used by the footer and
- * homepage support section.
- *
- * @param array $args { @type string $label, @type string $detail, @type string $class }
- * @return string
- */
 function safestore_contact_emails_row( $args = array() ) {
 	$args  = wp_parse_args(
 		$args,
@@ -1372,10 +1101,6 @@ function safestore_contact_emails_row( $args = array() ) {
 	);
 }
 
-/**
- * Enqueue the multi-email chooser enhancer (Escape, outside click, focus).
- * Markup works without this script via native <details>.
- */
 function safestore_contact_email_chooser_enqueue() {
 	if ( is_admin() ) {
 		return;
@@ -1396,24 +1121,6 @@ function safestore_contact_email_chooser_enqueue() {
 }
 add_action( 'wp_enqueue_scripts', 'safestore_contact_email_chooser_enqueue', 21 );
 
-/**
- * Render a clickable contact item. Copyable methods (phone / WhatsApp / email)
- * use [lead icon] [value + inline copy] … [action chip]; non-copyable methods
- * (e.g. Help Center) stay a single anchor with the brand icon on the left.
- * Returns markup; callers echo it (contains trusted SVG).
- *
- * @param array $args {
- *     @type string $type   phone|whatsapp|email (selects icon + auto-builds href). Default 'phone'.
- *     @type string $value  Display value, e.g. "+880 1811-892291". Required.
- *     @type string $href   Link target. Auto-built from $type + $value when omitted.
- *     @type string $label  Method label, e.g. "Call us" — not shown; used as the aria-label + tooltip.
- *     @type string $detail Small line below the value.
- *     @type string $icon   Custom trusted SVG (overrides the type icon).
- *     @type bool   $external Open in a new tab. Defaults to true for WhatsApp.
- *     @type string $class  Extra classes on the root element.
- * }
- * @return string
- */
 function safestore_contact_item( $args = array() ) {
 	$args = wp_parse_args(
 		$args,
@@ -1514,15 +1221,6 @@ function safestore_contact_item( $args = array() ) {
 	);
 }
 
-/**
- * Render a static (non-clickable) contact line — same layout as
- * safestore_contact_item(), used for address, opening hours, etc.
- *
- * @param array $args type, value (required), label, detail, icon, class, copy.
- *                    `copy` is null (auto — on for the address row), or a bool
- *                    to force the copy button on/off for this row.
- * @return string
- */
 function safestore_contact_line( $args = array() ) {
 	$args = wp_parse_args(
 		$args,
@@ -1576,11 +1274,6 @@ function safestore_contact_line( $args = array() ) {
 	);
 }
 
-/**
- * Shipping zones for page-shipping.php (filterable).
- *
- * @return array<int, array{zone: string, time: string, cost: string}>
- */
 function safestore_minimal_get_shipping_zones() {
 	return apply_filters(
 		'safestore_minimal_shipping_zones',
@@ -1604,9 +1297,6 @@ function safestore_minimal_get_shipping_zones() {
 	);
 }
 
-/**
- * Create Shipping page if missing (footer link: /shipping-delivery/).
- */
 function safestore_minimal_seed_shipping_page() {
 	if ( get_option( 'safestore_shipping_page_v1' ) ) {
 		return;
@@ -1677,11 +1367,6 @@ add_filter(
 	}
 );
 
-/**
- * Open roles for page-careers.php (filterable).
- *
- * @return array<int, array{title: string, type: string, summary: string}>
- */
 function safestore_minimal_get_career_openings() {
 	return apply_filters(
 		'safestore_minimal_career_openings',
@@ -1704,9 +1389,6 @@ function safestore_minimal_get_career_openings() {
 	);
 }
 
-/**
- * Create Careers page if missing (footer link: /careers/).
- */
 function safestore_minimal_seed_careers_page() {
 	if ( get_option( 'safestore_careers_page_v1' ) ) {
 		return;
@@ -1806,11 +1488,6 @@ add_filter(
 	}
 );
 
-/**
- * Order tracking steps for page-track-order.php (filterable).
- *
- * @return array<int, array{title: string, text: string}>
- */
 function safestore_minimal_get_track_steps() {
 	return apply_filters(
 		'safestore_minimal_track_steps',
@@ -1835,9 +1512,6 @@ function safestore_minimal_get_track_steps() {
 	);
 }
 
-/**
- * Create Track Order page if missing (footer link: /track-order/).
- */
 function safestore_minimal_seed_track_order_page() {
 	if ( get_option( 'safestore_track_order_page_v1' ) ) {
 		return;
@@ -1908,11 +1582,6 @@ add_filter(
 	}
 );
 
-/**
- * Privacy policy sections for page-privacy-policy.php (filterable).
- *
- * @return array<int, array{id: string, title: string, paragraphs: string[], list?: string[]}>
- */
 function safestore_minimal_get_privacy_sections() {
 	$contact_url = home_url( '/contact/' );
 
@@ -1964,9 +1633,6 @@ function safestore_minimal_get_privacy_sections() {
 	);
 }
 
-/**
- * Create Privacy Policy page if missing (footer link: /privacy-policy/).
- */
 function safestore_minimal_seed_privacy_policy_page() {
 	if ( get_option( 'safestore_privacy_policy_page_v1' ) ) {
 		return;
@@ -2037,11 +1703,6 @@ add_filter(
 	}
 );
 
-/**
- * Terms of service sections for page-terms-of-service.php (filterable).
- *
- * @return array<int, array{id: string, title: string, paragraphs?: string[], list?: string[]}>
- */
 function safestore_minimal_get_terms_sections() {
 	$returns_url  = home_url( '/return-refund-policy/' );
 	$shipping_url = home_url( '/shipping-delivery/' );
@@ -2105,9 +1766,6 @@ function safestore_minimal_get_terms_sections() {
 	);
 }
 
-/**
- * Create Terms of Service page if missing (footer link: /terms-of-service/).
- */
 function safestore_minimal_seed_terms_page() {
 	if ( get_option( 'safestore_terms_page_v1' ) ) {
 		return;
@@ -2178,11 +1836,6 @@ add_filter(
 	}
 );
 
-/**
- * Legal document links for page-legal.php.
- *
- * @return array<int, array{label: string, url: string, desc?: string}>
- */
 function safestore_minimal_get_legal_documents() {
 	return apply_filters(
 		'safestore_minimal_legal_documents',
@@ -2211,11 +1864,6 @@ function safestore_minimal_get_legal_documents() {
 	);
 }
 
-/**
- * Legal page sections (filterable).
- *
- * @return array<int, array{id: string, title: string, paragraphs?: string[], list?: string[]}>
- */
 function safestore_minimal_get_legal_sections() {
 	return apply_filters(
 		'safestore_minimal_legal_sections',
@@ -2249,11 +1897,6 @@ function safestore_minimal_get_legal_sections() {
 	);
 }
 
-/**
- * HTML sitemap groups for page-sitemap.php (filterable).
- *
- * @return array<int, array{title: string, links: array<int, array{label: string, url: string}>}>
- */
 function safestore_minimal_get_sitemap_groups() {
 	$shop_url = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
 
@@ -2329,9 +1972,6 @@ function safestore_minimal_get_sitemap_groups() {
 	return apply_filters( 'safestore_minimal_sitemap_groups', $groups );
 }
 
-/**
- * Create Legal page if missing (footer link: /legal/).
- */
 function safestore_minimal_seed_legal_page() {
 	if ( get_option( 'safestore_legal_page_v1' ) ) {
 		return;
@@ -2362,9 +2002,6 @@ function safestore_minimal_seed_legal_page() {
 	update_option( 'safestore_legal_page_v1', 1, false );
 }
 
-/**
- * Create Sitemap page if missing (footer link: /sitemap/).
- */
 function safestore_minimal_seed_sitemap_page() {
 	if ( get_option( 'safestore_sitemap_page_v1' ) ) {
 		return;
@@ -2492,11 +2129,6 @@ function safestorebd_checkout_fields( $fields ) {
 // ACR Checkout Page customize End
 
 // Checkout smoothing (Bangladesh-only store) Start
-/**
- * The country field is removed from checkout, so pin the customer to BD.
- * Without this an account with an empty saved country gets
- * "No shipping options available" and cannot order.
- */
 function safestorebd_checkout_force_country() {
     if ( ! function_exists( 'WC' ) || ! WC()->customer ) {
         return;
@@ -2519,27 +2151,12 @@ add_action(
     5
 );
 
-/**
- * WooCommerce's checkout script posts an empty country when the field is
- * absent, which blanks the customer country again on every totals refresh.
- * Reading an empty country as BD keeps shipping zones matching.
- *
- * @param string $country Stored country code.
- * @return string
- */
 function safestorebd_default_country_bd( $country ) {
     return $country ? $country : 'BD';
 }
 add_filter( 'woocommerce_customer_get_billing_country', 'safestorebd_default_country_bd' );
 add_filter( 'woocommerce_customer_get_shipping_country', 'safestorebd_default_country_bd' );
 
-/**
- * Normalise a Bangladeshi mobile number to 01XXXXXXXXX.
- * Accepts Bangla digits, spaces, dashes and a +880 / 880 prefix.
- *
- * @param string $phone Raw input.
- * @return string Digits only.
- */
 function safestorebd_normalize_bd_phone( $phone ) {
     $bangla = array( "\u{09E6}", "\u{09E7}", "\u{09E8}", "\u{09E9}", "\u{09EA}", "\u{09EB}", "\u{09EC}", "\u{09ED}", "\u{09EE}", "\u{09EF}" );
     $phone  = str_replace( $bangla, array( '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ), (string) $phone );
@@ -2599,9 +2216,4 @@ add_filter(
 // (safestore_cart_toast_fragments) — keyed to .sft-header-cart-total only,
 // so Account/Wishlist labels are never overwritten after AJAX add-to-cart.
 
-/**
- * Prevent duplicate category description on shop archives.
- * The theme's woocommerce.php header already outputs term_description(),
- * so remove WooCommerce's default archive description output.
- */
 remove_action( 'woocommerce_archive_description', 'woocommerce_taxonomy_archive_description', 10 );

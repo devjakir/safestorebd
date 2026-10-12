@@ -1,12 +1,4 @@
 <?php
-/**
- * Blog card (index, archives, search, related posts).
- *
- * One column card per post: cover with the category pill on it, the
- * date and reading time ruled off above the title, excerpt, read link.
- *
- * @package safestore-minimal
- */
 
 ?>
 <article <?php post_class( 'sft-blog-card' ); ?>>

@@ -1,32 +1,7 @@
 <?php
-/**
- * Product category links.
- *
- * The homepage templates used to hardcode `/product-category/<slug>/` URLs.
- * The real WooCommerce slugs are singular (safety-shoe, protective-helmet …)
- * while the templates carried plural ones, so every one of those links 404'd —
- * WordPress's fuzzy URL guessing masked it for some of them, which is why the
- * breakage was easy to miss.
- *
- * Resolving the term and asking WordPress for its permalink removes the whole
- * class of bug: rename a category in the admin and these links follow it.
- *
- * @package safestore-minimal
- */
 
 defined( 'ABSPATH' ) || exit;
 
-/**
- * Permalink for a product category, resolved from the term.
- *
- * @param string|string[] $slug     One slug, or candidates tried in order
- *                                  (lets a link survive a singular/plural rename).
- * @param string          $fallback URL to use when no candidate exists.
- *                                  Defaults to the shop page, so a missing
- *                                  category degrades to a useful destination
- *                                  rather than a dead link.
- * @return string
- */
 function safestore_category_url( $slug, $fallback = '' ) {
 	if ( taxonomy_exists( 'product_cat' ) ) {
 		foreach ( (array) $slug as $candidate ) {
@@ -56,19 +31,6 @@ function safestore_category_url( $slug, $fallback = '' ) {
 		: home_url( '/' );
 }
 
-/**
- * The live slug of a product category, resolved from a candidate list.
- *
- * Use this anywhere a slug string is needed rather than a URL — a tax_query,
- * a get_term_by() lookup, a cache key. Same contract as
- * safestore_category_url(): the caller names the category, not its spelling.
- *
- * @param string|string[] $slug     One slug, or candidates tried in order.
- * @param string          $fallback Returned when none of them exists.
- *                                  Defaults to the first candidate, so the
- *                                  return value is always a usable slug.
- * @return string
- */
 function safestore_category_slug( $slug, $fallback = '' ) {
 	$candidates = array();
 	foreach ( (array) $slug as $candidate ) {
@@ -94,16 +56,6 @@ function safestore_category_slug( $slug, $fallback = '' ) {
 	return isset( $candidates[0] ) ? $candidates[0] : '';
 }
 
-/**
- * Candidate slugs for a homepage category.
- *
- * Singular is the live slug; the plural is kept as a fallback so a link
- * keeps working if a category is ever renamed back. Single source of truth
- * for both safestore_home_category_url() and safestore_home_category_slug().
- *
- * @param string $key helmet|vest|glove|goggle|shoe.
- * @return string[]
- */
 function safestore_home_category_slug_candidates( $key ) {
 	$map = array(
 		'helmet' => array( 'protective-helmet', 'protective-helmets' ),
@@ -118,43 +70,14 @@ function safestore_home_category_slug_candidates( $key ) {
 	return (array) apply_filters( 'safestore_home_category_slugs', $candidates, $key );
 }
 
-/**
- * Permalink for a homepage category.
- *
- * @param string $key helmet|vest|glove|goggle|shoe.
- * @return string
- */
 function safestore_home_category_url( $key ) {
 	return safestore_category_url( safestore_home_category_slug_candidates( $key ) );
 }
 
-/**
- * Live slug for a homepage category.
- *
- * Needed by anything that queries the term rather than linking to it — the
- * hero overlay cards look up the category by slug to pull a real product's
- * price and rating, and silently render nothing when the slug is stale.
- *
- * @param string $key helmet|vest|glove|goggle|shoe.
- * @return string
- */
 function safestore_home_category_slug( $key ) {
 	return safestore_category_slug( safestore_home_category_slug_candidates( $key ) );
 }
 
-/**
- * 301 a product-category URL whose slug was renamed to the surviving term.
- *
- * Renaming the categories (safety-shoes -> safety-shoe) turned every archive
- * URL already out in the world into a hard 404: Google's index, old campaign
- * links, and links written into product descriptions. WordPress's fuzzy URL
- * guessing does not cover this case — /product-category/safety-shoes/ returns
- * a plain 404 rather than redirecting — so the hop has to be explicit.
- *
- * Runs only on a request that has already 404'd, and only redirects once the
- * target term is confirmed to exist, so it can never send a visitor to
- * another dead end or shadow a legitimate URL.
- */
 function safestore_redirect_renamed_category_urls() {
 	if ( is_admin() || ! is_404() || ! taxonomy_exists( 'product_cat' ) ) {
 		return;
@@ -189,12 +112,6 @@ function safestore_redirect_renamed_category_urls() {
 		? array( substr( $requested, 0, -1 ) )
 		: array( $requested . 's' );
 
-	/**
-	 * Filter the slugs tried when a category URL 404s.
-	 *
-	 * @param string[] $alternates Candidate slugs.
-	 * @param string   $requested  The slug that was asked for.
-	 */
 	$alternates = (array) apply_filters( 'safestore_renamed_category_alternates', $alternates, $requested );
 
 	foreach ( $alternates as $alternate ) {

@@ -1,39 +1,17 @@
 <?php
-/**
- * SafeStore mobile & tablet navigation
- * @package SafeStore_Minimal
- */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-/**
- * Whether the mobile chrome should render on this request.
- *
- * Visibility is a CSS concern (max-width: 1024px) — this only decides whether
- * the markup is emitted at all, so it can be switched off per-template.
- *
- * @return bool
- */
 function safestore_mnav_enabled() {
     if (is_admin()) {
         return false;
     }
 
-    /**
-     * Filter whether the mobile bottom bar and quick links render.
-     *
-     * @param bool $enabled Whether to render.
-     */
     return (bool) apply_filters('safestore_mnav_enabled', true);
 }
 
-/**
- * Current request path, normalised to a leading and trailing slash.
- *
- * @return string
- */
 function safestore_mnav_current_path() {
     $uri = isset($_SERVER['REQUEST_URI']) ? wp_unslash($_SERVER['REQUEST_URI']) : '/'; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
     $path = wp_parse_url((string) $uri, PHP_URL_PATH);
@@ -42,12 +20,6 @@ function safestore_mnav_current_path() {
     return '' === $path ? '/' : '/' . $path . '/';
 }
 
-/**
- * Compare a URL against the current request path.
- *
- * @param string $url Absolute URL.
- * @return bool
- */
 function safestore_mnav_path_matches($url) {
     if ('' === (string) $url) {
         return false;
@@ -59,12 +31,6 @@ function safestore_mnav_path_matches($url) {
     return $path === safestore_mnav_current_path();
 }
 
-/**
- * My-account URL, falling back to the WordPress login screen when
- * WooCommerce has no account page configured.
- *
- * @return string
- */
 function safestore_mnav_account_url() {
     if (function_exists('wc_get_page_permalink')) {
         $url = wc_get_page_permalink('myaccount');
@@ -75,11 +41,6 @@ function safestore_mnav_account_url() {
     return wp_login_url();
 }
 
-/**
- * Cart URL.
- *
- * @return string
- */
 function safestore_mnav_cart_url() {
     if (function_exists('wc_get_cart_url')) {
         return wc_get_cart_url();
@@ -87,12 +48,6 @@ function safestore_mnav_cart_url() {
     return home_url('/cart/');
 }
 
-/**
- * Number of items in the cart. Safe on pages where WooCommerce has not
- * booted its session (REST, early hooks, cart-less installs).
- *
- * @return int
- */
 function safestore_mnav_cart_count() {
     if (!function_exists('WC')) {
         return 0;
@@ -104,13 +59,6 @@ function safestore_mnav_cart_count() {
     return (int) $wc->cart->get_cart_contents_count();
 }
 
-/**
- * Inline SVG for a bottom-bar icon. Stroke-based to match the rest of the
- * theme's iconography; sized by CSS, not by the attributes.
- *
- * @param string $name Icon key.
- * @return string
- */
 function safestore_mnav_icon($name) {
     $paths = array(
         'home'       => '<path d="M3 10.6 12 3.2l9 7.4"/><path d="M5.6 9.6V20a1 1 0 0 0 1 1H10v-5.6h4V21h3.4a1 1 0 0 0 1-1V9.6"/>',
@@ -128,14 +76,6 @@ function safestore_mnav_icon($name) {
     return '<svg class="sft-bottomnav__svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' . $paths[$name] . '</svg>';
 }
 
-/**
- * The five bottom-bar destinations, in tab order.
- *
- * Cart sits dead centre on purpose: it is the highest-intent tap on the bar
- * and the centre slot is the easiest to hit with either thumb.
- *
- * @return array<int, array<string, mixed>>
- */
 function safestore_mnav_items() {
     $cart_url    = safestore_mnav_cart_url();
     $account_url = safestore_mnav_account_url();
@@ -189,23 +129,9 @@ function safestore_mnav_items() {
         ),
     );
 
-    /**
-     * Filter the bottom navigation items.
-     *
-     * The bar is a fixed five-column grid — adding a sixth item will make the
-     * labels wrap. Swap items rather than appending.
-     *
-     * @param array<int, array<string, mixed>> $items Ordered items.
-     */
     return apply_filters('safestore_mnav_items', $items);
 }
 
-/**
- * The cart badge markup. Kept in one place so the AJAX fragment and the
- * server-rendered bar can never drift apart.
- *
- * @return string
- */
 function safestore_mnav_badge_markup() {
     $count = safestore_mnav_cart_count();
 
@@ -216,9 +142,6 @@ function safestore_mnav_badge_markup() {
     );
 }
 
-/**
- * Render the sticky bottom navigation bar.
- */
 function safestore_mnav_render() {
     if (!safestore_mnav_enabled()) {
         return;
@@ -267,12 +190,6 @@ function safestore_mnav_render() {
 // widget lifts itself clear of the bar via the --sft-wa-offset variable.
 add_action('wp_footer', 'safestore_mnav_render', 5);
 
-/**
- * Keep the bottom-bar cart badge in sync with AJAX add-to-cart.
- *
- * @param array<string, string> $fragments WooCommerce fragments.
- * @return array<string, string>
- */
 function safestore_mnav_cart_fragments($fragments) {
     $fragments['span.sft-bottomnav__badge'] = safestore_mnav_badge_markup();
 
@@ -280,12 +197,6 @@ function safestore_mnav_cart_fragments($fragments) {
 }
 add_filter('woocommerce_add_to_cart_fragments', 'safestore_mnav_cart_fragments');
 
-/**
- * The quick-links strip shown under the header search on phone and tablet.
- *
- * Called directly from header.php so it sits inside the sticky header and
- * scrolls away with it.
- */
 function safestore_mnav_quicklinks() {
     if (!safestore_mnav_enabled()) {
         return;
@@ -319,11 +230,6 @@ function safestore_mnav_quicklinks() {
         ),
     );
 
-    /**
-     * Filter the header quick-links strip.
-     *
-     * @param array<int, array<string, mixed>> $links Ordered links.
-     */
     $links = apply_filters('safestore_mnav_quicklinks', $links);
 
     if (empty($links)) {
@@ -347,13 +253,6 @@ function safestore_mnav_quicklinks() {
     <?php
 }
 
-/**
- * The search trigger shown in the mobile header row.
- *
- * The search field itself stays in the markup (see header.php) — this only
- * toggles it open, so the form keeps working with JavaScript disabled: at
- * that point CSS leaves the field visible and the button is inert.
- */
 function safestore_mnav_search_toggle() {
     if (!safestore_mnav_enabled()) {
         return;
@@ -370,13 +269,6 @@ function safestore_mnav_search_toggle() {
     <?php
 }
 
-/**
- * Backdrop for the open search panel.
- *
- * Deliberately separate from .menu-overlay: that element's active state is
- * toggled by js/header-search-cat.js, and driving it from two places would
- * let the menu and the search fight over whether it is showing.
- */
 function safestore_mnav_search_backdrop() {
     if (!safestore_mnav_enabled()) {
         return;
@@ -384,12 +276,6 @@ function safestore_mnav_search_backdrop() {
     echo '<div class="sft-search-backdrop" data-sft-search-backdrop aria-hidden="true"></div>';
 }
 
-/**
- * Enqueue the mobile chrome assets.
- *
- * Loaded on every front-end view because the header and bar are global. CSS
- * is a few KB; the JS is deferred and does nothing above 1024px.
- */
 function safestore_mnav_enqueue() {
     if (!safestore_mnav_enabled()) {
         return;

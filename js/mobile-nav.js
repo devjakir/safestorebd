@@ -1,6 +1,3 @@
-/**
- * SafeStore mobile & tablet navigation.
- */
 (function () {
 	'use strict';
 
@@ -10,10 +7,6 @@
 	var drawer = document.getElementById('offcanvas-menu');
 	var trigger = document.querySelector('.mobile-menu-trigger');
 	var catTab = document.querySelector('[data-sft-open-categories]');
-
-	/* ------------------------------------------------------------------
-	 * Publish the header's rendered height.
-	 * ---------------------------------------------------------------- */
 
 	function syncHeaderHeight() {
 		if (!bar) {
@@ -32,10 +25,6 @@
 	if (bar && typeof window.ResizeObserver === 'function') {
 		new window.ResizeObserver(syncHeaderHeight).observe(bar);
 	}
-
-	/* ------------------------------------------------------------------
-	 * Categories tab → the drawer that already exists in the header.
-	 * ---------------------------------------------------------------- */
 
 	if (catTab && trigger) {
 		catTab.addEventListener('click', function (event) {
@@ -111,10 +100,6 @@
 		});
 	});
 
-	/* ------------------------------------------------------------------
-	 * Icon-triggered search.
-	 * ---------------------------------------------------------------- */
-
 	var searchToggle = document.querySelector('[data-sft-search-toggle]');
 	var searchWrap = document.getElementById('sft-header-search-panel');
 	var searchBackdrop = document.querySelector('[data-sft-search-backdrop]');
@@ -184,10 +169,6 @@
 		}
 		setSearch(false);
 	});
-
-	/* ------------------------------------------------------------------
-	 * Hide-on-scroll.
-	 * ---------------------------------------------------------------- */
 
 	if (!header || !bar) {
 		return;

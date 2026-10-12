@@ -1,9 +1,4 @@
 <?php
-/**
- * Comments for blog posts. (Product reviews use woocommerce/single-product-reviews.php.)
- *
- * @package safestore-minimal
- */
 
 if ( post_password_required() ) {
 	return;

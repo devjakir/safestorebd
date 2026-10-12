@@ -1,9 +1,5 @@
 </main>
 <?php
-/**
- * Site footer.
- * @package safestore-minimal
- */
 
 $sfx_tel_raw    = apply_filters( 'safestore_minimal_phone_tel', '+8801811892291' );
 $sfx_tel_digits = preg_replace( '/[^\d+]/', '', (string) $sfx_tel_raw );
@@ -42,12 +38,6 @@ $sfx_socials = array(
 	array( 'YouTube', 'https://www.youtube.com/@SafeStoreBD', '<path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.5 31.5 0 0 0 0 12a31.5 31.5 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.5 31.5 0 0 0 24 12a31.5 31.5 0 0 0-.5-5.8zM9.8 15.5v-7l6.3 3.5-6.3 3.5z"/>' ),
 );
 
-/**
- * Small stroke icon for the support column.
- *
- * @param string $name Icon key.
- * @return string
- */
 function sfx_footer_icon( $name ) {
 	$paths = array(
 		'phone'    => '<path d="M6.7 3.4 9.1 3l1.8 4.2-2 1.6a12.2 12.2 0 0 0 5.3 5.3l1.6-2 4.2 1.8-.4 2.4a2 2 0 0 1-2.2 1.7A15.6 15.6 0 0 1 5 6.2a2 2 0 0 1 1.7-2.8z"/>',

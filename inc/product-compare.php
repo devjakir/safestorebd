@@ -1,13 +1,4 @@
 <?php
-/**
- * Product comparison — floating bar, compare page data API, page seed.
- *
- * Complements the PDP Compare toggle in pdp-social.php / pdp-actions.js.
- * List lives in localStorage (`sft_compare`); this module resolves IDs to
- * product cards and renders the compare UI.
- *
- * @package SafeStore_Minimal
- */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -16,27 +7,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 /** Max products in a comparison set. */
 define( 'SAFESTORE_COMPARE_MAX', 4 );
 
-/**
- * Whether compare assets should load on this request.
- *
- * @return bool
- */
 function safestore_compare_enabled() {
 	$enabled = class_exists( 'WooCommerce' ) && ! is_admin();
 
-	/**
-	 * Toggle the product compare feature.
-	 *
-	 * @param bool $enabled Whether compare loads on this request.
-	 */
 	return (bool) apply_filters( 'safestore_compare_enabled', $enabled );
 }
 
-/**
- * Permalink for the Compare page (falls back to /compare/).
- *
- * @return string
- */
 function safestore_compare_page_url() {
 	$page = get_page_by_path( 'compare' );
 	if ( $page instanceof WP_Post ) {
@@ -45,21 +21,10 @@ function safestore_compare_page_url() {
 	return home_url( '/compare/' );
 }
 
-/**
- * Whether the current request is the Compare page template.
- *
- * @return bool
- */
 function safestore_is_compare_page() {
 	return is_page_template( 'page-compare.php' ) || is_page( 'compare' );
 }
 
-/**
- * Build a public payload for one product (safe for REST/JS).
- *
- * @param WC_Product $product Product.
- * @return array<string,mixed>|null
- */
 function safestore_compare_product_payload( $product ) {
 	if ( ! $product instanceof WC_Product || 'publish' !== $product->get_status() ) {
 		return null;
@@ -147,9 +112,6 @@ function safestore_compare_product_payload( $product ) {
 	);
 }
 
-/**
- * REST: GET /wp-json/safestore/v1/compare?ids=1,2,3
- */
 function safestore_compare_register_rest() {
 	register_rest_route(
 		'safestore/v1',
@@ -170,12 +132,6 @@ function safestore_compare_register_rest() {
 }
 add_action( 'rest_api_init', 'safestore_compare_register_rest' );
 
-/**
- * REST callback — resolve product IDs for the compare UI.
- *
- * @param WP_REST_Request $request Request.
- * @return WP_REST_Response
- */
 function safestore_compare_rest_callback( WP_REST_Request $request ) {
 	$raw = (string) $request->get_param( 'ids' );
 	$parts = preg_split( '/[,\s]+/', $raw, -1, PREG_SPLIT_NO_EMPTY );
@@ -209,9 +165,6 @@ function safestore_compare_rest_callback( WP_REST_Request $request ) {
 	);
 }
 
-/**
- * Enqueue compare assets site-wide (bar) and denser assets on the compare page.
- */
 function safestore_compare_enqueue() {
 	if ( ! safestore_compare_enabled() ) {
 		return;
@@ -290,9 +243,6 @@ function safestore_compare_enqueue() {
 }
 add_action( 'wp_enqueue_scripts', 'safestore_compare_enqueue', 24 );
 
-/**
- * Floating compare bar shell (filled by JS).
- */
 function safestore_compare_bar_markup() {
 	if ( ! safestore_compare_enabled() ) {
 		return;
@@ -342,9 +292,6 @@ function safestore_compare_bar_markup() {
 }
 add_action( 'wp_footer', 'safestore_compare_bar_markup', 25 );
 
-/**
- * Seed /compare/ page with the Compare template.
- */
 function safestore_seed_compare_page() {
 	if ( get_option( 'safestore_compare_page_v1' ) ) {
 		return;

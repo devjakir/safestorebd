@@ -1,27 +1,12 @@
 <?php
-/**
- * Home — Hero slider (3 slides, one hero product image each)
- */
 
 $shop_url   = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
 $assets_url = get_template_directory_uri() . '/assets/images';
 
-/**
- * Build absolute asset URL for a file in assets/images.
- *
- * @param string $filename File name.
- * @return string
- */
 $safestore_hero_product_src = static function ( string $filename ) use ( $assets_url ): string {
 	return $assets_url . '/' . rawurlencode( $filename );
 };
 
-/**
- * Responsive srcset for a hero base name (expects -480w / -720w siblings).
- *
- * @param string $base Filename without extension, e.g. sf-helmet-category.
- * @return string
- */
 $safestore_hero_srcset = static function ( string $base ) use ( $safestore_hero_product_src ): string {
 	return implode(
 		', ',
@@ -96,12 +81,6 @@ $hero_proof = array(
 	),
 );
 
-/**
- * Compact stroke icon for the hero proof row.
- *
- * @param string $name Icon key: check|pay.
- * @return string
- */
 $safestore_hero_proof_icon = static function ( string $name ): string {
 	$paths = array(
 		'check' => '<circle cx="12" cy="12" r="9"/><path d="m8.5 12.2 2.3 2.3 4.7-5"/>',

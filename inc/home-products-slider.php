@@ -1,10 +1,4 @@
 <?php
-/**
- * Home — Featured Products mobile slider: arrows + dots over the scroll-snap
- * track. Inlined in the footer, home page only, inert above the breakpoint.
- *
- * @package SafeStore_Minimal
- */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -13,11 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 /** Must match the max-width: 480px block in style.css. */
 const SAFESTORE_HOME_SLIDER_MQ = '(max-width: 480px)';
 
-/**
- * Does this request render the Featured Products row?
- *
- * @return bool
- */
 function safestore_home_slider_active() {
 	if ( ! is_front_page() && ! is_page_template( 'page-home.php' ) ) {
 		return false;
@@ -27,11 +16,6 @@ function safestore_home_slider_active() {
 	return class_exists( 'WooCommerce' );
 }
 
-/**
- * Slider behaviour, with labels and breakpoint injected.
- *
- * @return string
- */
 function safestore_home_slider_js() {
 	$text = array(
 		'carousel' => __( 'Featured products', 'safestore-minimal' ),
@@ -179,9 +163,6 @@ JS;
 	);
 }
 
-/**
- * Print the slider inline in the footer.
- */
 function safestore_home_slider_print() {
 	if ( ! safestore_home_slider_active() ) {
 		return;

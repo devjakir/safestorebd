@@ -1,6 +1,3 @@
-/**
- * SafeStore footer link-list accordions.
- */
 (function () {
 	'use strict';
 

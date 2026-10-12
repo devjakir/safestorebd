@@ -1,7 +1,4 @@
 <?php
-/**
- * Home — Featured categories (product-focused thumbnails for browsing)
- */
 
 $shop_url   = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
 $assets_url = get_template_directory_uri() . '/assets/images';
@@ -11,9 +8,6 @@ $gloves_cat = safestore_home_category_url( 'glove' );
 $goggle_cat = safestore_home_category_url( 'goggle' );
 $shoe_cat = safestore_home_category_url( 'shoe' );
 
-/**
- * @param string $filename File name as stored in assets/images (spaces & special chars OK).
- */
 $safestore_cat_img = static function ( string $filename ) use ( $assets_url ): string {
 	// Version by file mtime so browsers/CDN fetch a replaced image immediately.
 	$path = get_template_directory() . '/assets/images/' . $filename;

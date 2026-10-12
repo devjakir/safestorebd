@@ -114,8 +114,6 @@
   color: var(--ss-ink-soft);
 }@media (max-width: 720px) {}
 
-/* Applicant guidance — moved out of the old three-column pre-footer into the
-   sidebar, where it sits beside "How to apply" instead of below the fold. */
 .sft-careers-notes {
   margin-top: 18px;
   padding-top: 16px;

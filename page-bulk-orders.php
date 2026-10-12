@@ -1,14 +1,5 @@
 <?php
-/**
- * Template Name: Bulk Orders
- *
- * Bulk & corporate quotes — the B2B door. The header links to /bulk-orders/,
- * and so do the blog guides. Form = Fluent Forms, looked up by title so the
- * page never breaks if the form id changes; WhatsApp and email are always
- * shown as the fallback route.
- *
- * @package safestore-minimal
- */
+// Template Name: Bulk Orders
 
 get_header();
 
@@ -22,11 +13,6 @@ $shop_url   = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink
 $office     = function_exists( 'safestore_minimal_get_pickup_address' ) ? safestore_minimal_get_pickup_address() : '';
 
 if ( ! function_exists( 'safestore_bulk_quote_form_id' ) ) :
-/**
- * Fluent Forms form id for the quote form, found by title.
- *
- * @return int 0 when the form does not exist yet.
- */
 function safestore_bulk_quote_form_id() {
 	global $wpdb;
 	if ( ! shortcode_exists( 'fluentform' ) ) {

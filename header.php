@@ -11,8 +11,6 @@
 wp_body_open();
 $cart_url = function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/cart/');
 
-/* WooCommerce may be inactive (local installs without the plugin), so the cart
-   object is not guaranteed. Fall back to an empty cart instead of fataling. */
 $sft_wc         = function_exists('WC') ? WC() : null;
 $sft_wc_cart    = ($sft_wc && isset($sft_wc->cart) && $sft_wc->cart) ? $sft_wc->cart : null;
 $sft_cart_count = $sft_wc_cart ? (int) $sft_wc_cart->get_cart_contents_count() : 0;
@@ -20,9 +18,6 @@ $sft_cart_total = $sft_wc_cart ? $sft_wc_cart->get_cart_total() : '';
 ?>
 
 <header class="sft-header" role="banner">
-    <?php /* Only this wrapper may be transformed — the drawer and overlay below are
-       position:fixed children, and a transformed ancestor would become their
-       containing block. See css/mobile-nav.css. */ ?>
     <div class="sft-header-sticky">
     <div class="sft-header-main">
         <button type="button" class="mobile-menu-trigger" aria-label="Open Menu" aria-controls="offcanvas-menu" aria-expanded="false">

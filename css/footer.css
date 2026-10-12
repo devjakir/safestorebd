@@ -1,6 +1,3 @@
-/* ==========================================================================
-   SafeStore site footer
-   ========================================================================== */
 
 .sfx-footer {
   --sfx-bg: #081621;
@@ -36,8 +33,6 @@
   padding: 0 0 30px;
 }
 
-/* 25 / 50 / 25, matching Star Tech's proportions. min-width:0 keeps long
-   emails and addresses from forcing the flex row wider than the viewport. */
 .sfx-block {
   min-width: 0;
 }
@@ -195,9 +190,6 @@
   width: auto;
   height: 38px;
   max-width: 170px;
-  /* The wordmark is dark-ink artwork built for a white page. Inverting keeps
-     it legible on navy without shipping a second asset. Swap this for a real
-     light variant when one exists. */
   filter: brightness(0) invert(1);
   opacity: 0.94;
 }
@@ -274,14 +266,6 @@
   outline: 2px solid var(--sfx-accent-soft);
   outline-offset: 2px;
 }
-
-/* ---------- Payment / sourcing / socials strip ----------
-
-   These three groups used to stack inside the Stay Connected column, which
-   made that column run far taller than the other two. They read as
-   site-wide badges rather than "stay connected" content, so they sit on
-   their own full-width row instead: payment + sourcing left, socials right.
-   -------------------------------------------------------------------- */
 
 .sfx-footer__strip {
   display: flex;
@@ -424,9 +408,6 @@
   color: var(--sfx-accent-soft);
 }
 
-/* The floating WhatsApp button occupies the bottom-right ~78px of the
-   viewport at the same height as this row. Keep the legal links out from
-   under it rather than letting the widget sit on top of them. */
 @media (min-width: 1025px) {
   .sfx-footer__strip,
   .sfx-subfooter {
@@ -439,10 +420,6 @@
 .sfx-acc__btn {
   display: none;
 }
-
-/* ==========================================================================
-   Tablet — 3 blocks become 2 rows, gutters tighten
-   ========================================================================== */
 
 @media (max-width: 1024px) {
   .sfx-footer {
@@ -496,10 +473,6 @@
   }
 }
 
-/* ==========================================================================
-   Mobile — single column, collapsible link lists
-   ========================================================================== */
-
 @media (max-width: 767px) {
   .sfx-footer {
     padding-top: 30px;
@@ -534,15 +507,10 @@
     padding: 0;
   }
 
-  /* Link groups collapse behind a full-width tap target so the footer stays
-     short. Contact details are never hidden behind a tap. */
   .sfx-linkcol {
     border-top: 1px solid var(--sfx-rule);
   }
 
-  /* Progressive enhancement: the plain heading + open list is the no-JS
-     state. The script adds .is-acc once it has taken over, and only then
-     does the heading swap for a tap target. */
   .sfx-linkcol.is-acc .sfx-heading {
     display: none;
   }
@@ -587,8 +555,6 @@
     transform: rotate(180deg);
   }
 
-  /* Hidden via the hidden attribute, so it degrades correctly without JS:
-     the script removes `hidden` and takes over on first run. */
   .sfx-linkcol .sfx-links {
     padding: 0 2px 18px;
   }
@@ -619,8 +585,6 @@
     gap: 24px 24px;
   }
 
-  /* Socials sat above the payment badges before this row existed — keep that
-     order on phones, where the strip stacks anyway. */
   .sfx-footer__strip .sfx-socials {
     order: -1;
     gap: 10px;
@@ -677,14 +641,6 @@
     height: 36px;
   }
 }
-
-/* --------------------------------------------------------------------------
-   Clearance for the fixed chrome.
-
-   body already carries padding-bottom for the sticky bottom bar (see
-   mobile-nav.css). The WhatsApp button floats higher than that, so the
-   sub-footer needs its own room or the copyright sits under the widget.
-   -------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
   .sfx-social,

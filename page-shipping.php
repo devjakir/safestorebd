@@ -1,11 +1,5 @@
 <?php
-/**
- * Template Name: Shipping & Delivery
- *
- * Shipping and delivery information — Bangladesh market.
- *
- * @package safestore-minimal
- */
+// Template Name: Shipping & Delivery
 
 get_header();
 

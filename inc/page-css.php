@@ -1,12 +1,4 @@
 <?php
-/**
- * Page-scoped stylesheet loading for SafeStoreBD.
- *
- * style.css holds the GLOBAL shell: header, nav, offcanvas, typography and
- * shared commerce components (product card, stars, badges) that render on
- * many templates. Everything genuinely page-bound lives in css/page-*.css
- * and is enqueued only where the coverage audit proved it is used.
- */
 function safestore_page_css( $handle, $file ) {
 	static $done = array();
 	if ( isset( $done[ $file ] ) ) {

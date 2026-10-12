@@ -1,6 +1,3 @@
-/**
- * Keep PDP main image in a consistent square frame (WooCommerce flexslider sets inline heights).
- */
 (function () {
   function targetSize(gallery) {
     return Math.round(gallery.getBoundingClientRect().width);

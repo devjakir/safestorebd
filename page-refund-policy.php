@@ -1,11 +1,5 @@
 <?php
-/**
- * Template Name: Refund & Policy
- *
- * Return and refund policy for industrial safety products — Bangladesh market.
- *
- * @package safestore-minimal
- */
+// Template Name: Refund & Policy
 
 get_header();
 

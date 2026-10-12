@@ -1,14 +1,5 @@
 <?php
-/**
- * Variable product add to cart — SafeStore override.
- *
- * Footwear: native Size dropdown stays in the DOM (hidden); JS builds
- * clickable size swatches above Add to Cart. Non-footwear: standard UI,
- * no Size attribute.
- *
- * @package SafeStore_Minimal
- * @version 10.9.0
- */
+// @version 10.9.0
 
 defined( 'ABSPATH' ) || exit;
 
