@@ -145,3 +145,34 @@
     order: -1;
   }
 }
+
+/* Custom logo / name printing block (inc/custom-print.php links here) */
+.sft-bulk-print {
+  margin-bottom: 32px;
+  padding: 18px 20px;
+  border: 1px solid var(--ss-border);
+  border-radius: var(--ss-radius);
+  background: var(--ss-surface);
+  scroll-margin-top: 96px;
+}
+
+.sft-bulk-print .sft-about-h3 {
+  margin-top: 0;
+}
+
+.sft-bulk-print p {
+  margin: 0 0 10px;
+  color: var(--ss-ink-soft);
+  font-size: var(--ss-text-md);
+  line-height: 1.6;
+}
+
+.sft-bulk-print__link {
+  color: #0f7a3d;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.sft-bulk-print__link:hover {
+  text-decoration: underline;
+}

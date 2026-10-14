@@ -37,6 +37,8 @@ require get_template_directory() . '/inc/page-cta.php';
 
 require get_template_directory() . '/inc/category-links.php';
 
+require get_template_directory() . '/inc/custom-print.php';
+
 require get_template_directory() . '/inc/product-reviews.php';
 
 require get_template_directory() . '/inc/shop-filter.php';

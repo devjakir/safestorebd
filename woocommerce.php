@@ -50,6 +50,12 @@ get_header(); ?>
                 if ($description) : ?>
                     <div class="sft-shop-desc is-clamped"><div class="sft-shop-desc__text" id="sft-shop-desc-text"><?php echo wp_kses_post($description); ?></div></div>
                 <?php endif; ?>
+                <?php
+                // Vest + helmet categories: custom logo / name printing (inc/custom-print.php).
+                if ($sft_term && function_exists('safestore_custom_print_category_note')) {
+                    safestore_custom_print_category_note($sft_term);
+                }
+                ?>
             </header>
         <?php endif; ?>
 

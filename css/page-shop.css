@@ -279,3 +279,31 @@
   color: #cbd5e1;
   font-weight: 300;
 }
+/* Custom logo / name printing (inc/custom-print.php) */
+.sft-print-note {
+  max-width: 960px;
+  margin: 10px auto 0;
+  color: var(--ss-ink);
+  font-size: var(--ss-text-base);
+  line-height: 1.6;
+}
+
+.sft-print-note a,
+.sft-print-section__links a {
+  color: #0f7a3d;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.sft-print-note a:hover,
+.sft-print-section__links a:hover {
+  text-decoration: underline;
+}
+
+.sft-print-section {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--ss-border);
+  scroll-margin-top: 96px;
+}

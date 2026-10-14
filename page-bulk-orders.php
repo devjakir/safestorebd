@@ -57,6 +57,7 @@ $includes = array(
 	__( 'Volume pricing on 12, 50 and 100+ pieces', 'safestore-minimal' ),
 	__( 'VAT invoice (Mushak 6.3) and delivery challan', 'safestore-minimal' ),
 	__( 'Standard markings and test certificates on request', 'safestore-minimal' ),
+	__( 'Logo and company name printing on safety vests and helmets', 'safestore-minimal' ),
 	__( 'Size runs for footwear and gloves, mixed per order', 'safestore-minimal' ),
 	__( 'Delivery to all 64 districts; free pickup from Pallabi, Dhaka', 'safestore-minimal' ),
 	__( 'Genuine brand stock: MSA, Honeywell, 3M, Karam and more', 'safestore-minimal' ),
@@ -135,6 +136,14 @@ while ( have_posts() ) :
 							</p>
 						</div>
 					<?php endif; ?>
+
+					<div class="sft-bulk-print" id="custom-print">
+						<h3 class="sft-about-h3"><?php esc_html_e( 'Custom logo and name printing', 'safestore-minimal' ); ?></h3>
+						<p>
+							<?php esc_html_e( 'Safety vests can be supplied with your logo and company name printed on them, and safety helmets with your text or logo. Mention it in the form above or send the logo on WhatsApp, with the quantity and colour. We reply with the price, the minimum quantity and the delivery time, and print after you approve the design.', 'safestore-minimal' ); ?>
+						</p>
+						<a class="sft-bulk-print__link" href="<?php echo esc_url( safestore_primary_wa_link( __( 'Hello SafeStoreBD, I need custom logo / name printing on vests or helmets:', 'safestore-minimal' ) ) ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Send your logo on WhatsApp', 'safestore-minimal' ); ?> &rarr;</a>
+					</div>
 
 					<h3 class="sft-about-h3 sft-bulk-steps-title"><?php esc_html_e( 'How it works', 'safestore-minimal' ); ?></h3>
 					<ol class="sft-bulk-steps">
