@@ -106,7 +106,7 @@ function safestore_hero_product_score( $product ) {
 	}
 
 	// A transparent cutout sits on the dark hero without a white box, so it outranks a plain sale.
-	if ( safestore_hero_product_cutout_image_id( $product ) > 0 ) {
+	if ( safestore_hero_theme_cutout( $product->get_id() ) || safestore_hero_product_cutout_image_id( $product ) > 0 ) {
 		$score += 60;
 	}
 
@@ -189,6 +189,28 @@ function safestore_hero_attachment_has_alpha( $attachment_id ) {
 	return $result;
 }
 
+// Theme-shipped cutout for a product whose own photos are all opaque: assets/images/hero-cutouts/{product_id}.webp
+function safestore_hero_theme_cutout( $product_id ) {
+	$product_id = (int) $product_id;
+	if ( $product_id <= 0 ) {
+		return null;
+	}
+
+	$rel  = '/assets/images/hero-cutouts/' . $product_id . '.webp';
+	$path = get_template_directory() . $rel;
+	if ( ! is_readable( $path ) ) {
+		return null;
+	}
+
+	$size = @getimagesize( $path );
+
+	return array(
+		'src'    => get_template_directory_uri() . $rel,
+		'width'  => is_array( $size ) ? (int) $size[0] : 900,
+		'height' => is_array( $size ) ? (int) $size[1] : 900,
+	);
+}
+
 // First transparent image among the featured image and the gallery, or 0 when every image is opaque.
 function safestore_hero_product_cutout_image_id( $product ) {
 	$ids = array_merge( array( (int) $product->get_image_id() ), array_map( 'intval', (array) $product->get_gallery_image_ids() ) );
@@ -203,6 +225,19 @@ function safestore_hero_product_cutout_image_id( $product ) {
 }
 
 function safestore_hero_product_image_payload( $product ) {
+	$theme_cutout = safestore_hero_theme_cutout( $product->get_id() );
+	if ( $theme_cutout ) {
+		return array(
+			'src'    => $theme_cutout['src'],
+			'width'  => $theme_cutout['width'],
+			'height' => $theme_cutout['height'],
+			'srcset' => '',
+			'sizes'  => '(max-width: 900px) 70vw, 464px',
+			'alt'    => $product->get_name(),
+			'cutout' => true,
+		);
+	}
+
 	$featured_id = (int) $product->get_image_id();
 	$cutout_id   = safestore_hero_product_cutout_image_id( $product );
 	$image_id    = $cutout_id > 0 ? $cutout_id : $featured_id;
