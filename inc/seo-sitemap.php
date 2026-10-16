@@ -108,7 +108,24 @@ function safestore_seo_is_junk_items_request() {
 		return true;
 	}
 
+	// "?cate-4" / "?cate-1-108" spam: bare word-number key with no "=".
+	if ( false === strpos( $decoded, '=' ) && preg_match( '#^[a-z]{2,20}(?:-\d+)+/?$#i', $decoded ) ) {
+		return true;
+	}
+
 	return false;
+}
+
+// Path-style crawl spam like /shop/pg/58602333-4, answered with 410.
+function safestore_seo_is_junk_path_request() {
+	$uri  = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+	$path = (string) wp_parse_url( $uri, PHP_URL_PATH );
+	$base = (string) wp_parse_url( home_url( '/' ), PHP_URL_PATH );
+	if ( '' !== $base && '/' !== $base && 0 === strpos( $path, $base ) ) {
+		$path = '/' . ltrim( substr( $path, strlen( $base ) ), '/' );
+	}
+
+	return (bool) preg_match( '#^/shop/pg/\d+-\d+/?$#i', $path );
 }
 
 function safestore_seo_disable_canonical_for_junk_items( $redirect_url ) {
@@ -123,7 +140,7 @@ function safestore_seo_gone_junk_item_urls() {
 	if ( is_admin() || wp_doing_ajax() || wp_doing_cron() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
 		return;
 	}
-	if ( ! safestore_seo_is_junk_items_request() ) {
+	if ( ! safestore_seo_is_junk_items_request() && ! safestore_seo_is_junk_path_request() ) {
 		return;
 	}
 
@@ -268,3 +285,29 @@ function safestore_seo_home_structured_data() {
 	);
 }
 add_action( 'wp_head', 'safestore_seo_home_structured_data', 20 );
+
+// Archive/term/post feeds waste crawl budget: unlink them and 301 to their page; /feed/ and /comments/feed/ stay.
+remove_action( 'wp_head', 'feed_links_extra', 3 );
+
+function safestore_seo_redirect_secondary_feeds() {
+	if ( ! is_feed() || is_admin() ) {
+		return;
+	}
+	if ( ! ( is_archive() || is_singular() || is_search() ) ) {
+		return;
+	}
+
+	$uri  = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+	$path = (string) wp_parse_url( $uri, PHP_URL_PATH );
+	$clean = preg_replace( '#/feed(?:/(?:rss2?|atom|rdf))?/?$#i', '/', $path );
+	if ( null === $clean || $clean === $path ) {
+		return;
+	}
+
+	$home   = wp_parse_url( home_url( '/' ) );
+	$origin = ( isset( $home['scheme'] ) ? $home['scheme'] : 'https' ) . '://' . $home['host'] . ( isset( $home['port'] ) ? ':' . $home['port'] : '' );
+
+	wp_safe_redirect( $origin . $clean, 301, 'SafeStoreBD SEO' );
+	exit;
+}
+add_action( 'template_redirect', 'safestore_seo_redirect_secondary_feeds', 1 );
