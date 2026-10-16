@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 const SAFESTORE_HERO_PRODUCT_META = '_sft_hero_product_id';
 const SAFESTORE_HERO_OVERLAY_TTL  = 10 * MINUTE_IN_SECONDS;
-const SAFESTORE_HERO_OVERLAY_CACHE = 'sft_hero_overlay_v3_';
+const SAFESTORE_HERO_OVERLAY_CACHE = 'sft_hero_overlay_v4_';
 
 function safestore_hero_overlay_cache_key( $category_slug ) {
 	return SAFESTORE_HERO_OVERLAY_CACHE . sanitize_title( (string) $category_slug );
@@ -105,6 +105,11 @@ function safestore_hero_product_score( $product ) {
 		$score += 100;
 	}
 
+	// A transparent cutout sits on the dark hero without a white box, so it outranks a plain sale.
+	if ( safestore_hero_product_cutout_image_id( $product ) > 0 ) {
+		$score += 60;
+	}
+
 	$current = (float) $product->get_price();
 	if ( $current > 0 ) {
 		$score += 80;
@@ -152,8 +157,55 @@ function safestore_hero_product_is_usable( $product_id, $term ) {
 	return has_term( (int) $term->term_id, 'product_cat', $product_id );
 }
 
+// Sniffs the PNG/WebP header for an alpha channel; no image library needed.
+function safestore_hero_attachment_has_alpha( $attachment_id ) {
+	static $cache = array();
+
+	$attachment_id = (int) $attachment_id;
+	if ( isset( $cache[ $attachment_id ] ) ) {
+		return $cache[ $attachment_id ];
+	}
+
+	$result = false;
+	$file   = $attachment_id > 0 ? get_attached_file( $attachment_id ) : '';
+	$head   = ( is_string( $file ) && '' !== $file && is_readable( $file ) ) ? (string) file_get_contents( $file, false, null, 0, 4096 ) : '';
+
+	if ( strlen( $head ) >= 32 ) {
+		if ( "\x89PNG" === substr( $head, 0, 4 ) ) {
+			$color_type = ord( $head[25] );
+			$result     = in_array( $color_type, array( 4, 6 ), true ) || false !== strpos( $head, 'tRNS' );
+		} elseif ( 'RIFF' === substr( $head, 0, 4 ) && 'WEBP' === substr( $head, 8, 4 ) ) {
+			$chunk = substr( $head, 12, 4 );
+			if ( 'VP8X' === $chunk ) {
+				$result = (bool) ( ord( $head[20] ) & 0x10 );
+			} elseif ( 'VP8L' === $chunk ) {
+				$result = (bool) ( ord( $head[24] ) & 0x10 );
+			}
+		}
+	}
+
+	$cache[ $attachment_id ] = $result;
+
+	return $result;
+}
+
+// First transparent image among the featured image and the gallery, or 0 when every image is opaque.
+function safestore_hero_product_cutout_image_id( $product ) {
+	$ids = array_merge( array( (int) $product->get_image_id() ), array_map( 'intval', (array) $product->get_gallery_image_ids() ) );
+
+	foreach ( $ids as $id ) {
+		if ( $id > 0 && safestore_hero_attachment_has_alpha( $id ) ) {
+			return $id;
+		}
+	}
+
+	return 0;
+}
+
 function safestore_hero_product_image_payload( $product ) {
-	$image_id = (int) $product->get_image_id();
+	$featured_id = (int) $product->get_image_id();
+	$cutout_id   = safestore_hero_product_cutout_image_id( $product );
+	$image_id    = $cutout_id > 0 ? $cutout_id : $featured_id;
 	if ( $image_id <= 0 ) {
 		return null;
 	}
@@ -181,6 +233,7 @@ function safestore_hero_product_image_payload( $product ) {
 		'srcset' => is_string( $srcset ) ? $srcset : '',
 		'sizes'  => is_string( $sizes ) && '' !== $sizes ? $sizes : '(max-width: 900px) 70vw, 464px',
 		'alt'    => $alt,
+		'cutout' => $cutout_id > 0,
 	);
 }
 
@@ -340,7 +393,7 @@ function safestore_hero_category_field( $term ) {
 		<th scope="row"><label for="sft-hero-product-id"><?php esc_html_e( 'Hero product', 'safestore-minimal' ); ?></label></th>
 		<td>
 			<input name="sft_hero_product_id" id="sft-hero-product-id" type="number" min="0" step="1" value="<?php echo $current > 0 ? esc_attr( (string) $current ) : ''; ?>" />
-			<p class="description"><?php esc_html_e( 'WooCommerce product ID used for the homepage hero image, price, and review cards. Leave empty to auto-pick a product in this category (prefers a photo, a real sale price, and real ratings).', 'safestore-minimal' ); ?></p>
+			<p class="description"><?php esc_html_e( 'WooCommerce product ID used for the homepage hero image, price, and review cards. Leave empty to auto-pick a product in this category (prefers a transparent cutout photo, a real sale price, and real ratings).', 'safestore-minimal' ); ?></p>
 		</td>
 	</tr>
 	<?php
