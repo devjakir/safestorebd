@@ -108,8 +108,7 @@ function safestore_seo_is_junk_items_request() {
 		return true;
 	}
 
-	// "?cate-4", "?cate-1-108" style spam (GSC Oct 2026): a bare word-number
-	// key with no "=" and no slash. Real WP/Woo query args always carry "=".
+	// "?cate-4" / "?cate-1-108" spam: bare word-number key with no "=".
 	if ( false === strpos( $decoded, '=' ) && preg_match( '#^[a-z]{2,20}(?:-\d+)+/?$#i', $decoded ) ) {
 		return true;
 	}
@@ -117,10 +116,7 @@ function safestore_seo_is_junk_items_request() {
 	return false;
 }
 
-/**
- * Path-style crawl spam, e.g. /shop/pg/58602333-4 (GSC 404 + 5xx reports).
- * These never existed on the site; answer 410 so Google drops them faster.
- */
+// Path-style crawl spam like /shop/pg/58602333-4, answered with 410.
 function safestore_seo_is_junk_path_request() {
 	$uri  = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
 	$path = (string) wp_parse_url( $uri, PHP_URL_PATH );
@@ -290,19 +286,14 @@ function safestore_seo_home_structured_data() {
 }
 add_action( 'wp_head', 'safestore_seo_home_structured_data', 20 );
 
-/**
- * Archive/term/comment feeds (/product-category/x/feed/, /brand/x/feed/ …)
- * only burn crawl budget on a shop ("Crawled - currently not indexed" in GSC).
- * Stop advertising them and 301 each one to the page it belongs to.
- * The main site feed (/feed/) is left alone.
- */
+// Archive/term/post feeds waste crawl budget: unlink them and 301 to their page; /feed/ and /comments/feed/ stay.
 remove_action( 'wp_head', 'feed_links_extra', 3 );
 
 function safestore_seo_redirect_secondary_feeds() {
 	if ( ! is_feed() || is_admin() ) {
 		return;
 	}
-	if ( ! ( is_archive() || is_singular() || is_comment_feed() || is_search() ) ) {
+	if ( ! ( is_archive() || is_singular() || is_search() ) ) {
 		return;
 	}
 
