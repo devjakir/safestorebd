@@ -102,6 +102,17 @@
   border-radius: 0;
 }
 
+/* Opaque product photo (no cutout): frame it as a white card instead of a bare rectangle */
+.home .hero-slide-stage--photo {
+  background: var(--ss-white);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+}
+
+.home .hero-slide-stage--photo .hero-slide-product {
+  padding: 6%;
+  border-radius: var(--ss-radius);
+}
+
 .home .hero-slide-card {
   position: absolute;
   z-index: 3;

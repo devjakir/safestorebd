@@ -107,6 +107,8 @@ $safestore_hero_proof_icon = static function ( string $name ): string {
 				: '';
 
 			$product_image = ( ! empty( $overlay['image'] ) && is_array( $overlay['image'] ) ) ? $overlay['image'] : null;
+			// Opaque product photos get framed as a white card; cutouts float on the dark slide.
+			$stage_class = ( $product_image && empty( $product_image['cutout'] ) ) ? ' hero-slide-stage--photo' : '';
 			if ( $product_image ) {
 				$img_src    = $product_image['src'];
 				$img_srcset = isset( $product_image['srcset'] ) ? (string) $product_image['srcset'] : '';
@@ -174,7 +176,7 @@ $safestore_hero_proof_icon = static function ( string $name ): string {
 					</ul>
 				</div>
 				<div class="hero-slide-media">
-					<div class="hero-slide-stage">
+					<div class="hero-slide-stage<?php echo esc_attr( $stage_class ); ?>">
 						<?php if ( $is_first ) : ?>
 							<img class="hero-slide-product"
 								src="<?php echo esc_url( $img_src ); ?>"
