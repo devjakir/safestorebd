@@ -76,7 +76,7 @@ $segments = array(
 
 $bulk_points = array(
 	__( 'Written quotation within 24 hours (Sat–Thu)', 'safestore-minimal' ),
-	__( 'Volume pricing at 12, 50 and 100+ pieces', 'safestore-minimal' ),
+	__( 'Volume pricing at 50 and 100+ pieces', 'safestore-minimal' ),
 	__( 'VAT invoice (Mushak 6.3) and delivery challan with every order', 'safestore-minimal' ),
 	__( 'Mixed size runs for footwear and gloves', 'safestore-minimal' ),
 	__( 'One contact person from quotation to delivery', 'safestore-minimal' ),

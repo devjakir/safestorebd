@@ -54,7 +54,7 @@ $steps = array(
 );
 
 $includes = array(
-	__( 'Volume pricing on 12, 50 and 100+ pieces', 'safestore-minimal' ),
+	__( 'Volume pricing on 50 and 100+ pieces', 'safestore-minimal' ),
 	__( 'VAT invoice (Mushak 6.3) and delivery challan', 'safestore-minimal' ),
 	__( 'Standard markings and test certificates on request', 'safestore-minimal' ),
 	__( 'Logo and company name printing on safety vests and helmets', 'safestore-minimal' ),
