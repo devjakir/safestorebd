@@ -30,7 +30,18 @@ while ( have_posts() ) :
 			</div>
 		</section>
 
-		<?php if ( trim( (string) get_post()->post_content ) !== '' ) : ?>
+		<?php
+		/*
+		 * The theme's own sections below are the real policy. WordPress seeds this page
+		 * with its default "Suggested text:" privacy template, which duplicated those
+		 * sections (two "Who we are" headings etc.). Skip editor content that is still
+		 * the WP default; show it only if someone writes genuine extra notes.
+		 */
+		$sft_editor_content = trim( (string) get_post()->post_content );
+		$sft_is_wp_default  = ( false !== stripos( $sft_editor_content, 'Suggested text:' ) )
+			|| ( false !== stripos( $sft_editor_content, 'Our website address is:' ) );
+		?>
+		<?php if ( '' !== $sft_editor_content && ! $sft_is_wp_default ) : ?>
 			<section class="sft-about-editor-wrap" aria-label="<?php esc_attr_e( 'Additional notes', 'safestore-minimal' ); ?>">
 				<div class="sft-about-inner">
 					<div class="sft-about-editor entry-content">
