@@ -268,3 +268,18 @@
 	// Restoring a page from bfcache can land mid-document with a stale state.
 	window.addEventListener('pageshow', onChange);
 })();
+
+// Bring the current page's shortcut chip into view when it sits past the strip's edge.
+(function () {
+	var list = document.querySelector('.sft-quicklinks__list');
+	var chip = list ? list.querySelector('.sft-quicklinks__chip.is-active') : null;
+	if (!chip || list.scrollWidth <= list.clientWidth) {
+		return;
+	}
+	var listBox = list.getBoundingClientRect();
+	var chipBox = chip.getBoundingClientRect();
+	if (chipBox.left >= listBox.left && chipBox.right <= listBox.right) {
+		return;
+	}
+	list.scrollLeft += chipBox.left - listBox.left - (list.clientWidth - chipBox.width) / 2;
+})();

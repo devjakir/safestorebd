@@ -295,15 +295,34 @@
     text-decoration: none;
   }
 
+  /* Deals stays highlighted by colour and dot only, so it never reads as the selected chip */
   .sft-quicklinks__chip--accent {
     border-color: #fecaca;
-    background: #fef2f2;
+    background: #ffffff;
     color: #b91c1c;
   }
 
   .sft-quicklinks__chip--accent:active {
-    background: #fee2e2;
+    background: #fef2f2;
     color: #991b1b;
+  }
+
+  .sft-quicklinks__chip.is-active,
+  .sft-quicklinks__chip.is-active:active {
+    border-color: #0f172a;
+    background: #0f172a;
+    color: #ffffff;
+  }
+
+  .sft-quicklinks__chip--accent.is-active,
+  .sft-quicklinks__chip--accent.is-active:active {
+    border-color: #dc2626;
+    background: #dc2626;
+    color: #ffffff;
+  }
+
+  .sft-quicklinks__chip--accent.is-active .sft-quicklinks__dot {
+    background: #ffffff;
   }
 
   .sft-quicklinks__dot {
