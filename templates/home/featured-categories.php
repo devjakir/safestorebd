@@ -21,10 +21,10 @@ $categories = array(
 		'size'  => 'xl',
 		'tag'   => '',
 		'title' => 'Industrial Safety Shoes',
-		'image' => $safestore_cat_img( 'premium_brown_leather_industrial_safety_boots.webp' ),
+		'image' => $safestore_cat_img( 'safety-shoes-category.webp' ),
 		'fit'   => 'cover',
 		'url'   => $shoe_cat,
-		'alt'   => 'Premium brown leather industrial safety boots and work shoes',
+		'alt'   => 'Industrial safety shoes in Bangladesh: TINGGU and HAOJIA steel toe work shoes, DINGGU safety boots, black leather safety shoes and J.C.D gumboots',
 	),
 	array(
 		'size'  => 'sm',
