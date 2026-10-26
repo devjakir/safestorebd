@@ -904,10 +904,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--ss-text-lg);
-  font-weight: 600;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.home .category-card-arrow svg {
+  display: block;
+  width: 20px;
+  height: 20px;
 }
 
 .home .category-card:hover .category-card-arrow {
@@ -971,6 +975,11 @@
     height: 32px;
     top: 10px;
     right: 10px;
+  }
+
+  .home .category-card-arrow svg {
+    width: 18px;
+    height: 18px;
   }
 
   .home .category-card--cover .category-card-overlay {
