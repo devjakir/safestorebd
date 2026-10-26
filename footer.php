@@ -61,13 +61,27 @@ function sfx_footer_icon( $name ) {
 				<h2 class="sfx-heading"><?php esc_html_e( 'Support', 'safestore-minimal' ); ?></h2>
 
 				<?php if ( '' !== $sfx_tel_digits ) : ?>
-					<a class="sfx-bigbtn" href="<?php echo esc_url( 'tel:' . $sfx_tel_digits ); ?>">
-						<span class="sfx-bigbtn__icon"><?php echo sfx_footer_icon( 'phone' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
-						<span class="sfx-bigbtn__text">
-							<span class="sfx-bigbtn__eyebrow"><?php esc_html_e( 'Sat–Thu, 9am–8pm', 'safestore-minimal' ); ?></span>
-							<span class="sfx-bigbtn__value"><?php echo esc_html( $sfx_tel_label ); ?></span>
-						</span>
-					</a>
+					<?php // Copy button sits beside the link (a button may not nest inside <a>); data-sft-copy-skip stops the JS adding a second one below. ?>
+					<div class="sfx-bigbtn-row">
+						<a class="sfx-bigbtn" href="<?php echo esc_url( 'tel:' . $sfx_tel_digits ); ?>" data-sft-copy-skip>
+							<span class="sfx-bigbtn__icon"><?php echo sfx_footer_icon( 'phone' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
+							<span class="sfx-bigbtn__text">
+								<span class="sfx-bigbtn__eyebrow"><?php esc_html_e( 'Sat–Thu, 9am–8pm', 'safestore-minimal' ); ?></span>
+								<span class="sfx-bigbtn__value"><?php echo esc_html( $sfx_tel_label ); ?></span>
+							</span>
+						</a>
+						<?php
+						if ( function_exists( 'safestore_copy_button' ) ) {
+							echo safestore_copy_button( // phpcs:ignore WordPress.Security.EscapeOutput
+								array(
+									'value' => $sfx_tel_digits,
+									'noun'  => __( 'Phone number', 'safestore-minimal' ),
+									'class' => 'sft-copy-btn--inline sfx-bigbtn-row__copy',
+								)
+							);
+						}
+						?>
+					</div>
 				<?php endif; ?>
 
 				<div class="sfx-bigbtn sfx-bigbtn--static">
