@@ -178,3 +178,24 @@ function safestore_minimal_shop_seo_content() {
 	echo '<section class="sft-shop-seo">' . wp_kses_post( apply_filters( 'the_content', $content ) ) . '</section>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 add_action( 'woocommerce_after_shop_loop', 'safestore_minimal_shop_seo_content', 20 );
+
+// Short sort labels: desktop prefixes "Sort By:", and the compact mobile select must not clip them.
+function safestore_minimal_short_orderby_labels( $options ) {
+	$short = array(
+		'menu_order' => __( 'Default', 'safestore-minimal' ),
+		'popularity' => __( 'Popularity', 'safestore-minimal' ),
+		'rating'     => __( 'Top rated', 'safestore-minimal' ),
+		'date'       => __( 'Newest', 'safestore-minimal' ),
+		'price'      => __( 'Price: Low–High', 'safestore-minimal' ),
+		'price-desc' => __( 'Price: High–Low', 'safestore-minimal' ),
+	);
+
+	foreach ( $short as $key => $label ) {
+		if ( isset( $options[ $key ] ) ) {
+			$options[ $key ] = $label;
+		}
+	}
+
+	return $options;
+}
+add_filter( 'woocommerce_catalog_orderby', 'safestore_minimal_short_orderby_labels', 20 );

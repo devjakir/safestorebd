@@ -792,18 +792,37 @@
   }
 }
 
+/* Phones: Filters bar and results toolbar share one 44px rhythm; the sort select is a compact 32px pill. */
 @media (max-width: 600px) {
+  .sft-shop-sidebar {
+    margin-bottom: 10px;
+  }
+
+  .sft-shop-filter__toggle {
+    min-height: 44px;
+    padding: 0 14px;
+    font-size: 14px;
+    line-height: 1.2;
+  }
+
+  .sft-shop-filter__panel {
+    margin-top: 10px;
+  }
+
   .sft-shop-toolbar {
-    padding-right: 196px;
+    min-height: 44px;
+    margin-bottom: 12px;
+    padding-right: 166px;
     padding-left: 14px;
   }
 
   .sft-shop-toolbar__title {
-    font-size: 15px;
+    font-size: 14px;
   }
 
   .sft-shop-results .woocommerce-ordering {
-    right: 8px;
+    top: 6px;
+    right: 6px;
   }
 
   .sft-shop-results .woocommerce-ordering::before {
@@ -812,6 +831,14 @@
 
   .sft-shop-results .woocommerce-ordering select {
     min-width: 0;
-    width: 180px;
+    width: 154px;
+    height: 32px;
+    padding: 0 26px 0 30px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 30px;
+    background:
+      url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23dc2626' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 4v16M3 8l4-4 4 4M17 20V4M13 16l4 4 4-4'/%3E%3C/svg%3E") no-repeat left 10px center,
+      #fff url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 12 8'%3E%3Cpath fill='%2364748b' d='M1.4.6 6 5.2 10.6.6 12 2 6 8 0 2z'/%3E%3C/svg%3E") no-repeat right 10px center;
   }
 }

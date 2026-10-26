@@ -97,7 +97,8 @@ $categories = array(
 					<?php endif; ?>
 					<h3 class="category-card-title"><?php echo esc_html( $cat['title'] ); ?></h3>
 				</div>
-				<span class="category-card-arrow" aria-hidden="true">&rarr;</span>
+				<?php // SVG, not the &rarr; glyph: font metrics left the glyph thin and ~2px low; this path is centred on the viewBox. ?>
+				<span class="category-card-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M4 12h16M13 5l7 7-7 7"/></svg></span>
 			</a>
 		<?php endforeach; ?>
 	</div>

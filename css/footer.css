@@ -88,6 +88,23 @@
   margin-bottom: 0;
 }
 
+/* Phone row: copy button bottom-aligned so it sits on the number's line, right after it. */
+.sfx-bigbtn-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.sfx-bigbtn-row .sfx-bigbtn {
+  margin-bottom: 0;
+  min-width: 0;
+}
+
+.sfx-bigbtn-row__copy {
+  margin: 0 0 -1px;
+}
+
 /* The hours block is information, not an action. */
 .sfx-bigbtn--static {
   cursor: default;
@@ -572,6 +589,14 @@
   .sfx-bigbtn {
     margin-bottom: 16px;
     padding: 2px 0;
+  }
+
+  .sfx-bigbtn-row {
+    margin-bottom: 16px;
+  }
+
+  .sfx-bigbtn-row__copy {
+    margin-bottom: 1px;
   }
 
   .sfx-footer__strip {

@@ -523,9 +523,17 @@
     gap: 6px;
   }
 
+  /* One-line price pill centred on the stage; it may run wider than the narrow stage */
   .home .hero-slide-card--price {
-    top: 8px;
-    right: 8px;
+    top: 4px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    flex-wrap: nowrap;
+    gap: 6px;
+    padding: 5px 8px;
+    max-width: calc(100vw - 48px);
+    line-height: 1;
   }
 
   .home .hero-slide-card--reviews {
@@ -533,8 +541,20 @@
     left: 8px;
   }
 
+  .home .hero-slide-card__old,
+  .home .hero-slide-card__old .amount,
+  .home .hero-slide-card__old .woocommerce-Price-amount {
+    font-size: var(--ss-text-2xs);
+  }
+
   .home .hero-slide-card__now {
-    font-size: var(--ss-text-md);
+    font-size: var(--ss-text-base);
+  }
+
+  .home .hero-slide-card__save {
+    padding: 2px 6px;
+    font-size: 9.5px;
+    letter-spacing: 0.03em;
   }
 
   .home .hero-slider-dots {
@@ -578,9 +598,27 @@
     padding: 6px 12px;
   }
 
+  .home .hero-slide-actions {
+    gap: 8px;
+  }
+
+  /* Compact stacked CTAs on phones: 42px tall, still a comfortable tap target */
   .home .hero-slide-actions .hero-slide-cta {
     width: 100%;
     justify-content: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 9px 14px;
+    line-height: 1.25;
+    box-sizing: border-box;
+  }
+
+  .home .hero-slide-cta--primary {
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);
+  }
+
+  .home .hero-slide-cta-arrow {
+    font-size: 15px;
   }
 
   .home .hero-slide-proof {
@@ -866,10 +904,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--ss-text-lg);
-  font-weight: 600;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.home .category-card-arrow svg {
+  display: block;
+  width: 20px;
+  height: 20px;
 }
 
 .home .category-card:hover .category-card-arrow {
@@ -933,6 +975,11 @@
     height: 32px;
     top: 10px;
     right: 10px;
+  }
+
+  .home .category-card-arrow svg {
+    width: 18px;
+    height: 18px;
   }
 
   .home .category-card--cover .category-card-overlay {

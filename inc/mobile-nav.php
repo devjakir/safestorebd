@@ -239,8 +239,14 @@ function safestore_mnav_quicklinks() {
     <div class="sft-quicklinks" role="navigation" aria-label="<?php esc_attr_e('Shortcuts', 'safestore-minimal'); ?>">
         <ul class="sft-quicklinks__list">
             <?php foreach ($links as $link) : ?>
+                <?php
+                $is_current = safestore_mnav_path_matches($link['url']);
+                $chip_class = 'sft-quicklinks__chip';
+                $chip_class .= !empty($link['accent']) ? ' sft-quicklinks__chip--accent' : '';
+                $chip_class .= $is_current ? ' is-active' : '';
+                ?>
                 <li>
-                    <a class="sft-quicklinks__chip<?php echo !empty($link['accent']) ? ' sft-quicklinks__chip--accent' : ''; ?>" href="<?php echo esc_url($link['url']); ?>">
+                    <a class="<?php echo esc_attr($chip_class); ?>" href="<?php echo esc_url($link['url']); ?>"<?php echo $is_current ? ' aria-current="page"' : ''; ?>>
                         <?php if (!empty($link['accent'])) : ?>
                             <span class="sft-quicklinks__dot" aria-hidden="true"></span>
                         <?php endif; ?>
