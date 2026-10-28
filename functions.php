@@ -47,6 +47,9 @@ require get_template_directory() . '/inc/home-products-slider.php';
 
 require get_template_directory() . '/inc/blog.php';
 
+// Bulk / corporate landing (page-templates/template-bulk-landing.php): lead CPT, quote form handler, template-only assets.
+require get_template_directory() . '/inc/bulk-landing.php';
+
 function safestore_minimal_enqueue_assets() {
     $version = wp_get_theme()->get('Version');
 
