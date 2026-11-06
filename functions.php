@@ -55,6 +55,9 @@ require get_template_directory() . '/inc/checkout-thana.php';
 // Order received (thank-you) page helpers + BD price format (৳5,130).
 require get_template_directory() . '/inc/order-received.php';
 
+// bKash / Nagad Send Money: numbers + TrxID at checkout and on the thank-you page.
+require get_template_directory() . '/inc/mfs-payment.php';
+
 // Steadfast Courier shipping method: weight-based, Inside / Outside Dhaka City (see SHIPPING-SETUP.md).
 require get_template_directory() . '/inc/shipping-courier.php';
 
@@ -667,7 +670,7 @@ function safestore_minimal_get_faq_sections() {
 			'items' => array(
 				array(
 					'q' => __( 'Which payment methods do you accept?', 'safestore-minimal' ),
-					'a' => __( '<strong>Cash on delivery</strong> anywhere in Bangladesh, and <strong>bKash</strong> or <strong>Nagad</strong> merchant payment. Choose bKash/Nagad at checkout: we send the merchant number and the exact amount on WhatsApp, you reply with the transaction ID, and the order ships once it is confirmed.', 'safestore-minimal' ),
+					'a' => __( '<strong>Cash on delivery</strong> anywhere in Bangladesh, and <strong>bKash</strong> or <strong>Nagad</strong> Send Money. Choose bKash/Nagad at checkout: send the exact total to our personal number — bKash 01761-699627 or Nagad 01558-990209 — and enter the Transaction ID (TrxID). You can also place the order first and pay within 24 hours. The order ships once the payment is confirmed.', 'safestore-minimal' ),
 				),
 				array(
 					'q' => __( 'How does cash on delivery work?', 'safestore-minimal' ),
@@ -1756,7 +1759,7 @@ function safestore_minimal_get_terms_sections() {
 				'list'       => array(
 					__( 'Prices are in <strong>BDT (৳)</strong> unless stated otherwise. We may correct listing errors before accepting an order.', 'safestore-minimal' ),
 					__( 'An order is confirmed when we accept it and (if required) verify payment or COD details.', 'safestore-minimal' ),
-					__( 'Payment options are cash on delivery and bKash or Nagad merchant payment confirmed by transaction ID.', 'safestore-minimal' ),
+					__( 'Payment options are cash on delivery and bKash or Nagad Send Money to our personal number, confirmed by transaction ID (TrxID).', 'safestore-minimal' ),
 					__( 'You must provide a correct phone number and delivery address — couriers in Bangladesh often call before delivery.', 'safestore-minimal' ),
 					__( 'We may cancel or refuse orders suspected of fraud or abuse.', 'safestore-minimal' ),
 				),

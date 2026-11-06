@@ -118,7 +118,7 @@ function safestore_minimal_pdp_payment_methods() {
 			<li class="sft-pay sft-pay--bkash"><span class="sft-ship-pay-label">bKash</span></li>
 			<li class="sft-pay sft-pay--nagad"><span class="sft-ship-pay-label">Nagad</span></li>
 		</ul>
-		<p class="sft-pdp-pay__note"><?php esc_html_e( 'bKash / Nagad: choose it at checkout — we confirm the merchant number on WhatsApp.', 'safestore-minimal' ); ?></p>
+		<p class="sft-pdp-pay__note"><?php esc_html_e( 'bKash / Nagad: Send Money to our personal number and enter the TrxID at checkout.', 'safestore-minimal' ); ?></p>
 	</div>
 	<?php
 }
