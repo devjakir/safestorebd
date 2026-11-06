@@ -61,6 +61,9 @@ require get_template_directory() . '/inc/mfs-payment.php';
 // Steadfast Courier shipping method: weight-based, Inside / Outside Dhaka City (see SHIPPING-SETUP.md).
 require get_template_directory() . '/inc/shipping-courier.php';
 
+// Cart page: qty − / + buttons, auto "Update cart", notes under the totals (woocommerce/cart/cart.php).
+require get_template_directory() . '/inc/cart-page.php';
+
 // Bulk / corporate landing (page-templates/template-bulk-landing.php): lead CPT, quote form handler, template-only assets.
 require get_template_directory() . '/inc/bulk-landing.php';
 
