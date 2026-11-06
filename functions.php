@@ -59,6 +59,9 @@ require get_template_directory() . '/inc/shipping-courier.php';
 // Bulk / corporate landing (page-templates/template-bulk-landing.php): lead CPT, quote form handler, template-only assets.
 require get_template_directory() . '/inc/bulk-landing.php';
 
+// Single-product campaign landing (page-templates/template-product-landing.php): size → cart → checkout, page settings box.
+require get_template_directory() . '/inc/product-landing.php';
+
 function safestore_minimal_enqueue_assets() {
     $version = wp_get_theme()->get('Version');
 
