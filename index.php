@@ -6,7 +6,9 @@
             while (have_posts()) : the_post(); ?>
                 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
                     <?php
-                    if (is_singular()) {
+                    if (function_exists('safestore_is_order_received') && safestore_is_order_received()) {
+                        // Thank-you page: woocommerce/checkout/thankyou.php prints its own heading.
+                    } elseif (is_singular()) {
                         the_title('<h1>', '</h1>');
                     } else {
                         the_title(sprintf('<h2><a href="%s">', esc_url(get_permalink())), '</a></h2>');

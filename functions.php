@@ -47,8 +47,20 @@ require get_template_directory() . '/inc/home-products-slider.php';
 
 require get_template_directory() . '/inc/blog.php';
 
+// Checkout: District -> Thana / Upazila dropdown (billing_city), empty notes card hidden.
+require get_template_directory() . '/inc/checkout-thana.php';
+
+// Order received (thank-you) page helpers + BD price format (৳5,130).
+require get_template_directory() . '/inc/order-received.php';
+
+// Steadfast Courier shipping method: weight-based, Inside / Outside Dhaka City (see SHIPPING-SETUP.md).
+require get_template_directory() . '/inc/shipping-courier.php';
+
 // Bulk / corporate landing (page-templates/template-bulk-landing.php): lead CPT, quote form handler, template-only assets.
 require get_template_directory() . '/inc/bulk-landing.php';
+
+// Single-product campaign landing (page-templates/template-product-landing.php): size → cart → checkout, page settings box.
+require get_template_directory() . '/inc/product-landing.php';
 
 function safestore_minimal_enqueue_assets() {
     $version = wp_get_theme()->get('Version');
@@ -1355,7 +1367,15 @@ add_action(
 		if ( defined( 'WPSEO_VERSION' ) || defined( 'RANK_MATH_VERSION' ) ) {
 			return;
 		}
-		$desc = __( 'Courier delivery across Bangladesh and free Pallabi office pickup. Dhaka from ৳80, outside Dhaka from ৳135+. Track your SafeStoreBD order.', 'safestore-minimal' );
+		$courier = function_exists( 'safestorebd_courier_public_rates' ) ? safestorebd_courier_public_rates() : null;
+		$desc    = $courier
+			? sprintf(
+				/* translators: 1: Inside Dhaka City price, 2: outside price, e.g. ৳70 / ৳135 */
+				__( 'Courier delivery across Bangladesh and free Pallabi office pickup. Dhaka City from %1$s, outside Dhaka from %2$s. Track your SafeStoreBD order.', 'safestore-minimal' ),
+				safestorebd_courier_money( $courier['inside']['first'] ),
+				safestorebd_courier_money( $courier['outside']['first'] )
+			)
+			: __( 'Courier delivery across Bangladesh and free Pallabi office pickup. Dhaka from ৳80, outside Dhaka from ৳135+. Track your SafeStoreBD order.', 'safestore-minimal' );
 		printf( '<meta name="description" content="%s" />' . "\n", esc_attr( $desc ) );
 		printf( '<link rel="canonical" href="%s" />' . "\n", esc_url( get_permalink() ) );
 	},
@@ -2121,7 +2141,8 @@ function safestorebd_checkout_fields( $fields ) {
     unset( $fields['billing']['billing_last_name'] );
     unset( $fields['billing']['billing_company'] );
     unset( $fields['billing']['billing_country'] );
-    unset( $fields['billing']['billing_city'] );
+    // billing_city is kept: inc/checkout-thana.php turns it into the
+    // Thana / Upazila select that follows the District field.
     unset( $fields['billing']['billing_postcode'] );
     unset( $fields['billing']['billing_address_2'] );
 	unset( $fields['order']['order_comments'] );
