@@ -50,6 +50,31 @@ h3#order_review_heading {
   margin-bottom: 25px;
 }
 
+/* Order notes are removed (functions.php), but WooCommerce still prints the
+   .woocommerce-additional-fields wrapper, so the card style above drew an empty
+   box under the billing card. It is not truly empty — WooCommerce order
+   attribution puts its hidden inputs in there — so hide it while it has nothing
+   visible (js/checkout-thana.js does the same for browsers without :has()). */
+.woocommerce-checkout .woocommerce-additional-fields:not(:has(h3, .form-row, label, p, textarea, select, button, input:not([type="hidden"]))) {
+  display: none;
+}
+
+/* No dead space under the last field inside the billing card. */
+.woocommerce-billing-fields__field-wrapper > .form-row:last-child {
+  margin-bottom: 0;
+}
+
+/* Thana / Upazila — locked until a district is chosen. */
+.sft-thana-field select:disabled,
+.sft-thana-field .select2-container--disabled .select2-selection--single {
+  background: #f6f6f6;
+  cursor: not-allowed;
+}
+
+.sft-thana-field .select2-container--disabled .select2-selection__placeholder {
+  color: #8a8a8a;
+}
+
 /* Payment Box */
 #payment {
   background: var(--ss-white) !important;
