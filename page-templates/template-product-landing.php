@@ -239,7 +239,6 @@ $spl_steps = array(
 					<?php if ( $spl_price['was'] > 0 ) : ?>
 						<s><?php echo esc_html( safestore_pl_taka( $spl_price['was'] ) ); ?></s>
 					<?php endif; ?>
-					<small>ডেলিভারি চার্জ আলাদা — চেকআউটে দেখা যাবে</small>
 				</p>
 
 				<?php if ( $spl_bullets ) : ?>
