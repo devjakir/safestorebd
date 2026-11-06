@@ -1,53 +1,192 @@
+/* =====================================================================
+   Checkout (classic [woocommerce_checkout]).
+   Loaded after css/page-cart.css, which also styles cart/checkout pages,
+   so the rules below win at equal specificity. The order-received page is
+   also is_checkout(); everything page-level here is scoped away from it.
+   ===================================================================== */
 
+/* ---- Page title: plain heading, no card ---------------------------- */
+/* page-cart.css boxes the cart/checkout h1 in a white shadowed card. */
+body.woocommerce-checkout:not(.woocommerce-order-received) .entry-content > article > h1 {
+  background: none;
+  border: 0;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+  margin: -14px 0 18px;
+  font-size: clamp(26px, 2.2vw, 32px);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
 
-/* ACR customizations start for WooCommerce */
+/* ---- Notices above the form: compact one-line bars ------------------ */
+/* "X has been added to your cart" and "Have a coupon?". */
+.woocommerce-checkout .woocommerce-notices-wrapper .woocommerce-message,
+.woocommerce-checkout .woocommerce-form-coupon-toggle .woocommerce-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin: 0 0 12px;
+  padding: 10px 14px 10px 42px !important;
+  font-size: 15px;
+  line-height: 1.45;
+  border: 1px solid #e3e6eb;
+  border-left-width: 3px;
+  border-radius: var(--ss-radius);
+  background: var(--ss-white);
+  color: #374151;
+}
 
+.woocommerce-checkout .woocommerce-notices-wrapper .woocommerce-message {
+  border-color: #cfe8d6;
+  border-left-color: #16a34a;
+  background: #f4fbf6;
+}
+
+.woocommerce-checkout .woocommerce-form-coupon-toggle .woocommerce-info {
+  border-left-color: #94a3b8;
+}
+
+.woocommerce-checkout .woocommerce-notices-wrapper .woocommerce-message::before,
+.woocommerce-checkout .woocommerce-form-coupon-toggle .woocommerce-info::before {
+  top: 50%;
+  left: 14px;
+  transform: translateY(-50%);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.woocommerce-checkout .woocommerce-notices-wrapper .woocommerce-message::before {
+  color: #16a34a;
+}
+
+.woocommerce-checkout .woocommerce-form-coupon-toggle .woocommerce-info::before {
+  color: #64748b;
+}
+
+/* "View cart" sits first in the markup; show it as a small link on the right. */
+.woocommerce-checkout .woocommerce-notices-wrapper .woocommerce-message .button.wc-forward {
+  order: 2;
+  float: none;
+  margin: 0 0 0 auto;
+  padding: 5px 12px !important;
+  min-height: 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #15803d;
+  background: transparent;
+  border: 1px solid #a7d7b5;
+  border-radius: var(--ss-radius);
+}
+
+.woocommerce-checkout .woocommerce-notices-wrapper .woocommerce-message .button.wc-forward:hover {
+  background: #16a34a !important;
+  border-color: #16a34a;
+  color: var(--ss-white);
+}
+
+/* WooCommerce focuses new notices (tabindex="-1") so screen readers announce
+   them; that programmatic focus should not paint a ring around the bar. */
+.woocommerce-checkout .woocommerce-message[tabindex="-1"]:focus,
+.woocommerce-checkout .woocommerce-info[tabindex="-1"]:focus,
+.woocommerce-checkout .woocommerce-error[tabindex="-1"]:focus,
+.woocommerce-checkout .woocommerce-NoticeGroup:focus {
+  outline: none;
+}
+
+.woocommerce-checkout .woocommerce-notices-wrapper:not(:empty) {
+  margin-bottom: 4px;
+}
+
+.woocommerce-checkout form.checkout_coupon {
+  margin: 0 0 16px;
+  padding: 16px;
+  border: 1px solid #e3e6eb;
+  border-radius: var(--ss-radius);
+  background: var(--ss-white);
+}
+
+/* ---- Layout: form | order summary ----------------------------------- */
 form.checkout.woocommerce-checkout {
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
   flex-wrap: wrap;
-  gap: 20px;
+  align-items: flex-start;
+  gap: 20px 24px;
+  margin-top: 8px;
+}
+
+/* Validation errors are prepended to the form: full row above both columns. */
+form.checkout.woocommerce-checkout > .woocommerce-NoticeGroup {
+  flex: 0 0 100%;
+}
+
+.woocommerce-checkout .woocommerce-NoticeGroup .woocommerce-error {
+  margin: 0;
+  padding: 12px 16px 12px 44px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: #7f1d1d;
+  background: #fef2f2;
+  border: 1px solid #f5c2c2;
+  border-left: 3px solid var(--ss-c-d6001c);
+  border-radius: var(--ss-radius);
+}
+
+.woocommerce-checkout .woocommerce-NoticeGroup .woocommerce-error::before {
+  top: 14px;
+  left: 16px;
+}
+
+.woocommerce-checkout .woocommerce-NoticeGroup .woocommerce-error li {
+  margin: 0;
+}
+
+.woocommerce-checkout .woocommerce-NoticeGroup .woocommerce-error a,
+.woocommerce-checkout .woocommerce-NoticeGroup .woocommerce-error strong {
+  color: inherit;
+}
+
+.woocommerce-checkout form .form-row .checkout-inline-error-message {
+  margin: 5px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.woocommerce-checkout #customer_details {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 h3#order_review_heading {
   display: none;
 }
 
-/* Left Column */
-.woocommerce-checkout #customer_details {
-  flex: 0 0 60%;
-}
-
-/* Right Column */
 .woocommerce-checkout #order_review {
-  flex: 0 0 38%;
+  flex: 0 0 clamp(340px, 34%, 430px);
   position: sticky;
   top: 20px;
 }
 
 .woocommerce .col2-set .col-1,
-.woocommerce-page .col2-set .col-1 {
-  float: left;
-  width: 100%;
-}
-
+.woocommerce-page .col2-set .col-1,
 .woocommerce .col2-set .col-2,
 .woocommerce-page .col2-set .col-2 {
-  float: right;
+  float: none;
   width: 100%;
 }
 
-/* Card Design */
+/* ---- Cards ------------------------------------------------------------ */
 .woocommerce-billing-fields,
 .woocommerce-additional-fields,
-#order_review {
+.woocommerce-checkout #order_review {
   background: var(--ss-white);
-  border: 1px solid #ececec;
+  border: 1px solid #e8eaee;
   border-radius: var(--ss-radius);
-  padding: 30px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, .05);
-  margin-bottom: 25px;
+  padding: 24px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+  margin-bottom: 0;
 }
 
 /* Order notes are removed (functions.php), but WooCommerce still prints the
@@ -59,15 +198,96 @@ h3#order_review_heading {
   display: none;
 }
 
-/* No dead space under the last field inside the billing card. */
-.woocommerce-billing-fields__field-wrapper > .form-row:last-child {
+.woocommerce-checkout .woocommerce-billing-fields > h3 {
+  margin: 0 0 18px;
+  font-size: 21px;
+  line-height: 1.3;
+  font-weight: 700;
+  color: var(--ss-ink);
+}
+
+/* ---- Fields: two-up where the pair belongs together ------------------ */
+/* Name / Phone | Email / Address / District | Thana. */
+.woocommerce-checkout .woocommerce-billing-fields__field-wrapper {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 16px;
+}
+
+.woocommerce-checkout .woocommerce-billing-fields__field-wrapper::before,
+.woocommerce-checkout .woocommerce-billing-fields__field-wrapper::after {
+  display: none;
+}
+
+.woocommerce-checkout .woocommerce-billing-fields__field-wrapper > .form-row {
+  grid-column: 1 / -1;
+  float: none;
+  width: auto;
+  margin: 0 0 14px;
+  padding: 0;
+}
+
+.woocommerce-checkout .woocommerce-billing-fields__field-wrapper > #billing_phone_field,
+.woocommerce-checkout .woocommerce-billing-fields__field-wrapper > #billing_email_field,
+.woocommerce-checkout .woocommerce-billing-fields__field-wrapper > #billing_state_field,
+.woocommerce-checkout .woocommerce-billing-fields__field-wrapper > #billing_city_field {
+  grid-column: auto;
+}
+
+/* No dead space under the last field row inside the billing card. */
+.woocommerce-checkout .woocommerce-billing-fields__field-wrapper > .form-row:last-child,
+.woocommerce-checkout .woocommerce-billing-fields__field-wrapper > #billing_state_field:nth-last-child(2) {
   margin-bottom: 0;
+}
+
+.woocommerce-checkout form .form-row label {
+  margin: 0 0 6px;
+  font-size: 14px;
+  line-height: 1.35;
+  font-weight: 600;
+  color: #374151;
+}
+
+.woocommerce-checkout form .form-row .input-text,
+.woocommerce-checkout form .form-row select,
+.woocommerce-checkout form .form-row .select2-container .select2-selection--single {
+  height: 46px;
+  padding: 0 14px;
+  font-size: 15px;
+  border: 1px solid #d5d9e0;
+  border-radius: var(--ss-radius);
+  background-color: var(--ss-white);
+  box-shadow: none;
+}
+
+.woocommerce-checkout form .form-row .select2-container .select2-selection--single .select2-selection__rendered {
+  padding: 0;
+  line-height: 44px;
+  color: #111827;
+}
+
+.woocommerce-checkout form .form-row .select2-container .select2-selection--single .select2-selection__arrow {
+  height: 44px;
+  right: 8px;
+}
+
+.woocommerce-checkout form .form-row .input-text::placeholder {
+  color: #9ca3af;
+}
+
+.woocommerce-checkout form .form-row .input-text:focus,
+.woocommerce-checkout form .form-row select:focus,
+.woocommerce-checkout form .form-row .select2-container--focus .select2-selection--single,
+.woocommerce-checkout form .form-row .select2-container--open .select2-selection--single {
+  outline: none;
+  border-color: var(--ss-c-d6001c);
+  box-shadow: 0 0 0 3px rgba(214, 0, 28, .1);
 }
 
 /* Thana / Upazila — locked until a district is chosen. */
 .sft-thana-field select:disabled,
 .sft-thana-field .select2-container--disabled .select2-selection--single {
-  background: #f6f6f6;
+  background: #f6f7f9;
   cursor: not-allowed;
 }
 
@@ -75,67 +295,206 @@ h3#order_review_heading {
   color: #8a8a8a;
 }
 
-/* Payment Box */
-#payment {
+/* ---- Order summary ------------------------------------------------------ */
+/* page-cart.css pads every .shop_table cell 15–22px with !important. */
+.woocommerce-checkout #order_review .shop_table {
+  margin: 0;
+  border: 0 !important;
+  font-size: 15px;
+  table-layout: auto;
+}
+
+.woocommerce-checkout #order_review .shop_table th,
+.woocommerce-checkout #order_review .shop_table td {
+  padding: 12px 0 !important;
+  border: 0 !important;
+  border-top: 1px solid #eef0f3 !important;
+  vertical-align: top;
+  line-height: 1.45;
+  background: none;
+}
+
+.woocommerce-checkout #order_review .shop_table thead th {
+  padding: 0 0 10px !important;
+  border-top: 0 !important;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.woocommerce-checkout #order_review .shop_table .product-total,
+.woocommerce-checkout #order_review .shop_table tfoot td {
+  text-align: right;
+  white-space: nowrap;
+  padding-left: 16px !important;
+}
+
+.woocommerce-checkout #order_review .shop_table .cart_item .product-name {
+  padding-right: 8px !important;
+  font-weight: 600;
+  color: #111827;
+}
+
+.woocommerce-checkout #order_review .shop_table .cart_item .product-quantity {
+  font-weight: 600;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.woocommerce-checkout #order_review .shop_table .cart_item .product-total {
+  font-weight: 600;
+  color: #111827;
+}
+
+.woocommerce-checkout #order_review .shop_table tfoot th {
+  font-size: 15px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  color: #4b5563;
+}
+
+.woocommerce-checkout #order_review .shop_table tfoot td {
+  font-weight: 600;
+  color: #111827;
+}
+
+.woocommerce-checkout #order_review .shop_table tfoot tr:first-child th,
+.woocommerce-checkout #order_review .shop_table tfoot tr:first-child td {
+  border-top-color: #e5e7eb !important;
+}
+
+/* Shipping row: method name + price, right-aligned, allowed to wrap. */
+.woocommerce-checkout #order_review .woocommerce-shipping-totals td {
+  white-space: normal;
+}
+
+.woocommerce-checkout #order_review ul#shipping_method {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.woocommerce-checkout #order_review ul#shipping_method li {
+  margin: 0;
+  padding: 0;
+  text-indent: 0;
+}
+
+.woocommerce-checkout #order_review ul#shipping_method label {
+  font-weight: 600;
+}
+
+.woocommerce-checkout #order_review .shop_table tfoot .order-total th,
+.woocommerce-checkout #order_review .shop_table tfoot .order-total td {
+  padding-top: 14px !important;
+  border-top: 1px solid #d9dde3 !important;
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--ss-ink);
+}
+
+/* ---- Payment ------------------------------------------------------------ */
+.woocommerce-checkout #payment {
+  margin-top: 6px;
   background: var(--ss-white) !important;
   border: none !important;
+  border-radius: 0;
 }
 
-#payment ul.payment_methods {
-  border-bottom: 1px solid #eee;
-  padding-bottom: 15px;
+.woocommerce-checkout #payment ul.payment_methods {
+  margin: 0;
+  padding: 14px 0 !important;
+  border-top: 1px solid #eef0f3;
+  border-bottom: 1px solid #eef0f3;
 }
 
-#payment .payment_box {
-  background: #f8f8f8;
+.woocommerce-checkout #payment ul.payment_methods li {
+  margin: 0 0 6px;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.woocommerce-checkout #payment ul.payment_methods li:last-child {
+  margin-bottom: 0;
+}
+
+.woocommerce-checkout #payment ul.payment_methods li > label {
+  font-weight: 600;
+  color: #111827;
+}
+
+.woocommerce-checkout #payment div.payment_box {
+  margin: 10px 0 2px;
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #4b5563;
+  background: #f6f7f9;
+  border: 1px solid #eceef2;
   border-radius: var(--ss-radius);
+}
+
+.woocommerce-checkout #payment div.payment_box::before {
+  border-bottom-color: #eceef2;
+}
+
+/* .entry-content p adds 1.25em above and below. */
+.woocommerce-checkout #payment div.payment_box p {
+  margin: 0 0 8px;
+}
+
+.woocommerce-checkout #payment div.payment_box p:last-child {
+  margin-bottom: 0;
+}
+
+.woocommerce-checkout #payment div.form-row.place-order {
+  margin: 0;
+  padding: 14px 0 0 !important;
+}
+
+.woocommerce-checkout #payment .woocommerce-terms-and-conditions-wrapper {
+  margin-bottom: 14px;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 /* Place Order Button */
 #place_order {
   width: 100%;
-  height: 56px;
+  height: 52px;
   background: var(--ss-c-d6001c);
   color: var(--ss-white);
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
   border-radius: var(--ss-radius);
   border: none;
-  transition: .3s;
+  transition: background .2s ease;
 }
 
 #place_order:hover {
   background: #b50018;
 }
 
-/* Coupon */
-.checkout_coupon {
-  border: 1px solid #eee;
-  border-radius: var(--ss-radius);
-  padding: 20px;
-}
-
-@media (max-width: 767px) {
-
-  .woocommerce-checkout .woocommerce {
-    display: block;
-  }
-
-  #customer_details,
-  #order_review {
-    width: 100%;
+/* ---- Tablet / mobile ------------------------------------------------- */
+@media (max-width: 991px) {
+  .woocommerce-checkout #order_review {
+    flex: 0 0 100%;
     position: static;
-  }
-}
-
-@media (min-width: 320px) and (max-width:767px) {
-
-  .woocommerce-billing-fields h3 {
-    font-size: 22px;
   }
 
   .woocommerce-checkout #customer_details {
     flex: 0 0 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  body.woocommerce-checkout:not(.woocommerce-order-received) .entry-content > article > h1 {
+    margin: -20px 0 14px;
+    font-size: 24px;
+    text-align: left;
   }
 
   .woocommerce .col2-set .col-2,
@@ -143,14 +502,57 @@ h3#order_review_heading {
     display: none;
   }
 
-  .woocommerce-checkout #order_review {
-    flex: 0 0 100%;
+  form.checkout.woocommerce-checkout {
+    gap: 14px;
   }
 
   .woocommerce-billing-fields,
-  .woocommerce-additional-fields,
-  #order_review {
-    margin-bottom: 0px;
-    padding: 20px;
+  .woocommerce-checkout #order_review {
+    padding: 18px 16px;
+  }
+
+  .woocommerce-checkout .woocommerce-billing-fields > h3 {
+    font-size: 19px;
+    margin-bottom: 14px;
+  }
+
+  .woocommerce-checkout .woocommerce-notices-wrapper .woocommerce-message,
+  .woocommerce-checkout .woocommerce-form-coupon-toggle .woocommerce-info {
+    font-size: 14px;
+  }
+
+  /* page-cart.css turns every .shop_table row into a bordered flex card on
+     phones (right for the cart table); keep the summary a plain table. */
+  .woocommerce-checkout #order_review .shop_table tr {
+    display: table-row;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .woocommerce-checkout #order_review .shop_table th,
+  .woocommerce-checkout #order_review .shop_table td {
+    display: table-cell;
+  }
+
+  .woocommerce-checkout #order_review .shop_table td::before {
+    display: none;
+  }
+}
+
+/* Phones: one field per row. */
+@media (max-width: 560px) {
+  .woocommerce-checkout .woocommerce-billing-fields__field-wrapper {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .woocommerce-checkout .woocommerce-billing-fields__field-wrapper > .form-row,
+  .woocommerce-checkout .woocommerce-billing-fields__field-wrapper > #billing_state_field:nth-last-child(2) {
+    margin-bottom: 14px;
+  }
+
+  .woocommerce-checkout .woocommerce-billing-fields__field-wrapper > .form-row:last-child {
+    margin-bottom: 0;
   }
 }

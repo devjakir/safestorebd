@@ -165,9 +165,8 @@ $sft_hot_disp = safestore_ty_format_phone( $sft_hotline );
 			array(
 				/* translators: %s: order total */
 				'title' => sprintf( __( 'Pay %s cash on delivery', 'safestore-minimal' ), $sft_total_txt ),
-				'text'  => safestore_ty_is_dhaka( $order )
-					? __( 'Check the parcel, then pay the delivery person.', 'safestore-minimal' )
-					: __( 'Check the parcel, then pay the delivery person. Outside Dhaka we may ask for the delivery charge in advance by bKash / Nagad.', 'safestore-minimal' ),
+				'text'  => __( 'Check the parcel, then pay the delivery person.', 'safestore-minimal' )
+					. ( function_exists( 'safestore_cod_is_large_order' ) && safestore_cod_is_large_order( $order->get_total() ) ? ' ' . safestore_cod_large_order_note() : '' ),
 			),
 		);
 	}
