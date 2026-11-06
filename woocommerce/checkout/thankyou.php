@@ -98,6 +98,11 @@ $sft_hot_disp = safestore_ty_format_phone( $sft_hotline );
 		$sft_pay_type = 'paid';
 	}
 
+	// bKash / Nagad Send Money details (inc/mfs-payment.php).
+	$sft_mfs      = ( 'mobile' === $sft_pay_type && function_exists( 'safestore_mfs_order_payment' ) && safestore_mfs_gateway_id() === $order->get_payment_method() );
+	$sft_mfs_paid = $sft_mfs ? safestore_mfs_order_payment( $order ) : array( 'trxid' => '' );
+	$sft_trx_sent = $sft_mfs && '' !== $sft_mfs_paid['trxid'];
+
 	$sft_wa_text = sprintf(
 		/* translators: 1: order number, 2: order total, 3: payment method */
 		__( 'Hi SafeStoreBD, I just placed order #%1$s (%2$s, %3$s).', 'safestore-minimal' ),
@@ -105,8 +110,8 @@ $sft_hot_disp = safestore_ty_format_phone( $sft_hotline );
 		$sft_total_txt,
 		wp_strip_all_tags( $sft_pay_title )
 	);
-	if ( 'mobile' === $sft_pay_type ) {
-		$sft_wa_text .= ' ' . __( 'Please send me the merchant number to pay.', 'safestore-minimal' );
+	if ( 'mobile' === $sft_pay_type && ! $sft_trx_sent ) {
+		$sft_wa_text .= ' ' . __( 'I sent the payment by bKash / Nagad Send Money. TrxID:', 'safestore-minimal' ) . ' ';
 	}
 	$sft_wa_url = function_exists( 'safestore_wa_link' ) ? safestore_wa_link( 'primary', $sft_wa_text ) : '';
 
@@ -122,33 +127,58 @@ $sft_hot_disp = safestore_ty_format_phone( $sft_hotline );
 	// --------------------------------------------------------------- steps
 	$sft_steps = array();
 
-	if ( 'mobile' === $sft_pay_type ) {
-		$sft_hours    = (int) apply_filters( 'safestore_ty_prepay_hours', 24, $order );
-		// Clone keeps the store timezone, so the deadline reads in local time.
-		$sft_deadline = $sft_created ? wc_format_datetime( ( clone $sft_created )->modify( '+' . $sft_hours . ' hours' ), 'j M, g:i A' ) : '';
-
+	if ( 'mobile' === $sft_pay_type && $sft_trx_sent ) {
 		$sft_steps = array(
 			array(
-				'title' => __( 'We send you our merchant number', 'safestore-minimal' ),
-				/* translators: %s: customer's phone number */
-				'text'  => $sft_phone ? sprintf( __( 'On WhatsApp to %s, with the exact amount to pay.', 'safestore-minimal' ), '<strong>' . esc_html( $sft_phone ) . '</strong>' ) : __( 'On WhatsApp, with the exact amount to pay.', 'safestore-minimal' ),
+				'done'  => true,
+				'title' => __( 'Payment sent', 'safestore-minimal' ),
+				'text'  => esc_html( safestore_mfs_describe( $sft_mfs_paid ) ),
 			),
 			array(
-				/* translators: %s: order total */
-				'title' => sprintf( __( 'Pay %s with bKash or Nagad', 'safestore-minimal' ), $sft_total_txt ),
-				'text'  => $sft_deadline
-					/* translators: 1: hours, 2: deadline date and time */
-					? sprintf( __( 'Use the <strong>Payment</strong> option (not Send Money) within %1$d hours — by %2$s.', 'safestore-minimal' ), $sft_hours, '<strong>' . esc_html( $sft_deadline ) . '</strong>' )
-					/* translators: %d: hours */
-					: sprintf( __( 'Use the <strong>Payment</strong> option (not Send Money) within %d hours.', 'safestore-minimal' ), $sft_hours ),
-			),
-			array(
-				'title' => __( 'Reply with the Transaction ID', 'safestore-minimal' ),
-				'text'  => __( 'Send us the TrxID from your bKash / Nagad SMS on the same WhatsApp chat.', 'safestore-minimal' ),
+				'title' => __( 'We verify your payment', 'safestore-minimal' ),
+				'text'  => __( 'We check the TrxID in our bKash / Nagad app — usually within a few working hours.', 'safestore-minimal' ),
 			),
 			array(
 				'title' => __( 'We ship your order', 'safestore-minimal' ),
-				'text'  => __( 'As soon as the payment is confirmed, we pack it and hand it to the courier.', 'safestore-minimal' ),
+				'text'  => __( 'Packed and handed to the courier right after.', 'safestore-minimal' ),
+			),
+		);
+	} elseif ( 'mobile' === $sft_pay_type ) {
+		$sft_hours = function_exists( 'safestore_mfs_pay_hours' ) ? safestore_mfs_pay_hours() : 24;
+		$sft_hours = (int) apply_filters( 'safestore_ty_prepay_hours', $sft_hours, $order );
+		// Clone keeps the store timezone, so the deadline reads in local time.
+		$sft_deadline = $sft_created ? wc_format_datetime( ( clone $sft_created )->modify( '+' . $sft_hours . ' hours' ), 'j M, g:i A' ) : '';
+
+		$sft_pay_extra = '';
+		if ( $sft_mfs ) {
+			$sft_pay_extra = safestore_mfs_numbers_html( '' );
+			$sft_limit     = safestore_mfs_limit_note( $order->get_total() );
+			if ( $sft_limit ) {
+				$sft_pay_extra .= '<p class="sft-mfs-note sft-mfs-note--warn">' . wp_kses( $sft_limit, array( 'strong' => array() ) ) . '</p>';
+			}
+		}
+
+		$sft_steps = array(
+			array(
+				/* translators: %s: order total */
+				'title' => sprintf( __( 'Send Money %s by bKash or Nagad', 'safestore-minimal' ), $sft_total_txt ),
+				'text'  => $sft_deadline
+					/* translators: 1: hours, 2: deadline date and time */
+					? sprintf( __( 'Use <strong>Send Money</strong> to our personal number within %1$d hours — by %2$s.', 'safestore-minimal' ), $sft_hours, '<strong>' . esc_html( $sft_deadline ) . '</strong>' )
+					/* translators: %d: hours */
+					: sprintf( __( 'Use <strong>Send Money</strong> to our personal number within %d hours.', 'safestore-minimal' ), $sft_hours ),
+				'extra' => $sft_pay_extra,
+			),
+			array(
+				'title' => __( 'Submit your Transaction ID', 'safestore-minimal' ),
+				'text'  => $sft_mfs
+					? __( 'Copy the TrxID from your bKash / Nagad SMS and enter it here — or send it to us on WhatsApp.', 'safestore-minimal' )
+					: __( 'Send us the TrxID from your bKash / Nagad SMS on WhatsApp.', 'safestore-minimal' ),
+				'extra' => $sft_mfs ? safestore_mfs_trx_form_html( $order ) : '',
+			),
+			array(
+				'title' => __( 'We verify and ship', 'safestore-minimal' ),
+				'text'  => __( 'Once the payment is confirmed, we pack it and hand it to the courier.', 'safestore-minimal' ),
 			),
 		);
 	} elseif ( 'cod' === $sft_pay_type ) {
@@ -174,7 +204,9 @@ $sft_hot_disp = safestore_ty_format_phone( $sft_hotline );
 	$sft_show_gateway = '' !== $sft_gateway_html && ( empty( $sft_steps ) || $sft_gateway_is_interactive );
 
 	$sft_hero_lead = array(
-		'mobile' => __( 'One more step: pay with bKash or Nagad so we can ship it.', 'safestore-minimal' ),
+		'mobile' => $sft_trx_sent
+			? __( 'We received your Transaction ID. We will verify the payment and ship your order.', 'safestore-minimal' )
+			: __( 'One more step: Send Money with bKash or Nagad so we can ship it.', 'safestore-minimal' ),
 		'cod'    => __( 'We will contact you shortly to confirm it. You pay when it arrives.', 'safestore-minimal' ),
 		'paid'   => __( 'Your payment is confirmed. We are getting your order ready.', 'safestore-minimal' ),
 		'other'  => __( 'We will contact you shortly to confirm it.', 'safestore-minimal' ),
@@ -242,18 +274,18 @@ $sft_hot_disp = safestore_ty_format_phone( $sft_hotline );
 
 			<?php // ------------------------------------------------ 2. Next steps ?>
 			<?php if ( ! empty( $sft_steps ) || $sft_show_gateway || 'paid' === $sft_pay_type ) : ?>
-				<section class="sft-ty-card sft-ty-next sft-ty-next--<?php echo esc_attr( $sft_pay_type ); ?>" aria-labelledby="sft-ty-next-title">
+				<section class="sft-ty-card sft-ty-next sft-ty-next--<?php echo esc_attr( $sft_pay_type ); ?>" id="sft-ty-pay" aria-labelledby="sft-ty-next-title">
 					<header class="sft-ty-card__head">
 						<h2 class="sft-ty-card__title" id="sft-ty-next-title">
 							<?php
-							if ( 'mobile' === $sft_pay_type ) {
+							if ( 'mobile' === $sft_pay_type && ! $sft_trx_sent ) {
 								esc_html_e( 'Next step: pay with bKash / Nagad', 'safestore-minimal' );
 							} else {
 								esc_html_e( 'What happens next', 'safestore-minimal' );
 							}
 							?>
 						</h2>
-						<?php if ( 'mobile' === $sft_pay_type || 'cod' === $sft_pay_type ) : ?>
+						<?php if ( ( 'mobile' === $sft_pay_type && ! $sft_trx_sent ) || 'cod' === $sft_pay_type ) : ?>
 							<div class="sft-ty-due">
 								<span class="sft-ty-due__label">
 									<?php 'cod' === $sft_pay_type ? esc_html_e( 'Pay on delivery', 'safestore-minimal' ) : esc_html_e( 'Amount to pay', 'safestore-minimal' ); ?>
@@ -262,6 +294,13 @@ $sft_hot_disp = safestore_ty_format_phone( $sft_hotline );
 							</div>
 						<?php endif; ?>
 					</header>
+
+					<?php
+					$sft_notice = ( $sft_mfs && function_exists( 'safestore_mfs_form_notice' ) ) ? safestore_mfs_form_notice( $order ) : array();
+					if ( $sft_notice ) :
+						?>
+						<p class="sft-mfs-alert sft-mfs-alert--<?php echo esc_attr( $sft_notice[0] ); ?>" role="<?php echo 'error' === $sft_notice[0] ? 'alert' : 'status'; ?>"><?php echo esc_html( $sft_notice[1] ); ?></p>
+					<?php endif; ?>
 
 					<ol class="sft-ty-steps">
 						<li class="sft-ty-step is-done">
@@ -284,12 +323,32 @@ $sft_hot_disp = safestore_ty_format_phone( $sft_hotline );
 								</div>
 							</li>
 						<?php endif; ?>
-						<?php foreach ( $sft_steps as $sft_i => $sft_step ) : ?>
-							<li class="sft-ty-step<?php echo 0 === $sft_i ? ' is-current' : ''; ?>">
-								<span class="sft-ty-step__dot" aria-hidden="true"><?php echo (int) $sft_i + 2; ?></span>
+						<?php
+						$sft_current = null;
+						foreach ( $sft_steps as $sft_i => $sft_step ) :
+							$sft_done = ! empty( $sft_step['done'] );
+							$sft_cls  = $sft_done ? ' is-done' : '';
+							if ( ! $sft_done && null === $sft_current ) {
+								$sft_current = $sft_i;
+								$sft_cls     = ' is-current';
+							}
+							?>
+							<li class="sft-ty-step<?php echo esc_attr( $sft_cls ); ?>">
+								<span class="sft-ty-step__dot" aria-hidden="true">
+									<?php if ( $sft_done ) : ?>
+										<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+									<?php else : ?>
+										<?php echo (int) $sft_i + 2; ?>
+									<?php endif; ?>
+								</span>
 								<div class="sft-ty-step__body">
 									<p class="sft-ty-step__title"><?php echo esc_html( $sft_step['title'] ); ?></p>
 									<p class="sft-ty-step__text"><?php echo wp_kses( $sft_step['text'], array( 'strong' => array() ) ); ?></p>
+									<?php
+									if ( ! empty( $sft_step['extra'] ) ) {
+										echo $sft_step['extra']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built from escaped helpers in inc/mfs-payment.php.
+									}
+									?>
 								</div>
 							</li>
 						<?php endforeach; ?>
@@ -302,8 +361,10 @@ $sft_hot_disp = safestore_ty_format_phone( $sft_hotline );
 					<div class="sft-ty-help">
 						<p class="sft-ty-help__text">
 							<?php
-							if ( 'mobile' === $sft_pay_type ) {
-								esc_html_e( 'Want to pay right now? Message us and we will send the number straight away.', 'safestore-minimal' );
+							if ( 'mobile' === $sft_pay_type && ! $sft_trx_sent ) {
+								esc_html_e( 'Prefer WhatsApp? Send us the TrxID there, or ask us anything about the payment.', 'safestore-minimal' );
+							} elseif ( 'mobile' === $sft_pay_type ) {
+								esc_html_e( 'Questions about your payment or order? We are happy to help.', 'safestore-minimal' );
 							} elseif ( $sft_phone ) {
 								/* translators: %s: customer's phone number */
 								printf( esc_html__( 'Wrong phone number (%s)? Message us now so we can reach you.', 'safestore-minimal' ), esc_html( $sft_phone ) );
