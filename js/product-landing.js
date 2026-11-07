@@ -197,7 +197,7 @@
 			if (sizesBox) {
 				sizesBox.classList.add('is-error');
 				if (hint) {
-					hint.textContent = 'আগে সাইজ বেছে নিন, তারপর অর্ডার করুন।';
+					hint.textContent = 'অনুগ্রহ করে আগে সাইজ নির্বাচন করুন।';
 				}
 				sizesBox.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
 			}
@@ -234,7 +234,7 @@
 					}
 				});
 				if (submitLabel) {
-					submitLabel.textContent = 'চেকআউটে যাচ্ছে…';
+					submitLabel.textContent = 'চেকআউটে নেওয়া হচ্ছে…';
 				}
 			}, 0);
 			// Back button: re-enable so the form can be used again.

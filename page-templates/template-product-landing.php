@@ -58,7 +58,7 @@ if ( $spl_product ) {
 	$spl_eyebrow   = trim( $spl_brand . ( $spl_brand && $spl_cat ? ' · ' : '' ) . $spl_cat );
 
 	$spl_headline = '' !== $spl['headline'] ? $spl['headline'] : $spl_name;
-	$spl_lede     = '' !== $spl['lede'] ? $spl['lede'] : ( $spl_has_options ? 'সাইজ বেছে অর্ডার করুন — ক্যাশ অন ডেলিভারি, সারা বাংলাদেশে ডেলিভারি।' : 'অর্ডার করুন — ক্যাশ অন ডেলিভারি, সারা বাংলাদেশে ডেলিভারি।' );
+	$spl_lede     = '' !== $spl['lede'] ? $spl['lede'] : ( $spl_has_options ? 'সাইজ নির্বাচন করে অর্ডার করুন। সারা বাংলাদেশে ক্যাশ অন ডেলিভারি।' : 'এখনই অর্ডার করুন। সারা বাংলাদেশে ক্যাশ অন ডেলিভারি।' );
 
 	$spl_img_id  = (int) $spl_product->get_image_id();
 	$spl_gallery = array_values( array_unique( array_filter( array_merge( array( $spl_img_id ), (array) $spl_product->get_gallery_image_ids() ) ) ) );
@@ -110,14 +110,14 @@ if ( $spl_product ) {
 $spl_error = safestore_pl_error_text();
 $spl_trust = array(
 	array( 'icon' => 'card', 'text' => 'ক্যাশ অন ডেলিভারি' ),
-	array( 'icon' => 'truck', 'text' => 'ঢাকায় ~২৪ ঘণ্টায়' ),
+	array( 'icon' => 'truck', 'text' => 'ঢাকায় ২৪ ঘণ্টায় ডেলিভারি' ),
 	array( 'icon' => 'pin', 'text' => '৬৪ জেলায় ডেলিভারি' ),
-	array( 'icon' => 'return', 'text' => '৭ দিনের রিটার্ন' ),
+	array( 'icon' => 'return', 'text' => '৭ দিনে রিটার্ন ও এক্সচেঞ্জ' ),
 );
 $spl_steps = array(
-	array( 'title' => $spl_product && $spl_has_options ? 'সাইজ বেছে "অর্ডার করুন" চাপুন' : '"অর্ডার করুন" চাপুন', 'text' => 'কোনো অ্যাকাউন্ট খুলতে হবে না।' ),
-	array( 'title' => 'নাম, ফোন ও ঠিকানা দিন', 'text' => 'এক মিনিটের কাজ। জেলা ও থানা বেছে নিলে ডেলিভারি চার্জ সাথে সাথে দেখা যাবে।' ),
-	array( 'title' => 'পণ্য হাতে পেয়ে টাকা দিন', 'text' => 'ডেলিভারিম্যানের সামনে দেখে নিন, তারপর পেমেন্ট। bKash / Nagad-ও চলবে।' ),
+	array( 'title' => $spl_product && $spl_has_options ? 'সাইজ নির্বাচন করুন' : 'পরিমাণ নির্বাচন করুন', 'text' => ( $spl_product && $spl_has_options ? 'পছন্দের সাইজ ও পরিমাণ ঠিক করে ' : '' ) . '"অর্ডার করুন" বাটনে ক্লিক করুন।' ),
+	array( 'title' => 'ডেলিভারির তথ্য দিন', 'text' => 'নাম, মোবাইল নম্বর ও পূর্ণ ঠিকানা লিখুন। জেলা ও থানা নির্বাচন করলে ডেলিভারি চার্জ দেখা যাবে।' ),
+	array( 'title' => 'পণ্য যাচাই করে মূল্য পরিশোধ', 'text' => 'ডেলিভারি প্রতিনিধির সামনে পণ্য যাচাই করে মূল্য পরিশোধ করুন। bKash ও Nagad-এও পরিশোধ করা যায়।' ),
 );
 ?><!doctype html>
 <html <?php language_attributes(); ?>>
@@ -156,8 +156,8 @@ $spl_steps = array(
 
 	<section class="lp-section">
 		<div class="lp-wrap lp-wrap--narrow spl-empty">
-			<h1 class="lp-h2">পণ্যটি এই মুহূর্তে পাওয়া যাচ্ছে না</h1>
-			<p>শপে আমাদের সব সেফটি গিয়ার দেখুন, অথবা WhatsApp-এ লিখুন — আমরা সাহায্য করব।</p>
+			<h1 class="lp-h2">পণ্যটি বর্তমানে পাওয়া যাচ্ছে না</h1>
+			<p>আমাদের শপে সকল সেফটি পণ্য দেখুন, অথবা WhatsApp-এ যোগাযোগ করুন।</p>
 			<?php if ( current_user_can( 'edit_page', $spl_page_id ) ) : ?>
 				<p class="lp-alert">Admin: no published product matches "<?php echo esc_html( $spl['product'] ); ?>". Set the product URL / slug / ID in the "Product Landing (Facebook)" box on this page.</p>
 			<?php endif; ?>
@@ -257,7 +257,7 @@ $spl_steps = array(
 					<?php // Colour + size etc.: pick them on the product page. ?>
 					<div class="spl-order" id="<?php echo '' === $spl_error ? 'order' : 'order-cta'; ?>">
 						<a class="lp-btn lp-btn--amber lp-btn--lg lp-btn--block spl-cta" href="<?php echo esc_url( $spl_product->get_permalink() ); ?>" data-spl-pdp>
-							অপশন বেছে অর্ডার করুন
+							অপশন নির্বাচন করে অর্ডার করুন
 							<?php echo safestore_pl_icon( 'arrow', 20 ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 						</a>
 						<a class="lp-btn lp-btn--wa lp-btn--lg lp-btn--block" href="<?php echo esc_url( $spl_wa ); ?>" target="_blank" rel="noopener noreferrer" data-spl-loc="hero" data-spl-wa>
@@ -267,10 +267,10 @@ $spl_steps = array(
 					</div>
 				<?php elseif ( ! $spl_can_buy ) : ?>
 					<div class="spl-order" id="<?php echo '' === $spl_error ? 'order' : 'order-cta'; ?>">
-						<p class="spl-soldout">এই মুহূর্তে স্টকে নেই। কবে আসবে জানতে WhatsApp-এ লিখুন।</p>
+						<p class="spl-soldout">পণ্যটি বর্তমানে স্টকে নেই। স্টক সম্পর্কে জানতে WhatsApp-এ যোগাযোগ করুন।</p>
 						<a class="lp-btn lp-btn--wa lp-btn--lg lp-btn--block" href="<?php echo esc_url( $spl_wa ); ?>" target="_blank" rel="noopener noreferrer" data-spl-loc="hero" data-spl-wa>
 							<?php echo $spl_wa_icon; // phpcs:ignore WordPress.Security.EscapeOutput ?>
-							স্টক জানতে WhatsApp করুন
+							WhatsApp-এ স্টক জানুন
 						</a>
 					</div>
 				<?php else : ?>
@@ -282,7 +282,7 @@ $spl_steps = array(
 
 						<?php if ( $spl_has_options ) : ?>
 							<fieldset class="spl-sizes" data-spl-sizes>
-								<legend><?php echo esc_html( $spl_options['name'] ); ?> বেছে নিন <span class="lp-req" aria-hidden="true">*</span></legend>
+								<legend><?php echo esc_html( $spl_options['name'] ); ?> নির্বাচন করুন <span class="lp-req" aria-hidden="true">*</span></legend>
 								<div class="spl-sizes__grid">
 									<?php foreach ( $spl_options['items'] as $spl_o ) : ?>
 										<label class="spl-size<?php echo $spl_o['in_stock'] ? '' : ' is-out'; ?>">
@@ -292,7 +292,7 @@ $spl_steps = array(
 										</label>
 									<?php endforeach; ?>
 								</div>
-								<p class="spl-sizes__hint" data-spl-size-hint>আপনি সাধারণত যে সাইজের জুতা পরেন, সেটাই নিন। সন্দেহ থাকলে WhatsApp-এ জানান — ৭ দিনের মধ্যে সাইজ বদলানো যায়।</p>
+								<p class="spl-sizes__hint" data-spl-size-hint>আপনি নিয়মিত যে সাইজের জুতা পরেন, সেটিই নির্বাচন করুন। সাইজ নিয়ে নিশ্চিত না হলে WhatsApp-এ যোগাযোগ করুন। ডেলিভারির ৭ দিনের মধ্যে সাইজ পরিবর্তন করা যায়।</p>
 							</fieldset>
 						<?php else : ?>
 							<input type="hidden" name="spl_add" value="<?php echo (int) $spl_product->get_id(); ?>">
@@ -315,7 +315,7 @@ $spl_steps = array(
 							<?php echo $spl_wa_icon; // phpcs:ignore WordPress.Security.EscapeOutput ?>
 							WhatsApp-এ অর্ডার করুন
 						</a>
-						<p class="lp-note">অ্যাকাউন্ট লাগবে না · নাম, ফোন, ঠিকানা দিলেই অর্ডার · পণ্য হাতে পেয়ে টাকা</p>
+						<p class="lp-note">অর্ডার নিশ্চিত করতে আমরা ফোনে যোগাযোগ করব · পণ্য যাচাই করে মূল্য পরিশোধ</p>
 					</form>
 				<?php endif; ?>
 
@@ -333,8 +333,8 @@ $spl_steps = array(
 	<section class="lp-section lp-section--tint" id="features" aria-labelledby="spl-why-title">
 		<div class="lp-wrap">
 			<header class="lp-head">
-				<p class="lp-eyebrow">কেন এটা</p>
-				<h2 class="lp-h2" id="spl-why-title">যে কারণে কর্মীরা এটা বেছে নেন</h2>
+				<p class="lp-eyebrow">সুবিধাগুলো</p>
+				<h2 class="lp-h2" id="spl-why-title">কেন এটা কিনবেন?</h2>
 			</header>
 			<?php if ( $spl_bullets ) : ?>
 				<ul class="lp-grid lp-grid--2 spl-why">
@@ -347,7 +347,7 @@ $spl_steps = array(
 				</ul>
 			<?php endif; ?>
 			<?php if ( $spl['uses'] ) : ?>
-				<p class="spl-uses__label">কোথায় কাজে লাগে</p>
+				<p class="spl-uses__label">যেসব কাজে উপযোগী</p>
 				<ul class="spl-uses" aria-label="ব্যবহারের জায়গা">
 					<?php foreach ( $spl['uses'] as $spl_u ) : ?>
 						<li><?php echo esc_html( $spl_u ); ?></li>
@@ -358,80 +358,14 @@ $spl_steps = array(
 	</section>
 	<?php endif; ?>
 
-	<!-- 3. DELIVERY & PAYMENT ================================================= -->
-	<section class="lp-section" id="delivery" aria-labelledby="spl-delivery-title">
-		<div class="lp-wrap">
-			<header class="lp-head">
-				<p class="lp-eyebrow">ডেলিভারি ও পেমেন্ট</p>
-				<h2 class="lp-h2" id="spl-delivery-title">অর্ডারের আগে যা জানা দরকার</h2>
-			</header>
-			<ul class="lp-grid lp-grid--3 spl-delivery">
-				<?php foreach ( $spl_delivery as $spl_d ) : ?>
-					<li class="lp-card spl-delivery__item">
-						<span class="lp-ico"><?php echo safestore_pl_icon( $spl_d['icon'], 24 ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
-						<h3 class="lp-h3"><?php echo esc_html( $spl_d['title'] ); ?></h3>
-						<p><?php echo esc_html( $spl_d['text'] ); ?></p>
-					</li>
-				<?php endforeach; ?>
-			</ul>
-		</div>
-	</section>
-
-	<!-- 4. HOW TO ORDER ======================================================= -->
-	<section class="lp-section lp-section--dark" aria-labelledby="spl-steps-title">
-		<div class="lp-wrap">
-			<header class="lp-head">
-				<p class="lp-eyebrow lp-eyebrow--light">কীভাবে অর্ডার করবেন</p>
-				<h2 class="lp-h2" id="spl-steps-title">৩ ধাপে অর্ডার — কোনো অ্যাকাউন্ট ছাড়াই</h2>
-			</header>
-			<ol class="lp-steps">
-				<?php foreach ( $spl_steps as $spl_i => $spl_s ) : ?>
-					<li class="lp-step">
-						<span class="lp-step__n" aria-hidden="true"><?php echo esc_html( safestore_pl_bn( $spl_i + 1 ) ); ?></span>
-						<h3 class="lp-h3"><?php echo esc_html( $spl_s['title'] ); ?></h3>
-						<p><?php echo esc_html( $spl_s['text'] ); ?></p>
-					</li>
-				<?php endforeach; ?>
-			</ol>
-		</div>
-	</section>
-
-	<?php if ( $spl_reviews ) : ?>
-	<!-- 5. REVIEWS (real WooCommerce reviews only) ============================ -->
-	<section class="lp-section" id="reviews" aria-labelledby="spl-reviews-title">
-		<div class="lp-wrap">
-			<header class="lp-head">
-				<p class="lp-eyebrow">ক্রেতাদের মতামত</p>
-				<h2 class="lp-h2" id="spl-reviews-title">যারা কিনেছেন, তারা যা বলেছেন</h2>
-				<p class="lp-lede"><?php echo esc_html( 'গড় রেটিং ' . safestore_pl_bn( number_format( $spl_rating, 1 ) ) . ' / ৫ — ' . safestore_pl_bn( $spl_review_count ) . ' জন ক্রেতার রিভিউ থেকে' ); ?></p>
-			</header>
-			<ul class="lp-grid lp-grid--3">
-				<?php foreach ( $spl_reviews as $spl_r ) : ?>
-					<li>
-						<figure class="lp-card spl-review">
-							<?php if ( $spl_r['rating'] > 0 ) : ?>
-								<?php echo safestore_pl_stars( $spl_r['rating'], 16 ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-							<?php endif; ?>
-							<blockquote><p><?php echo esc_html( $spl_r['text'] ); ?></p></blockquote>
-							<figcaption>
-								<strong><?php echo esc_html( $spl_r['name'] ); ?></strong>
-								<?php if ( $spl_r['verified'] ) : ?><span>ভেরিফাইড ক্রেতা</span><?php endif; ?>
-							</figcaption>
-						</figure>
-					</li>
-				<?php endforeach; ?>
-			</ul>
-		</div>
-	</section>
-	<?php endif; ?>
-
 	<?php if ( $spl_more ) : ?>
-	<!-- 6. MORE PRODUCTS ====================================================== -->
-	<section class="lp-section lp-section--tint" id="more" aria-labelledby="spl-more-title">
+	<!-- 2b. MORE PRODUCTS (alternatives, right after features) ====================================================== -->
+	<section class="lp-section" id="more" aria-labelledby="spl-more-title">
 		<div class="lp-wrap">
 			<header class="lp-head">
-				<p class="lp-eyebrow">আরও দেখুন</p>
-				<h2 class="lp-h2" id="spl-more-title">এগুলোও অনেকে সাথে নেন</h2>
+				<p class="lp-eyebrow">আরও পণ্য</p>
+				<h2 class="lp-h2" id="spl-more-title">আপনার কাজের উপযোগী আরও সেফটি পণ্য</h2>
+				<p class="lp-lede">প্রতিটি পণ্যে একই সুবিধা: সারা বাংলাদেশে ক্যাশ অন ডেলিভারি ও ৭ দিনের রিটার্ন।</p>
 			</header>
 			<ul class="lp-grid spl-more">
 				<?php foreach ( $spl_more as $spl_m ) : ?>
@@ -457,12 +391,79 @@ $spl_steps = array(
 	</section>
 	<?php endif; ?>
 
+	<!-- 3. DELIVERY & PAYMENT ================================================= -->
+	<section class="lp-section lp-section--tint" id="delivery" aria-labelledby="spl-delivery-title">
+		<div class="lp-wrap">
+			<header class="lp-head">
+				<p class="lp-eyebrow">ডেলিভারি, পেমেন্ট ও রিটার্ন</p>
+				<h2 class="lp-h2" id="spl-delivery-title">অর্ডার করার আগে জেনে নিন</h2>
+			</header>
+			<ul class="lp-grid lp-grid--3 spl-delivery">
+				<?php foreach ( $spl_delivery as $spl_d ) : ?>
+					<li class="lp-card spl-delivery__item">
+						<span class="lp-ico"><?php echo safestore_pl_icon( $spl_d['icon'], 24 ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
+						<h3 class="lp-h3"><?php echo esc_html( $spl_d['title'] ); ?></h3>
+						<p><?php echo esc_html( $spl_d['text'] ); ?></p>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+		</div>
+	</section>
+
+	<!-- 4. HOW TO ORDER ======================================================= -->
+	<section class="lp-section lp-section--dark" aria-labelledby="spl-steps-title">
+		<div class="lp-wrap">
+			<header class="lp-head">
+				<p class="lp-eyebrow lp-eyebrow--light">কীভাবে অর্ডার করবেন</p>
+				<h2 class="lp-h2" id="spl-steps-title">৩টি সহজ ধাপে অর্ডার করুন</h2>
+			</header>
+			<ol class="lp-steps">
+				<?php foreach ( $spl_steps as $spl_i => $spl_s ) : ?>
+					<li class="lp-step">
+						<span class="lp-step__n" aria-hidden="true"><?php echo esc_html( safestore_pl_bn( $spl_i + 1 ) ); ?></span>
+						<h3 class="lp-h3"><?php echo esc_html( $spl_s['title'] ); ?></h3>
+						<p><?php echo esc_html( $spl_s['text'] ); ?></p>
+					</li>
+				<?php endforeach; ?>
+			</ol>
+		</div>
+	</section>
+
+	<?php if ( $spl_reviews ) : ?>
+	<!-- 5. REVIEWS (real WooCommerce reviews only) ============================ -->
+	<section class="lp-section" id="reviews" aria-labelledby="spl-reviews-title">
+		<div class="lp-wrap">
+			<header class="lp-head">
+				<p class="lp-eyebrow">ক্রেতাদের মতামত</p>
+				<h2 class="lp-h2" id="spl-reviews-title">ক্রেতারা যা বলছেন</h2>
+				<p class="lp-lede"><?php echo esc_html( safestore_pl_bn( $spl_review_count ) . 'টি রিভিউর ভিত্তিতে গড় রেটিং ' . safestore_pl_bn( number_format( $spl_rating, 1 ) ) . ' / ৫' ); ?></p>
+			</header>
+			<ul class="lp-grid lp-grid--3">
+				<?php foreach ( $spl_reviews as $spl_r ) : ?>
+					<li>
+						<figure class="lp-card spl-review">
+							<?php if ( $spl_r['rating'] > 0 ) : ?>
+								<?php echo safestore_pl_stars( $spl_r['rating'], 16 ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+							<?php endif; ?>
+							<blockquote><p><?php echo esc_html( $spl_r['text'] ); ?></p></blockquote>
+							<figcaption>
+								<strong><?php echo esc_html( $spl_r['name'] ); ?></strong>
+								<?php if ( $spl_r['verified'] ) : ?><span>ভেরিফাইড ক্রেতা</span><?php endif; ?>
+							</figcaption>
+						</figure>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+		</div>
+	</section>
+	<?php endif; ?>
+
 	<!-- 7. FAQ ================================================================ -->
 	<section class="lp-section" id="faq" aria-labelledby="spl-faq-title">
 		<div class="lp-wrap lp-wrap--narrow">
 			<header class="lp-head">
 				<p class="lp-eyebrow">প্রশ্ন ও উত্তর</p>
-				<h2 class="lp-h2" id="spl-faq-title">সাধারণ প্রশ্ন</h2>
+				<h2 class="lp-h2" id="spl-faq-title">সচরাচর জিজ্ঞাসা</h2>
 			</header>
 			<div class="lp-faq" data-spl-faq>
 				<?php foreach ( $spl_faq as $spl_i => $spl_f ) : ?>
@@ -491,7 +492,7 @@ $spl_steps = array(
 				<?php if ( $spl_can_buy ) : ?>
 					<a class="lp-btn lp-btn--amber lp-btn--lg" href="#order" data-spl-goto="order">অর্ডার করুন</a>
 				<?php elseif ( null === $spl_options ) : ?>
-					<a class="lp-btn lp-btn--amber lp-btn--lg" href="<?php echo esc_url( $spl_product->get_permalink() ); ?>">অপশন বেছে অর্ডার করুন</a>
+					<a class="lp-btn lp-btn--amber lp-btn--lg" href="<?php echo esc_url( $spl_product->get_permalink() ); ?>">অপশন নির্বাচন করে অর্ডার করুন</a>
 				<?php endif; ?>
 				<a class="lp-btn lp-btn--wa lp-btn--lg" href="<?php echo esc_url( $spl_wa ); ?>" target="_blank" rel="noopener noreferrer" data-spl-loc="final" data-spl-wa>
 					<?php echo $spl_wa_icon; // phpcs:ignore WordPress.Security.EscapeOutput ?>
@@ -543,7 +544,7 @@ $spl_steps = array(
 			<strong data-spl-price="total"><?php echo esc_html( safestore_pl_taka( $spl_price['now'] ) ); ?></strong>
 		</button>
 	<?php elseif ( null === $spl_options ) : ?>
-		<a class="lp-sticky__cta" href="<?php echo esc_url( $spl_product->get_permalink() ); ?>"><span>অপশন বেছে অর্ডার করুন</span></a>
+		<a class="lp-sticky__cta" href="<?php echo esc_url( $spl_product->get_permalink() ); ?>"><span>অপশন নির্বাচন করে অর্ডার করুন</span></a>
 	<?php else : ?>
 		<a class="lp-sticky__cta" href="<?php echo esc_url( 'tel:' . $spl_tel ); ?>" data-spl-loc="sticky"><?php echo safestore_pl_icon( 'phone', 20 ); // phpcs:ignore WordPress.Security.EscapeOutput ?><span>কল করুন</span></a>
 	<?php endif; ?>
