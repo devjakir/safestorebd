@@ -842,3 +842,58 @@
       #fff url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 12 8'%3E%3Cpath fill='%2364748b' d='M1.4.6 6 5.2 10.6.6 12 2 6 8 0 2z'/%3E%3C/svg%3E") no-repeat right 10px center;
   }
 }
+
+/* ---------- HUSKY AJAX loader (#woof_html_buffer) ----------
+ * HUSKY's front.css pins the box with top/left: 48% and no transform, so its
+ * top-left corner sits at the centre and the box hangs down-right (on phones it
+ * nearly touches the right edge). Centre it in the viewport — the click that
+ * triggers it is usually the pagination at the bottom, so the grid centre can be
+ * off-screen — and give it a spinner. While it shows, the results grid dims. */
+body div.woof_info_popup {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  align-items: center;
+  gap: 10px;
+  max-width: calc(100vw - 32px);
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: var(--ss-ink, #0f172a);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.25);
+  color: var(--ss-white, #fff);
+  font: 600 var(--ss-text-base, 14px) / 1.2 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  opacity: 1 !important;
+  pointer-events: none;
+}
+
+body div.woof_info_popup[style*="display: block"] {
+  display: inline-flex !important;
+}
+
+body div.woof_info_popup::before {
+  content: "";
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: var(--ss-white, #fff);
+  border-radius: 50%;
+  animation: sft-woof-spin 0.7s linear infinite;
+}
+
+@keyframes sft-woof-spin {
+  to { transform: rotate(360deg); }
+}
+
+body:has(#woof_html_buffer[style*="display: block"]) .sft-shop-results ul.products {
+  opacity: 0.45;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body div.woof_info_popup::before { animation-duration: 2s; }
+}
