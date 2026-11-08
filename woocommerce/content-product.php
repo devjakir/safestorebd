@@ -1,39 +1,33 @@
 <?php
+/**
+ * The template for displaying product content within loops
+ *
+ * Theme override of WooCommerce core 9.4.0. The theme renders its own product
+ * card (.sft-product-card) instead of the core loop hooks, so
+ * woocommerce_before_shop_loop_item / _title / after_shop_loop_item are not
+ * fired; extras are added through `safestore_minimal_product_card_footer` and
+ * direct calls (origin badge). The visibility guard matches core 9.4.0.
+ *
+ * @see     https://woocommerce.com/document/template-structure/
+ * @package WooCommerce\Templates
+ * @version 9.4.0
+ */
 
 defined('ABSPATH') || exit;
 
 global $product;
 
-if (empty($product) || ! $product->is_visible()) {
+// Check if the product is a valid WooCommerce product and ensure its visibility before proceeding.
+if (! is_a($product, WC_Product::class) || ! $product->is_visible()) {
     return;
 }
 
 $product_id = $product->get_id();
 $permalink  = get_permalink();
 
-// Savings badge (top-left, inside the image). Simple sale products show the
-// amount saved ("Save ৳400") — the most conversion-focused message; variable
-// products show a best-effort percentage since variations can differ.
-$badge_text = '';
-if ($product->is_on_sale()) {
-    if ($product->is_type('simple')) {
-        $regular = (float) $product->get_regular_price();
-        $sale    = (float) $product->get_sale_price();
-        if ($regular > 0 && $sale > 0 && $sale < $regular) {
-            $badge_text = sprintf(
-                /* translators: %s: amount saved, e.g. ৳400 */
-                __('Save %s', 'safestore-minimal'),
-                html_entity_decode(wp_strip_all_tags(wc_price($regular - $sale, array('decimals' => 0))))
-            );
-        }
-    } elseif ($product->is_type('variable')) {
-        $reg_min = (float) $product->get_variation_regular_price('min');
-        $now_min = (float) $product->get_variation_price('min');
-        if ($reg_min > 0 && $now_min > 0 && $now_min < $reg_min) {
-            $badge_text = '-' . (int) round((($reg_min - $now_min) / $reg_min) * 100) . '%';
-        }
-    }
-}
+// Discount badge (top-left, inside the image): one format everywhere, "-27%"
+// (inc/hot-badge.php). Optional "HOT" badge sits next to it.
+$badge_text = function_exists('safestore_discount_badge_text') ? safestore_discount_badge_text($product) : '';
 
 $is_hot = function_exists('safestore_product_is_hot') && safestore_product_is_hot($product);
 
@@ -63,7 +57,7 @@ $category_text = function_exists('safestore_get_product_category_label')
                     'class'    => 'sft-product-card__img',
                     'loading'  => 'lazy',
                     'decoding' => 'async',
-                    'sizes'    => '(max-width: 480px) 92vw, (max-width: 820px) 46vw, (max-width: 1080px) 30vw, 280px',
+                    'sizes'    => '(max-width: 820px) 48vw, (max-width: 1080px) 30vw, 280px', // 2-up on phones (shop + home)
                 )
             );
             ?>

@@ -345,7 +345,7 @@
 /* Phones: tighter chips so more shortcuts fit before the strip scrolls. */
 @media (max-width: 767px) {
   .sft-quicklinks__list {
-    padding: 6px 12px;
+    padding: 9px 12px;
     gap: 6px;
     scroll-padding-inline: 12px;
   }
@@ -354,7 +354,18 @@
     gap: 5px;
     /* Inter sits ~0.6px low in its line box; the extra bottom pixel optically centres the caps. */
     padding: 5px 10px 6px;
-    font-size: 11.5px;
+    font-size: 12px;
+  }
+
+  /* Tap target >=44px tall without making the chip look bigger. */
+  .sft-quicklinks__chip {
+    position: relative;
+  }
+
+  .sft-quicklinks__chip::after {
+    content: "";
+    position: absolute;
+    inset: -9px -3px;
   }
 
   .sft-quicklinks__dot {
@@ -401,7 +412,7 @@
     background: none;
     color: #64748b;
     font-family: inherit;
-    font-size: 10.5px;
+    font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.01em;
     line-height: 1.1;
@@ -473,7 +484,7 @@
     border-radius: 6px;
     background: #0f172a;
     color: #ffffff;
-    font-size: 11.5px;
+    font-size: 12px;
     font-weight: 600;
     line-height: 1.2;
     white-space: nowrap;
@@ -871,5 +882,26 @@ html.sft-menu-open {
     overflow-x: clip;
     overflow-y: hidden;
     overscroll-behavior: none;
+  }
+}
+
+/* Logged-in admins: keep the sticky header below #wpadminbar.
+   Admin bar is fixed 32px (>782px), fixed 46px (601-782px) and scrolls away
+   (position:absolute) at <=600px, where the header can stick to the top. */
+@media (max-width: 1024px) {
+  body.admin-bar .sft-header {
+    top: 32px;
+  }
+}
+
+@media (max-width: 782px) {
+  body.admin-bar .sft-header {
+    top: 46px;
+  }
+}
+
+@media (max-width: 600px) {
+  body.admin-bar .sft-header {
+    top: 0;
   }
 }

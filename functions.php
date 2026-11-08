@@ -67,6 +67,24 @@ require get_template_directory() . '/inc/shipping-courier.php';
 // Cart page: qty − / + buttons, auto "Update cart", notes under the totals (woocommerce/cart/cart.php).
 require get_template_directory() . '/inc/cart-page.php';
 
+// Store facts (opening hours, social URLs) — single source for templates.
+require get_template_directory() . '/inc/store-info.php';
+
+// Wishlist page + account sync (SFT_ENABLE_WISHLIST flag).
+require get_template_directory() . '/inc/wishlist.php';
+
+// Header account widget ("Hi, name" menu) as a cache-safe cart fragment.
+require get_template_directory() . '/inc/header-account.php';
+
+// Product page: mobile sticky Add to cart / Buy now bar.
+require get_template_directory() . '/inc/pdp-sticky-bar.php';
+
+// Product content SEO hygiene: one H1 per product page, strip copy-paste residue.
+require get_template_directory() . '/inc/seo-content.php';
+
+// Product search: title / SKU / category only, Banglish + Bangla synonyms, title-first ranking.
+require get_template_directory() . '/inc/product-search.php';
+
 // Bulk / corporate landing (page-templates/template-bulk-landing.php): lead CPT, quote form handler, template-only assets.
 require get_template_directory() . '/inc/bulk-landing.php';
 
@@ -730,7 +748,8 @@ function safestore_minimal_get_faq_sections() {
 				),
 				array(
 					'q' => __( 'How do I contact support?', 'safestore-minimal' ),
-					'a' => __( 'WhatsApp <strong>+880 1811-892291</strong> or call/email on this site. Open <strong>Sat–Thu, 9am–8pm</strong>; closed Fridays.', 'safestore-minimal' ),
+					/* translators: %s: opening hours */
+					'a' => sprintf( __( 'WhatsApp <strong>+880 1811-892291</strong> or call/email on this site. Open <strong>%s</strong>.', 'safestore-minimal' ), esc_html( safestore_store_hours() ) ),
 				),
 			),
 		),

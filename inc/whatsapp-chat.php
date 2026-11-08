@@ -21,7 +21,7 @@ function safestore_wa_defaults() {
         'title'        => __('SafeStoreBD', 'safestore-minimal'),
         'subtitle'     => __('Typically replies within minutes', 'safestore-minimal'),
         'welcome'      => __('Hi there! How can we help you today?', 'safestore-minimal'),
-        'hours_text'   => __('Sat–Thu, 9:00 AM – 8:00 PM', 'safestore-minimal'),
+        'hours_text'   => function_exists('safestore_store_hours') ? safestore_store_hours() : __('Sat–Thu, 9am–8pm (Friday closed)', 'safestore-minimal'),
         'open_time'    => '09:00',
         'close_time'   => '20:00',
         'closed_days'  => array(5), // 0 = Sunday … 6 = Saturday; Friday closed.
@@ -298,7 +298,8 @@ function safestore_wa_render_widget() {
                 <p class="sft-wa__bubble"><?php echo esc_html($o['welcome']); ?></p>
                 <p class="sft-wa__hours">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-                    <span><?php echo esc_html($o['hours_text']); ?></span>
+                    <?php // Single source of truth for hours (inc/store-info.php); the old settings value is ignored. ?>
+                    <span><?php echo esc_html(function_exists('safestore_store_hours') ? safestore_store_hours() : $o['hours_text']); ?></span>
                 </p>
                 <p class="sft-wa__offline-note" hidden><?php echo esc_html($o['offline_note']); ?></p>
             </div>
