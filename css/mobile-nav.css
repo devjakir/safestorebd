@@ -78,6 +78,13 @@
   .mobile-menu-trigger.is-open .hamburger-bar:nth-child(3) {
     transform: translateY(-7px) rotate(-45deg);
   }
+
+  /* Tablet: logo a touch smaller than desktop. Phones override below. */
+  .sft-header .sft-header-brand-logo {
+    height: 36px;
+    min-height: 36px;
+    max-height: 36px;
+  }
 }
 
 @media (max-width: 767px) {

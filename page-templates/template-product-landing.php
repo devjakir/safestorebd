@@ -26,7 +26,7 @@ $spl_address   = function_exists( 'safestore_minimal_get_pickup_address' ) ? saf
 $spl_emails    = function_exists( 'safestore_contact_email_addresses' ) ? safestore_contact_email_addresses() : array( 'contact@safestorebd.com' );
 $spl_email     = $spl_emails ? reset( $spl_emails ) : '';
 $spl_shop      = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
-$spl_logo_dir  = get_template_directory_uri() . '/assets/images/logo/';
+$spl_logo      = safestore_brand_logo_svg();
 $spl_hours     = 'শনি–বৃহস্পতি, সকাল ৯টা – রাত ৮টা';
 
 if ( $spl_product ) {
@@ -133,10 +133,7 @@ $spl_steps = array(
 <header class="lp-header" role="banner">
 	<div class="lp-wrap lp-header__in">
 		<a class="lp-header__brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?> — হোম">
-			<picture>
-				<source type="image/webp" srcset="<?php echo esc_url( $spl_logo_dir . 'safe-store-bd.webp' ); ?>">
-				<img src="<?php echo esc_url( $spl_logo_dir . 'safe-store-bd.png' ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" width="240" height="128" decoding="async">
-			</picture>
+			<img src="<?php echo esc_url( $spl_logo['url'] ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" width="<?php echo (int) $spl_logo['width']; ?>" height="<?php echo (int) $spl_logo['height']; ?>" decoding="async">
 		</a>
 		<div class="lp-header__acts">
 			<a class="lp-header__tel" href="<?php echo esc_url( 'tel:' . $spl_tel ); ?>" data-spl-loc="header" aria-label="<?php echo esc_attr( 'কল করুন: ' . $spl_tel_label ); ?>">

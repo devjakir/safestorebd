@@ -238,13 +238,10 @@ function safestore_perf_preload_lcp() {
 		return;
 	}
 
-	$logo_webp = get_template_directory() . '/assets/images/logo/safe-store-bd.webp';
-	$logo      = file_exists( $logo_webp )
-		? get_template_directory_uri() . '/assets/images/logo/safe-store-bd.webp'
-		: get_template_directory_uri() . '/assets/images/logo/safe-store-bd.png';
+	$logo = safestore_brand_logo_svg();
 	printf(
-		'<link rel="preload" as="image" href="%s" />' . "\n",
-		esc_url( $logo )
+		'<link rel="preload" as="image" href="%s" type="image/svg+xml" />' . "\n",
+		esc_url( $logo['url'] )
 	);
 }
 add_action( 'wp_head', 'safestore_perf_preload_lcp', 2 );

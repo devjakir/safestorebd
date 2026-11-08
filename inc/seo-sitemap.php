@@ -237,10 +237,7 @@ function safestore_seo_home_structured_data() {
 
 	$site_name = wp_strip_all_tags( get_bloginfo( 'name' ) );
 	$site_url  = home_url( '/' );
-	$logo      = get_template_directory_uri() . '/assets/images/logo/safe-store-bd.webp';
-	if ( ! file_exists( get_template_directory() . '/assets/images/logo/safe-store-bd.webp' ) ) {
-		$logo = get_template_directory_uri() . '/assets/images/logo/safe-store-bd.png';
-	}
+	$logo      = safestore_brand_logo_png();
 
 	$graph = array(
 		'@context' => 'https://schema.org',
@@ -251,8 +248,10 @@ function safestore_seo_home_structured_data() {
 				'name'  => $site_name,
 				'url'   => $site_url,
 				'logo'  => array(
-					'@type' => 'ImageObject',
-					'url'   => $logo,
+					'@type'  => 'ImageObject',
+					'url'    => $logo['url'],
+					'width'  => $logo['width'],
+					'height' => $logo['height'],
 				),
 				'sameAs' => array(
 					'https://www.facebook.com/safestorebd',

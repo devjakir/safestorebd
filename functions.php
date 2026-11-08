@@ -1,5 +1,8 @@
 <?php
 
+// Logo and favicon set; also overrides the wp-admin Site Icon and Rank Math logo.
+require get_template_directory() . '/inc/brand.php';
+
 require get_template_directory() . '/inc/performance.php';
 
 require get_template_directory() . '/inc/seo-sitemap.php';

@@ -26,17 +26,14 @@ $sft_cart_total = $sft_wc_cart ? $sft_wc_cart->get_cart_total() : '';
             <span class="hamburger-bar"></span>
         </button>
         <a class="sft-header-brand" href="<?php echo esc_url(home_url('/')); ?>" aria-label="<?php bloginfo('name'); ?> home">
-            <?php $sft_logo_dir = get_template_directory_uri() . '/assets/images/logo'; ?>
-            <picture>
-                <source type="image/webp" srcset="<?php echo esc_url( $sft_logo_dir . '/safe-store-bd.webp' ); ?>">
-                <img class="sft-header-brand-logo"
-                    src="<?php echo esc_url( $sft_logo_dir . '/safe-store-bd.png' ); ?>"
-                    alt="<?php bloginfo('name'); ?>"
-                    width="240"
-                    height="128"
-                    decoding="async"
-                    <?php echo ( is_page_template( 'page-home.php' ) || is_front_page() ) ? '' : 'fetchpriority="high"'; ?> />
-            </picture>
+            <?php $sft_logo = safestore_brand_logo_svg(); ?>
+            <img class="sft-header-brand-logo"
+                src="<?php echo esc_url( $sft_logo['url'] ); ?>"
+                alt="<?php bloginfo('name'); ?>"
+                width="<?php echo (int) $sft_logo['width']; ?>"
+                height="<?php echo (int) $sft_logo['height']; ?>"
+                decoding="async"
+                <?php echo ( is_page_template( 'page-home.php' ) || is_front_page() ) ? '' : 'fetchpriority="high"'; ?> />
         </a>
 
         <?php
