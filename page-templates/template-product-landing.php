@@ -9,7 +9,8 @@
  * thank-you page — no cart or checkout page (inc/product-landing-order.php).
  *
  * Per-page settings live in the "Product Landing (Facebook)" box on the page
- * edit screen; logic and defaults in inc/product-landing.php. Styling:
+ * edit screen; logic and defaults in inc/product-landing.php. Header, footer
+ * and the order form are the shared partials in templates/landing/. Styling:
  * css/landing-common.css (shared .lp-*) + css/product-landing.css (.spl-*).
  */
 
@@ -19,16 +20,11 @@ $spl_page_id = (int) get_queried_object_id();
 $spl         = safestore_pl_settings( $spl_page_id );
 $spl_product = safestore_pl_find_product( $spl['product'] );
 
-$spl_tel       = function_exists( 'safestore_primary_phone_e164' ) ? safestore_primary_phone_e164() : '+8801811892291';
-$spl_tel_label = safestore_pl_phone_bn( function_exists( 'safestore_primary_phone_display' ) ? safestore_primary_phone_display() : '+880 1811-892291' );
-$spl_wa_base   = function_exists( 'safestore_primary_wa_link' ) ? safestore_primary_wa_link() : 'https://wa.me/8801811892291';
-$spl_wa_icon   = function_exists( 'safestore_wa_icon_svg' ) ? safestore_wa_icon_svg( 'lp-ico-wa' ) : '';
-$spl_address   = safestore_pl_address();
-$spl_emails    = function_exists( 'safestore_contact_email_addresses' ) ? safestore_contact_email_addresses() : array( 'contact@safestorebd.com' );
-$spl_email     = $spl_emails ? reset( $spl_emails ) : '';
-$spl_shop      = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
-$spl_logo      = safestore_brand_logo_svg();
-$spl_hours     = 'শনি–বৃহস্পতি, সকাল ৯টা – রাত ৮টা';
+$spl_c       = safestore_lp_contact();
+$spl_tel     = $spl_c['tel'];
+$spl_wa_base = $spl_c['wa'];
+$spl_wa_icon = $spl_c['wa_icon'];
+$spl_shop    = $spl_c['shop'];
 
 if ( $spl_product ) {
 	$spl_name         = $spl_product->get_name();
@@ -86,27 +82,17 @@ if ( $spl_product ) {
 		$spl_preload
 	);
 
-	// Order form: what the visitor gave before (logged in, or a failed no-JS post). On a fresh
-	// visit a district without a thana is only the store's default address, so it is dropped.
-	$spl_vals = array();
-	foreach ( array_keys( safestore_pl_form_fields() ) as $spl_k ) {
-		$spl_vals[ $spl_k ] = (string) WC()->checkout()->get_value( $spl_k );
-	}
-	if ( '' === $spl_vals['billing_city'] && ! isset( $_GET['spl_err'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-		$spl_vals['billing_state'] = '';
-	}
-
-	$spl_js = array(
-		'id'       => $spl_product->get_id(),
-		'sku'      => (string) $spl_product->get_sku(),
-		'name'     => $spl_name,
-		'price'    => $spl_price['now'],
-		'currency' => function_exists( 'get_woocommerce_currency' ) ? get_woocommerce_currency() : 'BDT',
-		'waBase'   => $spl_wa_base,
-		'waText'   => $spl_wa_tpl,
-		'options'  => array(),
-		'thanas'   => function_exists( 'safestorebd_bd_thanas' ) ? safestorebd_bd_thanas() : array(),
-		'ship'     => safestore_pl_ship_data( $spl_product ),
+	// Order core (thanas, delivery charge, payment) + this product.
+	$spl_js = array_merge(
+		safestore_lp_order_cfg( $spl_product ),
+		array(
+			'id'      => $spl_product->get_id(),
+			'sku'     => (string) $spl_product->get_sku(),
+			'name'    => $spl_name,
+			'price'   => $spl_price['now'],
+			'waText'  => $spl_wa_tpl,
+			'options' => array(),
+		)
 	);
 	if ( $spl_has_options ) {
 		foreach ( $spl_options['items'] as $spl_o ) {
@@ -118,46 +104,15 @@ if ( $spl_product ) {
 }
 
 $spl_error = safestore_pl_error_text();
-$spl_trust = array(
-	array( 'icon' => 'card', 'text' => 'ক্যাশ অন ডেলিভারি' ),
-	array( 'icon' => 'truck', 'text' => 'ঢাকায় ২৪ ঘণ্টায় ডেলিভারি' ),
-	array( 'icon' => 'pin', 'text' => '৬৪ জেলায় ডেলিভারি' ),
-	array( 'icon' => 'return', 'text' => '৭ দিনে রিটার্ন ও এক্সচেঞ্জ' ),
+$spl_trust = safestore_lp_trust();
+$spl_steps = safestore_lp_steps(
+	array(
+		'title' => $spl_product && $spl_has_options ? 'সাইজ বেছে নিন' : 'পরিমাণ ঠিক করুন',
+		'text'  => $spl_product && $spl_has_options ? 'নিয়মিত যে সাইজের জুতা পরেন, সেটি ও কয় জোড়া লাগবে ঠিক করুন।' : 'কয়টি লাগবে ঠিক করুন।',
+	)
 );
-$spl_steps = array(
-	array( 'title' => $spl_product && $spl_has_options ? 'সাইজ বেছে নিন' : 'পরিমাণ ঠিক করুন', 'text' => $spl_product && $spl_has_options ? 'নিয়মিত যে সাইজের জুতা পরেন, সেটি ও কয় জোড়া লাগবে ঠিক করুন।' : 'কয়টি লাগবে ঠিক করুন।' ),
-	array( 'title' => 'ঠিকানা দিয়ে অর্ডার কনফার্ম', 'text' => 'এই পেজেই নাম, মোবাইল ও ঠিকানা দিন — জেলা বেছে নিলেই ডেলিভারি চার্জ দেখবেন। তারপর "অর্ডার কনফার্ম করুন"।' ),
-	array( 'title' => 'পণ্য দেখে টাকা দিন', 'text' => 'আমরা ফোন করে অর্ডার নিশ্চিত করব। ডেলিভারি প্রতিনিধির সামনে পণ্য যাচাই করে মূল্য দিন। বিকাশ ও নগদেও দেওয়া যায়।' ),
-);
-?><!doctype html>
-<html <?php language_attributes(); ?>>
-<head>
-	<meta charset="<?php bloginfo( 'charset' ); ?>">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<?php wp_head(); ?>
-</head>
-<body <?php body_class(); ?>>
-<?php wp_body_open(); ?>
-<a class="lp-skip" href="#spl-main">মূল কনটেন্টে যান</a>
-
-<header class="lp-header" role="banner">
-	<div class="lp-wrap lp-header__in">
-		<a class="lp-header__brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?> — হোম">
-			<img src="<?php echo esc_url( $spl_logo['url'] ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" width="<?php echo (int) $spl_logo['width']; ?>" height="<?php echo (int) $spl_logo['height']; ?>" decoding="async">
-		</a>
-		<div class="lp-header__acts">
-			<a class="lp-header__tel" href="<?php echo esc_url( 'tel:' . $spl_tel ); ?>" data-spl-loc="header" aria-label="<?php echo esc_attr( 'কল করুন: ' . $spl_tel_label ); ?>">
-				<?php echo safestore_pl_icon( 'phone', 20 ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-				<span class="lp-header__num" aria-hidden="true"><?php echo esc_html( $spl_tel_label ); ?></span>
-			</a>
-			<a class="lp-btn lp-btn--wa lp-btn--sm" href="<?php echo esc_url( $spl_wa ); ?>" target="_blank" rel="noopener noreferrer" data-spl-loc="header" data-spl-wa>
-				<?php echo $spl_wa_icon; // phpcs:ignore WordPress.Security.EscapeOutput ?>
-				<span>WhatsApp</span>
-			</a>
-		</div>
-	</div>
-</header>
-
+get_template_part( 'templates/landing/header', null, array( 'wa' => $spl_wa, 'main' => 'spl-main' ) );
+?>
 <main id="spl-main">
 <?php if ( ! $spl_product ) : ?>
 
@@ -204,7 +159,7 @@ $spl_steps = array(
 					<?php if ( '' !== $spl['badge'] ) : ?>
 						<span class="spl-badge"><?php echo esc_html( $spl['badge'] ); ?></span>
 					<?php elseif ( $spl_price['was'] > 0 ) : ?>
-						<span class="spl-badge"><?php echo esc_html( safestore_pl_taka( $spl_price['was'] - $spl_price['now'] ) . ' ছাড়' ); ?></span>
+						<span class="spl-badge"><?php echo esc_html( '-' . (int) round( ( $spl_price['was'] - $spl_price['now'] ) / $spl_price['was'] * 100 ) . '%' ); ?></span>
 					<?php endif; ?>
 				</figure>
 				<?php if ( count( $spl_gallery ) > 1 ) : ?>
@@ -241,7 +196,7 @@ $spl_steps = array(
 				<?php endif; ?>
 
 				<p class="spl-price">
-					<?php if ( $spl_price['from'] ) : ?><span class="spl-price__from">শুরু</span><?php endif; ?>
+					<?php if ( $spl_price['from'] ) : ?><span class="spl-price__from">From</span><?php endif; ?>
 					<strong data-spl-price><?php echo esc_html( safestore_pl_taka( $spl_price['now'] ) ); ?></strong>
 					<?php if ( $spl_price['was'] > 0 ) : ?>
 						<s><?php echo esc_html( safestore_pl_taka( $spl_price['was'] ) ); ?></s>
@@ -286,96 +241,44 @@ $spl_steps = array(
 
 						<?php if ( $spl_has_options ) : ?>
 							<fieldset class="spl-sizes" data-spl-sizes>
-								<legend><?php echo esc_html( safestore_pl_bn_words( $spl_options['name'] ) ); ?> নির্বাচন করুন <span class="lp-req" aria-hidden="true">*</span></legend>
+								<legend><?php echo esc_html( 'Select ' . strtolower( (string) $spl_options['name'] ) ); ?> <span class="lp-req" aria-hidden="true">*</span></legend>
 								<div class="spl-sizes__grid">
 									<?php foreach ( $spl_options['items'] as $spl_o ) : ?>
 										<label class="spl-size<?php echo $spl_o['in_stock'] ? '' : ' is-out'; ?>">
 											<input type="radio" name="spl_add" value="<?php echo (int) $spl_o['id']; ?>" required<?php echo $spl_o['in_stock'] ? '' : ' disabled'; ?> data-spl-size>
-											<span><?php echo esc_html( safestore_pl_bn( $spl_o['label'] ) ); ?></span>
-											<?php if ( ! $spl_o['in_stock'] ) : ?><small>স্টক নেই</small><?php endif; ?>
+											<span><?php echo esc_html( $spl_o['label'] ); ?></span>
+											<?php if ( ! $spl_o['in_stock'] ) : ?><small>Sold out</small><?php endif; ?>
 										</label>
 									<?php endforeach; ?>
 								</div>
-								<p class="spl-sizes__hint" data-spl-size-hint>নিয়মিত যে সাইজের জুতা পরেন, সেটিই বেছে নিন। নিশ্চিত না হলে WhatsApp-এ জিজ্ঞেস করুন — ডেলিভারির ৭ দিনের মধ্যে সাইজ বদলানো যায়।</p>
+								<p class="spl-sizes__hint" data-spl-size-hint>Pick the size you normally wear. Not sure? Ask us on WhatsApp — you can exchange the size within 7 days of delivery.</p>
 							</fieldset>
 						<?php else : ?>
 							<input type="hidden" name="spl_add" value="<?php echo (int) $spl_product->get_id(); ?>">
 						<?php endif; ?>
 
 						<div class="spl-qty">
-							<label for="spl-qty">পরিমাণ</label>
+							<label for="spl-qty">Quantity</label>
 							<div class="spl-qty__ctl">
-								<button type="button" data-spl-qty="-1" aria-label="কমান">−</button>
+								<button type="button" data-spl-qty="-1" aria-label="Decrease quantity">−</button>
 								<input id="spl-qty" name="qty" type="number" inputmode="numeric" min="1" max="<?php echo (int) ( ! $spl_has_options && $spl_product->get_max_purchase_quantity() > 0 ? min( SAFESTORE_PL_MAX_QTY, $spl_product->get_max_purchase_quantity() ) : SAFESTORE_PL_MAX_QTY ); ?>" step="1" value="1" data-spl-qty-input>
-								<button type="button" data-spl-qty="1" aria-label="বাড়ান">+</button>
+								<button type="button" data-spl-qty="1" aria-label="Increase quantity">+</button>
 							</div>
 						</div>
 
-						<div class="spl-ship">
-							<p class="spl-ship__title">ডেলিভারির তথ্য দিন</p>
-							<p class="spl-ship__sub">অর্ডার নিশ্চিত করতে এই নম্বরে আমরা ফোন করব</p>
-							<p class="lp-alert" role="alert" tabindex="-1" data-spl-alert hidden></p>
-							<div class="spl-ship__grid">
-								<?php
-								foreach ( safestore_pl_form_fields() as $spl_k => $spl_f ) :
-									$spl_id   = 'spl-' . str_replace( '_', '-', $spl_k );
-									$spl_opts = array();
-									if ( 'billing_state' === $spl_k ) {
-										$spl_opts = safestore_pl_districts();
-									} elseif ( 'billing_city' === $spl_k && '' !== $spl_vals['billing_state'] ) {
-										$spl_list = safestorebd_thanas_for( $spl_vals['billing_state'] );
-										$spl_opts = $spl_list ? array_combine( $spl_list, $spl_list ) : array();
-									}
-									// An empty thana list can't be "required" without JS (nothing to pick); the server checks it.
-									$spl_att = sprintf(
-										'id="%1$s" name="%2$s" autocomplete="%3$s"%5$s aria-describedby="%1$s-err" data-err="%4$s" data-spl-field',
-										esc_attr( $spl_id ),
-										esc_attr( $spl_k ),
-										esc_attr( $spl_f['auto'] ),
-										esc_attr( $spl_f['err'] ),
-										'billing_city' === $spl_k && ! $spl_opts ? '' : ' required'
-									);
-									?>
-									<div class="lp-field spl-f--<?php echo esc_attr( $spl_f['type'] ); ?>">
-										<label for="<?php echo esc_attr( $spl_id ); ?>"><?php echo esc_html( $spl_f['label'] ); ?> <span class="lp-req" aria-hidden="true">*</span></label>
-										<?php if ( 'select' === $spl_f['type'] ) : ?>
-											<select <?php echo $spl_att; // phpcs:ignore WordPress.Security.EscapeOutput -- escaped above ?>>
-												<option value=""><?php echo esc_html( 'billing_city' === $spl_k && $spl_opts ? 'থানা বেছে নিন' : $spl_f['ph'] ); ?></option>
-												<?php foreach ( $spl_opts as $spl_v => $spl_l ) : ?>
-													<option value="<?php echo esc_attr( $spl_v ); ?>"<?php selected( $spl_vals[ $spl_k ], (string) $spl_v ); ?>><?php echo esc_html( $spl_l ); ?></option>
-												<?php endforeach; ?>
-											</select>
-										<?php elseif ( 'textarea' === $spl_f['type'] ) : ?>
-											<textarea <?php echo $spl_att; // phpcs:ignore WordPress.Security.EscapeOutput ?> rows="2" placeholder="<?php echo esc_attr( $spl_f['ph'] ); ?>"><?php echo esc_textarea( $spl_vals[ $spl_k ] ); ?></textarea>
-										<?php else : ?>
-											<input <?php echo $spl_att; // phpcs:ignore WordPress.Security.EscapeOutput ?> type="<?php echo esc_attr( $spl_f['type'] ); ?>"<?php echo 'tel' === $spl_f['type'] ? ' inputmode="tel" maxlength="16"' : ''; ?> placeholder="<?php echo esc_attr( $spl_f['ph'] ); ?>" value="<?php echo esc_attr( $spl_vals[ $spl_k ] ); ?>">
-										<?php endif; ?>
-										<p class="lp-err" id="<?php echo esc_attr( $spl_id ); ?>-err" hidden></p>
-									</div>
-								<?php endforeach; ?>
-							</div>
-
-							<div class="spl-sum" aria-live="polite">
-								<p><span><?php echo esc_html( $spl_name_bn ); ?> <small data-spl-line></small></span><b data-spl-sub><?php echo esc_html( safestore_pl_taka( $spl_price['now'] ) ); ?></b></p>
-								<p class="spl-sum__ship"><span>ডেলিভারি চার্জ <small data-spl-zone></small></span><b data-spl-ship><?php echo $spl_js['ship'] ? 'জেলা বেছে নিন' : 'ফোনে জানানো হবে'; ?></b></p>
-								<p class="spl-sum__tot"><span>মোট</span><b data-spl-total><?php echo esc_html( safestore_pl_taka( $spl_price['now'] ) ); ?></b></p>
-							</div>
-							<p class="spl-cod"><?php echo safestore_pl_icon( 'card', 22 ); // phpcs:ignore WordPress.Security.EscapeOutput ?><span><b>ক্যাশ অন ডেলিভারি</b> — পণ্য হাতে পেয়ে টাকা দিন</span></p>
-						</div>
-
-						<p class="lp-hp" aria-hidden="true"><label>Website <input type="text" name="spl_website" tabindex="-1" autocomplete="off"></label></p>
-						<input type="hidden" name="spl_token" value="" data-spl-token>
-						<wc-order-attribution-inputs></wc-order-attribution-inputs>
-
-						<button class="lp-btn lp-btn--amber lp-btn--lg lp-btn--block spl-cta" type="submit" data-spl-submit>
-							<span class="lp-spin" aria-hidden="true"></span>
-							<span data-spl-submit-label>অর্ডার কনফার্ম করুন</span>
-						</button>
-						<p class="lp-note">অর্ডারের পর আমরা ফোন করে নিশ্চিত করব · পণ্য দেখে টাকা দিন<?php if ( function_exists( 'wc_terms_and_conditions_checkbox_enabled' ) && wc_terms_and_conditions_checkbox_enabled() ) : ?><br>অর্ডার করে আপনি আমাদের <a href="<?php echo esc_url( home_url( '/terms-of-service/' ) ); ?>">শর্তাবলি</a> মেনে নিচ্ছেন<?php endif; ?></p>
-						<a class="lp-btn lp-btn--outline lp-btn--block" href="<?php echo esc_url( $spl_wa ); ?>" target="_blank" rel="noopener noreferrer" data-spl-loc="hero" data-spl-wa>
-							<?php echo $spl_wa_icon; // phpcs:ignore WordPress.Security.EscapeOutput ?>
-							WhatsApp-এ অর্ডার করুন
-						</a>
+						<?php
+						get_template_part(
+							'templates/landing/order-form',
+							null,
+							array(
+								'cfg'   => $spl_js,
+								'lines' => array( array( 'name' => $spl_name, 'note' => '', 'amount' => $spl_price['now'] ) ),
+								'total' => $spl_price['now'],
+								'wa'    => $spl_wa,
+								'loc'   => 'hero',
+							)
+						);
+						?>
 					</form>
 				<?php endif; ?>
 
@@ -435,7 +338,7 @@ $spl_steps = array(
 							<span class="spl-card__name"><?php echo esc_html( safestore_pl_bn_words( $spl_m['name'] ) ); ?></span>
 							<span class="spl-card__price">
 								<?php if ( $spl_m['price']['now'] > 0 ) : ?>
-									<?php echo esc_html( ( $spl_m['price']['from'] ? 'শুরু ' : '' ) . safestore_pl_taka( $spl_m['price']['now'] ) ); ?>
+									<?php echo esc_html( ( $spl_m['price']['from'] ? 'From ' : '' ) . safestore_pl_taka( $spl_m['price']['now'] ) ); ?>
 									<?php if ( $spl_m['price']['was'] > 0 ) : ?><s><?php echo esc_html( safestore_pl_taka( $spl_m['price']['was'] ) ); ?></s><?php endif; ?>
 								<?php else : ?>
 									দাম দেখুন
@@ -546,7 +449,7 @@ $spl_steps = array(
 	<!-- 8. FINAL CTA ========================================================== -->
 	<section class="lp-final" aria-labelledby="spl-final-title">
 		<div class="lp-wrap">
-			<h2 class="lp-h2" id="spl-final-title"><?php echo esc_html( $spl_name_bn . ' — ' . ( $spl_price['from'] ? 'শুরু ' : '' ) . safestore_pl_taka( $spl_price['now'] ) ); ?></h2>
+			<h2 class="lp-h2" id="spl-final-title"><?php echo esc_html( $spl_name_bn . ' — ' . ( $spl_price['from'] ? 'From ' : '' ) . safestore_pl_taka( $spl_price['now'] ) ); ?></h2>
 			<p>ক্যাশ অন ডেলিভারি · সারা বাংলাদেশে · ৭ দিনের রিটার্ন</p>
 			<div class="lp-cta-row">
 				<?php if ( $spl_can_buy ) : ?>
@@ -565,32 +468,7 @@ $spl_steps = array(
 <?php endif; ?>
 </main>
 
-<footer class="lp-footer" role="contentinfo">
-	<div class="lp-wrap lp-footer__grid">
-		<div>
-			<p class="lp-footer__brand"><?php echo esc_html( get_bloginfo( 'name' ) ); ?></p>
-			<p><?php echo esc_html( $spl_address ); ?></p>
-			<p><?php echo esc_html( $spl_hours ); ?></p>
-		</div>
-		<ul>
-			<li><a href="<?php echo esc_url( 'tel:' . $spl_tel ); ?>" data-spl-loc="footer"><?php echo safestore_pl_icon( 'phone', 18 ); // phpcs:ignore WordPress.Security.EscapeOutput ?><?php echo esc_html( $spl_tel_label ); ?></a></li>
-			<?php if ( $spl_email ) : ?>
-				<li><a href="<?php echo esc_url( 'mailto:' . $spl_email ); ?>"><?php echo esc_html( $spl_email ); ?></a></li>
-			<?php endif; ?>
-		</ul>
-		<nav aria-label="নীতিমালা">
-			<ul class="lp-footer__links">
-				<li><a href="<?php echo esc_url( home_url( '/shipping-delivery/' ) ); ?>">ডেলিভারি</a></li>
-				<li><a href="<?php echo esc_url( home_url( '/return-refund-policy/' ) ); ?>">রিটার্ন ও রিফান্ড</a></li>
-				<li><a href="<?php echo esc_url( home_url( '/privacy-policy/' ) ); ?>">প্রাইভেসি পলিসি</a></li>
-				<li><a href="<?php echo esc_url( home_url( '/terms-of-service/' ) ); ?>">শর্তাবলি</a></li>
-				<li><a href="<?php echo esc_url( home_url( '/track-order/' ) ); ?>">অর্ডার ট্র্যাক</a></li>
-				<li><a href="<?php echo esc_url( $spl_shop ); ?>">শপ</a></li>
-			</ul>
-		</nav>
-	</div>
-	<p class="lp-wrap lp-footer__copy">© <?php echo esc_html( safestore_pl_bn( date_i18n( 'Y' ) ) ); ?> <?php echo esc_html( get_bloginfo( 'name' ) ); ?></p>
-</footer>
+<?php get_template_part( 'templates/landing/footer' ); ?>
 
 <?php if ( $spl_product ) : ?>
 <!-- 9. MOBILE STICKY BAR (<768px) ============================================ -->
