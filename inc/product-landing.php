@@ -14,11 +14,14 @@
  *   thank-you page (inc/product-landing-order.php). Old ?spl_add=<id>&qty=N
  *   links still go cart → checkout.
  * - Orders that started here get an order note + meta "_spl_landing_page".
- * - Template-only assets; floating WhatsApp widget and mobile bottom nav are off
- *   (the page has its own sticky bar).
+ * - Shared with every order landing (inc/landing-common.php): slim chrome and
+ *   assets, header / footer / order-form partials (templates/landing/), the
+ *   order core script (js/landing-order.js), trust strip, steps, common FAQ.
  */
 
 defined( 'ABSPATH' ) || exit;
+
+require_once __DIR__ . '/landing-common.php';
 
 define( 'SAFESTORE_PL_TEMPLATE', 'page-templates/template-product-landing.php' );
 define( 'SAFESTORE_PL_MAX_QTY', 24 );
@@ -47,7 +50,7 @@ function safestore_pl_defaults() {
 				'vaultex-safety-helmet',
 			),
 			// Used only when the page sells the default product and has no copy of its own.
-			'headline' => 'Haojia সেফটি শু — স্টিল টো, অ্যান্টি-স্লিপ, সারাদিন আরাম',
+			'headline' => 'Haojia Safety Shoes — Steel Toe, Anti-Slip, All-Day Comfort',
 			'lede'     => 'কনস্ট্রাকশন, ফ্যাক্টরি ও ওয়্যারহাউসের দৈনন্দিন কাজের জন্য। সাইজ বেছে নিচের ফর্মে ঠিকানা দিন — সারা বাংলাদেশে ক্যাশ অন ডেলিভারি।',
 			'bullets'  => array(
 				'স্টিল টো ক্যাপ — ভারী বস্তু পড়লেও পায়ের আঙুল সুরক্ষিত থাকে',
@@ -67,15 +70,11 @@ function safestore_pl_settings( $page_id ) {
 	$get = static function ( $key ) use ( $page_id ) {
 		return trim( (string) get_post_meta( $page_id, $key, true ) );
 	};
-	$lines = static function ( $raw ) {
-		return array_values( array_filter( array_map( 'trim', preg_split( '/[\r\n]+/', (string) $raw ) ) ) );
-	};
-
 	$product    = $get( '_spl_product' );
 	$product    = '' !== $product ? $product : $d['product'];
 	$is_default = $product === $d['product'];
-	$more       = $lines( $get( '_spl_more' ) );
-	$bullets    = $lines( $get( '_spl_bullets' ) );
+	$more       = safestore_lp_lines( $get( '_spl_more' ) );
+	$bullets    = safestore_lp_lines( $get( '_spl_bullets' ) );
 
 	return array(
 		'product'  => $product,
@@ -97,11 +96,8 @@ function safestore_pl_bn( $value ) {
 	return function_exists( 'safestore_bl_bn' ) ? safestore_bl_bn( $value ) : (string) $value;
 }
 
-/** "৳২,৫০০" or '' */
+/** "৳2,500" or '' — prices on the landing page are in English digits (same as checkout and the order email). */
 function safestore_pl_taka( $amount ) {
-	if ( function_exists( 'safestore_bl_taka' ) ) {
-		return safestore_bl_taka( $amount );
-	}
 	if ( '' === $amount || null === $amount || ! is_numeric( $amount ) ) {
 		return '';
 	}
@@ -390,29 +386,18 @@ function safestore_pl_delivery() {
 }
 
 function safestore_pl_faq( $product, $has_options ) {
-	$faq = array(
-		array(
-			'q' => 'ক্যাশ অন ডেলিভারি সুবিধা আছে কি?',
-			'a' => 'হ্যাঁ। পণ্য হাতে পেয়ে যাচাই করার পর মূল্য পরিশোধ করবেন। বিকাশ ও নগদেও পরিশোধ করা যায়।',
-		),
-		array(
-			'q' => 'ডেলিভারিতে কত দিন লাগে, চার্জ কত?',
-			'a' => 'ঢাকার ভেতরে সাধারণত ২৪ ঘণ্টার মধ্যে এবং ঢাকার বাইরে ২–৩ কার্যদিবসের মধ্যে ডেলিভারি হয়। অর্ডার ফর্মে জেলা ও থানা বেছে নিলেই ডেলিভারি চার্জ দেখা যাবে। পল্লবী অফিস থেকে বিনা খরচে পণ্য সংগ্রহও করতে পারেন।',
-		),
-	);
+	$common = safestore_lp_faq_common();
+	$faq    = array( $common['cod'], $common['delivery'] );
 	if ( $has_options ) {
 		$faq[] = array(
 			'q' => 'সাইজ না মিললে কী করব?',
 			'a' => 'ডেলিভারির ৭ দিনের মধ্যে অব্যবহৃত অবস্থায়, অরিজিনাল প্যাকেটসহ সাইজ পরিবর্তন করা যায়; এজন্য আগে আমাদের জানাতে হবে। অর্ডারের আগে নিশ্চিত হতে চাইলে WhatsApp-এ আপনার পায়ের মাপ (সেমি) বা নিয়মিত পরা সাইজ জানান, আমরা সঠিক সাইজ জানিয়ে দেব।',
 		);
 	}
-	$faq[] = array(
-		'q' => 'পণ্য কি নতুন এবং ছবির মতোই?',
-		'a' => 'হ্যাঁ, সম্পূর্ণ নতুন পণ্য। ছবিতে যা দেখছেন, সেটিই পাবেন। ডেলিভারির সময় পণ্য যাচাই করে তারপর মূল্য পরিশোধ করুন।',
-	);
+	$faq[] = $common['new'];
 	$faq[] = array(
 		'q' => 'কীভাবে অর্ডার করব?',
-		'a' => ( $has_options ? 'সাইজ বেছে ' : '' ) . 'এই পেজের ফর্মে নাম, মোবাইল নম্বর ও ঠিকানা দিয়ে "অর্ডার কনফার্ম করুন" চাপুন — আলাদা কোনো পেজে যেতে হবে না। চাইলে WhatsApp-এ ' . ( $has_options ? 'সাইজ ও ' : '' ) . 'ঠিকানা পাঠিয়েও অর্ডার করতে পারেন।',
+		'a' => ( $has_options ? 'সাইজ বেছে ' : '' ) . 'এই পেজের ফর্মে নাম, মোবাইল নম্বর ও ঠিকানা দিয়ে "Confirm order" চাপুন — আলাদা কোনো পেজে যেতে হবে না। চাইলে WhatsApp-এ ' . ( $has_options ? 'সাইজ ও ' : '' ) . 'ঠিকানা পাঠিয়েও অর্ডার করতে পারেন।',
 	);
 	return apply_filters( 'safestore_pl_faq', $faq, $product );
 }
@@ -480,13 +465,7 @@ add_action(
 		$page_id = (int) get_queried_object_id();
 		$line    = safestore_pl_resolve_line( $page_id, absint( $in['spl_add'] ), isset( $in['qty'] ) ? wp_unslash( $in['qty'] ) : 1 );
 		// phpcs:enable
-		$fail = static function ( $code ) use ( $page_id, $ajax ) {
-			if ( $ajax ) {
-				wp_send_json( array( 'result' => 'failure', 'messages' => safestore_pl_error_text( $code ) ) );
-			}
-			wp_safe_redirect( add_query_arg( 'spl_err', $code, get_permalink( $page_id ) ) . '#order' );
-			exit;
-		};
+		$fail    = safestore_lp_fail( $page_id, $ajax );
 
 		if ( ! is_array( $line ) ) {
 			$fail( $line );
@@ -504,10 +483,10 @@ add_action(
 	5
 );
 
-/** WooCommerce's English stock notices → Bangla (the page is Bangla). */
+/** WooCommerce's stock notices → one short, actionable line for the order form (English, like the form). */
 function safestore_pl_bn_notice( $text ) {
 	return preg_match( '/out of stock|not enough|only \d+ (?:left|available)|cannot add/i', wp_strip_all_tags( (string) $text ) )
-		? 'নির্বাচিত সাইজটি বর্তমানে স্টকে নেই অথবা পর্যাপ্ত পরিমাণে নেই। অন্য সাইজ বেছে নিন, অথবা WhatsApp-এ যোগাযোগ করুন।'
+		? 'The selected size is out of stock or not enough are left. Pick another size or message us on WhatsApp.'
 		: $text;
 }
 
@@ -534,10 +513,11 @@ function safestore_pl_error_text( $code = null ) {
 		}
 	}
 	$map = array(
-		'size'    => 'অনুগ্রহ করে আগে সাইজ নির্বাচন করুন।',
-		'busy'    => 'এই সংযোগ থেকে অনেকগুলো অর্ডার এসেছে। একটু পরে চেষ্টা করুন, অথবা WhatsApp-এ অর্ডার করুন।',
-		'product' => 'দুঃখিত, পণ্যটি এই মুহূর্তে অর্ডার করা যাচ্ছে না। বিস্তারিত জানতে WhatsApp-এ যোগাযোগ করুন।',
-		'cart'    => 'দুঃখিত, অর্ডারটি সম্পন্ন করা যায়নি। আবার চেষ্টা করুন অথবা WhatsApp-এ যোগাযোগ করুন।',
+		'size'    => 'Please select a size first.',
+		'pick'    => 'Please choose at least one product first.',
+		'busy'    => 'Too many orders from this connection. Please try again in a little while, or order on WhatsApp.',
+		'product' => 'Sorry, this product cannot be ordered right now. Message us on WhatsApp for details.',
+		'cart'    => 'Sorry, the order could not be placed. Please try again or message us on WhatsApp.',
 	);
 	return isset( $map[ $code ] ) ? $map[ $code ] : $map['cart'];
 }
@@ -569,11 +549,12 @@ add_action(
 function safestore_pl_fields() {
 	return array(
 		'_spl_product'  => array( 'text', __( 'Main product', 'safestore-minimal' ), __( 'Product URL, slug or ID. Empty = the default product.', 'safestore-minimal' ) ),
-		'_spl_headline' => array( 'text', __( 'Headline (H1)', 'safestore-minimal' ), __( 'Bangla. Empty = product name (default product has its own copy).', 'safestore-minimal' ) ),
+		'_spl_headline' => array( 'text', __( 'Headline (H1)', 'safestore-minimal' ), __( 'Empty = product name (the default product has its own copy).', 'safestore-minimal' ) ),
 		'_spl_lede'     => array( 'textarea', __( 'Sub-headline', 'safestore-minimal' ), __( 'One or two short sentences under the headline.', 'safestore-minimal' ) ),
 		'_spl_bullets'  => array( 'textarea', __( 'Benefit bullets', 'safestore-minimal' ), __( 'One per line, 3–6 lines. Empty = bullet points of the product short description.', 'safestore-minimal' ) ),
 		'_spl_badge'    => array( 'text', __( 'Badge on the photo', 'safestore-minimal' ), __( 'Optional, e.g. "ক্যাম্পেইন অফার" or "স্টক সীমিত". Leave empty for none.', 'safestore-minimal' ) ),
 		'_spl_more'     => array( 'textarea', __( 'More products (cards below)', 'safestore-minimal' ), __( 'One product URL, slug or ID per line. Empty = defaults, then the product\'s upsells / cross-sells.', 'safestore-minimal' ) ),
+		'_spl_index'    => array( 'checkbox', __( 'Search engines', 'safestore-minimal' ), __( 'Off (recommended for ad campaigns): noindex, so it never competes with the real product page. On: indexed, canonical points at the product page.', 'safestore-minimal' ), __( 'Allow Google to index this page', 'safestore-minimal' ) ),
 	);
 }
 
@@ -588,23 +569,7 @@ function safestore_pl_render_box( $post ) {
 	wp_nonce_field( 'spl_save_' . $post->ID, 'spl_nonce' );
 	$d = safestore_pl_defaults();
 	echo '<p class="description">' . esc_html__( 'Used only when the page template is "Product Landing (Facebook)". Default product: ', 'safestore-minimal' ) . '<code>' . esc_html( $d['product'] ) . '</code></p>';
-	echo '<table class="form-table" role="presentation"><tbody>';
-	foreach ( safestore_pl_fields() as $key => $f ) {
-		list( $type, $label, $hint ) = $f;
-		$value = (string) get_post_meta( $post->ID, $key, true );
-		$id    = 'spl-' . substr( $key, 5 );
-		echo '<tr><th scope="row"><label for="' . esc_attr( $id ) . '">' . esc_html( $label ) . '</label></th><td>';
-		if ( 'textarea' === $type ) {
-			echo '<textarea class="large-text" rows="4" id="' . esc_attr( $id ) . '" name="' . esc_attr( $key ) . '">' . esc_textarea( $value ) . '</textarea>';
-		} else {
-			echo '<input type="text" class="large-text" id="' . esc_attr( $id ) . '" name="' . esc_attr( $key ) . '" value="' . esc_attr( $value ) . '">';
-		}
-		echo '<p class="description">' . esc_html( $hint ) . '</p></td></tr>';
-	}
-	$index = '1' === (string) get_post_meta( $post->ID, '_spl_index', true );
-	echo '<tr><th scope="row">' . esc_html__( 'Search engines', 'safestore-minimal' ) . '</th><td><label><input type="checkbox" name="_spl_index" value="1"' . checked( $index, true, false ) . '> ' . esc_html__( 'Allow Google to index this page', 'safestore-minimal' ) . '</label>';
-	echo '<p class="description">' . esc_html__( 'Off (recommended for ad campaigns): noindex, so it never competes with the real product page. On: indexed, canonical points at the product page.', 'safestore-minimal' ) . '</p></td></tr>';
-	echo '</tbody></table>';
+	safestore_lp_meta_table( $post, safestore_pl_fields() );
 }
 
 add_action(
@@ -616,20 +581,7 @@ add_action(
 		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || ! current_user_can( 'edit_page', $post_id ) ) {
 			return;
 		}
-		foreach ( safestore_pl_fields() as $key => $f ) {
-			$raw   = isset( $_POST[ $key ] ) ? wp_unslash( (string) $_POST[ $key ] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-			$value = 'textarea' === $f[0] ? sanitize_textarea_field( $raw ) : sanitize_text_field( $raw );
-			if ( '' === trim( $value ) ) {
-				delete_post_meta( $post_id, $key );
-			} else {
-				update_post_meta( $post_id, $key, $value );
-			}
-		}
-		if ( ! empty( $_POST['_spl_index'] ) ) {
-			update_post_meta( $post_id, '_spl_index', '1' );
-		} else {
-			delete_post_meta( $post_id, '_spl_index' );
-		}
+		safestore_lp_meta_save( $post_id, safestore_pl_fields() );
 	}
 );
 
@@ -637,7 +589,11 @@ add_action(
  * Head: title, description, robots / canonical, OG, LCP preload
  * ---------------------------------------------------------------------- */
 
-/** Called from the template before wp_head(). */
+/**
+ * Called from the template before wp_head(). Also used by the category landing.
+ *
+ * @param array $seo       title, description, image, optional type (og:type, default "product").
+ */
 function safestore_pl_head( $seo, $index, $canonical, $preload ) {
 	$has_seo_plugin = defined( 'WPSEO_VERSION' ) || defined( 'RANK_MATH_VERSION' );
 
@@ -700,7 +656,7 @@ function safestore_pl_head( $seo, $index, $canonical, $preload ) {
 			}
 			printf( '<meta name="description" content="%s" />' . "\n", esc_attr( $seo['description'] ) );
 			printf( '<link rel="canonical" href="%s" />' . "\n", esc_url( $index ? $canonical : get_permalink() ) );
-			printf( '<meta property="og:type" content="product" />' . "\n" );
+			printf( '<meta property="og:type" content="%s" />' . "\n", esc_attr( isset( $seo['type'] ) ? $seo['type'] : 'product' ) );
 			printf( '<meta property="og:title" content="%s" />' . "\n", esc_attr( $seo['title'] ) );
 			printf( '<meta property="og:description" content="%s" />' . "\n", esc_attr( $seo['description'] ) );
 			printf( '<meta property="og:url" content="%s" />' . "\n", esc_url( get_permalink() ) );
@@ -713,53 +669,22 @@ function safestore_pl_head( $seo, $index, $canonical, $preload ) {
 }
 
 /* -------------------------------------------------------------------------
- * Assets — this template only
+ * Registration with the shared landing layer + this template's own assets
  * ---------------------------------------------------------------------- */
 
-add_filter( 'safestore_wa_render', static function ( $render ) {
-	return safestore_pl_is_landing() ? false : $render;
-} );
-add_filter( 'safestore_mnav_enabled', static function ( $enabled ) {
-	return safestore_pl_is_landing() ? false : $enabled;
-} );
-add_filter( 'body_class', static function ( $classes ) {
-	if ( safestore_pl_is_landing() ) {
-		$classes[] = 'lp-page';
-		$classes[] = 'spl-page';
+add_filter(
+	'safestore_lp_templates',
+	static function ( $templates ) {
+		$templates[ SAFESTORE_PL_TEMPLATE ] = 'spl-page';
+		return $templates;
 	}
-	return $classes;
-} );
-add_filter( 'language_attributes', static function ( $output ) {
-	return safestore_pl_is_landing() ? 'lang="bn-BD"' : $output;
-} );
+);
 
 add_action(
 	'wp_enqueue_scripts',
 	static function () {
-		if ( ! safestore_pl_is_landing() ) {
-			return;
-		}
-		foreach ( array( 'safestore-minimal-footer', 'safestore-cart-toast', 'safestore-copy-to-clipboard', 'safestore-product-compare' ) as $handle ) {
-			wp_dequeue_style( $handle );
-		}
-		foreach ( array( 'safestore-minimal-header-search-cat', 'safestore-minimal-footer-accordion', 'safestore-minimal-shop-cards', 'safestore-cart-toast', 'safestore-copy-to-clipboard', 'safestore-contact-email-chooser', 'safestore-product-compare', 'wc-cart-fragments' ) as $handle ) {
-			wp_dequeue_script( $handle );
-		}
-
-		if ( function_exists( 'safestore_page_css' ) ) {
-			safestore_page_css( 'landing-common', 'landing-common.css' );
-			safestore_page_css( 'product-landing', 'product-landing.css' );
-		}
-
-		$js = get_template_directory() . '/js/product-landing.js';
-		if ( file_exists( $js ) ) {
-			wp_enqueue_script(
-				'safestore-product-landing',
-				get_template_directory_uri() . '/js/product-landing.js',
-				array(),
-				(string) filemtime( $js ),
-				function_exists( 'safestore_perf_script_args' ) ? safestore_perf_script_args( true ) : true
-			);
+		if ( safestore_pl_is_landing() ) {
+			safestore_lp_enqueue( array( 'product-landing' ), 'product-landing' );
 		}
 	},
 	100

@@ -91,6 +91,9 @@ require get_template_directory() . '/inc/bulk-landing.php';
 // Single-product campaign landing (page-templates/template-product-landing.php): size → cart → checkout, page settings box.
 require get_template_directory() . '/inc/product-landing.php';
 
+// Category campaign landing (page-templates/template-category-landing.php): pick several products, one order on the page.
+require get_template_directory() . '/inc/category-landing.php';
+
 function safestore_minimal_enqueue_assets() {
     $version = wp_get_theme()->get('Version');
 
