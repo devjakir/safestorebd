@@ -235,19 +235,64 @@
   /* ------------------------------------------------------------------ */
   /* Variation gate                                                      */
   /* ------------------------------------------------------------------ */
-  // WooCommerce 11 writes variation_id as soon as a size is picked, but only
-  // re-enables the button after a setTimeout + slideDown (show_variation). A
-  // click inside that window used to slip through half-ready. Keep Add to
-  // cart / Buy now truly [disabled] until show_variation confirms a
-  // purchasable variation that matches the hidden variation_id.
+  // WooCommerce 11 only re-enables Add to cart after a setTimeout +
+  // slideDown (show_variation), so a quick "pick size → add" either hit a
+  // half-ready form or a disabled button and was lost. The variation list is
+  // already on the form (data-product_variations): resolve the chosen
+  // variation ourselves, synchronously, at the moment of the click — every
+  // click then adds exactly the size that was picked, independent of
+  // WooCommerce's timing. Products with >30 variations load variations by
+  // AJAX (no list on the form); those fall back to waiting for show_variation.
   function currentVariationId($form) {
     var v = $form.find('input[name="variation_id"]').val();
     return v && v !== '0' ? String(v) : '';
   }
 
-  function isVariationReady($form) {
-    var ready = $form.data('sftVariationReady');
-    return !!ready && ready === currentVariationId($form);
+  function chosenAttributes($form) {
+    var chosen = {};
+    var complete = true;
+    $form.find('select[name^="attribute_"]').each(function () {
+      var val = $(this).val() || '';
+      chosen[this.name] = val;
+      if (!val) {
+        complete = false;
+      }
+    });
+    return complete ? chosen : null;
+  }
+
+  // { state: 'select'|'ready'|'unavailable'|'unknown', variation }
+  function resolveVariation($form) {
+    var chosen = chosenAttributes($form);
+    if (!chosen) {
+      return { state: 'select' };
+    }
+    var list = $form.data('product_variations');
+    if (!$.isArray(list)) {
+      // AJAX-loaded variations: trust WooCommerce once it has shown one.
+      var ready = $form.data('sftVariationReady');
+      return ready && ready === currentVariationId($form) ? { state: 'ready', variation: { variation_id: ready } } : { state: 'unknown' };
+    }
+    for (var i = 0; i < list.length; i++) {
+      var v = list[i];
+      var attrs = v.attributes || {};
+      var match = true;
+      for (var key in attrs) {
+        if (Object.prototype.hasOwnProperty.call(attrs, key) && attrs[key] !== '' && attrs[key] !== chosen[key]) {
+          match = false;
+          break;
+        }
+      }
+      if (match) {
+        var buyable = v.is_purchasable !== false && v.is_in_stock !== false && v.variation_is_visible !== false && v.variation_is_active !== false;
+        return { state: buyable ? 'ready' : 'unavailable', variation: v };
+      }
+    }
+    return { state: 'unavailable' };
+  }
+
+  function allOptionsChosen($form) {
+    return !!chosenAttributes($form);
   }
 
   function initVariationGate($form) {
@@ -256,44 +301,45 @@
     }
     $form.data('sftGate', true);
 
-    // Only Add to cart is hard-disabled. Buy now stays clickable so the size
-    // guard (js/footwear-sizing.js) can still show "Please select a size".
+    // Only Add to cart is hard-disabled, and only while no size is chosen /
+    // the size is sold out. Buy now stays clickable so the size guard
+    // (js/footwear-sizing.js) can still show "Please select a size".
     var $atc = $form.find('.single_add_to_cart_button');
     var isFootwear = String($form.data('footwear')) === '1' || $form.hasClass('sft-variations-form--footwear');
     var readyLabel = $.trim($atc.first().text()) || t('addToCart', 'Add to cart');
     var selectLabel = isFootwear ? t('selectSize', 'Select a size') : t('selectOptions', 'Select options');
+    var lastState = '';
 
     function setState(state) {
-      var locked = state !== 'ready';
+      // 'unknown' (AJAX variations still loading) counts as clickable: the
+      // submit handler waits for WooCommerce in that case.
+      var locked = state === 'select' || state === 'unavailable';
       $atc.prop('disabled', locked).attr('aria-disabled', locked ? 'true' : 'false');
       $atc.toggleClass('sft-atc-needs-selection', state === 'select');
       $atc.toggleClass('sft-atc-unavailable', state === 'unavailable');
       $atc.text(state === 'select' ? selectLabel : (state === 'unavailable' ? t('unavailable', 'Unavailable') : readyLabel));
-      $form.trigger('sft_variation_gate', [state]);
+      if (state !== lastState) {
+        lastState = state;
+        $form.trigger('sft_variation_gate', [state]);
+      }
     }
 
-    function lock() {
-      $form.removeData('sftVariationReady');
-      setState('select');
+    function refresh() {
+      setState(resolveVariation($form).state);
     }
 
-    $form.on('reset_data hide_variation', lock);
+    $form.on('change', 'select[name^="attribute_"]', refresh);
+    $form.on('found_variation reset_data hide_variation woocommerce_update_variation_values', refresh);
     $form.on('show_variation', function (e, variation, purchasable) {
       var id = variation && variation.variation_id ? String(variation.variation_id) : '';
       if (purchasable && id && id === currentVariationId($form)) {
         $form.data('sftVariationReady', id);
-        setState('ready');
       } else {
         $form.removeData('sftVariationReady');
-        setState(id ? 'unavailable' : 'select');
       }
+      refresh();
     });
-
-    // Initial state: WooCommerce runs its first check_variations ~100ms after
-    // init and fires show_variation for a pre-selected default, if any.
-    if (!isVariationReady($form)) {
-      lock();
-    }
+    refresh();
   }
 
   function initVariationGates() {
@@ -306,6 +352,24 @@
   $(document.body).on('wc_variation_form', 'form.variations_form', function () {
     initVariationGate($(this));
   });
+
+  // Capture phase, before WooCommerce's own click handler: when the chosen
+  // size is resolvable, clear the transitional "disabled" classes WooCommerce
+  // keeps until show_variation, so it does not alert "Please select…" over a
+  // perfectly valid selection.
+  document.addEventListener('click', function (e) {
+    var btn = e.target && e.target.closest ? e.target.closest('form.variations_form .single_add_to_cart_button, form.variations_form .sft-pdp-buy-now') : null;
+    if (!btn) {
+      return;
+    }
+    var $form = $(btn).closest('form');
+    var r = resolveVariation($form);
+    if (r.state === 'ready' && r.variation && r.variation.variation_id) {
+      $(btn).removeClass('disabled wc-variation-selection-needed wc-variation-is-unavailable');
+      // Native posts (Buy now) read this hidden input.
+      $form.find('input[name="variation_id"]').val(String(r.variation.variation_id));
+    }
+  }, true);
 
   /* ------------------------------------------------------------------ */
   /* Stale fragment refresh guard                                        */
@@ -432,16 +496,6 @@
       });
   }
 
-  function allOptionsChosen($form) {
-    var ok = true;
-    $form.find('select[name^="attribute_"]').each(function () {
-      if (!$(this).val()) {
-        ok = false;
-      }
-    });
-    return ok;
-  }
-
   // Run fn once the variation gate reports "ready" (max ~2s).
   function waitForGate($form, fn) {
     var done = false;
@@ -489,13 +543,14 @@
     var isBuyNow = (submitter && $(submitter).hasClass('sft-pdp-buy-now')) || $form.data('sftBuyNow');
     var isVariable = $form.hasClass('variations_form');
 
-    if (isVariable && !isVariationReady($form)) {
-      // Never post a half-ready form. If the options are all chosen and
-      // WooCommerce is only finishing its show_variation step, retry once the
-      // gate opens; otherwise the size guard has already shown its message.
+    var resolved = isVariable ? resolveVariation($form) : null;
+    if (resolved && resolved.state !== 'ready') {
+      // Never post a half-ready form. 'unknown' = AJAX-loaded variations still
+      // resolving: retry once WooCommerce shows the variation. 'select' = the
+      // size guard has already shown its message.
       e.preventDefault();
       $form.removeData('sftBuyNow');
-      if (allOptionsChosen($form)) {
+      if (resolved.state === 'unknown' && allOptionsChosen($form)) {
         var $retryBtn = $(submitter || $form.find(isBuyNow ? '.sft-pdp-buy-now' : '.single_add_to_cart_button').first());
         waitForGate($form, function () {
           if (isBuyNow) {
@@ -503,7 +558,7 @@
           }
           nativeOrAjax($form, $retryBtn, isBuyNow);
         });
-      } else if (!$form.find('[data-sft-size-panel]').length) {
+      } else if (resolved.state === 'select' && !$form.find('[data-sft-size-panel]').length) {
         showError(t('selectOptionsFirst', 'Please choose the product options first.'));
       }
       return;
@@ -515,7 +570,7 @@
     }
 
     var $btn = $form.find('.single_add_to_cart_button').first();
-    if (!$btn.length || $btn.is('.disabled')) {
+    if (!$btn.length || (!isVariable && $btn.is('.disabled'))) {
       return; // not purchasable in this state — WooCommerce handles it
     }
 
@@ -526,7 +581,8 @@
 
     e.preventDefault();
 
-    var variationId = isVariable ? currentVariationId($form) : '';
+    // Snapshot of exactly what was picked at click time.
+    var variationId = (resolved && resolved.variation) ? String(resolved.variation.variation_id) : '';
     var data = {
       product_id: variationId || productId,
       quantity: $form.find('[name="quantity"]').val() || 1
