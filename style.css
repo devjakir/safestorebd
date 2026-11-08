@@ -2738,6 +2738,7 @@ input.button:hover {
   .sft-header-nav-list {
     display: flex !important;
     flex-direction: row !important;
+    flex-wrap: nowrap !important;
     list-style: none !important;
     padding: 0 !important;
     margin: 0 !important;
@@ -2754,6 +2755,7 @@ input.button:hover {
   .sft-header-nav-list>.menu-item>a {
     display: block !important;
     padding: 16px 13px !important;
+    white-space: nowrap !important; /* one line per label, never a 2-line item */
     font-size: 15px !important;
     font-weight: 500 !important;
     color: #333333 !important;
