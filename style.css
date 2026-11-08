@@ -1787,14 +1787,28 @@ a.sft-contact-item:focus-visible {
   visibility: hidden;
 }
 
-.sft-product-card__cart-btn.loading::after {
+/* Must out-rank WooCommerce's `.woocommerce a.button.loading::after`
+   (icon-font glyph pinned at top:.618em / right:1em), so every property it
+   sets is reset here. */
+.woocommerce ul.products li.product.sft-product-card .sft-product-card__footer a.button.sft-product-card__cart-btn.loading::after,
+.woocommerce-page ul.products li.product.sft-product-card .sft-product-card__footer a.button.sft-product-card__cart-btn.loading::after,
+.woocommerce .sft-product-card__footer a.button.sft-product-card__cart-btn.loading::after,
+.sft-product-card__footer a.button.sft-product-card__cart-btn.loading::after {
   content: "";
   position: absolute;
-  left: 50%;
   top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  box-sizing: border-box;
   width: 20px;
   height: 20px;
   margin: -10px 0 0 -10px;
+  padding: 0;
+  font-family: inherit;
+  font-size: 0;
+  line-height: 0;
+  vertical-align: middle;
   border: 2px solid rgba(255, 255, 255, 0.35);
   border-top-color: var(--ss-white);
   border-radius: 50%;
