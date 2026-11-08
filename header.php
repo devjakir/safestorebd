@@ -172,6 +172,35 @@ $sft_cart_total = $sft_wc_cart ? $sft_wc_cart->get_cart_total() : '';
             </a>
         </div>
     </nav>
+
+    <?php
+    // Mobile drawer extras (hidden >=1025px, where this panel is the category bar).
+    $sft_drawer_tel     = preg_replace( '/[^\d+]/', '', (string) apply_filters( 'safestore_minimal_phone_tel', '+8801811892291' ) );
+    $sft_drawer_gumboot = function_exists( 'safestore_category_url' )
+        ? safestore_category_url( array( 'safety-gumboot', 'gumboot', 'gumboots', 'gum-boot' ), add_query_arg( array( 's' => 'gumboot', 'post_type' => 'product' ), home_url( '/' ) ) )
+        : add_query_arg( array( 's' => 'gumboot', 'post_type' => 'product' ), home_url( '/' ) );
+    $sft_drawer_links   = array(
+        array( __( 'Safety Gumboot', 'safestore-minimal' ), $sft_drawer_gumboot ),
+        array( is_user_logged_in() ? __( 'My Account', 'safestore-minimal' ) : __( 'Login / Register', 'safestore-minimal' ), function_exists( 'safestore_mnav_account_url' ) ? safestore_mnav_account_url() : wp_login_url() ),
+        array( __( 'Track Order', 'safestore-minimal' ), home_url( '/track-order/' ) ),
+        array( __( 'Bulk Orders', 'safestore-minimal' ), home_url( '/bulk-orders/' ) ),
+        array( __( 'Contact', 'safestore-minimal' ), home_url( '/contact/' ) ),
+    );
+    ?>
+    <div class="sft-drawer-extra">
+        <ul class="sft-drawer-extra__list">
+            <?php foreach ( $sft_drawer_links as $sft_drawer_link ) : ?>
+                <li><a href="<?php echo esc_url( $sft_drawer_link[1] ); ?>"><?php echo esc_html( $sft_drawer_link[0] ); ?></a></li>
+            <?php endforeach; ?>
+        </ul>
+        <?php if ( '' !== $sft_drawer_tel ) : ?>
+            <a class="sft-drawer-extra__call" href="<?php echo esc_url( 'tel:' . $sft_drawer_tel ); ?>">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6.7 3.4 9.1 3l1.8 4.2-2 1.6a12.2 12.2 0 0 0 5.3 5.3l1.6-2 4.2 1.8-.4 2.4a2 2 0 0 1-2.2 1.7A15.6 15.6 0 0 1 5 6.2a2 2 0 0 1 1.7-2.8z"/></svg>
+                <?php esc_html_e( 'Call us', 'safestore-minimal' ); ?>
+                <span class="sft-drawer-extra__hours"><?php echo esc_html( function_exists( 'safestore_store_hours' ) ? safestore_store_hours() : '' ); ?></span>
+            </a>
+        <?php endif; ?>
+    </div>
   </div>
 </div>
 </header>

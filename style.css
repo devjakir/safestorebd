@@ -3128,3 +3128,63 @@ button.sft-header-action--account {
     display: none;
   }
 }
+
+/* Mobile drawer extras (header.php) ------------------------------------- */
+.sft-drawer-extra {
+  display: none;
+}
+
+@media screen and (max-width: 1024px) {
+  .sft-drawer-extra {
+    display: block;
+    margin-top: 18px;
+    padding-top: 10px;
+    border-top: 1px solid #eef0f3;
+  }
+
+  .sft-drawer-extra__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sft-drawer-extra__list a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f5f6f8;
+    color: var(--ss-ink);
+    font-size: 15px;
+    text-decoration: none;
+  }
+
+  .sft-drawer-extra__list a:active,
+  .sft-drawer-extra__list a:hover {
+    color: var(--ss-brand);
+  }
+
+  .sft-drawer-extra__call {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 4px 8px;
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: var(--ss-radius);
+    background: #16a34a;
+    color: #fff !important;
+    font-weight: 700;
+    font-size: var(--ss-text-base);
+    text-decoration: none;
+  }
+
+  .sft-drawer-extra__hours {
+    flex-basis: 100%;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    opacity: 0.9;
+  }
+}
