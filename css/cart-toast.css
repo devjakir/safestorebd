@@ -235,3 +235,29 @@
     transform: none;
   }
 }
+
+/* Error state (add-to-cart failed / timed out) ------------------------- */
+.sft-cart-toast__icon-err {
+  display: none;
+}
+
+.sft-cart-toast.is-error .sft-cart-toast__icon {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.sft-cart-toast.is-error .sft-cart-toast__icon-ok {
+  display: none;
+}
+
+.sft-cart-toast.is-error .sft-cart-toast__icon-err {
+  display: block;
+}
+
+.sft-cart-toast.is-error .sft-cart-toast__name {
+  -webkit-line-clamp: 4;
+}
+
+.sft-cart-toast__btn[hidden] {
+  display: none;
+}
