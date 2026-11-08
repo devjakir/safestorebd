@@ -228,10 +228,11 @@
 
 @media (min-width: 1025px) {
 
-  /* The wrapper now occupies the grid slot the form used to hold. */
+  /* The wrapper now occupies the grid slot the form used to hold. Capped by
+     that column, so it shrinks beside the wide logo instead of overlapping it. */
   .sft-header-searchwrap {
     justify-self: center;
-    width: min(600px, 96vw);
+    width: min(600px, 100%);
     min-width: 0;
   }
 
