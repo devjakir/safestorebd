@@ -43,9 +43,25 @@ get_header(); ?>
                     // so products stay above the fold.
                     $shop_page_id = function_exists('wc_get_page_id') ? (int) wc_get_page_id('shop') : 0;
                     $raw          = $shop_page_id > 0 ? get_post_field('post_content', $shop_page_id) : '';
-                    $description  = '' !== trim((string) $raw)
-                        ? '<p>' . esc_html(wp_trim_words(wp_strip_all_tags((string) $raw), 24, '…')) . '</p>'
-                        : '';
+                    // Whole sentences from the first paragraph (max ~240 chars) —
+                    // never a word count that stops mid-sentence ("Explore a…").
+                    $intro = '';
+                    if ('' !== trim((string) $raw)) {
+                        $raw_html = (string) $raw;
+                        if (preg_match('#<p[^>]*>(.*?)</p>#is', $raw_html, $m)) {
+                            $raw_html = $m[1];
+                        } else {
+                            $raw_html = preg_split('/\R\s*\R/', trim(wp_strip_all_tags($raw_html)))[0];
+                        }
+                        $intro = trim(preg_replace('/\s+/u', ' ', wp_strip_all_tags($raw_html)));
+                        $max   = 240;
+                        if (function_exists('mb_strlen') && mb_strlen($intro) > $max) {
+                            $cut  = mb_substr($intro, 0, $max);
+                            $stop = max((int) mb_strrpos($cut, '. '), (int) mb_strrpos($cut, '! '), (int) mb_strrpos($cut, '? '));
+                            $intro = $stop > 60 ? mb_substr($cut, 0, $stop + 1) : rtrim(mb_substr($cut, 0, (int) mb_strrpos($cut, ' ')), ' ,;:') . '…';
+                        }
+                    }
+                    $description = '' !== $intro ? '<p>' . esc_html($intro) . '</p>' : '';
                 }
                 if ($description) : ?>
                     <div class="sft-shop-desc is-clamped"><div class="sft-shop-desc__text" id="sft-shop-desc-text"><?php echo wp_kses_post($description); ?></div></div>
