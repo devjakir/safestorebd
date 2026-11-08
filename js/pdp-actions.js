@@ -128,15 +128,30 @@
     if (idx === -1) {
       list.push(PRODUCT_ID);
       writeList(WL_KEY, list);
+      emitWishlistChange(list);
       syncWishlist();
       announce(t('wishlistAdded', 'Added to wishlist'));
       return;
     }
     list.splice(idx, 1);
     writeList(WL_KEY, list);
+    emitWishlistChange(list);
     syncWishlist();
     announce(t('wishlistRemoved', 'Removed from wishlist'));
   }
+
+  // js/wishlist.js saves the list to the shopper's account when logged in.
+  function emitWishlistChange(list) {
+    try {
+      window.dispatchEvent(new CustomEvent('sft:wishlist-change', { detail: { ids: list.slice() } }));
+    } catch (err) {
+      /* ignore */
+    }
+  }
+  // …and tells us when the account copy changed the local list.
+  window.addEventListener('sft:wishlist-synced', function () {
+    syncWishlist();
+  });
 
   function toggleCompare() {
     if (!PRODUCT_ID) {

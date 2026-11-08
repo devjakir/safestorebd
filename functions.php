@@ -67,6 +67,9 @@ require get_template_directory() . '/inc/shipping-courier.php';
 // Cart page: qty − / + buttons, auto "Update cart", notes under the totals (woocommerce/cart/cart.php).
 require get_template_directory() . '/inc/cart-page.php';
 
+// Wishlist page + account sync (SFT_ENABLE_WISHLIST flag).
+require get_template_directory() . '/inc/wishlist.php';
+
 // Bulk / corporate landing (page-templates/template-bulk-landing.php): lead CPT, quote form handler, template-only assets.
 require get_template_directory() . '/inc/bulk-landing.php';
 

@@ -170,6 +170,7 @@ function safestore_minimal_pdp_action_bar() {
 				<span class="sft-pdp-actions__label"><?php esc_html_e( 'Compare', 'safestore-minimal' ); ?></span>
 			</button>
 
+			<?php if ( function_exists( 'safestore_wishlist_enabled' ) && safestore_wishlist_enabled() ) : ?>
 			<button
 				type="button"
 				class="sft-pdp-actions__link"
@@ -182,6 +183,7 @@ function safestore_minimal_pdp_action_bar() {
 				</svg>
 				<span class="sft-pdp-actions__label"><?php esc_html_e( 'Add to wishlist', 'safestore-minimal' ); ?></span>
 			</button>
+			<?php endif; ?>
 		</div>
 
 		<div class="sft-pdp-actions__right" data-sft-share>

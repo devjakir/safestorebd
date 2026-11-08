@@ -115,12 +115,14 @@ $sft_cart_total = $sft_wc_cart ? $sft_wc_cart->get_cart_total() : '';
                 </span>
             </a>
 
-            <a class="sft-header-action sft-header-action--wishlist" href="<?php echo esc_url(home_url('/wishlist/')); ?>">
+            <?php if (function_exists('safestore_wishlist_enabled') && safestore_wishlist_enabled()) : ?>
+            <a class="sft-header-action sft-header-action--wishlist" href="<?php echo esc_url(safestore_wishlist_page_url()); ?>">
                 <svg class="sft-header-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
                 <span class="sft-header-action-text">
                     <span class="sft-header-action-label sft-header-action-label--single">Wishlist</span>
                 </span>
             </a>
+            <?php endif; ?>
 
             <a class="sft-header-action sft-header-action--cart" href="<?php echo esc_url($cart_url); ?>">
                 <span class="sft-header-cart-icon">
