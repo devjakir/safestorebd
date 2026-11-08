@@ -449,16 +449,20 @@
     margin: 12px auto 18px;
   }
 
+  /* All slides share one grid cell: the hero is as tall as the tallest slide,
+     so it never changes height (CLS) when the carousel rotates. */
   .home .hero-slider-viewport {
     border-radius: var(--ss-radius);
+    display: grid;
     height: auto;
     min-height: 0;
     overflow: hidden;
   }
 
   .home .hero-slide {
-    position: absolute;
-    inset: 0;
+    position: relative;
+    inset: auto;
+    grid-area: 1 / 1;
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: auto auto;
@@ -589,8 +593,9 @@
     min-height: 0;
   }
 
+  /* Smaller product shot on phones so headline + CTA stay above the fold. */
   .home .hero-slide-stage {
-    width: min(72vw, 220px);
+    width: min(50vw, 180px);
   }
 
   .home .hero-slide-badge {
@@ -1235,6 +1240,11 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 18px 12px;
   }
+
+  /* Two columns: show 8 (four full rows). */
+  .home .sft-bestsellers ul.products > li:nth-child(n+9) {
+    display: none !important;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1260,38 +1270,15 @@
   }
 
   .home .sft-bestsellers__grid {
-    margin-inline: -8px;
-    padding-inline: 8px;
+    margin-inline: 0;
+    padding-inline: 0;
   }
 
+  /* Phones: 2-column grid (first 8 products) instead of a one-card carousel. */
   .home .sft-bestsellers ul.products,
   .home .sft-bestsellers .woocommerce ul.products {
-    display: flex !important;
-    grid-template-columns: none;
-    gap: 12px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    scroll-padding-inline: 0;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 2px;
-    /* Dots replace the native scrollbar as the position cue. */
-    scrollbar-width: none;
-  }
-
-  .home .sft-bestsellers ul.products::-webkit-scrollbar,
-  .home .sft-bestsellers .woocommerce ul.products::-webkit-scrollbar {
-    display: none;
-  }
-
-  .home .sft-bestsellers ul.products li.product,
-  .home .sft-bestsellers ul.products li.sft-product-card {
-    /* Peek the next card so the row reads as scrollable. */
-    flex: 0 0 82%;
-    width: 82% !important;
-    max-width: 82% !important;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 10px;
   }
 
   .home .sft-bestsellers .sft-slider-controls {

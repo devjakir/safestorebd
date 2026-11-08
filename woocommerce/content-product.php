@@ -77,7 +77,7 @@ $category_text = function_exists('safestore_get_product_category_label')
                     'class'    => 'sft-product-card__img',
                     'loading'  => 'lazy',
                     'decoding' => 'async',
-                    'sizes'    => '(max-width: 480px) 92vw, (max-width: 820px) 46vw, (max-width: 1080px) 30vw, 280px',
+                    'sizes'    => '(max-width: 820px) 48vw, (max-width: 1080px) 30vw, 280px', // 2-up on phones (shop + home)
                 )
             );
             ?>
