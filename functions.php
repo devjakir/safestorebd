@@ -73,6 +73,9 @@ require get_template_directory() . '/inc/wishlist.php';
 // Header account widget ("Hi, name" menu) as a cache-safe cart fragment.
 require get_template_directory() . '/inc/header-account.php';
 
+// Product page: mobile sticky Add to cart / Buy now bar.
+require get_template_directory() . '/inc/pdp-sticky-bar.php';
+
 // Bulk / corporate landing (page-templates/template-bulk-landing.php): lead CPT, quote form handler, template-only assets.
 require get_template_directory() . '/inc/bulk-landing.php';
 
