@@ -1,5 +1,14 @@
 /* Hero slider — full-width banner carousel above the promo grid */
 .home .hero-slider {
+  /* The H1 is pinned over the banner's top-left; slide content starts below
+     it. Breakpoints only retune these. */
+  --hero-h1-top: 26px;
+  --hero-h1-lh: 18px;
+  --hero-h1-lines: 1;
+  --hero-h1-gap: 20px;
+  --hero-content-top: calc(var(--hero-h1-top) + var(--hero-h1-lines) * var(--hero-h1-lh) + var(--hero-h1-gap));
+  position: relative;
+  isolation: isolate;
   width: var(--ss-container);
   margin: 18px auto 24px;
   padding: 0;
@@ -26,9 +35,12 @@
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
   align-items: stretch;
   background: linear-gradient(135deg, #0a0d14 0%, #11161f 60%, #161c27 100%);
+  /* Fade out first, then the next slide fades in (see .is-active): the two
+     never overlap, so the outgoing slide's text and buttons can't show
+     through the incoming one. visibility flips only once the fade-out ends. */
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.7s ease-in-out, visibility 0s linear 0.7s;
+  transition: opacity 0.35s ease-in, visibility 0s linear 0.35s;
   pointer-events: none;
   z-index: 1;
   overflow: hidden;
@@ -50,8 +62,16 @@
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-  transition: opacity 0.7s ease-in-out, visibility 0s linear 0s;
+  transition: opacity 0.35s ease-out 0.35s, visibility 0s linear 0s;
   z-index: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .home .hero-slide,
+  .home .hero-slide.is-active {
+    transition: none;
+  }
 }
 
 .home .hero-slide-media {
@@ -214,27 +234,43 @@
   font-weight: 500;
 }
 
+/* Starts right under the pinned H1 rather than centring, so the badge can
+   never ride up into it whatever the slide's content height. */
 .home .hero-slide-content {
   position: relative;
   z-index: 2;
-  padding: 30px 56px;
+  padding: var(--hero-content-top) 56px 30px;
   max-width: 620px;
   color: var(--ss-white);
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 18px;
 }
 
-/* Homepage H1 — one, always visible, above the carousel (slide titles are H2). */
+/* Homepage H1 — the page's only H1 (slide titles are H2). In the DOM it stays
+   outside the rotating slides, so it is never inside a visibility:hidden
+   slide; visually it is pinned over the banner's top-left and does not move
+   while the slides rotate. pointer-events: none so swipes and clicks land on
+   the slide beneath it. */
 .home .hero-site-h1 {
-  margin: 0 0 10px;
-  font-size: clamp(13px, 1.15vw, 15px);
-  font-weight: 700;
-  line-height: 1.35;
-  letter-spacing: 0.04em;
+  position: absolute;
+  top: var(--hero-h1-top);
+  left: 56px;
+  right: 56px;
+  z-index: 3;
+  margin: 0;
+  padding: 0 0 0 12px;
+  border-left: 3px solid #d4a017;
+  background: none;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: var(--hero-h1-lh);
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--ss-ink);
+  text-wrap: balance;
+  pointer-events: none;
 }
 
 .home .hero-slide-badge {
@@ -480,17 +516,21 @@
     height: auto;
   }
 
+  .home .hero-slider {
+    --hero-h1-top: 16px;
+    --hero-h1-gap: 8px;
+  }
+
   .home .hero-slide-content {
-    padding: 20px 16px 8px;
+    padding: var(--hero-content-top) 16px 8px;
     max-width: 100%;
     gap: 10px;
     justify-content: flex-start;
   }
 
   .home .hero-site-h1 {
-    margin-bottom: 8px;
-    font-size: 12px;
-    letter-spacing: 0.03em;
+    left: 20px;
+    right: 20px;
   }
 
   .home .hero-slide-title {
@@ -586,6 +626,26 @@
 
   .home .hero-slide-proof__item {
     font-size: var(--ss-text-xs);
+  }
+}
+
+/* Phones: smaller H1 that may wrap to two lines; the slide content reserves
+   the lines it actually takes, so the badge sits 8px below it. */
+@media (max-width: 768px) {
+
+  .home .hero-slider {
+    --hero-h1-lh: 15px;
+  }
+
+  .home .hero-site-h1 {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 520px) {
+
+  .home .hero-slider {
+    --hero-h1-lines: 2;
   }
 }
 
