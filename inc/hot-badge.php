@@ -93,3 +93,40 @@ function safestore_hot_badge_single() {
 	echo safestore_hot_badge_html( 'sft-hot-badge--pdp' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 add_action( 'woocommerce_before_single_product_summary', 'safestore_hot_badge_single', 9 );
+
+/**
+ * Discount badge text: "-27%" (the one format used on cards, the hero price
+ * card and the product page). Variable products use the cheapest variation's
+ * regular vs current price. Empty when not on sale or under 1%.
+ *
+ * @param WC_Product|null $product Product.
+ * @return string
+ */
+function safestore_discount_badge_text( $product ) {
+	if ( ! $product instanceof WC_Product || ! $product->is_on_sale() ) {
+		return '';
+	}
+	if ( $product->is_type( 'variable' ) ) {
+		$regular = (float) $product->get_variation_regular_price( 'min', true );
+		$current = (float) $product->get_variation_price( 'min', true );
+	} else {
+		$regular = (float) wc_get_price_to_display( $product, array( 'price' => $product->get_regular_price() ) );
+		$current = (float) wc_get_price_to_display( $product );
+	}
+	if ( $regular <= 0 || $current <= 0 || $current >= $regular ) {
+		return '';
+	}
+	$pct = (int) round( ( ( $regular - $current ) / $regular ) * 100 );
+	return $pct >= 1 ? '-' . $pct . '%' : '';
+}
+
+// Product page: WooCommerce's "Sale!" flash → the same "-27%" badge.
+add_filter(
+	'woocommerce_sale_flash',
+	static function ( $html, $post, $product ) {
+		$text = safestore_discount_badge_text( $product );
+		return '' === $text ? '' : '<span class="onsale">' . esc_html( $text ) . '</span>';
+	},
+	10,
+	3
+);
