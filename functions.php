@@ -76,6 +76,9 @@ require get_template_directory() . '/inc/header-account.php';
 // Product page: mobile sticky Add to cart / Buy now bar.
 require get_template_directory() . '/inc/pdp-sticky-bar.php';
 
+// Product content SEO hygiene: one H1 per product page, strip copy-paste residue.
+require get_template_directory() . '/inc/seo-content.php';
+
 // Bulk / corporate landing (page-templates/template-bulk-landing.php): lead CPT, quote form handler, template-only assets.
 require get_template_directory() . '/inc/bulk-landing.php';
 
