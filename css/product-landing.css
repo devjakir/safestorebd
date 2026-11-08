@@ -87,6 +87,41 @@
 .spl-sum__tot b { color: var(--lp-brand-dark); }
 .spl-cod { display: flex; align-items: center; gap: 10px; margin: 0; padding: 10px 12px; border: 2px solid var(--lp-wa); border-radius: var(--lp-r); background: #f0fdf4; color: var(--lp-ink); font-size: 15px; line-height: 1.45; }
 .spl-cod svg { flex-shrink: 0; color: var(--lp-wa); }
+
+/* Payment method: after the total, before the button. COD pre-selected; "Pay now" opens bKash / Nagad inline. */
+.spl-pay { min-width: 0; margin: 0 0 16px; padding: 0; border: 0; }
+.spl-pay legend { margin-bottom: 10px; padding: 0; }
+.spl-pay__opt { position: relative; display: flex; align-items: flex-start; gap: 10px; margin: 0 0 8px; padding: 12px 14px; border: 2px solid var(--lp-line); border-radius: var(--lp-r); background: #fff; cursor: pointer; transition: border-color .15s ease, background-color .15s ease; }
+.spl-pay__opt input { flex-shrink: 0; width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--lp-wa); }
+.spl-pay__opt.is-checked { border-color: var(--lp-wa); background: #f0fdf4; }
+.spl-pay__opt:focus-within { outline: 2px solid var(--lp-ink); outline-offset: 2px; }
+.spl-pay__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.spl-pay__name { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; color: var(--lp-ink); font-size: 16px; font-weight: 700; line-height: 1.35; }
+.spl-pay__name svg { color: var(--lp-wa); }
+.spl-pay__desc { color: var(--lp-muted); font-size: 14px; line-height: 1.45; }
+.spl-pay__wallet { display: inline-block; padding: 2px 8px; border-radius: 999px; color: #fff; font-size: 12px; font-weight: 800; letter-spacing: .02em; }
+.spl-pay__wallet--bkash { background: #e2136e; }
+.spl-pay__wallet--nagad { background: #ec1c24; }
+
+.spl-mfs { margin: 0 0 8px; padding: 14px; border: 2px solid var(--lp-wa); border-top: 0; border-radius: 0 0 var(--lp-r) var(--lp-r); background: #fff; }
+.spl-pay__opt.is-checked + .spl-mfs { margin-top: -10px; }
+.spl-mfs[hidden] { display: none; }
+.spl-mfs__lead { margin: 0 0 8px; color: var(--lp-ink); font-weight: 600; }
+.spl-mfs__nums { display: grid; gap: 8px; margin: 0 0 10px; padding: 0; list-style: none; }
+.spl-mfs__num { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--lp-line); border-radius: var(--lp-r); background: var(--lp-tint); }
+.spl-mfs__brand { min-width: 52px; color: var(--lp-ink); font-weight: 800; }
+.spl-mfs__num--bkash .spl-mfs__brand { color: #c2105d; }
+.spl-mfs__num--nagad .spl-mfs__brand { color: #c8161d; }
+.spl-mfs__digits { flex: 1; color: var(--lp-ink); font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+.spl-mfs__copy { min-height: 36px; padding: 6px 12px; border: 1px solid var(--lp-ink); border-radius: var(--lp-r); background: #fff; color: var(--lp-ink); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+.spl-mfs__amount { display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 10px; padding: 10px; border-radius: var(--lp-r); background: #fefce8; color: var(--lp-ink); }
+.spl-mfs__amount b { font-size: 20px; color: var(--lp-brand-dark); }
+.spl-mfs__steps { margin: 0 0 12px; padding-left: 20px; color: var(--lp-text); font-size: 14px; line-height: 1.55; }
+.spl-mfs__wallets { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0 0 10px; padding: 0; border: 0; }
+.spl-mfs__wallets legend { width: 100%; margin-bottom: 4px; color: var(--lp-ink); font-size: 14px; font-weight: 700; }
+.spl-mfs__wallets label { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; font-weight: 600; }
+.spl-mfs .lp-field { margin: 0 0 10px; }
+.spl-mfs__later { margin: 0; color: var(--lp-muted); font-size: 13px; line-height: 1.5; }
 .spl-cod b { color: var(--lp-wa); }
 .spl-order .lp-note + .lp-btn { margin-top: 12px; }
 .spl-order .lp-note a { text-decoration: underline; }

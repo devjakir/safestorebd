@@ -20,9 +20,10 @@
 			return BN.charAt(Number(d));
 		});
 	}
+	// Prices, sizes and the order form are in English digits (same as checkout / emails).
 	function taka(amount) {
 		var n = Math.round(Number(amount) || 0);
-		return '৳' + bn(n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+		return '৳' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 	}
 
 	/* ---- Tracking: Meta Pixel, GA4, dataLayer — each guarded ---------------- */
@@ -130,7 +131,12 @@
 	['price', 'line', 'sub', 'ship', 'zone', 'total'].forEach(function (k) { out[k] = $$('[data-spl-' + k + ']'); });
 	var waLinks = $$('[data-spl-wa]');
 	var options = cfg.options || {};
-	var ZONES = { inside: 'ঢাকা সিটি', suburb: 'ঢাকার আশপাশ', outside: 'ঢাকার বাইরে' };
+	var ZONES = { inside: 'Inside Dhaka City', suburb: 'Dhaka suburbs', outside: 'Outside Dhaka' };
+	var payOpts = $$('[data-spl-pay-opt]');
+	var mfsPanel = $('[data-spl-mfs]');
+	var mfsSender = $('[name="sft_mfs_sender"]');
+	var mfsTrx = $('[name="sft_mfs_trxid"]');
+	function payMethod() { var p = payOpts.filter(function (i) { return i.checked; })[0]; return p ? p.value : 'cod'; }
 	var busy = false;
 
 	function setText(list, text) { list.forEach(function (el) { el.textContent = text; }); }
@@ -150,10 +156,20 @@
 		return v;
 	}
 
-	/* Delivery charge with the courier's own rules (inc/shipping-courier.php); the order recomputes it. */
+	/* Delivery charge: the courier's own rules (inc/shipping-courier.php), or — while the courier is not
+	   live — what WooCommerce's zones charge for this product (cfg.flat, inc/product-landing-order.php).
+	   The order recomputes it either way. */
 	function delivery(qty) {
+		if (!district || !district.value) {
+			return null;
+		}
+		var f = cfg.flat;
+		if (!cfg.ship && f) {
+			var r = f[district.value];
+			return r ? { cost: Number(r[0]) + Math.max(0, qty - 1) * Number(r[1]), zone: district.value === 'BD-13' ? 'Dhaka' : 'Outside Dhaka' } : null;
+		}
 		var s = cfg.ship;
-		if (!s || !district || !district.value) {
+		if (!s) {
 			return null;
 		}
 		var lane = s.lanes[district.value] || 'outside';
@@ -187,14 +203,25 @@
 		}
 		// Hero: unit price of the size; sticky bar: line total.
 		out.price.forEach(function (el) { el.textContent = taka(el.getAttribute('data-spl-price') === 'total' ? sub : unit); });
-		setText(out.line, (o ? '· সাইজ ' + bn(o.label) + ' ' : '') + '× ' + bn(qty));
+		setText(out.line, (o ? '· Size ' + o.label + ' ' : '') + '× ' + qty);
 		setText(out.sub, taka(sub));
-		setText(out.ship, d ? taka(d.cost) : (cfg.ship ? 'জেলা বেছে নিন' : 'ফোনে জানানো হবে'));
+		setText(out.ship, d ? (d.cost > 0 ? taka(d.cost) : 'Free') : ((cfg.ship || cfg.flat) ? 'Select district' : 'Added at checkout'));
 		setText(out.zone, d ? '(' + d.zone + ')' : '');
 		setText(out.total, taka(sub + (d ? d.cost : 0)));
+		var mfs = payMethod() === 'mfs';
 		if (submitLabel && !busy) {
-			submitLabel.textContent = 'অর্ডার কনফার্ম করুন' + (d ? ' — ' + taka(sub + d.cost) : '');
+			submitLabel.textContent = (mfs ? 'Place order' : 'Confirm order') + (d ? ' — ' + taka(sub + d.cost) : '');
 		}
+		if (mfsPanel) {
+			mfsPanel.hidden = !mfs;
+		}
+		$$('[data-spl-note]').forEach(function (n) { n.hidden = n.getAttribute('data-spl-note') !== (mfs ? 'mfs' : 'cod'); });
+		payOpts.forEach(function (i) {
+			var card = i.closest('.spl-pay__opt');
+			if (card) {
+				card.classList.toggle('is-checked', i.checked);
+			}
+		});
 		if (cfg.waBase && cfg.waText) {
 			var href = cfg.waBase + '?text=' + encodeURIComponent(cfg.waText.replace('{size}', o ? o.label : '').replace(/পরিমাণ: [০-৯\d]+/, 'পরিমাণ: ' + bn(qty)));
 			waLinks.forEach(function (a) { a.setAttribute('href', href); });
@@ -207,7 +234,7 @@
 		}
 		sizesBox.classList.add('is-error');
 		if (hint) {
-			hint.textContent = 'অনুগ্রহ করে আগে সাইজ নির্বাচন করুন।';
+			hint.textContent = 'Please select a size first.';
 		}
 		scrollTo(sizesBox);
 		var first = sizes.filter(function (i) { return !i.disabled; })[0];
@@ -224,7 +251,7 @@
 		var list = (cfg.thanas || {})[district.value] || [];
 		var keep = thana.value;
 		thana.innerHTML = '';
-		thana.add(new Option(list.length ? 'থানা বেছে নিন' : 'আগে জেলা বেছে নিন', ''));
+		thana.add(new Option(list.length ? 'Select thana / upazila' : 'Select district first', ''));
 		list.forEach(function (t) { thana.add(new Option(t, t, false, t === keep)); });
 		thana.disabled = !list.length;
 	}
@@ -248,6 +275,28 @@
 		var ok = v !== '' && !(el.name === 'billing_phone' && !/^01[3-9]\d{8}$/.test(digits(v)));
 		setError(el, ok ? '' : el.getAttribute('data-err'));
 		return ok;
+	}
+
+	/* Pay now: the TrxID is optional (pay within 24 h), but once given it must look right and come with the sender number. */
+	function checkMfs() {
+		if (payMethod() !== 'mfs' || !mfsTrx) {
+			return [];
+		}
+		var bad = [];
+		var trx = mfsTrx.value.replace(/[^A-Za-z0-9]/g, '');
+		var trxOk = trx === '' || /^[A-Za-z0-9]{8,12}$/.test(trx);
+		setError(mfsTrx, trxOk ? '' : mfsTrx.getAttribute('data-err'));
+		if (!trxOk) {
+			bad.push(mfsTrx);
+		}
+		if (mfsSender) {
+			var senderOk = trx === '' || /^01[3-9]\d{8}$/.test(digits(mfsSender.value));
+			setError(mfsSender, senderOk ? '' : mfsSender.getAttribute('data-err'));
+			if (!senderOk) {
+				bad.push(mfsSender);
+			}
+		}
+		return bad;
 	}
 
 	function showAlert(msg) {
@@ -275,7 +324,7 @@
 			}
 		});
 		if (on && submitLabel) {
-			submitLabel.textContent = 'অর্ডার হচ্ছে…';
+			submitLabel.textContent = 'Placing order…';
 		}
 		if (!on) {
 			refresh();
@@ -296,7 +345,7 @@
 				rest.push(li.textContent.trim());
 			}
 		});
-		showAlert(rest.length ? rest.join(' ') : 'কিছু তথ্য ঠিক করুন, তারপর আবার চাপুন।');
+		showAlert(rest.length ? rest.join(' ') : 'Please fix the highlighted details and try again.');
 		var bad = $('[aria-invalid="true"]', form);
 		if (bad) {
 			bad.focus();
@@ -306,7 +355,7 @@
 	}
 
 	if (form) {
-		form.noValidate = true; // Bangla messages below instead of the browser's English bubbles
+		form.noValidate = true; // our inline messages instead of the browser's bubbles
 		var token = $('[data-spl-token]');
 		if (token) {
 			token.value = (window.crypto && window.crypto.randomUUID) ? window.crypto.randomUUID().replace(/-/g, '') : String(Date.now()) + Math.random().toString(36).slice(2);
@@ -333,6 +382,33 @@
 		if (thana) {
 			thana.addEventListener('change', refresh);
 		}
+		var payTracked = false;
+		payOpts.forEach(function (input) {
+			input.addEventListener('change', function () {
+				refresh();
+				if (input.value === 'mfs' && input.checked && !payTracked) {
+					payTracked = true;
+					track('AddPaymentInfo', 'add_payment_info', productParams({ value: unitPrice() * clampQty(), payment_type: 'bkash_nagad' }));
+				}
+			});
+		});
+		[mfsTrx, mfsSender].forEach(function (el) {
+			if (el) {
+				el.addEventListener('input', function () { if (el.getAttribute('aria-invalid') === 'true') { checkMfs(); } });
+			}
+		});
+		$$('[data-spl-copy]').forEach(function (btn) {
+			btn.addEventListener('click', function () {
+				var value = btn.getAttribute('data-spl-copy') || '';
+				var done = function () {
+					btn.textContent = 'Copied ✓';
+					setTimeout(function () { btn.textContent = 'Copy'; }, 1800);
+				};
+				if (navigator.clipboard && navigator.clipboard.writeText) {
+					navigator.clipboard.writeText(value).then(done, function () {});
+				}
+			});
+		});
 		fields.forEach(function (el) {
 			// Check a field once the visitor leaves it; after an error, re-check while typing.
 			el.addEventListener('blur', function () { if (el.value.trim() !== '') { check(el); } });
@@ -357,9 +433,9 @@
 				sizeError();
 				return;
 			}
-			var bad = fields.filter(function (el) { return !check(el); });
+			var bad = fields.filter(function (el) { return !check(el); }).concat(checkMfs());
 			if (bad.length) {
-				showAlert(bn(bad.length) + 'টি তথ্য ঠিক করুন, তারপর আবার চাপুন।');
+				showAlert(bad.length === 1 ? 'Please fix 1 detail, then try again.' : 'Please fix ' + bad.length + ' details, then try again.');
 				bad[0].focus();
 				return;
 			}
@@ -373,7 +449,7 @@
 				.then(function (res) {
 					if (res && res.result === 'success' && res.redirect) {
 						if (submitLabel) {
-							submitLabel.textContent = 'অর্ডার হয়েছে ✓';
+							submitLabel.textContent = 'Order placed ✓';
 						}
 						window.location.href = res.redirect;
 						return;
@@ -387,7 +463,7 @@
 				})
 				.catch(function () {
 					setBusy(false);
-					showAlert('দুঃখিত, অর্ডারটি পাঠানো যায়নি। ইন্টারনেট সংযোগ দেখে আবার চাপুন, অথবা WhatsApp-এ অর্ডার করুন।');
+					showAlert('Sorry, the order could not be sent. Check your internet connection and try again, or order on WhatsApp.');
 					if (alertBox) {
 						scrollTo(alertBox);
 					}

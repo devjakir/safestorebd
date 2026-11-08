@@ -107,7 +107,13 @@ if ( $spl_product ) {
 		'options'  => array(),
 		'thanas'   => function_exists( 'safestorebd_bd_thanas' ) ? safestorebd_bd_thanas() : array(),
 		'ship'     => safestore_pl_ship_data( $spl_product ),
+		'flat'     => null,
+		'pay'      => array( 'mfs' => safestore_pl_mfs_available() ),
 	);
+	// Steadfast courier not live → the charge WooCommerce's own zones (Flat rate…) apply.
+	if ( ! $spl_js['ship'] ) {
+		$spl_js['flat'] = safestore_pl_wc_ship_data( $spl_product );
+	}
 	if ( $spl_has_options ) {
 		foreach ( $spl_options['items'] as $spl_o ) {
 			$spl_js['options'][ $spl_o['id'] ] = array( 'label' => $spl_o['label'], 'price' => $spl_o['price'], 'max' => $spl_o['max'] );
@@ -204,7 +210,7 @@ $spl_steps = array(
 					<?php if ( '' !== $spl['badge'] ) : ?>
 						<span class="spl-badge"><?php echo esc_html( $spl['badge'] ); ?></span>
 					<?php elseif ( $spl_price['was'] > 0 ) : ?>
-						<span class="spl-badge"><?php echo esc_html( safestore_pl_taka( $spl_price['was'] - $spl_price['now'] ) . ' ছাড়' ); ?></span>
+						<span class="spl-badge"><?php echo esc_html( '-' . (int) round( ( $spl_price['was'] - $spl_price['now'] ) / $spl_price['was'] * 100 ) . '%' ); ?></span>
 					<?php endif; ?>
 				</figure>
 				<?php if ( count( $spl_gallery ) > 1 ) : ?>
@@ -241,7 +247,7 @@ $spl_steps = array(
 				<?php endif; ?>
 
 				<p class="spl-price">
-					<?php if ( $spl_price['from'] ) : ?><span class="spl-price__from">শুরু</span><?php endif; ?>
+					<?php if ( $spl_price['from'] ) : ?><span class="spl-price__from">From</span><?php endif; ?>
 					<strong data-spl-price><?php echo esc_html( safestore_pl_taka( $spl_price['now'] ) ); ?></strong>
 					<?php if ( $spl_price['was'] > 0 ) : ?>
 						<s><?php echo esc_html( safestore_pl_taka( $spl_price['was'] ) ); ?></s>
@@ -286,34 +292,34 @@ $spl_steps = array(
 
 						<?php if ( $spl_has_options ) : ?>
 							<fieldset class="spl-sizes" data-spl-sizes>
-								<legend><?php echo esc_html( safestore_pl_bn_words( $spl_options['name'] ) ); ?> নির্বাচন করুন <span class="lp-req" aria-hidden="true">*</span></legend>
+								<legend><?php echo esc_html( 'Select ' . strtolower( (string) $spl_options['name'] ) ); ?> <span class="lp-req" aria-hidden="true">*</span></legend>
 								<div class="spl-sizes__grid">
 									<?php foreach ( $spl_options['items'] as $spl_o ) : ?>
 										<label class="spl-size<?php echo $spl_o['in_stock'] ? '' : ' is-out'; ?>">
 											<input type="radio" name="spl_add" value="<?php echo (int) $spl_o['id']; ?>" required<?php echo $spl_o['in_stock'] ? '' : ' disabled'; ?> data-spl-size>
-											<span><?php echo esc_html( safestore_pl_bn( $spl_o['label'] ) ); ?></span>
-											<?php if ( ! $spl_o['in_stock'] ) : ?><small>স্টক নেই</small><?php endif; ?>
+											<span><?php echo esc_html( $spl_o['label'] ); ?></span>
+											<?php if ( ! $spl_o['in_stock'] ) : ?><small>Sold out</small><?php endif; ?>
 										</label>
 									<?php endforeach; ?>
 								</div>
-								<p class="spl-sizes__hint" data-spl-size-hint>নিয়মিত যে সাইজের জুতা পরেন, সেটিই বেছে নিন। নিশ্চিত না হলে WhatsApp-এ জিজ্ঞেস করুন — ডেলিভারির ৭ দিনের মধ্যে সাইজ বদলানো যায়।</p>
+								<p class="spl-sizes__hint" data-spl-size-hint>Pick the size you normally wear. Not sure? Ask us on WhatsApp — you can exchange the size within 7 days of delivery.</p>
 							</fieldset>
 						<?php else : ?>
 							<input type="hidden" name="spl_add" value="<?php echo (int) $spl_product->get_id(); ?>">
 						<?php endif; ?>
 
 						<div class="spl-qty">
-							<label for="spl-qty">পরিমাণ</label>
+							<label for="spl-qty">Quantity</label>
 							<div class="spl-qty__ctl">
-								<button type="button" data-spl-qty="-1" aria-label="কমান">−</button>
+								<button type="button" data-spl-qty="-1" aria-label="Decrease quantity">−</button>
 								<input id="spl-qty" name="qty" type="number" inputmode="numeric" min="1" max="<?php echo (int) ( ! $spl_has_options && $spl_product->get_max_purchase_quantity() > 0 ? min( SAFESTORE_PL_MAX_QTY, $spl_product->get_max_purchase_quantity() ) : SAFESTORE_PL_MAX_QTY ); ?>" step="1" value="1" data-spl-qty-input>
-								<button type="button" data-spl-qty="1" aria-label="বাড়ান">+</button>
+								<button type="button" data-spl-qty="1" aria-label="Increase quantity">+</button>
 							</div>
 						</div>
 
 						<div class="spl-ship">
-							<p class="spl-ship__title">ডেলিভারির তথ্য দিন</p>
-							<p class="spl-ship__sub">অর্ডার নিশ্চিত করতে এই নম্বরে আমরা ফোন করব</p>
+							<p class="spl-ship__title">Delivery details</p>
+							<p class="spl-ship__sub">We will call this number to confirm your order</p>
 							<p class="lp-alert" role="alert" tabindex="-1" data-spl-alert hidden></p>
 							<div class="spl-ship__grid">
 								<?php
@@ -340,7 +346,7 @@ $spl_steps = array(
 										<label for="<?php echo esc_attr( $spl_id ); ?>"><?php echo esc_html( $spl_f['label'] ); ?> <span class="lp-req" aria-hidden="true">*</span></label>
 										<?php if ( 'select' === $spl_f['type'] ) : ?>
 											<select <?php echo $spl_att; // phpcs:ignore WordPress.Security.EscapeOutput -- escaped above ?>>
-												<option value=""><?php echo esc_html( 'billing_city' === $spl_k && $spl_opts ? 'থানা বেছে নিন' : $spl_f['ph'] ); ?></option>
+												<option value=""><?php echo esc_html( 'billing_city' === $spl_k && $spl_opts ? 'Select thana / upazila' : $spl_f['ph'] ); ?></option>
 												<?php foreach ( $spl_opts as $spl_v => $spl_l ) : ?>
 													<option value="<?php echo esc_attr( $spl_v ); ?>"<?php selected( $spl_vals[ $spl_k ], (string) $spl_v ); ?>><?php echo esc_html( $spl_l ); ?></option>
 												<?php endforeach; ?>
@@ -356,12 +362,74 @@ $spl_steps = array(
 							</div>
 
 							<div class="spl-sum" aria-live="polite">
-								<p><span><?php echo esc_html( $spl_name_bn ); ?> <small data-spl-line></small></span><b data-spl-sub><?php echo esc_html( safestore_pl_taka( $spl_price['now'] ) ); ?></b></p>
-								<p class="spl-sum__ship"><span>ডেলিভারি চার্জ <small data-spl-zone></small></span><b data-spl-ship><?php echo $spl_js['ship'] ? 'জেলা বেছে নিন' : 'ফোনে জানানো হবে'; ?></b></p>
-								<p class="spl-sum__tot"><span>মোট</span><b data-spl-total><?php echo esc_html( safestore_pl_taka( $spl_price['now'] ) ); ?></b></p>
+								<p><span><?php echo esc_html( $spl_name ); ?> <small data-spl-line></small></span><b data-spl-sub><?php echo esc_html( safestore_pl_taka( $spl_price['now'] ) ); ?></b></p>
+								<p class="spl-sum__ship"><span>Delivery charge <small data-spl-zone></small></span><b data-spl-ship><?php echo ( $spl_js['ship'] || $spl_js['flat'] ) ? 'Select district' : 'Added at checkout'; ?></b></p>
+								<p class="spl-sum__tot"><span>Total</span><b data-spl-total><?php echo esc_html( safestore_pl_taka( $spl_price['now'] ) ); ?></b></p>
 							</div>
-							<p class="spl-cod"><?php echo safestore_pl_icon( 'card', 22 ); // phpcs:ignore WordPress.Security.EscapeOutput ?><span><b>ক্যাশ অন ডেলিভারি</b> — পণ্য হাতে পেয়ে টাকা দিন</span></p>
 						</div>
+
+						<?php
+						// Payment: right after the total, right before the button — the buyer
+						// already knows what they pay and only picks how. Cash on Delivery is
+						// pre-selected (most buyers); "Pay now" opens bKash / Nagad inline.
+						$spl_mfs = $spl_js['pay']['mfs'] && function_exists( 'safestore_mfs_accounts' );
+						?>
+						<fieldset class="spl-pay" data-spl-pay>
+							<legend class="spl-ship__title">Payment method</legend>
+							<label class="spl-pay__opt">
+								<input type="radio" name="spl_payment" value="cod" checked data-spl-pay-opt>
+								<span class="spl-pay__body">
+									<span class="spl-pay__name"><?php echo safestore_pl_icon( 'card', 20 ); // phpcs:ignore WordPress.Security.EscapeOutput ?> Cash on Delivery</span>
+									<span class="spl-pay__desc">Pay when you receive it — check the product first.</span>
+								</span>
+							</label>
+							<?php if ( $spl_mfs ) : ?>
+								<label class="spl-pay__opt">
+									<input type="radio" name="spl_payment" value="mfs" data-spl-pay-opt>
+									<span class="spl-pay__body">
+										<span class="spl-pay__name"><span class="spl-pay__wallet spl-pay__wallet--bkash">bKash</span><span class="spl-pay__wallet spl-pay__wallet--nagad">Nagad</span> Pay now</span>
+										<span class="spl-pay__desc">Pay online now — nothing to pay at delivery.</span>
+									</span>
+								</label>
+								<div class="spl-mfs" data-spl-mfs hidden>
+									<p class="spl-mfs__lead"><?php echo esc_html( function_exists( 'safestore_mfs_copy' ) ? safestore_mfs_copy( 'lead' ) : 'Send Money to one of our numbers:' ); ?></p>
+									<ul class="spl-mfs__nums">
+										<?php foreach ( safestore_mfs_accounts() as $spl_acc ) : ?>
+											<li class="spl-mfs__num spl-mfs__num--<?php echo esc_attr( $spl_acc['key'] ); ?>">
+												<span class="spl-mfs__brand"><?php echo esc_html( $spl_acc['label'] ); ?></span>
+												<span class="spl-mfs__digits"><?php echo esc_html( safestore_mfs_format_number( $spl_acc['number'] ) ); ?></span>
+												<button type="button" class="spl-mfs__copy" data-spl-copy="<?php echo esc_attr( $spl_acc['number'] ); ?>" aria-label="<?php echo esc_attr( 'Copy ' . $spl_acc['label'] . ' number' ); ?>">Copy</button>
+											</li>
+										<?php endforeach; ?>
+									</ul>
+									<p class="spl-mfs__amount">Amount to send <b data-spl-total><?php echo esc_html( safestore_pl_taka( $spl_price['now'] ) ); ?></b></p>
+									<ol class="spl-mfs__steps">
+										<li><?php echo wp_kses( function_exists( 'safestore_mfs_copy' ) ? safestore_mfs_copy( 'step1' ) : 'Open the bKash or Nagad app and tap <strong>Send Money</strong>.', array( 'strong' => array() ) ); ?></li>
+										<li>Send exactly the amount above to one of the numbers.</li>
+										<li>Enter the Transaction ID (TrxID) from your SMS below.</li>
+									</ol>
+									<div class="spl-mfs__fields">
+										<fieldset class="spl-mfs__wallets">
+											<legend>Paid with</legend>
+											<?php foreach ( safestore_mfs_wallet_labels() as $spl_wk => $spl_wl ) : ?>
+												<label><input type="radio" name="sft_mfs_wallet" value="<?php echo esc_attr( $spl_wk ); ?>"<?php checked( 'bkash', $spl_wk ); ?>> <?php echo esc_html( $spl_wl ); ?></label>
+											<?php endforeach; ?>
+										</fieldset>
+										<div class="lp-field">
+											<label for="spl-mfs-sender">Your bKash / Nagad number</label>
+											<input id="spl-mfs-sender" name="sft_mfs_sender" type="tel" inputmode="tel" maxlength="16" placeholder="01XXXXXXXXX" autocomplete="tel" aria-describedby="spl-mfs-sender-err" data-err="Enter the 11-digit number you sent the money from">
+											<p class="lp-err" id="spl-mfs-sender-err" hidden></p>
+										</div>
+										<div class="lp-field">
+											<label for="spl-mfs-trxid">Transaction ID (TrxID)</label>
+											<input id="spl-mfs-trxid" name="sft_mfs_trxid" type="text" maxlength="16" placeholder="e.g. 9BG7X2K4LM" autocapitalize="characters" autocomplete="off" spellcheck="false" aria-describedby="spl-mfs-trxid-err" data-err="The TrxID is 8–12 letters and numbers from your SMS">
+											<p class="lp-err" id="spl-mfs-trxid-err" hidden></p>
+										</div>
+									</div>
+									<p class="spl-mfs__later">Not paid yet? Leave the TrxID empty and place the order — pay within <?php echo (int) ( function_exists( 'safestore_mfs_pay_hours' ) ? safestore_mfs_pay_hours() : 24 ); ?> hours. The next page shows the numbers again.</p>
+								</div>
+							<?php endif; ?>
+						</fieldset>
 
 						<p class="lp-hp" aria-hidden="true"><label>Website <input type="text" name="spl_website" tabindex="-1" autocomplete="off"></label></p>
 						<input type="hidden" name="spl_token" value="" data-spl-token>
@@ -369,12 +437,12 @@ $spl_steps = array(
 
 						<button class="lp-btn lp-btn--amber lp-btn--lg lp-btn--block spl-cta" type="submit" data-spl-submit>
 							<span class="lp-spin" aria-hidden="true"></span>
-							<span data-spl-submit-label>অর্ডার কনফার্ম করুন</span>
+							<span data-spl-submit-label>Confirm order</span>
 						</button>
-						<p class="lp-note">অর্ডারের পর আমরা ফোন করে নিশ্চিত করব · পণ্য দেখে টাকা দিন<?php if ( function_exists( 'wc_terms_and_conditions_checkbox_enabled' ) && wc_terms_and_conditions_checkbox_enabled() ) : ?><br>অর্ডার করে আপনি আমাদের <a href="<?php echo esc_url( home_url( '/terms-of-service/' ) ); ?>">শর্তাবলি</a> মেনে নিচ্ছেন<?php endif; ?></p>
+						<p class="lp-note"><span data-spl-note="cod">We'll call you to confirm the order · Check the product, then pay</span><span data-spl-note="mfs" hidden>We'll verify your payment and call you to confirm the order</span><?php if ( function_exists( 'wc_terms_and_conditions_checkbox_enabled' ) && wc_terms_and_conditions_checkbox_enabled() ) : ?><br>By placing the order you agree to our <a href="<?php echo esc_url( home_url( '/terms-of-service/' ) ); ?>">Terms</a><?php endif; ?></p>
 						<a class="lp-btn lp-btn--outline lp-btn--block" href="<?php echo esc_url( $spl_wa ); ?>" target="_blank" rel="noopener noreferrer" data-spl-loc="hero" data-spl-wa>
 							<?php echo $spl_wa_icon; // phpcs:ignore WordPress.Security.EscapeOutput ?>
-							WhatsApp-এ অর্ডার করুন
+							Order on WhatsApp
 						</a>
 					</form>
 				<?php endif; ?>
@@ -435,7 +503,7 @@ $spl_steps = array(
 							<span class="spl-card__name"><?php echo esc_html( safestore_pl_bn_words( $spl_m['name'] ) ); ?></span>
 							<span class="spl-card__price">
 								<?php if ( $spl_m['price']['now'] > 0 ) : ?>
-									<?php echo esc_html( ( $spl_m['price']['from'] ? 'শুরু ' : '' ) . safestore_pl_taka( $spl_m['price']['now'] ) ); ?>
+									<?php echo esc_html( ( $spl_m['price']['from'] ? 'From ' : '' ) . safestore_pl_taka( $spl_m['price']['now'] ) ); ?>
 									<?php if ( $spl_m['price']['was'] > 0 ) : ?><s><?php echo esc_html( safestore_pl_taka( $spl_m['price']['was'] ) ); ?></s><?php endif; ?>
 								<?php else : ?>
 									দাম দেখুন
@@ -546,7 +614,7 @@ $spl_steps = array(
 	<!-- 8. FINAL CTA ========================================================== -->
 	<section class="lp-final" aria-labelledby="spl-final-title">
 		<div class="lp-wrap">
-			<h2 class="lp-h2" id="spl-final-title"><?php echo esc_html( $spl_name_bn . ' — ' . ( $spl_price['from'] ? 'শুরু ' : '' ) . safestore_pl_taka( $spl_price['now'] ) ); ?></h2>
+			<h2 class="lp-h2" id="spl-final-title"><?php echo esc_html( $spl_name_bn . ' — ' . ( $spl_price['from'] ? 'From ' : '' ) . safestore_pl_taka( $spl_price['now'] ) ); ?></h2>
 			<p>ক্যাশ অন ডেলিভারি · সারা বাংলাদেশে · ৭ দিনের রিটার্ন</p>
 			<div class="lp-cta-row">
 				<?php if ( $spl_can_buy ) : ?>

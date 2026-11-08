@@ -47,7 +47,7 @@ function safestore_pl_defaults() {
 				'vaultex-safety-helmet',
 			),
 			// Used only when the page sells the default product and has no copy of its own.
-			'headline' => 'Haojia সেফটি শু — স্টিল টো, অ্যান্টি-স্লিপ, সারাদিন আরাম',
+			'headline' => 'Haojia Safety Shoes — Steel Toe, Anti-Slip, All-Day Comfort',
 			'lede'     => 'কনস্ট্রাকশন, ফ্যাক্টরি ও ওয়্যারহাউসের দৈনন্দিন কাজের জন্য। সাইজ বেছে নিচের ফর্মে ঠিকানা দিন — সারা বাংলাদেশে ক্যাশ অন ডেলিভারি।',
 			'bullets'  => array(
 				'স্টিল টো ক্যাপ — ভারী বস্তু পড়লেও পায়ের আঙুল সুরক্ষিত থাকে',
@@ -97,11 +97,8 @@ function safestore_pl_bn( $value ) {
 	return function_exists( 'safestore_bl_bn' ) ? safestore_bl_bn( $value ) : (string) $value;
 }
 
-/** "৳২,৫০০" or '' */
+/** "৳2,500" or '' — prices on the landing page are in English digits (same as checkout and the order email). */
 function safestore_pl_taka( $amount ) {
-	if ( function_exists( 'safestore_bl_taka' ) ) {
-		return safestore_bl_taka( $amount );
-	}
 	if ( '' === $amount || null === $amount || ! is_numeric( $amount ) ) {
 		return '';
 	}
@@ -504,10 +501,10 @@ add_action(
 	5
 );
 
-/** WooCommerce's English stock notices → Bangla (the page is Bangla). */
+/** WooCommerce's stock notices → one short, actionable line for the order form (English, like the form). */
 function safestore_pl_bn_notice( $text ) {
 	return preg_match( '/out of stock|not enough|only \d+ (?:left|available)|cannot add/i', wp_strip_all_tags( (string) $text ) )
-		? 'নির্বাচিত সাইজটি বর্তমানে স্টকে নেই অথবা পর্যাপ্ত পরিমাণে নেই। অন্য সাইজ বেছে নিন, অথবা WhatsApp-এ যোগাযোগ করুন।'
+		? 'The selected size is out of stock or not enough are left. Pick another size or message us on WhatsApp.'
 		: $text;
 }
 
@@ -534,10 +531,10 @@ function safestore_pl_error_text( $code = null ) {
 		}
 	}
 	$map = array(
-		'size'    => 'অনুগ্রহ করে আগে সাইজ নির্বাচন করুন।',
-		'busy'    => 'এই সংযোগ থেকে অনেকগুলো অর্ডার এসেছে। একটু পরে চেষ্টা করুন, অথবা WhatsApp-এ অর্ডার করুন।',
-		'product' => 'দুঃখিত, পণ্যটি এই মুহূর্তে অর্ডার করা যাচ্ছে না। বিস্তারিত জানতে WhatsApp-এ যোগাযোগ করুন।',
-		'cart'    => 'দুঃখিত, অর্ডারটি সম্পন্ন করা যায়নি। আবার চেষ্টা করুন অথবা WhatsApp-এ যোগাযোগ করুন।',
+		'size'    => 'Please select a size first.',
+		'busy'    => 'Too many orders from this connection. Please try again in a little while, or order on WhatsApp.',
+		'product' => 'Sorry, this product cannot be ordered right now. Message us on WhatsApp for details.',
+		'cart'    => 'Sorry, the order could not be placed. Please try again or message us on WhatsApp.',
 	);
 	return isset( $map[ $code ] ) ? $map[ $code ] : $map['cart'];
 }
@@ -569,7 +566,7 @@ add_action(
 function safestore_pl_fields() {
 	return array(
 		'_spl_product'  => array( 'text', __( 'Main product', 'safestore-minimal' ), __( 'Product URL, slug or ID. Empty = the default product.', 'safestore-minimal' ) ),
-		'_spl_headline' => array( 'text', __( 'Headline (H1)', 'safestore-minimal' ), __( 'Bangla. Empty = product name (default product has its own copy).', 'safestore-minimal' ) ),
+		'_spl_headline' => array( 'text', __( 'Headline (H1)', 'safestore-minimal' ), __( 'Empty = product name (the default product has its own copy).', 'safestore-minimal' ) ),
 		'_spl_lede'     => array( 'textarea', __( 'Sub-headline', 'safestore-minimal' ), __( 'One or two short sentences under the headline.', 'safestore-minimal' ) ),
 		'_spl_bullets'  => array( 'textarea', __( 'Benefit bullets', 'safestore-minimal' ), __( 'One per line, 3–6 lines. Empty = bullet points of the product short description.', 'safestore-minimal' ) ),
 		'_spl_badge'    => array( 'text', __( 'Badge on the photo', 'safestore-minimal' ), __( 'Optional, e.g. "ক্যাম্পেইন অফার" or "স্টক সীমিত". Leave empty for none.', 'safestore-minimal' ) ),
