@@ -70,6 +70,9 @@ require get_template_directory() . '/inc/cart-page.php';
 // Wishlist page + account sync (SFT_ENABLE_WISHLIST flag).
 require get_template_directory() . '/inc/wishlist.php';
 
+// Header account widget ("Hi, name" menu) as a cache-safe cart fragment.
+require get_template_directory() . '/inc/header-account.php';
+
 // Bulk / corporate landing (page-templates/template-bulk-landing.php): lead CPT, quote form handler, template-only assets.
 require get_template_directory() . '/inc/bulk-landing.php';
 

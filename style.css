@@ -3050,3 +3050,79 @@ input.button:hover {
   white-space: nowrap;
   border: 0;
 }
+
+/* Header account widget (inc/header-account.php) ------------------------ */
+.sft-header-account {
+  position: relative;
+  display: inline-flex;
+}
+
+button.sft-header-action--account {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sft-header-account__chev {
+  display: inline-block;
+  vertical-align: -1px;
+  margin-left: 2px;
+  transition: transform 0.15s ease;
+}
+
+.sft-header-action--account[aria-expanded="true"] .sft-header-account__chev {
+  transform: rotate(180deg);
+}
+
+.sft-header-account__menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 99700;
+  min-width: 200px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: #fff;
+  border: 1px solid #e7eaef;
+  border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.14);
+}
+
+.sft-header-account__menu[hidden] {
+  display: none;
+}
+
+.sft-header-account__menu a {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: var(--ss-ink);
+  font-size: var(--ss-text-sm);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.sft-header-account__menu a:hover,
+.sft-header-account__menu a:focus-visible {
+  background: #f1f5f9;
+  color: var(--ss-brand);
+}
+
+.sft-header-account__sep {
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid #eef0f3;
+}
+
+@media (max-width: 767px) {
+  /* Bottom nav carries Account on phones (css/mobile-nav.css hides the link). */
+  .sft-header-account {
+    display: none;
+  }
+}

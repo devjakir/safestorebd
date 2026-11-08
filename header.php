@@ -107,13 +107,11 @@ $sft_cart_total = $sft_wc_cart ? $sft_wc_cart->get_cart_total() : '';
         <div class="sft-header-actions">
             <?php if ( function_exists( 'safestore_mnav_search_toggle' ) ) { safestore_mnav_search_toggle(); } ?>
 
-            <a class="sft-header-action sft-header-action--account" href="<?php echo esc_url( function_exists('safestore_mnav_account_url') ? safestore_mnav_account_url() : wp_login_url() ); ?>">
-                <svg class="sft-header-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
-                <span class="sft-header-action-text">
-                    <span class="sft-header-action-eyebrow">Hello, sign in</span>
-                    <span class="sft-header-action-label">Account</span>
-                </span>
-            </a>
+            <?php
+            if ( function_exists( 'safestore_header_account_markup' ) ) {
+                echo safestore_header_account_markup(); // phpcs:ignore WordPress.Security.EscapeOutput -- escaped inside.
+            }
+            ?>
 
             <?php if (function_exists('safestore_wishlist_enabled') && safestore_wishlist_enabled()) : ?>
             <a class="sft-header-action sft-header-action--wishlist" href="<?php echo esc_url(safestore_wishlist_page_url()); ?>">
