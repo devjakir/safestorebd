@@ -79,6 +79,9 @@ require get_template_directory() . '/inc/pdp-sticky-bar.php';
 // Product content SEO hygiene: one H1 per product page, strip copy-paste residue.
 require get_template_directory() . '/inc/seo-content.php';
 
+// Product search: title / SKU / category only, Banglish + Bangla synonyms, title-first ranking.
+require get_template_directory() . '/inc/product-search.php';
+
 // Bulk / corporate landing (page-templates/template-bulk-landing.php): lead CPT, quote form handler, template-only assets.
 require get_template_directory() . '/inc/bulk-landing.php';
 
