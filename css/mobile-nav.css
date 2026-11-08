@@ -884,3 +884,24 @@ html.sft-menu-open {
     overscroll-behavior: none;
   }
 }
+
+/* Logged-in admins: keep the sticky header below #wpadminbar.
+   Admin bar is fixed 32px (>782px), fixed 46px (601-782px) and scrolls away
+   (position:absolute) at <=600px, where the header can stick to the top. */
+@media (max-width: 1024px) {
+  body.admin-bar .sft-header {
+    top: 32px;
+  }
+}
+
+@media (max-width: 782px) {
+  body.admin-bar .sft-header {
+    top: 46px;
+  }
+}
+
+@media (max-width: 600px) {
+  body.admin-bar .sft-header {
+    top: 0;
+  }
+}
