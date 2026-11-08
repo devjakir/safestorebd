@@ -288,8 +288,11 @@ function safestore_perf_defer_vendor_scripts() {
 		'wp-util',
 	);
 
+	$scripts = wp_scripts();
 	foreach ( $handles as $handle ) {
-		if ( wp_script_is( $handle, 'registered' ) ) {
+		// Aliases (no src, e.g. WC 10+'s js-cookie / jquery-blockui shims) cannot
+		// take a strategy — WordPress logs a _doing_it_wrong notice for them.
+		if ( wp_script_is( $handle, 'registered' ) && ! empty( $scripts->registered[ $handle ]->src ) ) {
 			wp_script_add_data( $handle, 'strategy', 'defer' );
 		}
 	}
