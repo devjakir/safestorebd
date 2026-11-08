@@ -1,10 +1,24 @@
 <?php
+/**
+ * The template for displaying product content within loops
+ *
+ * Theme override of WooCommerce core 9.4.0. The theme renders its own product
+ * card (.sft-product-card) instead of the core loop hooks, so
+ * woocommerce_before_shop_loop_item / _title / after_shop_loop_item are not
+ * fired; extras are added through `safestore_minimal_product_card_footer` and
+ * direct calls (origin badge). The visibility guard matches core 9.4.0.
+ *
+ * @see     https://woocommerce.com/document/template-structure/
+ * @package WooCommerce\Templates
+ * @version 9.4.0
+ */
 
 defined('ABSPATH') || exit;
 
 global $product;
 
-if (empty($product) || ! $product->is_visible()) {
+// Check if the product is a valid WooCommerce product and ensure its visibility before proceeding.
+if (! is_a($product, WC_Product::class) || ! $product->is_visible()) {
     return;
 }
 
