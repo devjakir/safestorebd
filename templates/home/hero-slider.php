@@ -95,8 +95,14 @@ $safestore_hero_proof_icon = static function ( string $name ): string {
 };
 ?>
 
-<section class="hero-slider" aria-roledescription="carousel" aria-label="Featured safety products">
-	<div class="hero-slider-viewport">
+<section class="hero-slider" aria-label="<?php esc_attr_e( 'Featured safety products', 'safestore-minimal' ); ?>">
+	<?php
+	// The page's single H1 (site value prop, echoes the title tag). It lives
+	// outside the rotating slides so it is always visible and never inside a
+	// visibility:hidden slide; slide titles stay H2.
+	?>
+	<h1 class="hero-site-h1"><?php esc_html_e( 'Industrial Safety Equipment & PPE Store in Bangladesh', 'safestore-minimal' ); ?></h1>
+	<div class="hero-slider-viewport" aria-roledescription="carousel" aria-label="<?php esc_attr_e( 'Featured safety products', 'safestore-minimal' ); ?>">
 		<?php foreach ( $hero_slides as $index => $slide ) : ?>
 			<?php
 			$overlay    = ( ! empty( $slide['category_slug'] ) && function_exists( 'safestore_hero_overlay_for_category' ) )
@@ -133,17 +139,6 @@ $safestore_hero_proof_icon = static function ( string $name ): string {
 				data-slide="<?php echo (int) $index; ?>"
 				<?php echo ! $is_first ? 'aria-hidden="true"' : ''; ?>>
 				<div class="hero-slide-content">
-					<?php
-					// One homepage H1 (site value prop). Slide category titles stay H2
-					// so Google gets the right topical signal; other slides keep the
-					// same visual line as a non-heading so layout does not jump.
-					$site_h1 = __( 'Industrial Safety Equipment & PPE Store in Bangladesh', 'safestore-minimal' );
-					if ( $is_first ) :
-						?>
-						<h1 class="hero-site-h1"><?php echo esc_html( $site_h1 ); ?></h1>
-					<?php else : ?>
-						<p class="hero-site-h1" aria-hidden="true"><?php echo esc_html( $site_h1 ); ?></p>
-					<?php endif; ?>
 					<span class="hero-slide-badge">
 						<span class="hero-slide-badge-star" aria-hidden="true">&#9733;</span>
 						<?php echo wp_kses_post( $slide['badge'] ); ?>

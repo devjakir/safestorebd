@@ -226,16 +226,15 @@
   gap: 18px;
 }
 
-/* Homepage topical H1 — echoes the title tag; slide titles are H2. */
+/* Homepage H1 — one, always visible, above the carousel (slide titles are H2). */
 .home .hero-site-h1 {
-  margin: 0;
-  max-width: 36em;
-  font-size: clamp(12px, 1.15vw, 14px);
-  font-weight: 600;
+  margin: 0 0 10px;
+  font-size: clamp(13px, 1.15vw, 15px);
+  font-weight: 700;
   line-height: 1.35;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: rgba(226, 232, 240, 0.72);
+  color: var(--ss-ink);
 }
 
 .home .hero-slide-badge {
@@ -482,8 +481,9 @@
   }
 
   .home .hero-site-h1 {
-    font-size: var(--ss-text-2xs);
-    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    font-size: 12px;
+    letter-spacing: 0.03em;
   }
 
   .home .hero-slide-title {
