@@ -281,6 +281,11 @@ function safestore_perf_defer_vendor_scripts() {
 		'wc-add-to-cart',
 		'wc-cart-fragments',
 		'woocommerce',
+		// Only needed by wc-add-to-cart-variation (already deferred) on product
+		// pages; they were the last render-blocking scripts in <head>. WordPress
+		// keeps them blocking automatically if any dependent is blocking.
+		'underscore',
+		'wp-util',
 	);
 
 	foreach ( $handles as $handle ) {
@@ -290,6 +295,26 @@ function safestore_perf_defer_vendor_scripts() {
 	}
 }
 add_action( 'wp_enqueue_scripts', 'safestore_perf_defer_vendor_scripts', 100 );
+
+/**
+ * PixelYourSite ships its own js-cookie 2.1.3 (js-cookie-pys) next to
+ * WooCommerce's 2.1.4 (wc-js-cookie) — same library and API (window.Cookies),
+ * downloaded twice. Turn the PYS handle into an alias of WooCommerce's copy so
+ * anything that depends on it still gets window.Cookies, from one file.
+ */
+function safestore_perf_dedupe_js_cookie() {
+	if ( is_admin() ) {
+		return;
+	}
+	$scripts = wp_scripts();
+	if ( empty( $scripts->registered['js-cookie-pys'] ) || empty( $scripts->registered['wc-js-cookie'] ) ) {
+		return;
+	}
+	$pys       = $scripts->registered['js-cookie-pys'];
+	$pys->src  = false; // alias: prints nothing itself
+	$pys->deps = array_values( array_unique( array_merge( array( 'wc-js-cookie' ), (array) $pys->deps ) ) );
+}
+add_action( 'wp_enqueue_scripts', 'safestore_perf_dedupe_js_cookie', 999 );
 
 function safestore_perf_is_delayed_third_party_src( $src ) {
 	if ( ! is_string( $src ) || '' === $src ) {
