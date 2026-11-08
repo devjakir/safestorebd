@@ -34,7 +34,7 @@ function safestore_header_account_markup() {
 		ob_start();
 		?>
 		<div class="sft-header-account" data-sft-auth="0">
-			<a class="sft-header-action sft-header-action--account" href="<?php echo esc_url( $account_url ); ?>">
+			<a class="sft-header-action sft-header-action--account" href="<?php echo esc_url( $account_url ); ?>" aria-label="<?php esc_attr_e( 'Sign in or register', 'safestore-minimal' ); ?>">
 				<?php echo safestore_header_account_icon(); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 				<span class="sft-header-action-text">
 					<span class="sft-header-action-eyebrow"><?php esc_html_e( 'Welcome', 'safestore-minimal' ); ?></span>
@@ -67,7 +67,7 @@ function safestore_header_account_markup() {
 	ob_start();
 	?>
 	<div class="sft-header-account is-logged-in" data-sft-auth="1">
-		<button type="button" class="sft-header-action sft-header-action--account" aria-haspopup="true" aria-expanded="false" aria-controls="<?php echo esc_attr( $menu_id ); ?>" data-sft-account-toggle>
+		<button type="button" class="sft-header-action sft-header-action--account" aria-haspopup="true" aria-expanded="false" aria-controls="<?php echo esc_attr( $menu_id ); ?>" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: customer's first name */ __( 'Account menu, signed in as %s', 'safestore-minimal' ), $name ) ); ?>" data-sft-account-toggle>
 			<?php echo safestore_header_account_icon(); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 			<span class="sft-header-action-text">
 				<span class="sft-header-action-eyebrow">

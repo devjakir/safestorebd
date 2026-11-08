@@ -25,7 +25,7 @@ $sft_cart_total = $sft_wc_cart ? $sft_wc_cart->get_cart_total() : '';
             <span class="hamburger-bar"></span>
             <span class="hamburger-bar"></span>
         </button>
-        <a class="sft-header-brand" href="<?php echo esc_url(home_url('/')); ?>" aria-label="<?php bloginfo('name'); ?> home">
+        <a class="sft-header-brand" href="<?php echo esc_url(home_url('/')); ?>" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: site name */ __( '%s home', 'safestore-minimal' ), get_bloginfo( 'name' ) ) ); ?>">
             <?php $sft_logo = safestore_brand_logo_svg(); ?>
             <img class="sft-header-brand-logo"
                 src="<?php echo esc_url( $sft_logo['url'] ); ?>"
@@ -114,7 +114,7 @@ $sft_cart_total = $sft_wc_cart ? $sft_wc_cart->get_cart_total() : '';
             ?>
 
             <?php if (function_exists('safestore_wishlist_enabled') && safestore_wishlist_enabled()) : ?>
-            <a class="sft-header-action sft-header-action--wishlist" href="<?php echo esc_url(safestore_wishlist_page_url()); ?>">
+            <a class="sft-header-action sft-header-action--wishlist" href="<?php echo esc_url(safestore_wishlist_page_url()); ?>" aria-label="<?php esc_attr_e('Wishlist', 'safestore-minimal'); ?>">
                 <svg class="sft-header-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
                 <span class="sft-header-action-text">
                     <span class="sft-header-action-label sft-header-action-label--single">Wishlist</span>
@@ -122,7 +122,7 @@ $sft_cart_total = $sft_wc_cart ? $sft_wc_cart->get_cart_total() : '';
             </a>
             <?php endif; ?>
 
-            <a class="sft-header-action sft-header-action--cart" href="<?php echo esc_url($cart_url); ?>">
+            <a class="sft-header-action sft-header-action--cart" href="<?php echo esc_url($cart_url); ?>" aria-label="<?php esc_attr_e('Cart', 'safestore-minimal'); ?>">
                 <span class="sft-header-cart-icon">
                     <svg class="sft-header-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/><path d="M3 4h2l2.4 11.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.5L21 8H6"/></svg>
                     <span class="sft-header-cart-badge"><?php echo esc_html($sft_cart_count); ?></span>

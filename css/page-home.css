@@ -420,11 +420,14 @@
 }
 
 .home .hero-dot {
-  width: 34px;
-  height: 25px;
+  /* 44x44 tap target; the visible pill stays 24x4 (transparent border). */
+  width: 44px;
+  height: 44px;
   padding: 0;
   border-radius: 999px;
-  border: 10px solid transparent;
+  border-width: 20px 10px;
+  border-style: solid;
+  border-color: transparent;
   background: rgba(255, 255, 255, 0.28);
   background-clip: padding-box;
   cursor: pointer;
@@ -437,7 +440,7 @@
 }
 
 .home .hero-dot.is-active {
-  width: 52px;
+  width: 56px;
   background: var(--ss-white);
   background-clip: padding-box;
 }
@@ -556,8 +559,8 @@
   }
 
   .home .hero-slide-card__save {
-    padding: 2px 6px;
-    font-size: 9.5px;
+    padding: 2px 5px;
+    font-size: 12px;
     letter-spacing: 0.03em;
   }
 
