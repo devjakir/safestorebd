@@ -1160,7 +1160,8 @@
 .home .sft-bestsellers ul.products,
 .home .sft-bestsellers .woocommerce ul.products {
   display: grid !important;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  /* 4 columns x 3 rows of 12 — no orphan cards in the last row. */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 28px 20px;
   margin: 0 !important;
   padding: 0;

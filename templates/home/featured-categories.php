@@ -160,9 +160,10 @@ $categories = array(
 	</div>
 	<div class="sft-bestsellers__grid">
 		<?php
-		// 8 products, 4-up on desktop — same card template as shop (content-product.php).
+		// 12 products: full rows at 4 (desktop), 3 (tablet) and 2 columns; phones
+		// show the first 8 (css/page-home.css). Same card as the shop.
 		// Deterministic: WooCommerce popularity (total sales), not random.
-		echo do_shortcode( '[products limit="10" columns="4" orderby="popularity"]' );
+		echo do_shortcode( '[products limit="12" columns="4" orderby="popularity"]' );
 		?>
 	</div>
 </section>
