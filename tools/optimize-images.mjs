@@ -5,7 +5,6 @@ import sharp from 'sharp';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const imagesDir = path.resolve(__dirname, '../assets/images');
-const logoDir = path.join(imagesDir, 'logo');
 
 const HERO_BASES = [
 	'sf-helmet-category.webp',
@@ -79,18 +78,7 @@ async function main() {
 			console.log(`${path.basename(out)}: ${(bytes / 1024).toFixed(1)}KB`);
 		}
 	}
-
-	const logoPng = path.join(logoDir, 'safe-store-bd.png');
-	const logoWebp = path.join(logoDir, 'safe-store-bd.webp');
-	if (await sizeOf(logoPng)) {
-		const logoInput = await fs.readFile(logoPng);
-		const buf = await sharp(logoInput)
-			.resize({ width: 480, withoutEnlargement: true })
-			.webp({ quality: 80, effort: 6 })
-			.toBuffer();
-		await writeAtomic(logoWebp, buf);
-		console.log(`\nlogo webp: ${(buf.length / 1024).toFixed(1)}KB`);
-	}
+	// The logo is an SVG (assets/images/logo/safestorebd-logo.svg), so it needs no WebP variant.
 }
 
 main().catch((err) => {
