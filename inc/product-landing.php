@@ -5,11 +5,14 @@
  * Built for Facebook / Instagram ad traffic: ONE product above the fold, pick a
  * size, tap "অর্ডার করুন" and land on the normal WooCommerce checkout with that
  * size already in the cart (COD, district → thana, courier charge all live there).
+ * (Since Nov 2026 the order is placed on the landing page itself — see below.)
  *
  * - Settings per page (meta box): main product, extra products, headline, lede,
  *   benefit bullets, badge, index/noindex. Anything empty falls back to the
  *   defaults below and then to live product data.
- * - ?spl_add=<variation or product id>&qty=N → cart → checkout (template_redirect).
+ * - POST from the page's order form → order placed right here, then the
+ *   thank-you page (inc/product-landing-order.php). Old ?spl_add=<id>&qty=N
+ *   links still go cart → checkout.
  * - Orders that started here get an order note + meta "_spl_landing_page".
  * - Template-only assets; floating WhatsApp widget and mobile bottom nav are off
  *   (the page has its own sticky bar).
@@ -45,10 +48,10 @@ function safestore_pl_defaults() {
 			),
 			// Used only when the page sells the default product and has no copy of its own.
 			'headline' => 'Haojia সেফটি শু — স্টিল টো, অ্যান্টি-স্লিপ, সারাদিন আরাম',
-			'lede'     => 'কনস্ট্রাকশন, ফ্যাক্টরি ও ওয়্যারহাউসের দৈনন্দিন কাজের জন্য। সাইজ নির্বাচন করে অর্ডার করুন — সারা বাংলাদেশে ক্যাশ অন ডেলিভারি।',
+			'lede'     => 'কনস্ট্রাকশন, ফ্যাক্টরি ও ওয়্যারহাউসের দৈনন্দিন কাজের জন্য। সাইজ বেছে নিচের ফর্মে ঠিকানা দিন — সারা বাংলাদেশে ক্যাশ অন ডেলিভারি।',
 			'bullets'  => array(
 				'স্টিল টো ক্যাপ — ভারী বস্তু পড়লেও পায়ের আঙুল সুরক্ষিত থাকে',
-				'পাংচার-রেজিস্ট্যান্ট মিডসোল — পেরেক বা ধারালো বস্তু ভেদ করতে পারে না',
+				'পেরেক ঢোকে না এমন মিডসোল — ধারালো বস্তু পায়ে লাগে না',
 				'অ্যান্টি-স্লিপ ও তেল-প্রতিরোধী রাবার সোল — ভেজা বা তৈলাক্ত মেঝেতেও পা পিছলায় না',
 				'হালকা ও বাতাস চলাচলের উপযোগী — কুশন ইনসোলের কারণে সারাদিন আরামে পরা যায়',
 			),
@@ -107,6 +110,37 @@ function safestore_pl_taka( $amount ) {
 
 function safestore_pl_icon( $name, $size = 24 ) {
 	return function_exists( 'safestore_bl_icon' ) ? safestore_bl_icon( $name, $size ) : '';
+}
+
+/** Shop words in English → Bangla, for short labels (category, size attribute, card names). Brands stay. */
+function safestore_pl_bn_words( $text ) {
+	static $map = null;
+	if ( null === $map ) {
+		$map = apply_filters(
+			'safestore_pl_bn_words',
+			array(
+				'Safety Shoes'   => 'সেফটি শু',
+				'Safety Shoe'    => 'সেফটি শু',
+				'Safety Boots'   => 'সেফটি বুট',
+				'Safety Helmets' => 'সেফটি হেলমেট',
+				'Safety Helmet'  => 'সেফটি হেলমেট',
+				'Gumboots'       => 'গামবুট',
+				'Gloves'         => 'গ্লাভস',
+				'Size'           => 'সাইজ',
+			)
+		);
+	}
+	return trim( str_ireplace( array_keys( $map ), array_values( $map ), (string) $text ) );
+}
+
+/** "+880 1811-892291" → "০১৮১১-৮৯২২৯১" (display only; tel: links keep +880). */
+function safestore_pl_phone_bn( $label ) {
+	return safestore_pl_bn( preg_replace( '/^\+?880\s*/', '0', (string) $label ) );
+}
+
+/** Office address in Bangla for page copy. */
+function safestore_pl_address() {
+	return apply_filters( 'safestore_pl_address', '১৭/৫/১ আলব্দিরটেক, পল্লবী, ঢাকা ১২১৬' );
 }
 
 /** Five stars, $rating of them filled (rounded to halves shown as full). */
@@ -339,14 +373,14 @@ function safestore_pl_delivery() {
 			$outside = safestore_pl_taka( $rates['outside']['first'] );
 		}
 	}
-	$address = function_exists( 'safestore_minimal_get_pickup_address' ) ? safestore_minimal_get_pickup_address() : 'Pallabi, Dhaka 1216';
+	$address = safestore_pl_address();
 
 	return apply_filters(
 		'safestore_pl_delivery',
 		array(
 			array( 'icon' => 'truck', 'title' => 'ঢাকার ভেতরে', 'text' => 'দুপুর ২টার আগে অর্ডার নিশ্চিত হলে সাধারণত ২৪ ঘণ্টার মধ্যে ডেলিভারি। চার্জ ' . $inside . ' থেকে শুরু।' ),
 			array( 'icon' => 'pin', 'title' => 'ঢাকার বাইরে — ৬৪ জেলায়', 'text' => 'কুরিয়ারের মাধ্যমে ডিসপ্যাচের ২–৩ কার্যদিবসের মধ্যে ডেলিভারি। চার্জ ' . $outside . ' থেকে শুরু।' ),
-			array( 'icon' => 'card', 'title' => 'ক্যাশ অন ডেলিভারি', 'text' => 'পণ্য হাতে পেয়ে মূল্য পরিশোধ করুন। bKash ও Nagad-এও পরিশোধ করা যায়।' ),
+			array( 'icon' => 'card', 'title' => 'ক্যাশ অন ডেলিভারি', 'text' => 'পণ্য হাতে পেয়ে মূল্য পরিশোধ করুন। বিকাশ ও নগদেও পরিশোধ করা যায়।' ),
 			array( 'icon' => 'return', 'title' => '৭ দিনে রিটার্ন ও এক্সচেঞ্জ', 'text' => 'ডেলিভারির ৭ দিনের মধ্যে অব্যবহৃত পণ্য অরিজিনাল প্যাকেটসহ ফেরত বা পরিবর্তন করা যায়। আগে আমাদের জানাতে হবে।' ),
 			array( 'icon' => 'box', 'title' => 'অফিস থেকে সংগ্রহ (ফ্রি)', 'text' => 'সরাসরি এসে পণ্য দেখে নিতে পারেন: ' . $address . ' (শনি–বৃহস্পতি, সকাল ৯টা – রাত ৮টা)।' ),
 		),
@@ -359,11 +393,11 @@ function safestore_pl_faq( $product, $has_options ) {
 	$faq = array(
 		array(
 			'q' => 'ক্যাশ অন ডেলিভারি সুবিধা আছে কি?',
-			'a' => 'হ্যাঁ। পণ্য হাতে পেয়ে যাচাই করার পর মূল্য পরিশোধ করবেন। bKash ও Nagad-এও পরিশোধ করা যায়।',
+			'a' => 'হ্যাঁ। পণ্য হাতে পেয়ে যাচাই করার পর মূল্য পরিশোধ করবেন। বিকাশ ও নগদেও পরিশোধ করা যায়।',
 		),
 		array(
 			'q' => 'ডেলিভারিতে কত দিন লাগে, চার্জ কত?',
-			'a' => 'ঢাকার ভেতরে সাধারণত ২৪ ঘণ্টার মধ্যে এবং ঢাকার বাইরে ২–৩ কার্যদিবসের মধ্যে ডেলিভারি হয়। চেকআউটে ঠিকানা দেওয়ার পর ডেলিভারি চার্জ দেখা যাবে। পল্লবী অফিস থেকে বিনা খরচে পণ্য সংগ্রহও করতে পারেন।',
+			'a' => 'ঢাকার ভেতরে সাধারণত ২৪ ঘণ্টার মধ্যে এবং ঢাকার বাইরে ২–৩ কার্যদিবসের মধ্যে ডেলিভারি হয়। অর্ডার ফর্মে জেলা ও থানা বেছে নিলেই ডেলিভারি চার্জ দেখা যাবে। পল্লবী অফিস থেকে বিনা খরচে পণ্য সংগ্রহও করতে পারেন।',
 		),
 	);
 	if ( $has_options ) {
@@ -378,82 +412,110 @@ function safestore_pl_faq( $product, $has_options ) {
 	);
 	$faq[] = array(
 		'q' => 'কীভাবে অর্ডার করব?',
-		'a' => ( $has_options ? 'সাইজ নির্বাচন করে ' : '' ) . '"অর্ডার করুন" বাটনে ক্লিক করুন, তারপর নাম, মোবাইল নম্বর ও ঠিকানা দিয়ে অর্ডার নিশ্চিত করুন। চাইলে WhatsApp-এ ' . ( $has_options ? 'সাইজ ও ' : '' ) . 'ঠিকানা পাঠিয়েও অর্ডার করতে পারেন।',
+		'a' => ( $has_options ? 'সাইজ বেছে ' : '' ) . 'এই পেজের ফর্মে নাম, মোবাইল নম্বর ও ঠিকানা দিয়ে "অর্ডার কনফার্ম করুন" চাপুন — আলাদা কোনো পেজে যেতে হবে না। চাইলে WhatsApp-এ ' . ( $has_options ? 'সাইজ ও ' : '' ) . 'ঠিকানা পাঠিয়েও অর্ডার করতে পারেন।',
 	);
 	return apply_filters( 'safestore_pl_faq', $faq, $product );
 }
 
 /* -------------------------------------------------------------------------
- * ?spl_add=<id>&qty=N → cart → checkout
+ * Order requests: POST from the form → order here; GET ?spl_add= → checkout
  * ---------------------------------------------------------------------- */
+
+/**
+ * The cart line a landing request asks for: the page's product, one of its sizes, a quantity.
+ *
+ * @return array|string array( product_id, variation_id, attrs, qty ) or an error code (size | product)
+ */
+function safestore_pl_resolve_line( $page_id, $pick, $qty ) {
+	$product = safestore_pl_find_product( safestore_pl_settings( $page_id )['product'] );
+	if ( ! $product || ! $product->is_purchasable() ) {
+		return 'product';
+	}
+	$line = array(
+		'product_id'   => $product->get_id(),
+		'variation_id' => 0,
+		'attrs'        => array(),
+		'qty'          => max( 1, min( SAFESTORE_PL_MAX_QTY, absint( $qty ) ) ),
+	);
+	if ( $product->is_type( 'variable' ) ) {
+		$variation = $pick ? wc_get_product( $pick ) : null;
+		if ( ! $variation || ! $variation->is_type( 'variation' ) || (int) $variation->get_parent_id() !== $line['product_id'] ) {
+			return 'size';
+		}
+		$line['variation_id'] = (int) $pick;
+		$line['attrs']        = $variation->get_variation_attributes(); // attribute_pa_size => 42
+	} elseif ( $pick && (int) $pick !== $line['product_id'] ) {
+		return 'product';
+	}
+	return $line;
+}
+
+/** Put the line in the cart; the same line already there (double tap, back button) just gets the quantity. */
+function safestore_pl_cart_line( $line ) {
+	$cart = WC()->cart;
+	$key  = $cart->find_product_in_cart( $cart->generate_cart_id( $line['product_id'], $line['variation_id'], $line['attrs'] ) );
+	return $key ? (bool) $cart->set_quantity( $key, $line['qty'] ) : (bool) $cart->add_to_cart( $line['product_id'], $line['qty'], $line['variation_id'], $line['attrs'] );
+}
+
+/** Remember the landing page for the order note / meta (woocommerce_checkout_order_created below). */
+function safestore_pl_mark_session( $page_id, $line ) {
+	if ( WC()->session ) {
+		WC()->session->set( 'spl_landing', array( 'page' => $page_id, 'product' => $line['product_id'], 'variation' => $line['variation_id'] ) );
+	}
+}
 
 add_action(
 	'template_redirect',
 	static function () {
-		if ( ! safestore_pl_is_landing() || ! isset( $_GET['spl_add'] ) || ! function_exists( 'WC' ) || ! WC()->cart ) { // phpcs:ignore WordPress.Security.NonceVerification
+		if ( ! safestore_pl_is_landing() || ! function_exists( 'WC' ) || ! WC()->cart ) {
 			return;
 		}
-		// Plain GET link, same model as WooCommerce's own ?add-to-cart=; nothing is written until checkout.
-		// phpcs:disable WordPress.Security.NonceVerification
-		$page_id  = (int) get_queried_object_id();
-		$settings = safestore_pl_settings( $page_id );
-		$product  = safestore_pl_find_product( $settings['product'] );
-		$pick     = absint( $_GET['spl_add'] );
-		$qty      = isset( $_GET['qty'] ) ? max( 1, min( SAFESTORE_PL_MAX_QTY, absint( $_GET['qty'] ) ) ) : 1;
+		// phpcs:disable WordPress.Security.NonceVerification -- see inc/product-landing-order.php
+		$is_post = isset( $_SERVER['REQUEST_METHOD'] ) && 'POST' === $_SERVER['REQUEST_METHOD'] && isset( $_POST['spl_add'] );
+		if ( ! $is_post && ! isset( $_GET['spl_add'] ) ) {
+			return;
+		}
+		$in      = $is_post ? $_POST : $_GET;
+		$ajax    = $is_post && ! empty( $_POST['spl_ajax'] );
+		$page_id = (int) get_queried_object_id();
+		$line    = safestore_pl_resolve_line( $page_id, absint( $in['spl_add'] ), isset( $in['qty'] ) ? wp_unslash( $in['qty'] ) : 1 );
 		// phpcs:enable
-		$back = static function ( $code ) use ( $page_id ) {
+		$fail = static function ( $code ) use ( $page_id, $ajax ) {
+			if ( $ajax ) {
+				wp_send_json( array( 'result' => 'failure', 'messages' => safestore_pl_error_text( $code ) ) );
+			}
 			wp_safe_redirect( add_query_arg( 'spl_err', $code, get_permalink( $page_id ) ) . '#order' );
 			exit;
 		};
 
-		if ( ! $product || ! $product->is_purchasable() ) {
-			$back( 'product' );
+		if ( ! is_array( $line ) ) {
+			$fail( $line );
 		}
-
-		$product_id   = $product->get_id();
-		$variation_id = 0;
-		$attrs        = array();
-
-		if ( $product->is_type( 'variable' ) ) {
-			$variation = $pick ? wc_get_product( $pick ) : null;
-			if ( ! $variation || ! $variation->is_type( 'variation' ) || (int) $variation->get_parent_id() !== $product_id ) {
-				$back( 'size' );
-			}
-			$variation_id = $pick;
-			foreach ( $variation->get_variation_attributes() as $key => $value ) {
-				$attrs[ $key ] = $value; // attribute_pa_size => 42
-			}
-		} elseif ( $pick && $pick !== $product_id ) {
-			$back( 'product' );
+		if ( $is_post ) {
+			safestore_pl_place_order( $page_id, $line, $ajax, $fail ); // exits
 		}
-
-		// Same line already in the cart (double tap, back button): set the quantity, don't stack a second pair.
-		$cart_id  = WC()->cart->generate_cart_id( $product_id, $variation_id, $attrs );
-		$existing = WC()->cart->find_product_in_cart( $cart_id );
-		if ( $existing ) {
-			$ok = WC()->cart->set_quantity( $existing, $qty );
-		} else {
-			$ok = (bool) WC()->cart->add_to_cart( $product_id, $qty, $variation_id, $attrs );
+		if ( ! safestore_pl_cart_line( $line ) ) {
+			$fail( 'cart' ); // WooCommerce queued the reason as an error notice; the page prints it.
 		}
-		if ( ! $ok ) {
-			$back( 'cart' ); // WooCommerce queued the reason as an error notice; the page prints it.
-		}
-
-		if ( WC()->session ) {
-			WC()->session->set(
-				'spl_landing',
-				array( 'page' => $page_id, 'product' => $product_id, 'variation' => $variation_id )
-			);
-		}
+		safestore_pl_mark_session( $page_id, $line );
 		wp_safe_redirect( wc_get_checkout_url() );
 		exit;
 	},
 	5
 );
 
-/** Error text for ?spl_err= (WooCommerce notices for 'cart'). */
-function safestore_pl_error_text() {
-	$code = isset( $_GET['spl_err'] ) ? sanitize_key( wp_unslash( $_GET['spl_err'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+/** WooCommerce's English stock notices → Bangla (the page is Bangla). */
+function safestore_pl_bn_notice( $text ) {
+	return preg_match( '/out of stock|not enough|only \d+ (?:left|available)|cannot add/i', wp_strip_all_tags( (string) $text ) )
+		? 'নির্বাচিত সাইজটি বর্তমানে স্টকে নেই অথবা পর্যাপ্ত পরিমাণে নেই। অন্য সাইজ বেছে নিন, অথবা WhatsApp-এ যোগাযোগ করুন।'
+		: $text;
+}
+
+/** Error text for a code, or for ?spl_err= when none is given ('cart' prints WooCommerce's notices). */
+function safestore_pl_error_text( $code = null ) {
+	if ( null === $code ) {
+		$code = isset( $_GET['spl_err'] ) ? sanitize_key( wp_unslash( $_GET['spl_err'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+	}
 	if ( '' === $code ) {
 		return '';
 	}
@@ -468,16 +530,12 @@ function safestore_pl_error_text() {
 		}
 		wc_clear_notices();
 		if ( $lines ) {
-			$joined = implode( ' ', $lines );
-			// WooCommerce's stock notices are English; the page is Bangla.
-			if ( preg_match( '/out of stock|not enough|only \d+ (?:left|available)/i', $joined ) ) {
-				return 'নির্বাচিত সাইজটি বর্তমানে স্টকে নেই অথবা পর্যাপ্ত পরিমাণে নেই। অন্য সাইজ নির্বাচন করুন, অথবা WhatsApp-এ যোগাযোগ করুন।';
-			}
-			return $joined;
+			return safestore_pl_bn_notice( implode( ' ', $lines ) );
 		}
 	}
 	$map = array(
 		'size'    => 'অনুগ্রহ করে আগে সাইজ নির্বাচন করুন।',
+		'busy'    => 'এই সংযোগ থেকে অনেকগুলো অর্ডার এসেছে। একটু পরে চেষ্টা করুন, অথবা WhatsApp-এ অর্ডার করুন।',
 		'product' => 'দুঃখিত, পণ্যটি এই মুহূর্তে অর্ডার করা যাচ্ছে না। বিস্তারিত জানতে WhatsApp-এ যোগাযোগ করুন।',
 		'cart'    => 'দুঃখিত, অর্ডারটি সম্পন্ন করা যায়নি। আবার চেষ্টা করুন অথবা WhatsApp-এ যোগাযোগ করুন।',
 	);
@@ -706,3 +764,5 @@ add_action(
 	},
 	100
 );
+
+require_once __DIR__ . '/product-landing-order.php';
