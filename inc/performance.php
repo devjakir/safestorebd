@@ -238,6 +238,27 @@ function safestore_perf_preload_lcp() {
 		return;
 	}
 
+	// Product pages: the main gallery image is the LCP element, not the logo.
+	if ( function_exists( 'is_product' ) && is_product() ) {
+		$product  = wc_get_product( get_queried_object_id() );
+		$image_id = $product ? (int) $product->get_image_id() : 0;
+		if ( $image_id ) {
+			$size   = 'woocommerce_single';
+			$src    = wp_get_attachment_image_src( $image_id, $size );
+			$srcset = wp_get_attachment_image_srcset( $image_id, $size );
+			$sizes  = wp_get_attachment_image_sizes( $image_id, $size );
+			if ( is_array( $src ) && ! empty( $src[0] ) ) {
+				printf(
+					'<link rel="preload" as="image" href="%1$s" fetchpriority="high"%2$s%3$s />' . "\n",
+					esc_url( $src[0] ),
+					$srcset ? ' imagesrcset="' . esc_attr( $srcset ) . '"' : '',
+					( $srcset && $sizes ) ? ' imagesizes="' . esc_attr( $sizes ) . '"' : ''
+				);
+				return;
+			}
+		}
+	}
+
 	$logo = safestore_brand_logo_svg();
 	printf(
 		'<link rel="preload" as="image" href="%s" type="image/svg+xml" />' . "\n",

@@ -16,12 +16,44 @@ $safestore_cat_img = static function ( string $filename ) use ( $assets_url ): s
 	return '' !== $ver ? $url . '?ver=' . $ver : $url;
 };
 
+// srcset from the resized copies next to each image (name-400w.webp, -600w, -900w).
+$safestore_cat_srcset = static function ( string $filename, int $full_width ) use ( $assets_url ): string {
+	$dir   = get_template_directory() . '/assets/images/';
+	$base  = substr( $filename, 0, -5 ); // strip ".webp"
+	$parts = array();
+	foreach ( array( 400, 600, 900 ) as $w ) {
+		$file = $base . '-' . $w . 'w.webp';
+		if ( $w < $full_width && file_exists( $dir . $file ) ) {
+			$parts[] = $assets_url . '/' . rawurlencode( $file ) . '?ver=' . filemtime( $dir . $file ) . ' ' . $w . 'w';
+		}
+	}
+	if ( file_exists( $dir . $filename ) ) {
+		$parts[] = $assets_url . '/' . rawurlencode( $filename ) . '?ver=' . filemtime( $dir . $filename ) . ' ' . $full_width . 'w';
+	}
+	return implode( ', ', $parts );
+};
+
+/*
+ * `sizes` per card shape. Cards use object-fit: cover in fixed-height rows
+ * (400px desktop, 240px <=900px, 180px <=480px), so the slot can need more
+ * pixels than its width — these values account for that.
+ */
+$safestore_cat_sizes = array(
+	'xl' => '(max-width: 900px) 100vw, 680px',
+	'lg' => '(max-width: 900px) 50vw, 760px',
+	'md' => '(max-width: 900px) 50vw, 560px',
+	'sm' => '(max-width: 900px) 50vw, 400px',
+);
+
 $categories = array(
 	array(
 		'size'  => 'xl',
 		'tag'   => '',
 		'title' => 'Industrial Safety Shoes',
 		'image' => $safestore_cat_img( 'safety-shoes-category.webp' ),
+		'file'  => 'safety-shoes-category.webp',
+		'w'     => 1400,
+		'h'     => 827,
 		'fit'   => 'cover',
 		'url'   => $shoe_cat,
 		'alt'   => 'Industrial safety shoes in Bangladesh: TINGGU and HAOJIA steel toe work shoes, DINGGU safety boots, black leather safety shoes and J.C.D gumboots',
@@ -31,6 +63,9 @@ $categories = array(
 		'tag'   => '',
 		'title' => 'High-Visibility Safety Vests',
 		'image' => $safestore_cat_img( 'premium_hyper_realistic_product_photography_of_a_high_visibility_safety_vest._a.webp' ),
+		'file'  => 'premium_hyper_realistic_product_photography_of_a_high_visibility_safety_vest._a.webp',
+		'w'     => 800,
+		'h'     => 800,
 		'fit'   => 'cover',
 		'url'   => $vest_cat,
 		'alt'   => 'High visibility reflective safety vest product on neutral background',
@@ -40,6 +75,9 @@ $categories = array(
 		'tag'   => '',
 		'title' => 'Industrial Safety Gloves',
 		'image' => $safestore_cat_img( 'premium_hyper_realistic_product_photography_of_industrial_safety_gloves._a_pair (1).webp' ),
+		'file'  => 'premium_hyper_realistic_product_photography_of_industrial_safety_gloves._a_pair (1).webp',
+		'w'     => 800,
+		'h'     => 800,
 		'fit'   => 'cover',
 		'url'   => $gloves_cat,
 		'alt'   => 'Industrial safety gloves product shot for warehouse and factory use',
@@ -49,6 +87,9 @@ $categories = array(
 		'tag'   => '',
 		'title' => 'Safety Glasses & Goggles',
 		'image' => $safestore_cat_img( 'premium_hyper_realistic_product_photography_of_industrial_safety_goggles._a (3).webp' ),
+		'file'  => 'premium_hyper_realistic_product_photography_of_industrial_safety_goggles._a (3).webp',
+		'w'     => 1024,
+		'h'     => 1024,
 		'fit'   => 'cover',
 		'url'   => $goggle_cat,
 		'alt'   => 'Safety glasses and goggles product photo for workshop eye protection',
@@ -58,6 +99,9 @@ $categories = array(
 		'tag'   => '',
 		'title' => 'Safety Helmets & Hard Hats',
 		'image' => $safestore_cat_img( 'industrial_safety_category-helmet.webp' ),
+		'file'  => 'industrial_safety_category-helmet.webp',
+		'w'     => 1264,
+		'h'     => 848,
 		'fit'   => 'cover',
 		'url'   => $helmet_cat,
 		'alt'   => 'Industrial safety helmets and hard hats category art',
@@ -77,16 +121,16 @@ $categories = array(
 	<div class="featured-categories-grid">
 		<?php foreach ( $categories as $cat ) : ?>
 			<?php
-			$card_sizes = ( $cat['size'] === 'xl' )
-				? '(max-width: 900px) 92vw, (max-width: 1200px) 50vw, 560px'
-				: '(max-width: 900px) 46vw, (max-width: 1200px) 40vw, 420px';
+			$card_sizes  = isset( $safestore_cat_sizes[ $cat['size'] ] ) ? $safestore_cat_sizes[ $cat['size'] ] : $safestore_cat_sizes['sm'];
+			$card_srcset = $safestore_cat_srcset( $cat['file'], (int) $cat['w'] );
 			?>
 			<a class="category-card category-card--<?php echo esc_attr( $cat['size'] ); ?> category-card--<?php echo esc_attr( $cat['fit'] ); ?>"
 				href="<?php echo esc_url( $cat['url'] ); ?>">
 				<img src="<?php echo esc_url( $cat['image'] ); ?>"
+					<?php if ( '' !== $card_srcset ) : ?>srcset="<?php echo esc_attr( $card_srcset ); ?>"<?php endif; ?>
 					alt="<?php echo esc_attr( $cat['alt'] ); ?>"
-					width="800"
-					height="600"
+					width="<?php echo (int) $cat['w']; ?>"
+					height="<?php echo (int) $cat['h']; ?>"
 					sizes="<?php echo esc_attr( $card_sizes ); ?>"
 					loading="lazy"
 					decoding="async"

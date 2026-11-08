@@ -33,7 +33,7 @@ $sft_cart_total = $sft_wc_cart ? $sft_wc_cart->get_cart_total() : '';
                 width="<?php echo (int) $sft_logo['width']; ?>"
                 height="<?php echo (int) $sft_logo['height']; ?>"
                 decoding="async"
-                <?php echo ( is_page_template( 'page-home.php' ) || is_front_page() ) ? '' : 'fetchpriority="high"'; ?> />
+                <?php echo ( is_page_template( 'page-home.php' ) || is_front_page() || ( function_exists( 'is_product' ) && is_product() ) ) ? '' : 'fetchpriority="high"'; ?> />
         </a>
 
         <?php
