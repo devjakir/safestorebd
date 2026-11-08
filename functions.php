@@ -67,6 +67,9 @@ require get_template_directory() . '/inc/shipping-courier.php';
 // Cart page: qty − / + buttons, auto "Update cart", notes under the totals (woocommerce/cart/cart.php).
 require get_template_directory() . '/inc/cart-page.php';
 
+// Store facts (opening hours, social URLs) — single source for templates.
+require get_template_directory() . '/inc/store-info.php';
+
 // Wishlist page + account sync (SFT_ENABLE_WISHLIST flag).
 require get_template_directory() . '/inc/wishlist.php';
 
@@ -745,7 +748,8 @@ function safestore_minimal_get_faq_sections() {
 				),
 				array(
 					'q' => __( 'How do I contact support?', 'safestore-minimal' ),
-					'a' => __( 'WhatsApp <strong>+880 1811-892291</strong> or call/email on this site. Open <strong>Sat–Thu, 9am–8pm</strong>; closed Fridays.', 'safestore-minimal' ),
+					/* translators: %s: opening hours */
+					'a' => sprintf( __( 'WhatsApp <strong>+880 1811-892291</strong> or call/email on this site. Open <strong>%s</strong>.', 'safestore-minimal' ), esc_html( safestore_store_hours() ) ),
 				),
 			),
 		),

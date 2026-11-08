@@ -115,7 +115,7 @@ while ( have_posts() ) :
 				<div class="sft-bulk-main" id="sft-bulk-form">
 					<h2 class="sft-about-h2" id="sft-bulk-form-heading"><?php esc_html_e( 'Request a quotation', 'safestore-minimal' ); ?></h2>
 					<p class="sft-contact-required-note">
-						<?php esc_html_e( 'Fields marked with * are required. Quotations go out within 24 hours, Sat–Thu 9am–8pm. Urgent? WhatsApp is faster.', 'safestore-minimal' ); ?>
+						<?php /* translators: %s: opening hours */ echo esc_html( sprintf( __( 'Fields marked with * are required. Quotations go out within 24 hours, %s. Urgent? WhatsApp is faster.', 'safestore-minimal' ), safestore_store_hours() ) ); ?>
 					</p>
 
 					<?php if ( $form_id > 0 ) : ?>
@@ -175,7 +175,7 @@ while ( have_posts() ) :
 						</li>
 						<li>
 							<span class="sft-about-contact-label"><?php esc_html_e( 'Hours', 'safestore-minimal' ); ?></span>
-							<?php esc_html_e( 'Sat–Thu, 9am–8pm', 'safestore-minimal' ); ?>
+							<?php echo esc_html( safestore_store_hours() ); ?>
 						</li>
 						<?php if ( '' !== $office ) : ?>
 							<li>

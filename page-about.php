@@ -86,7 +86,7 @@ $facts = array(
 	__( 'Founded', 'safestore-minimal' )          => __( '17 October 2025', 'safestore-minimal' ),
 	__( 'Founder', 'safestore-minimal' )          => __( 'Md Jakir Hossain, BSc Engineer', 'safestore-minimal' ),
 	__( 'Office & pickup', 'safestore-minimal' )  => $office,
-	__( 'Hours', 'safestore-minimal' )            => __( 'Sat–Thu, 9am–8pm', 'safestore-minimal' ),
+	__( 'Hours', 'safestore-minimal' )            => safestore_store_hours(),
 );
 
 while ( have_posts() ) :

@@ -76,7 +76,7 @@ while ( have_posts() ) :
 				<aside class="sft-about-contact-card" aria-labelledby="sft-privacy-contact-heading">
 					<h3 class="sft-about-h3" id="sft-privacy-contact-heading"><?php esc_html_e( 'Privacy contact', 'safestore-minimal' ); ?></h3>
 					<p class="sft-about-contact-lead">
-						<?php esc_html_e( 'Email or WhatsApp for data requests. Sat–Thu, 9am–8pm.', 'safestore-minimal' ); ?>
+						<?php /* translators: %s: opening hours */ echo esc_html( sprintf( __( 'Email or WhatsApp for data requests. %s.', 'safestore-minimal' ), safestore_store_hours() ) ); ?>
 					</p>
 					<ul class="sft-about-contact-list">
 						<li><?php echo safestore_contact_email_links(); ?></li>

@@ -65,7 +65,7 @@ while ( have_posts() ) :
 				<aside class="sft-about-contact-card" aria-labelledby="sft-terms-help-heading">
 					<h3 class="sft-about-h3" id="sft-terms-help-heading"><?php esc_html_e( 'Order support', 'safestore-minimal' ); ?></h3>
 					<p class="sft-about-contact-lead">
-						<?php esc_html_e( 'Questions before you buy or after delivery — Sat–Thu, 9am–8pm.', 'safestore-minimal' ); ?>
+						<?php /* translators: %s: opening hours */ echo esc_html( sprintf( __( 'Questions before you buy or after delivery — %s.', 'safestore-minimal' ), safestore_store_hours() ) ); ?>
 					</p>
 					<ul class="sft-about-contact-list">
 						<li><?php echo safestore_contact_email_links(); ?></li>

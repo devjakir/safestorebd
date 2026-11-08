@@ -66,7 +66,7 @@ function sfx_footer_icon( $name ) {
 						<a class="sfx-bigbtn" href="<?php echo esc_url( 'tel:' . $sfx_tel_digits ); ?>" data-sft-copy-skip>
 							<span class="sfx-bigbtn__icon"><?php echo sfx_footer_icon( 'phone' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
 							<span class="sfx-bigbtn__text">
-								<span class="sfx-bigbtn__eyebrow"><?php esc_html_e( 'Sat–Thu, 9am–8pm', 'safestore-minimal' ); ?></span>
+								<span class="sfx-bigbtn__eyebrow"><?php esc_html_e( 'Call us', 'safestore-minimal' ); ?></span>
 								<span class="sfx-bigbtn__value"><?php echo esc_html( $sfx_tel_label ); ?></span>
 							</span>
 						</a>
@@ -88,8 +88,7 @@ function sfx_footer_icon( $name ) {
 					<span class="sfx-bigbtn__icon"><?php echo sfx_footer_icon( 'clock' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
 					<span class="sfx-bigbtn__text">
 						<span class="sfx-bigbtn__eyebrow"><?php esc_html_e( 'Hours', 'safestore-minimal' ); ?></span>
-						<span class="sfx-bigbtn__value"><?php esc_html_e( 'Sat–Thu, 9am–8pm — full week only', 'safestore-minimal' ); ?></span>
-						<span class="sfx-bigbtn__eyebrow"><?php esc_html_e( 'Office: 9am–10pm', 'safestore-minimal' ); ?></span>
+						<span class="sfx-bigbtn__value"><?php echo esc_html( safestore_store_hours() ); ?></span>
 					</span>
 				</div>
 			</div>
