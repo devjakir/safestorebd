@@ -9,7 +9,8 @@
  * thank-you page — no cart or checkout page (inc/product-landing-order.php).
  *
  * Per-page settings live in the "Product Landing (Facebook)" box on the page
- * edit screen; logic and defaults in inc/product-landing.php. Styling:
+ * edit screen; logic and defaults in inc/product-landing.php. Header, footer
+ * and the order form are the shared partials in templates/landing/. Styling:
  * css/landing-common.css (shared .lp-*) + css/product-landing.css (.spl-*).
  */
 
@@ -19,16 +20,11 @@ $spl_page_id = (int) get_queried_object_id();
 $spl         = safestore_pl_settings( $spl_page_id );
 $spl_product = safestore_pl_find_product( $spl['product'] );
 
-$spl_tel       = function_exists( 'safestore_primary_phone_e164' ) ? safestore_primary_phone_e164() : '+8801811892291';
-$spl_tel_label = safestore_pl_phone_bn( function_exists( 'safestore_primary_phone_display' ) ? safestore_primary_phone_display() : '+880 1811-892291' );
-$spl_wa_base   = function_exists( 'safestore_primary_wa_link' ) ? safestore_primary_wa_link() : 'https://wa.me/8801811892291';
-$spl_wa_icon   = function_exists( 'safestore_wa_icon_svg' ) ? safestore_wa_icon_svg( 'lp-ico-wa' ) : '';
-$spl_address   = safestore_pl_address();
-$spl_emails    = function_exists( 'safestore_contact_email_addresses' ) ? safestore_contact_email_addresses() : array( 'contact@safestorebd.com' );
-$spl_email     = $spl_emails ? reset( $spl_emails ) : '';
-$spl_shop      = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
-$spl_logo      = safestore_brand_logo_svg();
-$spl_hours     = 'শনি–বৃহস্পতি, সকাল ৯টা – রাত ৮টা';
+$spl_c       = safestore_lp_contact();
+$spl_tel     = $spl_c['tel'];
+$spl_wa_base = $spl_c['wa'];
+$spl_wa_icon = $spl_c['wa_icon'];
+$spl_shop    = $spl_c['shop'];
 
 if ( $spl_product ) {
 	$spl_name         = $spl_product->get_name();
@@ -86,34 +82,18 @@ if ( $spl_product ) {
 		$spl_preload
 	);
 
-	// Order form: what the visitor gave before (logged in, or a failed no-JS post). On a fresh
-	// visit a district without a thana is only the store's default address, so it is dropped.
-	$spl_vals = array();
-	foreach ( array_keys( safestore_pl_form_fields() ) as $spl_k ) {
-		$spl_vals[ $spl_k ] = (string) WC()->checkout()->get_value( $spl_k );
-	}
-	if ( '' === $spl_vals['billing_city'] && ! isset( $_GET['spl_err'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-		$spl_vals['billing_state'] = '';
-	}
-
-	$spl_js = array(
-		'id'       => $spl_product->get_id(),
-		'sku'      => (string) $spl_product->get_sku(),
-		'name'     => $spl_name,
-		'price'    => $spl_price['now'],
-		'currency' => function_exists( 'get_woocommerce_currency' ) ? get_woocommerce_currency() : 'BDT',
-		'waBase'   => $spl_wa_base,
-		'waText'   => $spl_wa_tpl,
-		'options'  => array(),
-		'thanas'   => function_exists( 'safestorebd_bd_thanas' ) ? safestorebd_bd_thanas() : array(),
-		'ship'     => safestore_pl_ship_data( $spl_product ),
-		'flat'     => null,
-		'pay'      => array( 'mfs' => safestore_pl_mfs_available() ),
+	// Order core (thanas, delivery charge, payment) + this product.
+	$spl_js = array_merge(
+		safestore_lp_order_cfg( $spl_product ),
+		array(
+			'id'      => $spl_product->get_id(),
+			'sku'     => (string) $spl_product->get_sku(),
+			'name'    => $spl_name,
+			'price'   => $spl_price['now'],
+			'waText'  => $spl_wa_tpl,
+			'options' => array(),
+		)
 	);
-	// Steadfast courier not live → the charge WooCommerce's own zones (Flat rate…) apply.
-	if ( ! $spl_js['ship'] ) {
-		$spl_js['flat'] = safestore_pl_wc_ship_data( $spl_product );
-	}
 	if ( $spl_has_options ) {
 		foreach ( $spl_options['items'] as $spl_o ) {
 			$spl_js['options'][ $spl_o['id'] ] = array( 'label' => $spl_o['label'], 'price' => $spl_o['price'], 'max' => $spl_o['max'] );
@@ -124,46 +104,15 @@ if ( $spl_product ) {
 }
 
 $spl_error = safestore_pl_error_text();
-$spl_trust = array(
-	array( 'icon' => 'card', 'text' => 'ক্যাশ অন ডেলিভারি' ),
-	array( 'icon' => 'truck', 'text' => 'ঢাকায় ২৪ ঘণ্টায় ডেলিভারি' ),
-	array( 'icon' => 'pin', 'text' => '৬৪ জেলায় ডেলিভারি' ),
-	array( 'icon' => 'return', 'text' => '৭ দিনে রিটার্ন ও এক্সচেঞ্জ' ),
+$spl_trust = safestore_lp_trust();
+$spl_steps = safestore_lp_steps(
+	array(
+		'title' => $spl_product && $spl_has_options ? 'সাইজ বেছে নিন' : 'পরিমাণ ঠিক করুন',
+		'text'  => $spl_product && $spl_has_options ? 'নিয়মিত যে সাইজের জুতা পরেন, সেটি ও কয় জোড়া লাগবে ঠিক করুন।' : 'কয়টি লাগবে ঠিক করুন।',
+	)
 );
-$spl_steps = array(
-	array( 'title' => $spl_product && $spl_has_options ? 'সাইজ বেছে নিন' : 'পরিমাণ ঠিক করুন', 'text' => $spl_product && $spl_has_options ? 'নিয়মিত যে সাইজের জুতা পরেন, সেটি ও কয় জোড়া লাগবে ঠিক করুন।' : 'কয়টি লাগবে ঠিক করুন।' ),
-	array( 'title' => 'ঠিকানা দিয়ে অর্ডার কনফার্ম', 'text' => 'এই পেজেই নাম, মোবাইল ও ঠিকানা দিন — জেলা বেছে নিলেই ডেলিভারি চার্জ দেখবেন। তারপর "অর্ডার কনফার্ম করুন"।' ),
-	array( 'title' => 'পণ্য দেখে টাকা দিন', 'text' => 'আমরা ফোন করে অর্ডার নিশ্চিত করব। ডেলিভারি প্রতিনিধির সামনে পণ্য যাচাই করে মূল্য দিন। বিকাশ ও নগদেও দেওয়া যায়।' ),
-);
-?><!doctype html>
-<html <?php language_attributes(); ?>>
-<head>
-	<meta charset="<?php bloginfo( 'charset' ); ?>">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<?php wp_head(); ?>
-</head>
-<body <?php body_class(); ?>>
-<?php wp_body_open(); ?>
-<a class="lp-skip" href="#spl-main">মূল কনটেন্টে যান</a>
-
-<header class="lp-header" role="banner">
-	<div class="lp-wrap lp-header__in">
-		<a class="lp-header__brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?> — হোম">
-			<img src="<?php echo esc_url( $spl_logo['url'] ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" width="<?php echo (int) $spl_logo['width']; ?>" height="<?php echo (int) $spl_logo['height']; ?>" decoding="async">
-		</a>
-		<div class="lp-header__acts">
-			<a class="lp-header__tel" href="<?php echo esc_url( 'tel:' . $spl_tel ); ?>" data-spl-loc="header" aria-label="<?php echo esc_attr( 'কল করুন: ' . $spl_tel_label ); ?>">
-				<?php echo safestore_pl_icon( 'phone', 20 ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-				<span class="lp-header__num" aria-hidden="true"><?php echo esc_html( $spl_tel_label ); ?></span>
-			</a>
-			<a class="lp-btn lp-btn--wa lp-btn--sm" href="<?php echo esc_url( $spl_wa ); ?>" target="_blank" rel="noopener noreferrer" data-spl-loc="header" data-spl-wa>
-				<?php echo $spl_wa_icon; // phpcs:ignore WordPress.Security.EscapeOutput ?>
-				<span>WhatsApp</span>
-			</a>
-		</div>
-	</div>
-</header>
-
+get_template_part( 'templates/landing/header', null, array( 'wa' => $spl_wa, 'main' => 'spl-main' ) );
+?>
 <main id="spl-main">
 <?php if ( ! $spl_product ) : ?>
 
@@ -317,133 +266,19 @@ $spl_steps = array(
 							</div>
 						</div>
 
-						<div class="spl-ship">
-							<p class="spl-ship__title">Delivery details</p>
-							<p class="spl-ship__sub">We will call this number to confirm your order</p>
-							<p class="lp-alert" role="alert" tabindex="-1" data-spl-alert hidden></p>
-							<div class="spl-ship__grid">
-								<?php
-								foreach ( safestore_pl_form_fields() as $spl_k => $spl_f ) :
-									$spl_id   = 'spl-' . str_replace( '_', '-', $spl_k );
-									$spl_opts = array();
-									if ( 'billing_state' === $spl_k ) {
-										$spl_opts = safestore_pl_districts();
-									} elseif ( 'billing_city' === $spl_k && '' !== $spl_vals['billing_state'] ) {
-										$spl_list = safestorebd_thanas_for( $spl_vals['billing_state'] );
-										$spl_opts = $spl_list ? array_combine( $spl_list, $spl_list ) : array();
-									}
-									// An empty thana list can't be "required" without JS (nothing to pick); the server checks it.
-									$spl_att = sprintf(
-										'id="%1$s" name="%2$s" autocomplete="%3$s"%5$s aria-describedby="%1$s-err" data-err="%4$s" data-spl-field',
-										esc_attr( $spl_id ),
-										esc_attr( $spl_k ),
-										esc_attr( $spl_f['auto'] ),
-										esc_attr( $spl_f['err'] ),
-										'billing_city' === $spl_k && ! $spl_opts ? '' : ' required'
-									);
-									?>
-									<div class="lp-field spl-f--<?php echo esc_attr( $spl_f['type'] ); ?>">
-										<label for="<?php echo esc_attr( $spl_id ); ?>"><?php echo esc_html( $spl_f['label'] ); ?> <span class="lp-req" aria-hidden="true">*</span></label>
-										<?php if ( 'select' === $spl_f['type'] ) : ?>
-											<select <?php echo $spl_att; // phpcs:ignore WordPress.Security.EscapeOutput -- escaped above ?>>
-												<option value=""><?php echo esc_html( 'billing_city' === $spl_k && $spl_opts ? 'Select thana / upazila' : $spl_f['ph'] ); ?></option>
-												<?php foreach ( $spl_opts as $spl_v => $spl_l ) : ?>
-													<option value="<?php echo esc_attr( $spl_v ); ?>"<?php selected( $spl_vals[ $spl_k ], (string) $spl_v ); ?>><?php echo esc_html( $spl_l ); ?></option>
-												<?php endforeach; ?>
-											</select>
-										<?php elseif ( 'textarea' === $spl_f['type'] ) : ?>
-											<textarea <?php echo $spl_att; // phpcs:ignore WordPress.Security.EscapeOutput ?> rows="2" placeholder="<?php echo esc_attr( $spl_f['ph'] ); ?>"><?php echo esc_textarea( $spl_vals[ $spl_k ] ); ?></textarea>
-										<?php else : ?>
-											<input <?php echo $spl_att; // phpcs:ignore WordPress.Security.EscapeOutput ?> type="<?php echo esc_attr( $spl_f['type'] ); ?>"<?php echo 'tel' === $spl_f['type'] ? ' inputmode="tel" maxlength="16"' : ''; ?> placeholder="<?php echo esc_attr( $spl_f['ph'] ); ?>" value="<?php echo esc_attr( $spl_vals[ $spl_k ] ); ?>">
-										<?php endif; ?>
-										<p class="lp-err" id="<?php echo esc_attr( $spl_id ); ?>-err" hidden></p>
-									</div>
-								<?php endforeach; ?>
-							</div>
-
-							<div class="spl-sum" aria-live="polite">
-								<p><span><?php echo esc_html( $spl_name ); ?> <small data-spl-line></small></span><b data-spl-sub><?php echo esc_html( safestore_pl_taka( $spl_price['now'] ) ); ?></b></p>
-								<p class="spl-sum__ship"><span>Delivery charge <small data-spl-zone></small></span><b data-spl-ship><?php echo ( $spl_js['ship'] || $spl_js['flat'] ) ? 'Select district' : 'Added at checkout'; ?></b></p>
-								<p class="spl-sum__tot"><span>Total</span><b data-spl-total><?php echo esc_html( safestore_pl_taka( $spl_price['now'] ) ); ?></b></p>
-							</div>
-						</div>
-
 						<?php
-						// Payment: right after the total, right before the button — the buyer
-						// already knows what they pay and only picks how. Cash on Delivery is
-						// pre-selected (most buyers); "Pay now" opens bKash / Nagad inline.
-						$spl_mfs = $spl_js['pay']['mfs'] && function_exists( 'safestore_mfs_accounts' );
+						get_template_part(
+							'templates/landing/order-form',
+							null,
+							array(
+								'cfg'   => $spl_js,
+								'lines' => array( array( 'name' => $spl_name, 'note' => '', 'amount' => $spl_price['now'] ) ),
+								'total' => $spl_price['now'],
+								'wa'    => $spl_wa,
+								'loc'   => 'hero',
+							)
+						);
 						?>
-						<fieldset class="spl-pay" data-spl-pay>
-							<legend class="spl-ship__title">Payment method</legend>
-							<label class="spl-pay__opt">
-								<input type="radio" name="spl_payment" value="cod" checked data-spl-pay-opt>
-								<span class="spl-pay__body">
-									<span class="spl-pay__name"><?php echo safestore_pl_icon( 'card', 20 ); // phpcs:ignore WordPress.Security.EscapeOutput ?> Cash on Delivery</span>
-									<span class="spl-pay__desc">Pay when you receive it — check the product first.</span>
-								</span>
-							</label>
-							<?php if ( $spl_mfs ) : ?>
-								<label class="spl-pay__opt">
-									<input type="radio" name="spl_payment" value="mfs" data-spl-pay-opt>
-									<span class="spl-pay__body">
-										<span class="spl-pay__name"><span class="spl-pay__wallet spl-pay__wallet--bkash">bKash</span><span class="spl-pay__wallet spl-pay__wallet--nagad">Nagad</span> Pay now</span>
-										<span class="spl-pay__desc">Pay online now — nothing to pay at delivery.</span>
-									</span>
-								</label>
-								<div class="spl-mfs" data-spl-mfs hidden>
-									<p class="spl-mfs__lead"><?php echo esc_html( function_exists( 'safestore_mfs_copy' ) ? safestore_mfs_copy( 'lead' ) : 'Send Money to one of our numbers:' ); ?></p>
-									<ul class="spl-mfs__nums">
-										<?php foreach ( safestore_mfs_accounts() as $spl_acc ) : ?>
-											<li class="spl-mfs__num spl-mfs__num--<?php echo esc_attr( $spl_acc['key'] ); ?>">
-												<span class="spl-mfs__brand"><?php echo esc_html( $spl_acc['label'] ); ?></span>
-												<span class="spl-mfs__digits"><?php echo esc_html( safestore_mfs_format_number( $spl_acc['number'] ) ); ?></span>
-												<button type="button" class="spl-mfs__copy" data-spl-copy="<?php echo esc_attr( $spl_acc['number'] ); ?>" aria-label="<?php echo esc_attr( 'Copy ' . $spl_acc['label'] . ' number' ); ?>">Copy</button>
-											</li>
-										<?php endforeach; ?>
-									</ul>
-									<p class="spl-mfs__amount">Amount to send <b data-spl-total><?php echo esc_html( safestore_pl_taka( $spl_price['now'] ) ); ?></b></p>
-									<ol class="spl-mfs__steps">
-										<li><?php echo wp_kses( function_exists( 'safestore_mfs_copy' ) ? safestore_mfs_copy( 'step1' ) : 'Open the bKash or Nagad app and tap <strong>Send Money</strong>.', array( 'strong' => array() ) ); ?></li>
-										<li>Send exactly the amount above to one of the numbers.</li>
-										<li>Enter the Transaction ID (TrxID) from your SMS below.</li>
-									</ol>
-									<div class="spl-mfs__fields">
-										<fieldset class="spl-mfs__wallets">
-											<legend>Paid with</legend>
-											<?php foreach ( safestore_mfs_wallet_labels() as $spl_wk => $spl_wl ) : ?>
-												<label><input type="radio" name="sft_mfs_wallet" value="<?php echo esc_attr( $spl_wk ); ?>"<?php checked( 'bkash', $spl_wk ); ?>> <?php echo esc_html( $spl_wl ); ?></label>
-											<?php endforeach; ?>
-										</fieldset>
-										<div class="lp-field">
-											<label for="spl-mfs-sender">Your bKash / Nagad number</label>
-											<input id="spl-mfs-sender" name="sft_mfs_sender" type="tel" inputmode="tel" maxlength="16" placeholder="01XXXXXXXXX" autocomplete="tel" aria-describedby="spl-mfs-sender-err" data-err="Enter the 11-digit number you sent the money from">
-											<p class="lp-err" id="spl-mfs-sender-err" hidden></p>
-										</div>
-										<div class="lp-field">
-											<label for="spl-mfs-trxid">Transaction ID (TrxID)</label>
-											<input id="spl-mfs-trxid" name="sft_mfs_trxid" type="text" maxlength="16" placeholder="e.g. 9BG7X2K4LM" autocapitalize="characters" autocomplete="off" spellcheck="false" aria-describedby="spl-mfs-trxid-err" data-err="The TrxID is 8–12 letters and numbers from your SMS">
-											<p class="lp-err" id="spl-mfs-trxid-err" hidden></p>
-										</div>
-									</div>
-									<p class="spl-mfs__later">Not paid yet? Leave the TrxID empty and place the order — pay within <?php echo (int) ( function_exists( 'safestore_mfs_pay_hours' ) ? safestore_mfs_pay_hours() : 24 ); ?> hours. The next page shows the numbers again.</p>
-								</div>
-							<?php endif; ?>
-						</fieldset>
-
-						<p class="lp-hp" aria-hidden="true"><label>Website <input type="text" name="spl_website" tabindex="-1" autocomplete="off"></label></p>
-						<input type="hidden" name="spl_token" value="" data-spl-token>
-						<wc-order-attribution-inputs></wc-order-attribution-inputs>
-
-						<button class="lp-btn lp-btn--amber lp-btn--lg lp-btn--block spl-cta" type="submit" data-spl-submit>
-							<span class="lp-spin" aria-hidden="true"></span>
-							<span data-spl-submit-label>Confirm order</span>
-						</button>
-						<p class="lp-note"><span data-spl-note="cod">We'll call you to confirm the order · Check the product, then pay</span><span data-spl-note="mfs" hidden>We'll verify your payment and call you to confirm the order</span><?php if ( function_exists( 'wc_terms_and_conditions_checkbox_enabled' ) && wc_terms_and_conditions_checkbox_enabled() ) : ?><br>By placing the order you agree to our <a href="<?php echo esc_url( home_url( '/terms-of-service/' ) ); ?>">Terms</a><?php endif; ?></p>
-						<a class="lp-btn lp-btn--outline lp-btn--block" href="<?php echo esc_url( $spl_wa ); ?>" target="_blank" rel="noopener noreferrer" data-spl-loc="hero" data-spl-wa>
-							<?php echo $spl_wa_icon; // phpcs:ignore WordPress.Security.EscapeOutput ?>
-							Order on WhatsApp
-						</a>
 					</form>
 				<?php endif; ?>
 
@@ -633,32 +468,7 @@ $spl_steps = array(
 <?php endif; ?>
 </main>
 
-<footer class="lp-footer" role="contentinfo">
-	<div class="lp-wrap lp-footer__grid">
-		<div>
-			<p class="lp-footer__brand"><?php echo esc_html( get_bloginfo( 'name' ) ); ?></p>
-			<p><?php echo esc_html( $spl_address ); ?></p>
-			<p><?php echo esc_html( $spl_hours ); ?></p>
-		</div>
-		<ul>
-			<li><a href="<?php echo esc_url( 'tel:' . $spl_tel ); ?>" data-spl-loc="footer"><?php echo safestore_pl_icon( 'phone', 18 ); // phpcs:ignore WordPress.Security.EscapeOutput ?><?php echo esc_html( $spl_tel_label ); ?></a></li>
-			<?php if ( $spl_email ) : ?>
-				<li><a href="<?php echo esc_url( 'mailto:' . $spl_email ); ?>"><?php echo esc_html( $spl_email ); ?></a></li>
-			<?php endif; ?>
-		</ul>
-		<nav aria-label="নীতিমালা">
-			<ul class="lp-footer__links">
-				<li><a href="<?php echo esc_url( home_url( '/shipping-delivery/' ) ); ?>">ডেলিভারি</a></li>
-				<li><a href="<?php echo esc_url( home_url( '/return-refund-policy/' ) ); ?>">রিটার্ন ও রিফান্ড</a></li>
-				<li><a href="<?php echo esc_url( home_url( '/privacy-policy/' ) ); ?>">প্রাইভেসি পলিসি</a></li>
-				<li><a href="<?php echo esc_url( home_url( '/terms-of-service/' ) ); ?>">শর্তাবলি</a></li>
-				<li><a href="<?php echo esc_url( home_url( '/track-order/' ) ); ?>">অর্ডার ট্র্যাক</a></li>
-				<li><a href="<?php echo esc_url( $spl_shop ); ?>">শপ</a></li>
-			</ul>
-		</nav>
-	</div>
-	<p class="lp-wrap lp-footer__copy">© <?php echo esc_html( safestore_pl_bn( date_i18n( 'Y' ) ) ); ?> <?php echo esc_html( get_bloginfo( 'name' ) ); ?></p>
-</footer>
+<?php get_template_part( 'templates/landing/footer' ); ?>
 
 <?php if ( $spl_product ) : ?>
 <!-- 9. MOBILE STICKY BAR (<768px) ============================================ -->

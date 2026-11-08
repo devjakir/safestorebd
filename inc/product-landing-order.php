@@ -4,7 +4,8 @@
  *
  * The order form on page-templates/template-product-landing.php POSTs to the
  * page itself. inc/product-landing.php checks the product / size / quantity and
- * calls safestore_pl_place_order(), which puts only that line in the cart and
+ * calls safestore_pl_place_order(), which puts only that line in the cart (a
+ * category landing passes several lines) and
  * runs WooCommerce's own checkout (WC_Checkout::process_checkout). So the thana
  * check, phone check, Steadfast charge, COD, stock, emails and order
  * attribution work exactly as on /checkout/.
@@ -65,12 +66,7 @@ function safestore_pl_ship_data( $product ) {
 	if ( ! $rates ) {
 		return null;
 	}
-	$kg = (float) $product->get_weight();
-	if ( $kg > 0 ) {
-		$kg = (float) wc_get_weight( $kg, 'kg' );
-	} elseif ( class_exists( 'SafeStoreBD_Shipping_Courier' ) ) {
-		$kg = max( 0.0, (float) ( new SafeStoreBD_Shipping_Courier() )->get_option( 'default_weight' ) );
-	}
+	$kg    = safestore_lp_product_kg( $product );
 	$lanes = array();
 	foreach ( array_keys( safestore_pl_districts() ) as $code ) {
 		$lane = safestorebd_courier_lane( $code, '' );
@@ -203,14 +199,16 @@ function safestore_pl_courier_rate_id( $state, $thana ) {
 }
 
 /**
- * Place the order for one checked cart line and end the request.
+ * Place the order for the checked cart line(s) and end the request.
  *
  * @param int      $page_id Landing page.
- * @param array    $line    From safestore_pl_resolve_line().
+ * @param array    $lines   One line from safestore_pl_resolve_line(), or a list of
+ *                          lines (category landing: several products in one order).
  * @param bool     $ajax    JSON answer instead of redirects.
  * @param callable $fail    Sends the error for a code and exits.
  */
-function safestore_pl_place_order( $page_id, $line, $ajax, $fail ) {
+function safestore_pl_place_order( $page_id, $lines, $ajax, $fail ) {
+	$lines = isset( $lines['product_id'] ) ? array( $lines ) : array_values( (array) $lines );
 	// phpcs:disable WordPress.Security.NonceVerification -- public order form, see the guards in the file header.
 	if ( ! empty( $_POST['spl_website'] ) ) {
 		$fail( 'cart' ); // honeypot filled: a bot
@@ -233,7 +231,7 @@ function safestore_pl_place_order( $page_id, $line, $ajax, $fail ) {
 		exit;
 	}
 
-	// Only this line goes into the order; whatever was in the cart comes back afterwards.
+	// Only these lines go into the order; whatever was in the cart comes back afterwards.
 	$saved = WC()->cart->get_cart();
 	WC()->cart->empty_cart( false );
 	if ( $saved ) {
@@ -249,10 +247,12 @@ function safestore_pl_place_order( $page_id, $line, $ajax, $fail ) {
 			0 // before WooCommerce saves the session (20)
 		);
 	}
-	if ( ! safestore_pl_cart_line( $line ) ) {
-		$fail( 'cart' );
+	foreach ( $lines as $line ) {
+		if ( ! safestore_pl_cart_line( $line ) ) {
+			$fail( 'cart' );
+		}
 	}
-	safestore_pl_mark_session( $page_id, $line );
+	safestore_pl_mark_session( $page_id, $lines[0] );
 
 	$state = isset( $_POST['billing_state'] ) ? wc_clean( wp_unslash( $_POST['billing_state'] ) ) : '';
 	$thana = isset( $_POST['billing_city'] ) ? wc_clean( wp_unslash( $_POST['billing_city'] ) ) : '';
