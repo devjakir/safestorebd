@@ -67,6 +67,61 @@ function safestore_mfs_format_number( $digits ) {
 	return 11 === strlen( $digits ) ? substr( $digits, 0, 5 ) . '-' . substr( $digits, 5 ) : $digits;
 }
 
+/**
+ * Receiving account type — the single switch for every bKash / Nagad line.
+ *
+ * 'personal' (default): customers use "Send Money" (what the numbers are today).
+ * 'merchant': customers use "Payment" — only flip this once the numbers really
+ * are bKash / Nagad merchant accounts, otherwise payments fail in the app.
+ *
+ * Set with define( 'SFT_MFS_ACCOUNT_TYPE', 'merchant' ); in wp-config.php or the
+ * `safestore_mfs_account_type` filter.
+ */
+function safestore_mfs_account_type() {
+	$type = defined( 'SFT_MFS_ACCOUNT_TYPE' ) ? (string) SFT_MFS_ACCOUNT_TYPE : 'personal';
+	$type = (string) apply_filters( 'safestore_mfs_account_type', $type );
+	return 'merchant' === $type ? 'merchant' : 'personal';
+}
+
+/**
+ * Customer-facing copy that depends on the account type. One place for the
+ * checkout gateway, pay box, emails, product page and FAQ.
+ *
+ * @param string $key Copy key.
+ * @return string Translated string (may contain printf placeholders / <strong>).
+ */
+function safestore_mfs_copy( $key ) {
+	$merchant = 'merchant' === safestore_mfs_account_type();
+	$copy     = $merchant
+		? array(
+			'method'       => __( 'Payment', 'safestore-minimal' ),
+			'title'        => __( 'bKash / Nagad (Merchant Payment)', 'safestore-minimal' ),
+			/* translators: %s: "bKash: 01761-699627 · Nagad: 01558-990209" */
+			'description'  => __( 'Pay to our merchant number with “Payment” — %s — then enter the Transaction ID.', 'safestore-minimal' ),
+			/* translators: 1: wallet numbers, 2: hours */
+			'instructions' => __( 'Pay by bKash / Nagad “Payment” to our merchant number — %1$s — within %2$d hours, using the exact order total. Then send us the Transaction ID (TrxID) from your SMS on WhatsApp: 01811-892291. Your order ships once the payment is confirmed.', 'safestore-minimal' ),
+			'num_type'     => __( 'Merchant · Payment', 'safestore-minimal' ),
+			'lead'         => __( 'Pay to one of our merchant numbers:', 'safestore-minimal' ),
+			'step1'        => __( 'Open the bKash or Nagad app and tap <strong>Payment</strong>.', 'safestore-minimal' ),
+			'pdp_note'     => __( 'bKash / Nagad: pay to our merchant number and enter the TrxID at checkout.', 'safestore-minimal' ),
+		)
+		: array(
+			'method'       => __( 'Send Money', 'safestore-minimal' ),
+			'title'        => __( 'bKash / Nagad (Send Money)', 'safestore-minimal' ),
+			/* translators: %s: "bKash: 01761-699627 · Nagad: 01558-990209" */
+			'description'  => __( 'Send Money to our personal number — %s — then enter the Transaction ID.', 'safestore-minimal' ),
+			/* translators: 1: wallet numbers, 2: hours */
+			'instructions' => __( 'Pay by bKash / Nagad Send Money to our personal number — %1$s — within %2$d hours, using the exact order total. Then send us the Transaction ID (TrxID) from your SMS on WhatsApp: 01811-892291. Your order ships once the payment is confirmed.', 'safestore-minimal' ),
+			'num_type'     => __( 'Personal · Send Money', 'safestore-minimal' ),
+			'lead'         => __( 'Send Money to one of our personal numbers:', 'safestore-minimal' ),
+			'step1'        => __( 'Open the bKash or Nagad app and tap <strong>Send Money</strong>.', 'safestore-minimal' ),
+			'pdp_note'     => __( 'bKash / Nagad: Send Money to our personal number and enter the TrxID at checkout.', 'safestore-minimal' ),
+		);
+
+	$copy = (array) apply_filters( 'safestore_mfs_copy', $copy, $merchant ? 'merchant' : 'personal' );
+	return isset( $copy[ $key ] ) ? (string) $copy[ $key ] : '';
+}
+
 /** Hours the customer has to pay after ordering. */
 function safestore_mfs_pay_hours() {
 	return (int) apply_filters( 'safestore_mfs_pay_hours', 24 );
@@ -98,8 +153,8 @@ function safestore_mfs_clean_mobile( $raw ) {
 /** Upper-case TrxID without spaces; '' when it does not look like one. */
 function safestore_mfs_clean_trxid( $raw ) {
 	$t = strtoupper( preg_replace( '/[^A-Za-z0-9]/', '', (string) $raw ) );
-	// bKash TrxIDs are 10 characters, Nagad 8; allow a little slack.
-	return preg_match( '/^[A-Z0-9]{6,20}$/', $t ) ? $t : '';
+	// bKash TrxIDs are 10 characters, Nagad 8; accept 8–12 letters / digits.
+	return preg_match( '/^[A-Z0-9]{8,12}$/', $t ) ? $t : '';
 }
 
 /** Saved payment details of an order. */
@@ -129,18 +184,9 @@ add_filter(
 		}
 		$numbers = implode( ' · ', $lines );
 
-		$settings['title']        = __( 'bKash / Nagad (Send Money)', 'safestore-minimal' );
-		$settings['description']  = sprintf(
-			/* translators: %s: "bKash: 01761-699627 · Nagad: 01558-990209" */
-			__( 'Send Money to our personal number — %s — then enter the Transaction ID.', 'safestore-minimal' ),
-			$numbers
-		);
-		$settings['instructions'] = sprintf(
-			/* translators: 1: wallet numbers, 2: hours */
-			__( 'Pay by bKash / Nagad Send Money to our personal number — %1$s — within %2$d hours, using the exact order total. Then send us the Transaction ID (TrxID) from your SMS on WhatsApp: 01811-892291. Your order ships once the payment is confirmed.', 'safestore-minimal' ),
-			$numbers,
-			safestore_mfs_pay_hours()
-		);
+		$settings['title']        = safestore_mfs_copy( 'title' );
+		$settings['description']  = sprintf( safestore_mfs_copy( 'description' ), $numbers );
+		$settings['instructions'] = sprintf( safestore_mfs_copy( 'instructions' ), $numbers, safestore_mfs_pay_hours() );
 		return $settings;
 	}
 );
@@ -163,7 +209,7 @@ function safestore_mfs_numbers_html( $amount_text ) {
 				<span class="sft-mfs-num__brand"><?php echo esc_html( $acc['label'] ); ?></span>
 				<span class="sft-mfs-num__value">
 					<span class="sft-mfs-num__digits"><?php echo esc_html( safestore_mfs_format_number( $acc['number'] ) ); ?></span>
-					<span class="sft-mfs-num__type"><?php esc_html_e( 'Personal · Send Money', 'safestore-minimal' ); ?></span>
+					<span class="sft-mfs-num__type"><?php echo esc_html( safestore_mfs_copy( 'num_type' ) ); ?></span>
 				</span>
 				<?php
 				if ( function_exists( 'safestore_copy_button' ) ) {
@@ -193,7 +239,8 @@ function safestore_mfs_numbers_html( $amount_text ) {
 /** "Over ৳50,000" note, or ''. */
 function safestore_mfs_limit_note( $amount ) {
 	$limit = safestore_mfs_daily_limit();
-	if ( $limit <= 0 || (float) $amount <= $limit ) {
+	// The daily cap is a personal-account Send Money rule.
+	if ( 'personal' !== safestore_mfs_account_type() || $limit <= 0 || (float) $amount <= $limit ) {
 		return '';
 	}
 	return sprintf(
@@ -233,7 +280,7 @@ function safestore_mfs_fields_html( $prefix, $values = array(), $required = fals
 		</p>
 		<p class="sft-mfs-field">
 			<label for="<?php echo esc_attr( $prefix . '_trxid' ); ?>"><?php esc_html_e( 'Transaction ID (TrxID)', 'safestore-minimal' ); ?></label>
-			<input type="text" class="input-text" id="<?php echo esc_attr( $prefix . '_trxid' ); ?>" name="<?php echo esc_attr( $prefix . '_trxid' ); ?>" value="<?php echo esc_attr( $values['trxid'] ); ?>" placeholder="<?php esc_attr_e( 'e.g. 9BG7X2K4LM', 'safestore-minimal' ); ?>" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="24"<?php echo esc_attr( $req ); ?> />
+			<input type="text" class="input-text" id="<?php echo esc_attr( $prefix . '_trxid' ); ?>" name="<?php echo esc_attr( $prefix . '_trxid' ); ?>" value="<?php echo esc_attr( $values['trxid'] ); ?>" placeholder="<?php esc_attr_e( 'e.g. 9BG7X2K4LM', 'safestore-minimal' ); ?>" autocapitalize="characters" autocomplete="off" spellcheck="false" minlength="8" maxlength="16" pattern="[A-Za-z0-9 \-]{8,16}" title="<?php esc_attr_e( '8–12 letters and numbers from your bKash / Nagad SMS', 'safestore-minimal' ); ?>"<?php echo esc_attr( $req ); ?> />
 		</p>
 	</div>
 	<?php
@@ -259,11 +306,11 @@ function safestore_mfs_payment_box() {
 	// phpcs:enable
 	?>
 	<div class="sft-mfs">
-		<p class="sft-mfs__lead"><?php esc_html_e( 'Send Money to one of our personal numbers:', 'safestore-minimal' ); ?></p>
+		<p class="sft-mfs__lead"><?php echo esc_html( safestore_mfs_copy( 'lead' ) ); ?></p>
 		<?php echo safestore_mfs_numbers_html( $text ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped inside. ?>
 
 		<ol class="sft-mfs-howto">
-			<li><?php echo wp_kses( __( 'Open the bKash or Nagad app and tap <strong>Send Money</strong>.', 'safestore-minimal' ), array( 'strong' => array() ) ); ?></li>
+			<li><?php echo wp_kses( safestore_mfs_copy( 'step1' ), array( 'strong' => array() ) ); ?></li>
 			<li>
 				<?php
 				echo $text
@@ -327,7 +374,7 @@ function safestore_mfs_read_posted( $prefix, $require_trx = false ) {
 	}
 
 	if ( '' === $values['trxid'] ) {
-		$error = __( 'The Transaction ID looks wrong. Copy it exactly from your bKash / Nagad SMS (letters and numbers only).', 'safestore-minimal' );
+		$error = __( 'The Transaction ID looks wrong. Copy it exactly from your bKash / Nagad SMS: 8–12 letters and numbers (bKash 10, Nagad 8).', 'safestore-minimal' );
 	} elseif ( '' === $values['sender'] ) {
 		$error = __( 'Please enter the bKash / Nagad number you sent the money from (11 digits, e.g. 017XXXXXXXX).', 'safestore-minimal' );
 	} elseif ( '' === $values['wallet'] ) {
