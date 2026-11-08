@@ -218,7 +218,7 @@ function safestore_mnav_quicklinks() {
         ),
         array(
             'label' => __('Wishlist', 'safestore-minimal'),
-            'url'   => home_url('/wishlist/'),
+            'url'   => function_exists('safestore_wishlist_page_url') ? safestore_wishlist_page_url() : home_url('/wishlist/'),
         ),
         array(
             'label' => __('Shipping', 'safestore-minimal'),

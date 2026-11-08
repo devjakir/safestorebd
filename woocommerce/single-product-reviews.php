@@ -1,5 +1,17 @@
 <?php
-// @version 9.7.0
+/**
+ * Display single product reviews (comments)
+ *
+ * Theme override of WooCommerce core 11.2.0. Differences from core:
+ *  - sft-pdp-reviews__* classes for the PDP tab styling (css/pdp-tabs.css).
+ *  - The "N reviews for …" heading only renders when there are reviews (the
+ *    tab label already says "Reviews").
+ *  - Reply title is an <h3>, submit label "Post review".
+ *
+ * @see     https://woocommerce.com/document/template-structure/
+ * @package WooCommerce\Templates
+ * @version 11.2.0
+ */
 
 defined('ABSPATH') || exit;
 
@@ -19,8 +31,13 @@ if (!comments_open()) {
 				$reviews_title = sprintf(
                     esc_html(_n('%1$s review for %2$s', '%1$s reviews for %2$s', $count, 'woocommerce')),
                     esc_html($count),
-                    '<span>' . get_the_title() . '</span>'
+                    '<span>' . wp_kses_post(get_the_title()) . '</span>'
                 );
+				/**
+				 * Filters the heading shown above the product review list.
+				 *
+				 * @since 3.6.0
+				 */
 				echo apply_filters('woocommerce_reviews_title', $reviews_title, $count, $product); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				?>
 			</h2>
@@ -60,6 +77,7 @@ if (!comments_open()) {
 				$comment_form = array(
 					/* translators: %s is product title */
 					'title_reply'         => have_comments() ? esc_html__('Add a review', 'woocommerce') : sprintf(esc_html__('Be the first to review &ldquo;%s&rdquo;', 'woocommerce'), get_the_title()),
+					/* translators: %s is product title */
 					'title_reply_to'      => esc_html__('Leave a Reply to %s', 'woocommerce'),
 					'title_reply_before'  => '<h3 id="reply-title" class="comment-reply-title sft-pdp-reviews__form-title" role="heading" aria-level="3">',
 					'title_reply_after'   => '</h3>',

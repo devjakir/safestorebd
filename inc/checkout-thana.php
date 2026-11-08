@@ -163,3 +163,30 @@ function safestorebd_checkout_thana_enqueue() {
 	);
 }
 add_action( 'wp_enqueue_scripts', 'safestorebd_checkout_thana_enqueue', 20 );
+
+/**
+ * District list: the four busiest districts first (most orders), then the
+ * rest A–Z. Only the order changes — values stay WooCommerce's BD-xx codes
+ * and every district appears exactly once (the live list had no duplicate).
+ * Filter `safestorebd_top_districts` to change the shortlist.
+ */
+add_filter(
+	'woocommerce_states',
+	static function ( $states ) {
+		if ( empty( $states['BD'] ) || ! is_array( $states['BD'] ) ) {
+			return $states;
+		}
+		$top = (array) apply_filters( 'safestorebd_top_districts', array( 'BD-13', 'BD-18', 'BD-40', 'BD-10' ) ); // Dhaka, Gazipur, Narayanganj, Chattogram.
+		$bd  = array_unique( $states['BD'] );
+		$out = array();
+		foreach ( $top as $code ) {
+			if ( isset( $bd[ $code ] ) ) {
+				$out[ $code ] = $bd[ $code ];
+				unset( $bd[ $code ] );
+			}
+		}
+		$states['BD'] = $out + $bd;
+		return $states;
+	},
+	20
+);

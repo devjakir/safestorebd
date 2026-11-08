@@ -238,6 +238,27 @@ function safestore_perf_preload_lcp() {
 		return;
 	}
 
+	// Product pages: the main gallery image is the LCP element, not the logo.
+	if ( function_exists( 'is_product' ) && is_product() ) {
+		$product  = wc_get_product( get_queried_object_id() );
+		$image_id = $product ? (int) $product->get_image_id() : 0;
+		if ( $image_id ) {
+			$size   = 'woocommerce_single';
+			$src    = wp_get_attachment_image_src( $image_id, $size );
+			$srcset = wp_get_attachment_image_srcset( $image_id, $size );
+			$sizes  = wp_get_attachment_image_sizes( $image_id, $size );
+			if ( is_array( $src ) && ! empty( $src[0] ) ) {
+				printf(
+					'<link rel="preload" as="image" href="%1$s" fetchpriority="high"%2$s%3$s />' . "\n",
+					esc_url( $src[0] ),
+					$srcset ? ' imagesrcset="' . esc_attr( $srcset ) . '"' : '',
+					( $srcset && $sizes ) ? ' imagesizes="' . esc_attr( $sizes ) . '"' : ''
+				);
+				return;
+			}
+		}
+	}
+
 	$logo = safestore_brand_logo_svg();
 	printf(
 		'<link rel="preload" as="image" href="%s" type="image/svg+xml" />' . "\n",
@@ -260,15 +281,43 @@ function safestore_perf_defer_vendor_scripts() {
 		'wc-add-to-cart',
 		'wc-cart-fragments',
 		'woocommerce',
+		// Only needed by wc-add-to-cart-variation (already deferred) on product
+		// pages; they were the last render-blocking scripts in <head>. WordPress
+		// keeps them blocking automatically if any dependent is blocking.
+		'underscore',
+		'wp-util',
 	);
 
+	$scripts = wp_scripts();
 	foreach ( $handles as $handle ) {
-		if ( wp_script_is( $handle, 'registered' ) ) {
+		// Aliases (no src, e.g. WC 10+'s js-cookie / jquery-blockui shims) cannot
+		// take a strategy — WordPress logs a _doing_it_wrong notice for them.
+		if ( wp_script_is( $handle, 'registered' ) && ! empty( $scripts->registered[ $handle ]->src ) ) {
 			wp_script_add_data( $handle, 'strategy', 'defer' );
 		}
 	}
 }
 add_action( 'wp_enqueue_scripts', 'safestore_perf_defer_vendor_scripts', 100 );
+
+/**
+ * PixelYourSite ships its own js-cookie 2.1.3 (js-cookie-pys) next to
+ * WooCommerce's 2.1.4 (wc-js-cookie) — same library and API (window.Cookies),
+ * downloaded twice. Turn the PYS handle into an alias of WooCommerce's copy so
+ * anything that depends on it still gets window.Cookies, from one file.
+ */
+function safestore_perf_dedupe_js_cookie() {
+	if ( is_admin() ) {
+		return;
+	}
+	$scripts = wp_scripts();
+	if ( empty( $scripts->registered['js-cookie-pys'] ) || empty( $scripts->registered['wc-js-cookie'] ) ) {
+		return;
+	}
+	$pys       = $scripts->registered['js-cookie-pys'];
+	$pys->src  = false; // alias: prints nothing itself
+	$pys->deps = array_values( array_unique( array_merge( array( 'wc-js-cookie' ), (array) $pys->deps ) ) );
+}
+add_action( 'wp_enqueue_scripts', 'safestore_perf_dedupe_js_cookie', 999 );
 
 function safestore_perf_is_delayed_third_party_src( $src ) {
 	if ( ! is_string( $src ) || '' === $src ) {

@@ -253,12 +253,9 @@ function safestore_seo_home_structured_data() {
 					'width'  => $logo['width'],
 					'height' => $logo['height'],
 				),
-				'sameAs' => array(
-					'https://www.facebook.com/safestorebd',
-					'https://www.instagram.com/safestorebd/',
-					'https://www.linkedin.com/in/safestorebd/',
-					'https://www.youtube.com/@SafeStoreBD',
-				),
+				'sameAs' => function_exists( 'safestore_social_urls' )
+					? array_values( array_filter( array_intersect_key( safestore_social_urls(), array_flip( array( 'facebook', 'instagram', 'linkedin', 'youtube' ) ) ) ) )
+					: array( 'https://www.facebook.com/safestorebd', 'https://www.instagram.com/safestorebd/', 'https://www.linkedin.com/company/safestorebd/', 'https://www.youtube.com/@SafeStoreBD' ),
 			),
 			array(
 				'@type'           => 'WebSite',

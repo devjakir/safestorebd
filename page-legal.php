@@ -77,7 +77,7 @@ while ( have_posts() ) :
 				<aside class="sft-about-contact-card" aria-labelledby="sft-legal-page-help-heading">
 					<h3 class="sft-about-h3" id="sft-legal-page-help-heading"><?php esc_html_e( 'Legal enquiries', 'safestore-minimal' ); ?></h3>
 					<p class="sft-about-contact-lead">
-						<?php esc_html_e( 'For policy or compliance questions — email us. Sat–Thu, 9am–8pm.', 'safestore-minimal' ); ?>
+						<?php /* translators: %s: opening hours */ echo esc_html( sprintf( __( 'For policy or compliance questions — email us. %s.', 'safestore-minimal' ), safestore_store_hours() ) ); ?>
 					</p>
 					<ul class="sft-about-contact-list">
 						<li><?php echo safestore_contact_email_links(); // phpcs:ignore WordPress.Security.EscapeOutput ?></li>

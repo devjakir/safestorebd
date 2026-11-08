@@ -58,6 +58,12 @@
   top: 24px;
 }
 
+/* WooCommerce prints style="opacity:0" and fades the gallery in from JS; the
+   LCP image must paint immediately, before any script runs. */
+.woocommerce-product-gallery {
+  opacity: 1 !important;
+}
+
 .sft-pdp__col--media .woocommerce-product-gallery {
   width: 100%;
   border-radius: var(--ss-radius);

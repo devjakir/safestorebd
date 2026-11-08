@@ -178,4 +178,6 @@ function safestore_home_slider_print() {
 
 	echo '<script id="safestore-home-slider-js">' . $js . '</script>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
-add_action( 'wp_footer', 'safestore_home_slider_print', 20 );
+// Disabled (QA C-15): phones now get a 2-column grid of 8 Featured Products
+// instead of a one-card-per-screen carousel. Re-add this hook to bring it back.
+// add_action( 'wp_footer', 'safestore_home_slider_print', 20 );

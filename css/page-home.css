@@ -226,16 +226,15 @@
   gap: 18px;
 }
 
-/* Homepage topical H1 — echoes the title tag; slide titles are H2. */
+/* Homepage H1 — one, always visible, above the carousel (slide titles are H2). */
 .home .hero-site-h1 {
-  margin: 0;
-  max-width: 36em;
-  font-size: clamp(12px, 1.15vw, 14px);
-  font-weight: 600;
+  margin: 0 0 10px;
+  font-size: clamp(13px, 1.15vw, 15px);
+  font-weight: 700;
   line-height: 1.35;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: rgba(226, 232, 240, 0.72);
+  color: var(--ss-ink);
 }
 
 .home .hero-slide-badge {
@@ -421,11 +420,14 @@
 }
 
 .home .hero-dot {
-  width: 34px;
-  height: 25px;
+  /* 44x44 tap target; the visible pill stays 24x4 (transparent border). */
+  width: 44px;
+  height: 44px;
   padding: 0;
   border-radius: 999px;
-  border: 10px solid transparent;
+  border-width: 20px 10px;
+  border-style: solid;
+  border-color: transparent;
   background: rgba(255, 255, 255, 0.28);
   background-clip: padding-box;
   cursor: pointer;
@@ -438,7 +440,7 @@
 }
 
 .home .hero-dot.is-active {
-  width: 52px;
+  width: 56px;
   background: var(--ss-white);
   background-clip: padding-box;
 }
@@ -450,16 +452,20 @@
     margin: 12px auto 18px;
   }
 
+  /* All slides share one grid cell: the hero is as tall as the tallest slide,
+     so it never changes height (CLS) when the carousel rotates. */
   .home .hero-slider-viewport {
     border-radius: var(--ss-radius);
+    display: grid;
     height: auto;
     min-height: 0;
     overflow: hidden;
   }
 
   .home .hero-slide {
-    position: absolute;
-    inset: 0;
+    position: relative;
+    inset: auto;
+    grid-area: 1 / 1;
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: auto auto;
@@ -482,8 +488,9 @@
   }
 
   .home .hero-site-h1 {
-    font-size: var(--ss-text-2xs);
-    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    font-size: 12px;
+    letter-spacing: 0.03em;
   }
 
   .home .hero-slide-title {
@@ -552,8 +559,8 @@
   }
 
   .home .hero-slide-card__save {
-    padding: 2px 6px;
-    font-size: 9.5px;
+    padding: 2px 5px;
+    font-size: 12px;
     letter-spacing: 0.03em;
   }
 
@@ -589,8 +596,9 @@
     min-height: 0;
   }
 
+  /* Smaller product shot on phones so headline + CTA stay above the fold. */
   .home .hero-slide-stage {
-    width: min(72vw, 220px);
+    width: min(50vw, 180px);
   }
 
   .home .hero-slide-badge {
@@ -1155,7 +1163,8 @@
 .home .sft-bestsellers ul.products,
 .home .sft-bestsellers .woocommerce ul.products {
   display: grid !important;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  /* 4 columns x 3 rows of 12 — no orphan cards in the last row. */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 28px 20px;
   margin: 0 !important;
   padding: 0;
@@ -1235,6 +1244,11 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 18px 12px;
   }
+
+  /* Two columns: show 8 (four full rows). */
+  .home .sft-bestsellers ul.products > li:nth-child(n+9) {
+    display: none !important;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1260,38 +1274,15 @@
   }
 
   .home .sft-bestsellers__grid {
-    margin-inline: -8px;
-    padding-inline: 8px;
+    margin-inline: 0;
+    padding-inline: 0;
   }
 
+  /* Phones: 2-column grid (first 8 products) instead of a one-card carousel. */
   .home .sft-bestsellers ul.products,
   .home .sft-bestsellers .woocommerce ul.products {
-    display: flex !important;
-    grid-template-columns: none;
-    gap: 12px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    scroll-padding-inline: 0;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 2px;
-    /* Dots replace the native scrollbar as the position cue. */
-    scrollbar-width: none;
-  }
-
-  .home .sft-bestsellers ul.products::-webkit-scrollbar,
-  .home .sft-bestsellers .woocommerce ul.products::-webkit-scrollbar {
-    display: none;
-  }
-
-  .home .sft-bestsellers ul.products li.product,
-  .home .sft-bestsellers ul.products li.sft-product-card {
-    /* Peek the next card so the row reads as scrollable. */
-    flex: 0 0 82%;
-    width: 82% !important;
-    max-width: 82% !important;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 10px;
   }
 
   .home .sft-bestsellers .sft-slider-controls {

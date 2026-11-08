@@ -30,12 +30,12 @@ $sfx_service_links = array(
 );
 
 $sfx_socials = array(
-	array( 'Facebook', 'https://www.facebook.com/safestorebd', '<path d="M13.5 8.5V6.8c0-.8.5-.9.8-.9h2.1V2.5h-2.9C10.5 2.5 9 4.8 9 8v.5H6.8v3.6H9v9.4h4.5v-9.4h2.8l.4-3.6h-3.2z"/>' ),
-	array( 'X', 'https://x.com/safestorebd', '<path d="M18.9 3h2.9l-6.3 7.2L23 21h-5.9l-4.6-6-5.3 6H4.3l6.8-7.8L1 3h6l4.2 5.5L18.9 3zm-1 16.3h1.6L6.1 4.6H4.4z"/>' ),
-	array( 'Instagram', 'https://www.instagram.com/safestorebd/', '<path d="M12 7.2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6zm0 7.9a3.1 3.1 0 1 1 0-6.2 3.1 3.1 0 0 1 0 6.2z"/><path d="M18.1 2.5H5.9A3.4 3.4 0 0 0 2.5 5.9v12.2a3.4 3.4 0 0 0 3.4 3.4h12.2a3.4 3.4 0 0 0 3.4-3.4V5.9a3.4 3.4 0 0 0-3.4-3.4zm1.7 15.6c0 .9-.8 1.7-1.7 1.7H5.9c-.9 0-1.7-.8-1.7-1.7V5.9c0-.9.8-1.7 1.7-1.7h12.2c.9 0 1.7.8 1.7 1.7v12.2z"/><circle cx="17.4" cy="6.6" r="1.1"/>' ),
-	array( 'Pinterest', 'https://www.pinterest.com/safestorebd/', '<path d="M12 2C6.5 2 2 6.5 2 12c0 4.2 2.6 7.8 6.3 9.3-.1-.8-.2-2 0-2.9.2-.8 1.2-5 1.2-5s-.3-.6-.3-1.5c0-1.4.8-2.4 1.8-2.4.9 0 1.3.6 1.3 1.4 0 .9-.5 2.1-.8 3.3-.2 1 .5 1.8 1.5 1.8 1.8 0 3.1-1.9 3.1-4.6 0-2.4-1.7-4.1-4.2-4.1-2.8 0-4.5 2.1-4.5 4.3 0 .9.3 1.8.7 2.3.1.1.1.2.1.3l-.3 1.1c0 .2-.1.2-.3.1-1.2-.6-2-2.4-2-3.9 0-3.2 2.3-6.1 6.6-6.1 3.5 0 6.2 2.5 6.2 5.8 0 3.4-2.2 6.2-5.2 6.2-1 0-2-.5-2.3-1.1l-.6 2.4c-.2.9-.8 2-1.2 2.6.9.3 1.9.4 3 .4 5.5 0 10-4.5 10-10S17.5 2 12 2z"/>' ),
-	array( 'LinkedIn', 'https://www.linkedin.com/in/safestorebd/', '<path d="M5.4 8.1H2V21h3.4V8.1zM3.7 2.7A2 2 0 1 0 3.7 6.7 2 2 0 0 0 3.7 2.7zM22 13.6c0-3.4-1.8-5.9-5.2-5.9-2.4 0-3.4 1.3-4 2.2V8.1H9.4V21h3.4v-6.4c0-1.7.3-3.4 2.4-3.4s2.1 1.9 2.1 3.5V21H22v-7.4z"/>' ),
-	array( 'YouTube', 'https://www.youtube.com/@SafeStoreBD', '<path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.5 31.5 0 0 0 0 12a31.5 31.5 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.5 31.5 0 0 0 24 12a31.5 31.5 0 0 0-.5-5.8zM9.8 15.5v-7l6.3 3.5-6.3 3.5z"/>' ),
+	array( 'Facebook', safestore_social_url( 'facebook' ), '<path d="M13.5 8.5V6.8c0-.8.5-.9.8-.9h2.1V2.5h-2.9C10.5 2.5 9 4.8 9 8v.5H6.8v3.6H9v9.4h4.5v-9.4h2.8l.4-3.6h-3.2z"/>' ),
+	array( 'X', safestore_social_url( 'x' ), '<path d="M18.9 3h2.9l-6.3 7.2L23 21h-5.9l-4.6-6-5.3 6H4.3l6.8-7.8L1 3h6l4.2 5.5L18.9 3zm-1 16.3h1.6L6.1 4.6H4.4z"/>' ),
+	array( 'Instagram', safestore_social_url( 'instagram' ), '<path d="M12 7.2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6zm0 7.9a3.1 3.1 0 1 1 0-6.2 3.1 3.1 0 0 1 0 6.2z"/><path d="M18.1 2.5H5.9A3.4 3.4 0 0 0 2.5 5.9v12.2a3.4 3.4 0 0 0 3.4 3.4h12.2a3.4 3.4 0 0 0 3.4-3.4V5.9a3.4 3.4 0 0 0-3.4-3.4zm1.7 15.6c0 .9-.8 1.7-1.7 1.7H5.9c-.9 0-1.7-.8-1.7-1.7V5.9c0-.9.8-1.7 1.7-1.7h12.2c.9 0 1.7.8 1.7 1.7v12.2z"/><circle cx="17.4" cy="6.6" r="1.1"/>' ),
+	array( 'Pinterest', safestore_social_url( 'pinterest' ), '<path d="M12 2C6.5 2 2 6.5 2 12c0 4.2 2.6 7.8 6.3 9.3-.1-.8-.2-2 0-2.9.2-.8 1.2-5 1.2-5s-.3-.6-.3-1.5c0-1.4.8-2.4 1.8-2.4.9 0 1.3.6 1.3 1.4 0 .9-.5 2.1-.8 3.3-.2 1 .5 1.8 1.5 1.8 1.8 0 3.1-1.9 3.1-4.6 0-2.4-1.7-4.1-4.2-4.1-2.8 0-4.5 2.1-4.5 4.3 0 .9.3 1.8.7 2.3.1.1.1.2.1.3l-.3 1.1c0 .2-.1.2-.3.1-1.2-.6-2-2.4-2-3.9 0-3.2 2.3-6.1 6.6-6.1 3.5 0 6.2 2.5 6.2 5.8 0 3.4-2.2 6.2-5.2 6.2-1 0-2-.5-2.3-1.1l-.6 2.4c-.2.9-.8 2-1.2 2.6.9.3 1.9.4 3 .4 5.5 0 10-4.5 10-10S17.5 2 12 2z"/>' ),
+	array( 'LinkedIn', safestore_social_url( 'linkedin' ), '<path d="M5.4 8.1H2V21h3.4V8.1zM3.7 2.7A2 2 0 1 0 3.7 6.7 2 2 0 0 0 3.7 2.7zM22 13.6c0-3.4-1.8-5.9-5.2-5.9-2.4 0-3.4 1.3-4 2.2V8.1H9.4V21h3.4v-6.4c0-1.7.3-3.4 2.4-3.4s2.1 1.9 2.1 3.5V21H22v-7.4z"/>' ),
+	array( 'YouTube', safestore_social_url( 'youtube' ), '<path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.5 31.5 0 0 0 0 12a31.5 31.5 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.5 31.5 0 0 0 24 12a31.5 31.5 0 0 0-.5-5.8zM9.8 15.5v-7l6.3 3.5-6.3 3.5z"/>' ),
 );
 
 function sfx_footer_icon( $name ) {
@@ -66,7 +66,7 @@ function sfx_footer_icon( $name ) {
 						<a class="sfx-bigbtn" href="<?php echo esc_url( 'tel:' . $sfx_tel_digits ); ?>" data-sft-copy-skip>
 							<span class="sfx-bigbtn__icon"><?php echo sfx_footer_icon( 'phone' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
 							<span class="sfx-bigbtn__text">
-								<span class="sfx-bigbtn__eyebrow"><?php esc_html_e( 'Sat–Thu, 9am–8pm', 'safestore-minimal' ); ?></span>
+								<span class="sfx-bigbtn__eyebrow"><?php esc_html_e( 'Call us', 'safestore-minimal' ); ?></span>
 								<span class="sfx-bigbtn__value"><?php echo esc_html( $sfx_tel_label ); ?></span>
 							</span>
 						</a>
@@ -88,8 +88,7 @@ function sfx_footer_icon( $name ) {
 					<span class="sfx-bigbtn__icon"><?php echo sfx_footer_icon( 'clock' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
 					<span class="sfx-bigbtn__text">
 						<span class="sfx-bigbtn__eyebrow"><?php esc_html_e( 'Hours', 'safestore-minimal' ); ?></span>
-						<span class="sfx-bigbtn__value"><?php esc_html_e( 'Sat–Thu, 9am–8pm — full week only', 'safestore-minimal' ); ?></span>
-						<span class="sfx-bigbtn__eyebrow"><?php esc_html_e( 'Office: 9am–10pm', 'safestore-minimal' ); ?></span>
+						<span class="sfx-bigbtn__value"><?php echo esc_html( safestore_store_hours() ); ?></span>
 					</span>
 				</div>
 			</div>

@@ -73,7 +73,17 @@ function safestore_cart_toast_enqueue() {
             'redirectAfterAdd' => ('yes' === get_option('woocommerce_cart_redirect_after_add')),
             'justAdded'        => $just_added,
             'i18n'             => array(
-                'defaultName' => __('Item', 'safestore-minimal'),
+                'defaultName'        => __('Item', 'safestore-minimal'),
+                'addedTitle'         => __('Added to cart', 'safestore-minimal'),
+                'addToCart'          => __('Add to cart', 'safestore-minimal'),
+                'selectSize'         => __('Select a size', 'safestore-minimal'),
+                'selectOptions'      => __('Select options', 'safestore-minimal'),
+                'selectOptionsFirst' => __('Please choose the product options first.', 'safestore-minimal'),
+                'unavailable'        => __('Unavailable', 'safestore-minimal'),
+                'errorTitle'         => __('Not added to cart', 'safestore-minimal'),
+                'errorGeneric'       => __('This item could not be added. Please check the size and quantity, then try again.', 'safestore-minimal'),
+                'errorNetwork'       => __('Network problem: the item was not added. Please try again.', 'safestore-minimal'),
+                'errorTimeout'       => __('The connection is slow and we could not confirm the item was added. Check your cart or try again.', 'safestore-minimal'),
             ),
         )
     );
@@ -92,7 +102,8 @@ function safestore_cart_toast_markup() {
         </button>
         <div class="sft-cart-toast__head">
             <span class="sft-cart-toast__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M20 6 9 17l-5-5"/></svg>
+                <svg class="sft-cart-toast__icon-ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M20 6 9 17l-5-5"/></svg>
+                <svg class="sft-cart-toast__icon-err" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M12 8v5M12 16.5v.01"/><circle cx="12" cy="12" r="9"/></svg>
             </span>
             <div class="sft-cart-toast__copy">
                 <p class="sft-cart-toast__title"><?php esc_html_e('Added to cart', 'safestore-minimal'); ?></p>
@@ -101,7 +112,8 @@ function safestore_cart_toast_markup() {
         </div>
         <div class="sft-cart-toast__actions">
             <button type="button" class="sft-cart-toast__btn sft-cart-toast__btn--ghost" data-sft-continue><?php esc_html_e('Continue shopping', 'safestore-minimal'); ?></button>
-            <a class="sft-cart-toast__btn sft-cart-toast__btn--primary" href="<?php echo esc_url($cart_url); ?>"><?php esc_html_e('View cart', 'safestore-minimal'); ?></a>
+            <a class="sft-cart-toast__btn sft-cart-toast__btn--primary" href="<?php echo esc_url($cart_url); ?>" data-sft-view-cart><?php esc_html_e('View cart', 'safestore-minimal'); ?></a>
+            <button type="button" class="sft-cart-toast__btn sft-cart-toast__btn--primary" data-sft-retry hidden><?php esc_html_e('Try again', 'safestore-minimal'); ?></button>
         </div>
         <span class="sft-cart-toast__progress" aria-hidden="true"></span>
     </div>

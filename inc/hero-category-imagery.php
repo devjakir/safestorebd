@@ -385,8 +385,8 @@ function safestore_hero_overlay_markup( $overlay ) {
 		if ( ! empty( $price['save_pct'] ) ) {
 			$html .= '<span class="hero-slide-card__save">' . esc_html(
 				sprintf(
-					/* translators: %d: percent off */
-					__( 'Save %d%%', 'safestore-minimal' ),
+					/* translators: %d: percent off (badge format "-27%") */
+					__( '-%d%%', 'safestore-minimal' ),
 					(int) $price['save_pct']
 				)
 			) . '</span>';

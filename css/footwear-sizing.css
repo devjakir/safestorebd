@@ -261,10 +261,18 @@
   color: #475569;
 }
 
+/* Neutral grey "Select a size" state — WooCommerce's own disabled style is
+   purple (#7f54b3), which at opacity .5 read as lilac. */
 .sft-pdp form.cart .single_add_to_cart_button.disabled,
 .sft-pdp form.cart .single_add_to_cart_button:disabled,
+.sft-pdp form.cart .single_add_to_cart_button.disabled:hover,
+.sft-pdp form.cart .single_add_to_cart_button:disabled:hover,
 .sft-pdp form.cart .sft-pdp-buy-now.disabled {
-  opacity: 0.5;
+  opacity: 1 !important;
+  background: #e5e7eb !important;
+  border-color: #e5e7eb !important;
+  color: #4b5563 !important;
+  box-shadow: none !important;
   cursor: not-allowed;
   pointer-events: none;
 }
