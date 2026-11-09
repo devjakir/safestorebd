@@ -142,15 +142,15 @@ select {
   color: var(--ss-ink);
 }
 
-/* Horizontal SVG logo (~5.3:1): size it by height only, width follows. */
+/* Horizontal SVG logo (~4.1:1): size it by height only, width follows. */
 .sft-header .sft-header-brand-logo {
   display: block;
   flex-shrink: 0;
-  height: 40px;
+  height: 44px;
   width: auto;
   max-width: none;
-  max-height: 40px;
-  min-height: 40px;
+  max-height: 44px;
+  min-height: 44px;
   object-fit: contain;
 }
 

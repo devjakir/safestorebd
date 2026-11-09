@@ -74,7 +74,7 @@
 .lp-header { position: sticky; top: 0; z-index: 100; background: #fff; border-bottom: 1px solid var(--lp-line); }
 .admin-bar .lp-header { top: 46px; }
 .lp-header__in { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: var(--lp-header-h); }
-.lp-header__brand img { display: block; width: auto; height: 32px; }
+.lp-header__brand img { display: block; width: auto; height: 36px; }
 .lp-header__acts { display: flex; align-items: center; gap: 8px; }
 .lp-header__tel { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 44px; min-height: 44px; padding: 0 10px; border: 1px solid var(--lp-line); border-radius: var(--lp-r); color: var(--lp-ink) !important; font-weight: 600; white-space: nowrap; }
 .lp-header__num { display: none; font-size: 15px; }
@@ -184,7 +184,7 @@ a.lp-card:hover { border-color: #cbd5e1; box-shadow: 0 12px 28px rgba(15, 23, 42
 }
 @media (min-width: 900px) {
   .lp-page { --lp-header-h: 72px; }
-  .lp-header__brand img { height: 40px; }
+  .lp-header__brand img { height: 44px; }
   .lp-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
   .lp-grid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .lp-card { padding: 24px; }

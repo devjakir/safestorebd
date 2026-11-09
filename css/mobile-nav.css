@@ -81,9 +81,9 @@
 
   /* Tablet: logo a touch smaller than desktop. Phones override below. */
   .sft-header .sft-header-brand-logo {
-    height: 36px;
-    min-height: 36px;
-    max-height: 36px;
+    height: 40px;
+    min-height: 40px;
+    max-height: 40px;
   }
 }
 
@@ -96,9 +96,9 @@
   }
 
   .sft-header .sft-header-brand-logo {
-    height: 30px;
-    min-height: 30px;
-    max-height: 30px;
+    height: 34px;
+    min-height: 34px;
+    max-height: 34px;
   }
 
   .sft-header-action--account,
