@@ -7,10 +7,22 @@
  * Meta → Local SEO); both are overridden here so a logo change ships with a
  * deploy instead of needing a manual admin step on every environment.
  *
- * Source files: SafeStorebd-logo pack (svg/safestorebd-logo-color.svg, favicon/*).
+ * Source files: safestorebd-logo-transparent_3 pack. The logo is
+ * safestorebd-logo-no-tagline-transparent.svg with its viewBox cropped to the
+ * artwork; the favicons are rendered from safestorebd-icon-transparent(-1080).
  */
 
 defined( 'ABSPATH' ) || exit;
+
+/**
+ * URL of a theme brand file with ?ver=<mtime>, so browsers and CDNs drop the
+ * cached copy when a logo or icon is replaced under the same filename.
+ */
+function safestore_brand_asset_url( $relative ) {
+	$path = get_template_directory() . '/assets/images/' . $relative;
+	$url  = get_template_directory_uri() . '/assets/images/' . $relative;
+	return file_exists( $path ) ? add_query_arg( 'ver', (string) filemtime( $path ), $url ) : $url;
+}
 
 /**
  * Horizontal colour logo for <img> tags. SVG, so it stays sharp on any screen.
@@ -18,9 +30,9 @@ defined( 'ABSPATH' ) || exit;
  */
 function safestore_brand_logo_svg() {
 	return array(
-		'url'    => get_template_directory_uri() . '/assets/images/logo/safestorebd-logo.svg',
-		'width'  => 211,
-		'height' => 40,
+		'url'    => safestore_brand_asset_url( 'logo/safestorebd-logo.svg' ),
+		'width'  => 180,
+		'height' => 44,
 	);
 }
 
@@ -29,9 +41,9 @@ function safestore_brand_logo_svg() {
  */
 function safestore_brand_logo_png() {
 	return array(
-		'url'    => get_template_directory_uri() . '/assets/images/logo/safestorebd-logo.png',
+		'url'    => safestore_brand_asset_url( 'logo/safestorebd-logo.png' ),
 		'width'  => 1200,
-		'height' => 228,
+		'height' => 293,
 	);
 }
 
@@ -53,7 +65,7 @@ function safestore_brand_icon_url( $size ) {
 	} else {
 		$file = 'icon-512.png';
 	}
-	return get_template_directory_uri() . '/assets/images/favicon/' . $file;
+	return safestore_brand_asset_url( 'favicon/' . $file );
 }
 
 /**
@@ -78,7 +90,7 @@ add_filter(
 	function ( $tags ) {
 		$tags[] = sprintf(
 			'<link rel="icon" href="%s" type="image/svg+xml" />',
-			esc_url( get_template_directory_uri() . '/assets/images/favicon/favicon.svg' )
+			esc_url( safestore_brand_asset_url( 'favicon/favicon.svg' ) )
 		);
 		return $tags;
 	}
