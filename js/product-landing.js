@@ -16,7 +16,7 @@
 
 	function productParams(extra) {
 		var p = {
-			content_ids: [cfg.sku || String(cfg.id || '')],
+			content_ids: [String(cfg.id || cfg.sku || '')],
 			content_name: cfg.name || '',
 			content_type: 'product',
 			currency: cfg.currency || 'BDT',
