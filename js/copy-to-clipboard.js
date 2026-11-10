@@ -256,21 +256,88 @@
         /* keep the raw value */
       }
       address = address.trim();
-      return address ? { value: address, noun: t('nounEmail', 'Email address') } : null;
+      return address ? { type: 'email', value: address, noun: t('nounEmail', 'Email address') } : null;
     }
 
     if (href.indexOf('tel:') === 0) {
       var phone = href.slice(4).replace(/[^\d+]/g, '');
-      return phone ? { value: phone, noun: t('nounPhone', 'Phone number') } : null;
+      return phone ? { type: 'phone', value: phone, noun: t('nounPhone', 'Phone number') } : null;
     }
 
     // wa.me/<digits> and api.whatsapp.com/send?phone=<digits>
     var wa = href.match(/wa\.me\/(\d+)/) || href.match(/[?&]phone=(\d+)/);
     if (wa && wa[1]) {
-      return { value: '+' + wa[1], noun: t('nounWhatsapp', 'WhatsApp number') };
+      return { type: 'phone', value: '+' + wa[1], noun: t('nounWhatsapp', 'WhatsApp number') };
     }
 
     return null;
+  }
+
+  // Bangla digits count too, so "০১৮১১-৮৯২২৯১" matches "+8801811892291".
+  function digitsOf(text) {
+    return String(text || '')
+      .replace(/[০-৯]/g, function (d) {
+        return String(d.charCodeAt(0) - 0x09E6);
+      })
+      .replace(/\D/g, '');
+  }
+
+  // A copy icon only makes sense next to the value itself. "Email us",
+  // "WhatsApp us" or "Call us" labels hide the value, so copying from them
+  // would be a surprise.
+  function showsValue(link, info) {
+    var text = link.textContent || '';
+
+    if (info.type === 'email') {
+      return text.toLowerCase().indexOf(info.value.toLowerCase()) !== -1;
+    }
+
+    // Last 10 digits, so +880 / 0 prefixes and spacing don't matter.
+    var want = digitsOf(info.value).slice(-10);
+    return want.length >= 6 && digitsOf(text).indexOf(want) !== -1;
+  }
+
+  function isTransparent(color) {
+    if (!color || color === 'transparent') {
+      return true;
+    }
+    var m = color.match(/rgba?\(([^)]*)\)/);
+    if (!m) {
+      return false;
+    }
+    var parts = m[1].split(/[\s,\/]+/).filter(Boolean);
+    return parts.length === 4 && parseFloat(parts[3]) === 0;
+  }
+
+  // Filled or outlined CTAs: an icon hanging off a button breaks its row and
+  // reads as a second, unlabeled button.
+  function looksLikeButton(link) {
+    if (/(?:^|[\s_-])(?:btn|button)(?:$|[\s_-])/i.test(String(link.className || ''))) {
+      return true;
+    }
+    var cs = window.getComputedStyle ? window.getComputedStyle(link) : null;
+    if (!cs) {
+      return false;
+    }
+    if (!isTransparent(cs.backgroundColor)) {
+      return true;
+    }
+    var boxed = function (side) {
+      return parseFloat(cs['border' + side + 'Width']) > 0 && cs['border' + side + 'Style'] !== 'none';
+    };
+    return boxed('Top') && boxed('Left');
+  }
+
+  // Last line of defence: if the icon still ended up on a line of its own
+  // (column flex, narrow card), take it back out. Only measurable when shown.
+  function wrappedAway(link, btn) {
+    var lr = link.getBoundingClientRect();
+    var br = btn.getBoundingClientRect();
+    if (!lr.width || !br.width) {
+      return false;
+    }
+    var gap = Math.abs((lr.top + lr.height / 2) - (br.top + br.height / 2));
+    return gap > Math.max(lr.height, br.height) / 2;
   }
 
   function buildButton(value, noun, variant) {
@@ -315,10 +382,16 @@
       }
 
       link.setAttribute('data-sft-copy-init', '1');
-      var btn = buildButton(info.value, info.noun, 'sft-copy-btn--inline');
 
-      if (link.parentNode) {
-        link.parentNode.insertBefore(btn, link.nextSibling);
+      if (!showsValue(link, info) || looksLikeButton(link) || !link.parentNode) {
+        return;
+      }
+
+      var btn = buildButton(info.value, info.noun, 'sft-copy-btn--inline');
+      link.parentNode.insertBefore(btn, link.nextSibling);
+
+      if (wrappedAway(link, btn)) {
+        btn.parentNode.removeChild(btn);
       }
     });
   }

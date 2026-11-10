@@ -175,32 +175,66 @@ $sft_cart_total = $sft_wc_cart ? $sft_wc_cart->get_cart_total() : '';
 
     <?php
     // Mobile drawer extras (hidden >=1025px, where this panel is the category bar).
-    $sft_drawer_tel     = preg_replace( '/[^\d+]/', '', (string) apply_filters( 'safestore_minimal_phone_tel', '+8801811892291' ) );
-    $sft_drawer_gumboot = function_exists( 'safestore_category_url' )
-        ? safestore_category_url( array( 'safety-gumboot', 'gumboot', 'gumboots', 'gum-boot' ), add_query_arg( array( 's' => 'gumboot', 'post_type' => 'product' ), home_url( '/' ) ) )
-        : add_query_arg( array( 's' => 'gumboot', 'post_type' => 'product' ), home_url( '/' ) );
-    $sft_drawer_links   = array(
-        array( __( 'Safety Gumboot', 'safestore-minimal' ), $sft_drawer_gumboot ),
-        array( is_user_logged_in() ? __( 'My Account', 'safestore-minimal' ) : __( 'Login / Register', 'safestore-minimal' ), function_exists( 'safestore_mnav_account_url' ) ? safestore_mnav_account_url() : wp_login_url() ),
-        array( __( 'Track Order', 'safestore-minimal' ), home_url( '/track-order/' ) ),
-        array( __( 'Bulk Orders', 'safestore-minimal' ), home_url( '/bulk-orders/' ) ),
-        array( __( 'Contact', 'safestore-minimal' ), home_url( '/contact/' ) ),
+    $sft_drawer_tel_raw = (string) apply_filters( 'safestore_minimal_phone_tel', '+8801811892291' );
+    $sft_drawer_tel     = preg_replace( '/[^\d+]/', '', $sft_drawer_tel_raw );
+    $sft_drawer_tel_lab = function_exists( 'safestore_wa_format_number' )
+        ? safestore_wa_format_number( $sft_drawer_tel_raw )
+        : trim( preg_replace( '/^\+?880/', '+880 ', $sft_drawer_tel_raw ) );
+
+    // Gumboot is only added when the category menu above doesn't list it already.
+    $sft_drawer_menu_text = '';
+    $sft_drawer_locations = get_nav_menu_locations();
+    if ( ! empty( $sft_drawer_locations['header_categories'] ) ) {
+        foreach ( (array) wp_get_nav_menu_items( $sft_drawer_locations['header_categories'] ) as $sft_drawer_item ) {
+            $sft_drawer_menu_text .= ' ' . $sft_drawer_item->title . ' ' . $sft_drawer_item->url;
+        }
+    }
+
+    $sft_drawer_icons = array(
+        'tag'     => '<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.4"/>',
+        'account' => '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+        'track'   => '<path d="M2.8 6.6h11.4v9.6H2.8z"/><path d="M14.2 10h3.4l3.6 3.3v2.9h-7z"/><circle cx="7" cy="18.4" r="1.7"/><circle cx="17.4" cy="18.4" r="1.7"/>',
+        'bulk'    => '<path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5 12 12l9-4.5"/><path d="M12 12v9"/>',
+        'contact' => '<path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.5L3 20.5l1.6-5A8.4 8.4 0 1 1 21 11.5z"/>',
     );
+
+    $sft_drawer_links = array();
+    if ( false === stripos( $sft_drawer_menu_text, 'gumboot' ) && false === stripos( $sft_drawer_menu_text, 'gum-boot' ) ) {
+        $sft_drawer_gumboot = function_exists( 'safestore_category_url' )
+            ? safestore_category_url( array( 'safety-gumboot', 'gumboot', 'gumboots', 'gum-boot' ), add_query_arg( array( 's' => 'gumboot', 'post_type' => 'product' ), home_url( '/' ) ) )
+            : add_query_arg( array( 's' => 'gumboot', 'post_type' => 'product' ), home_url( '/' ) );
+        $sft_drawer_links[] = array( __( 'Safety Gumboot', 'safestore-minimal' ), $sft_drawer_gumboot, 'tag' );
+    }
+    $sft_drawer_links[] = array( is_user_logged_in() ? __( 'My Account', 'safestore-minimal' ) : __( 'Login / Register', 'safestore-minimal' ), function_exists( 'safestore_mnav_account_url' ) ? safestore_mnav_account_url() : wp_login_url(), 'account' );
+    $sft_drawer_links[] = array( __( 'Track Order', 'safestore-minimal' ), home_url( '/track-order/' ), 'track' );
+    $sft_drawer_links[] = array( __( 'Bulk Orders', 'safestore-minimal' ), home_url( '/bulk-orders/' ), 'bulk' );
+    $sft_drawer_links[] = array( __( 'Contact', 'safestore-minimal' ), home_url( '/contact/' ), 'contact' );
     ?>
-    <div class="sft-drawer-extra">
+    <nav class="sft-drawer-extra" aria-labelledby="sft-drawer-extra-title">
+        <p class="sft-drawer-extra__title" id="sft-drawer-extra-title"><?php esc_html_e( 'Help & account', 'safestore-minimal' ); ?></p>
         <ul class="sft-drawer-extra__list">
             <?php foreach ( $sft_drawer_links as $sft_drawer_link ) : ?>
-                <li><a href="<?php echo esc_url( $sft_drawer_link[1] ); ?>"><?php echo esc_html( $sft_drawer_link[0] ); ?></a></li>
+                <li>
+                    <a href="<?php echo esc_url( $sft_drawer_link[1] ); ?>">
+                        <svg class="sft-drawer-extra__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><?php echo $sft_drawer_icons[ $sft_drawer_link[2] ]; // phpcs:ignore WordPress.Security.EscapeOutput -- static SVG paths. ?></svg>
+                        <span class="sft-drawer-extra__label"><?php echo esc_html( $sft_drawer_link[0] ); ?></span>
+                        <svg class="sft-drawer-extra__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg>
+                    </a>
+                </li>
             <?php endforeach; ?>
         </ul>
         <?php if ( '' !== $sft_drawer_tel ) : ?>
-            <a class="sft-drawer-extra__call" href="<?php echo esc_url( 'tel:' . $sft_drawer_tel ); ?>">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6.7 3.4 9.1 3l1.8 4.2-2 1.6a12.2 12.2 0 0 0 5.3 5.3l1.6-2 4.2 1.8-.4 2.4a2 2 0 0 1-2.2 1.7A15.6 15.6 0 0 1 5 6.2a2 2 0 0 1 1.7-2.8z"/></svg>
-                <?php esc_html_e( 'Call us', 'safestore-minimal' ); ?>
-                <span class="sft-drawer-extra__hours"><?php echo esc_html( function_exists( 'safestore_store_hours' ) ? safestore_store_hours() : '' ); ?></span>
+            <a class="sft-drawer-extra__call" href="<?php echo esc_url( 'tel:' . $sft_drawer_tel ); ?>" data-sft-copy-skip>
+                <span class="sft-drawer-extra__call-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M6.7 3.4 9.1 3l1.8 4.2-2 1.6a12.2 12.2 0 0 0 5.3 5.3l1.6-2 4.2 1.8-.4 2.4a2 2 0 0 1-2.2 1.7A15.6 15.6 0 0 1 5 6.2a2 2 0 0 1 1.7-2.8z"/></svg>
+                </span>
+                <span class="sft-drawer-extra__call-text">
+                    <span class="sft-drawer-extra__call-title"><?php esc_html_e( 'Call us', 'safestore-minimal' ); ?> <span class="sft-drawer-extra__call-num"><?php echo esc_html( $sft_drawer_tel_lab ); ?></span></span>
+                    <span class="sft-drawer-extra__hours"><?php echo esc_html( function_exists( 'safestore_store_hours' ) ? safestore_store_hours() : '' ); ?></span>
+                </span>
             </a>
         <?php endif; ?>
-    </div>
+    </nav>
   </div>
 </div>
 </header>

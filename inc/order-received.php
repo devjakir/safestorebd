@@ -113,6 +113,57 @@ function safestore_ty_is_dhaka( $order ) {
 	return 'BD-13' === $state || 0 === stripos( $state, 'dhaka' );
 }
 
+/**
+ * Delivery address split into parts for the "Delivery address" card, so the
+ * name, street and area can be styled on their own instead of WooCommerce's
+ * one-line-per-field block. Shipping address first, billing as fallback.
+ *
+ * @return array{name:string,initials:string,company:string,street:string[],area:string}
+ */
+function safestore_ty_address_parts( $order ) {
+	$type = $order->has_shipping_address() ? 'shipping' : 'billing';
+	$get  = static function ( $field ) use ( $order, $type ) {
+		$method = 'get_' . $type . '_' . $field;
+		return is_callable( array( $order, $method ) ) ? trim( (string) $order->$method() ) : '';
+	};
+
+	$name = trim( $get( 'first_name' ) . ' ' . $get( 'last_name' ) );
+
+	$initials = '';
+	foreach ( array_slice( preg_split( '/\s+/u', $name, -1, PREG_SPLIT_NO_EMPTY ), 0, 2 ) as $word ) {
+		$initials .= function_exists( 'mb_substr' ) ? mb_substr( $word, 0, 1, 'UTF-8' ) : substr( $word, 0, 1 );
+	}
+	$initials = function_exists( 'mb_strtoupper' ) ? mb_strtoupper( $initials, 'UTF-8' ) : strtoupper( $initials );
+
+	$country = $get( 'country' );
+	$state   = $get( 'state' );
+	if ( '' !== $state && '' !== $country && function_exists( 'WC' ) ) {
+		$states = WC()->countries->get_states( $country );
+		if ( is_array( $states ) && isset( $states[ $state ] ) ) {
+			$state = $states[ $state ];
+		}
+	}
+
+	$area = implode( ', ', array_filter( array( $get( 'city' ), $state ) ) );
+	if ( '' !== $get( 'postcode' ) ) {
+		$area = trim( $area . ' ' . $get( 'postcode' ) );
+	}
+	// Every order ships inside Bangladesh, so the country is only shown when it isn't the store's own.
+	$base = function_exists( 'WC' ) ? WC()->countries->get_base_country() : 'BD';
+	if ( '' !== $country && $country !== $base && function_exists( 'WC' ) ) {
+		$countries = WC()->countries->get_countries();
+		$area      = implode( ', ', array_filter( array( $area, isset( $countries[ $country ] ) ? $countries[ $country ] : $country ) ) );
+	}
+
+	return array(
+		'name'     => $name,
+		'initials' => $initials,
+		'company'  => $get( 'company' ),
+		'street'   => array_values( array_filter( array( $get( 'address_1' ), $get( 'address_2' ) ) ) ),
+		'area'     => $area,
+	);
+}
+
 /** Store hotline digits (the main WhatsApp line). */
 function safestore_ty_hotline() {
 	$digits = function_exists( 'safestore_wa_number' ) ? safestore_wa_number() : '';
