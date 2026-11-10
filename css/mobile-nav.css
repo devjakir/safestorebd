@@ -719,10 +719,11 @@
 
   #offcanvas-menu .menu-item a {
     display: block !important;
-    padding: 14px 52px 14px 18px !important;
-    min-height: 48px;
-    font-size: 14.5px !important;
-    line-height: 1.4;
+    /* Compact 42px rows so the whole drawer fits a phone without scrolling. */
+    padding: 11px 48px 11px 16px !important;
+    min-height: 42px;
+    font-size: 14px !important;
+    line-height: 20px;
     color: #1f2937;
     border-bottom: 0 !important;
     text-decoration: none;
@@ -730,7 +731,7 @@
   }
 
   #offcanvas-menu .menu-item-has-children>a {
-    padding-right: 52px !important;
+    padding-right: 48px !important;
   }
 
   #offcanvas-menu .menu-item a:active {
@@ -750,8 +751,8 @@
     position: absolute;
     right: 0;
     top: 0;
-    width: 52px;
-    height: 48px;
+    width: 48px;
+    height: 42px;
     align-items: center;
     justify-content: center;
     background: none;
@@ -819,14 +820,21 @@
   }
 
   #offcanvas-menu .sub-menu .menu-item a {
-    padding-left: 34px !important;
-    font-size: 14px !important;
+    padding-top: 9px !important;
+    padding-bottom: 9px !important;
+    padding-left: 30px !important;
+    min-height: 38px;
+    font-size: 13.5px !important;
     color: #475569;
   }
 
   #offcanvas-menu .sub-menu .sub-menu .menu-item a {
-    padding-left: 50px !important;
-    font-size: 13.5px !important;
+    padding-left: 44px !important;
+    font-size: 13px !important;
+  }
+
+  #offcanvas-menu .sub-menu .dropdown-toggle-btn {
+    height: 38px;
   }
 
   /* ---- Deals button ---- */
@@ -836,8 +844,8 @@
     justify-content: center;
     align-items: center;
     gap: 8px;
-    margin: 14px 16px 20px;
-    padding: 10px 14px;
+    margin: 10px 16px 12px;
+    padding: 8px 14px;
     border-radius: 8px;
     background: #dc2626;
     color: #ffffff !important;
