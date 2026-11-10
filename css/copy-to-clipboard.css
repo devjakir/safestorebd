@@ -145,6 +145,12 @@
   border-color: transparent;
 }
 
+/* The email row is a flex row with a 6px gap; pull the icon back so it sits
+   as close to the address as the phone icons sit to their numbers. */
+.sft-contact-emails__item .sft-copy-btn--inline {
+  margin-left: -2px;
+}
+
 .sft-contact-item__value-row .sft-copy-btn,
 .sft-contact-emails__item .sft-copy-btn {
   position: relative;
