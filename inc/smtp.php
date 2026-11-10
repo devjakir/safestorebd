@@ -61,3 +61,26 @@ function ssbd_configure_phpmailer($phpmailer) {
     $phpmailer->Sender     = $settings['from'];
 }
 add_action('phpmailer_init', 'ssbd_configure_phpmailer', 1000);
+
+/**
+ * Where shop notifications go (bKash/Nagad TrxID, bulk-order leads).
+ *
+ * Follows WooCommerce → Settings → Emails → New order → Recipient(s), so the
+ * order inbox is set in one place; falls back to the site admin email.
+ * Filter: safestore_shop_notify_email.
+ *
+ * @return string Comma-separated address list.
+ */
+function safestore_shop_notify_email() {
+    $to       = '';
+    $settings = get_option('woocommerce_new_order_settings');
+    if (is_array($settings) && !empty($settings['recipient'])) {
+        $valid = array_filter(array_map('trim', explode(',', (string) $settings['recipient'])), 'is_email');
+        $to    = implode(', ', $valid);
+    }
+    if ('' === $to) {
+        $to = (string) get_option('admin_email');
+    }
+
+    return (string) apply_filters('safestore_shop_notify_email', $to);
+}

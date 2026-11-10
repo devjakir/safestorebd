@@ -493,7 +493,7 @@ add_action(
 		$order->add_order_note( sprintf( __( 'Customer submitted on the thank-you page: %s. Verify in the wallet app before shipping.', 'safestore-minimal' ), safestore_mfs_describe( $values ) ) );
 
 		// Tell the shop — this arrives after the "new order" email.
-		$admin = get_option( 'admin_email' );
+		$admin = function_exists( 'safestore_shop_notify_email' ) ? safestore_shop_notify_email() : get_option( 'admin_email' );
 		if ( $admin ) {
 			wp_mail(
 				$admin,

@@ -495,7 +495,7 @@ foreach ( array( 'wp_ajax_', 'wp_ajax_nopriv_' ) as $sbl_hook ) {
 unset( $sbl_hook );
 
 function safestore_bl_send_mail( $post_id, $lead, $items, $file ) {
-	$to = apply_filters( 'safestore_bulk_lead_recipients', get_option( 'admin_email' ) );
+	$to = apply_filters( 'safestore_bulk_lead_recipients', function_exists( 'safestore_shop_notify_email' ) ? safestore_shop_notify_email() : get_option( 'admin_email' ) );
 
 	$lines = array(
 		'নতুন বাল্ক কোটেশন রিকোয়েস্ট',
