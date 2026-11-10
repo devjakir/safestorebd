@@ -3371,7 +3371,8 @@ button.sft-header-action--account {
 /* Landscape phones (~270px of drawer height): a wider drawer with the
    categories on the left and help/call on the right, so it still fits. */
 @media screen and (max-width: 1024px) and (max-height: 500px) and (orientation: landscape) {
-  #offcanvas-menu {
+  /* .offcanvas-menu adds specificity: css/mobile-nav.css loads after this file. */
+  #offcanvas-menu.offcanvas-menu {
     width: min(92vw, 600px);
     max-width: 600px;
   }
