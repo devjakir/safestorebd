@@ -311,6 +311,14 @@ add_action(
 			return;
 		}
 		add_filter( 'gettext_safestore-minimal', 'safestore_pl_ty_bn', 10, 2 );
+		// Lets css/page-order-received.css drop Latin-only letter-spacing for Bangla labels.
+		add_filter(
+			'body_class',
+			static function ( $classes ) {
+				$classes[] = 'sft-ty-bn';
+				return $classes;
+			}
+		);
 		add_filter(
 			'ngettext_safestore-minimal',
 			static function ( $translation, $single ) {
@@ -362,6 +370,14 @@ function safestore_pl_ty_bn( $translation, $text ) {
 			'WhatsApp us'                               => 'WhatsApp-এ মেসেজ দিন',
 			'Call %s'                                   => 'কল করুন %s',
 			'Delivery address'                          => 'ডেলিভারি ঠিকানা',
+			'Please check it — the courier will deliver here.' => 'একবার মিলিয়ে নিন — কুরিয়ার এই ঠিকানাতেই আসবে।',
+			'Inside Dhaka · usually within 24 hours'    => 'ঢাকার ভেতরে · সাধারণত ২৪ ঘণ্টায়',
+			'Outside Dhaka · 2–3 business days'         => 'ঢাকার বাইরে · ২–৩ কার্যদিবসে',
+			'Recipient'                                 => 'প্রাপক',
+			'Address'                                   => 'ঠিকানা',
+			'Address wrong?'                            => 'ঠিকানা ভুল?',
+			'Tell us on WhatsApp before we ship'        => 'পাঠানোর আগে WhatsApp-এ জানান',
+			'Hi SafeStoreBD, please correct the delivery address for order #%s:' => 'হ্যালো SafeStoreBD, অর্ডার #%s-এর ডেলিভারি ঠিকানা ঠিক করতে চাই:',
 			'Order summary'                             => 'অর্ডারের বিবরণ',
 			'Qty %1$d × %2$s'                           => 'পরিমাণ %1$d × %2$s',
 			'Subtotal'                                  => 'পণ্যের দাম',
