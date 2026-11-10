@@ -651,6 +651,13 @@
     height: calc(100vh - var(--sft-header-h, 120px));
     height: calc(100dvh - var(--sft-header-h, 120px));
     max-height: none;
+    /* Fluid vertical rhythm: rows breathe on tall phones and tighten on short
+       ones, so the drawer fits the screen instead of scrolling.
+       Row = 20px line + 2 x pad -> 30px (<=500px tall) ... 38px (>=780px). */
+    --sft-drawer-pad: clamp(5px, calc(1.6vh - 3px), 9px);
+    --sft-drawer-pad: clamp(5px, calc(1.6dvh - 3px), 9px);
+    --sft-drawer-gap: clamp(6px, calc(1.6vh - 2px), 12px);
+    --sft-drawer-gap: clamp(6px, calc(1.6dvh - 2px), 12px);
     padding: 0;
     background: #ffffff;
     box-shadow: 6px 0 26px rgba(15, 23, 42, 0.16);
@@ -719,11 +726,13 @@
 
   #offcanvas-menu .menu-item a {
     display: block !important;
-    /* Compact 42px rows so the whole drawer fits a phone without scrolling. */
-    padding: 11px 48px 11px 16px !important;
-    min-height: 42px;
+    padding: var(--sft-drawer-pad, 9px) 48px var(--sft-drawer-pad, 9px) 16px !important;
+    min-height: 0;
     font-size: 14px !important;
     line-height: 20px;
+    /* The desktop category bar is nowrap; long names must wrap here. */
+    white-space: normal !important;
+    overflow-wrap: anywhere;
     color: #1f2937;
     border-bottom: 0 !important;
     text-decoration: none;
@@ -752,7 +761,7 @@
     right: 0;
     top: 0;
     width: 48px;
-    height: 42px;
+    height: calc(20px + 2 * var(--sft-drawer-pad, 9px));
     align-items: center;
     justify-content: center;
     background: none;
@@ -820,10 +829,10 @@
   }
 
   #offcanvas-menu .sub-menu .menu-item a {
-    padding-top: 9px !important;
-    padding-bottom: 9px !important;
+    padding-top: calc(var(--sft-drawer-pad, 9px) - 1px) !important;
+    padding-bottom: calc(var(--sft-drawer-pad, 9px) - 1px) !important;
     padding-left: 30px !important;
-    min-height: 38px;
+    min-height: 0;
     font-size: 13.5px !important;
     color: #475569;
   }
@@ -834,7 +843,7 @@
   }
 
   #offcanvas-menu .sub-menu .dropdown-toggle-btn {
-    height: 38px;
+    height: calc(18px + 2 * var(--sft-drawer-pad, 9px));
   }
 
   /* ---- Deals button ---- */
@@ -844,7 +853,7 @@
     justify-content: center;
     align-items: center;
     gap: 8px;
-    margin: 10px 16px 12px;
+    margin: var(--sft-drawer-gap, 10px) 16px;
     padding: 8px 14px;
     border-radius: 8px;
     background: #dc2626;
