@@ -28,5 +28,5 @@ build/
 # Env
 .env
 
-# Local SMTP secrets (use Hostinger app password; never commit)
+# Local SMTP secrets (contact@ mailbox password; never commit)
 inc/smtp-secret.php

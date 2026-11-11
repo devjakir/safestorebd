@@ -5,5 +5,5 @@ if (!defined('ABSPATH')) {
 }
 
 if (!defined('SSBD_SMTP_PASS')) {
-    define('SSBD_SMTP_PASS', 'REPLACE_WITH_HOSTINGER_APP_PASSWORD');
+    define('SSBD_SMTP_PASS', 'REPLACE_WITH_CONTACT_MAILBOX_PASSWORD');
 }
