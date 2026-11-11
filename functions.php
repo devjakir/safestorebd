@@ -8,6 +8,8 @@ require get_template_directory() . '/inc/performance.php';
 require get_template_directory() . '/inc/seo-sitemap.php';
 
 require get_template_directory() . '/inc/whatsapp-chat.php';
+// Floating back-to-top button with scroll-progress ring (stacks above the WhatsApp FAB).
+require get_template_directory() . '/inc/back-to-top.php';
 
 require get_template_directory() . '/inc/cart-toast.php';
 
