@@ -1,4 +1,9 @@
 /* Mobile sticky add-to-cart bar (inc/pdp-sticky-bar.php) */
+:root {
+  /* Space the bar takes; css/back-to-top.css sits just above it. */
+  --sft-sticky-atc-h: 64px;
+}
+
 .sft-sticky-atc {
   display: none;
 }
@@ -100,7 +105,7 @@
 
   /* Keep page content clear of the bar while it is up. */
   body.sft-sticky-atc-on {
-    padding-bottom: calc(var(--sft-bottomnav-h, 0px) + var(--sft-bottomnav-inset, 0px) + 64px);
+    padding-bottom: calc(var(--sft-bottomnav-h, 0px) + var(--sft-bottomnav-inset, 0px) + var(--sft-sticky-atc-h));
   }
 
   /* WhatsApp float would cover the bar: hide it while the bar is shown. */

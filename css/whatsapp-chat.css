@@ -1,17 +1,25 @@
 
+/* Corner geometry — also read by css/back-to-top.css to stack above the FAB. */
+:root {
+  --sft-wa-bottom: max(24px, calc(env(safe-area-inset-bottom, 0px) + 12px));
+  --sft-wa-edge: max(20px, env(safe-area-inset-right, 0px));
+  --sft-wa-fab: 58px;
+  --sft-wa-gap: 12px;
+}
+
 .sft-wa {
   position: fixed;
-  bottom: max(24px, calc(env(safe-area-inset-bottom, 0px) + 12px));
+  bottom: var(--sft-wa-bottom);
   z-index: 99000;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 12px;
+  gap: var(--sft-wa-gap);
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   line-height: 1.45;
 }
 
-.sft-wa[data-position="right"] { right: max(20px, env(safe-area-inset-right, 0px)); }
+.sft-wa[data-position="right"] { right: var(--sft-wa-edge); }
 .sft-wa[data-position="left"]  { left: max(20px, env(safe-area-inset-left, 0px)); align-items: flex-start; }
 
 /* Floating action button */
@@ -19,8 +27,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 58px;
-  height: 58px;
+  width: var(--sft-wa-fab);
+  height: var(--sft-wa-fab);
   border-radius: 999px;
   background: #25d366;
   color: #ffffff;
@@ -215,10 +223,13 @@
 
 /* Mobile */
 @media (max-width: 640px) {
-  .sft-wa { bottom: max(20px, calc(env(safe-area-inset-bottom, 0px) + 10px)); gap: 10px; }
-  .sft-wa[data-position="right"] { right: 16px; }
+  :root {
+    --sft-wa-bottom: max(20px, calc(env(safe-area-inset-bottom, 0px) + 10px));
+    --sft-wa-edge: 16px;
+    --sft-wa-fab: 54px;
+    --sft-wa-gap: 10px;
+  }
   .sft-wa[data-position="left"]  { left: 16px; }
-  .sft-wa__fab { width: 54px; height: 54px; }
   .sft-wa__fab-icon { width: 28px; height: 28px; }
   .sft-wa__panel { width: calc(100vw - 32px); }
 }
