@@ -10,9 +10,9 @@
   --sft-cmp-bar-z: 98950;
 }
 
-/* Lift WhatsApp FAB when the compare bar is open */
-html.sft-compare-bar-open .sft-wa {
-  bottom: max(86px, calc(env(safe-area-inset-bottom, 0px) + 74px));
+/* Lift the floating corner buttons (WhatsApp FAB, back-to-top) when the compare bar is open */
+html.sft-compare-bar-open {
+  --sft-wa-bottom: max(86px, calc(env(safe-area-inset-bottom, 0px) + 74px));
 }
 
 .sft-compare-live {
@@ -590,8 +590,8 @@ html.sft-compare-bar-open .sft-wa {
 /* ------------------------------------------------------------------ */
 
 @media (max-width: 768px) {
-  html.sft-compare-bar-open .sft-wa {
-    bottom: max(118px, calc(env(safe-area-inset-bottom, 0px) + 106px));
+  html.sft-compare-bar-open {
+    --sft-wa-bottom: max(118px, calc(env(safe-area-inset-bottom, 0px) + 106px));
   }
 
   .sft-compare-bar__inner {
