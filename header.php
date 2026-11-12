@@ -18,6 +18,8 @@ $sft_cart_total = $sft_wc_cart ? $sft_wc_cart->get_cart_total() : '';
 ?>
 
 <header class="sft-header" role="banner">
+<?php // Set at parse time, not by the deferred mobile-nav.js: on phones that class collapses the 44px search row, and adding it after first paint shifted every page by 0.05 CLS. ?>
+<script>document.currentScript.parentNode.classList.add('has-js-search');</script>
     <div class="sft-header-sticky">
     <div class="sft-header-main">
         <button type="button" class="mobile-menu-trigger" aria-label="Open Menu" aria-controls="offcanvas-menu" aria-expanded="false">

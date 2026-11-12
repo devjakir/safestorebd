@@ -126,11 +126,12 @@ function safestore_perf_async_style_handles() {
 		'safestore-cart-toast',
 		'safestore-copy-to-clipboard',
 		'safestore-product-compare',
-		// Nothing in the first screen needs these: the footer slab is below the
-		// fold, the back-to-top button and the mobile sticky bar start hidden
-		// (aria-hidden / [hidden] + style.css guards), the lightbox and the
-		// desktop hover zoom only matter on interaction.
-		'safestore-minimal-footer',
+		// Nothing in the first screen needs these: the back-to-top button and the
+		// mobile sticky bar start hidden (aria-hidden / [hidden] + style.css
+		// guards), the lightbox and the desktop hover zoom only matter on
+		// interaction. footer.css stays blocking on purpose: on short pages
+		// (account, wishlist, 404) the footer is inside the first screen and
+		// loading it async measured CLS 0.17-0.68 there.
 		'safestore-back-to-top',
 		'safestore-pdp-sticky-bar',
 		'safestore-minimal-pdp-zoom',
