@@ -405,6 +405,29 @@ function safestore_perf_delay_third_party_boot() {
 }
 add_action( 'wp_footer', 'safestore_perf_delay_third_party_boot', 1 );
 
+/**
+ * 1-based slot of the current product card inside the MAIN shop/category loop
+ * while it is one of the first SAFESTORE_EAGER_CARDS cards, else 0. Related,
+ * upsell and shortcode loops (wc loop name / is_shortcode) never count.
+ */
+function safestore_minimal_eager_card_slot() {
+	static $printed = 0;
+
+	if ( ! function_exists( 'wc_get_loop_prop' ) || ! ( is_shop() || is_product_taxonomy() ) || is_search() ) {
+		return 0;
+	}
+	if ( wc_get_loop_prop( 'is_shortcode' ) || '' !== (string) wc_get_loop_prop( 'name' ) ) {
+		return 0;
+	}
+
+	$limit = (int) apply_filters( 'safestore_eager_card_images', 2 );
+	if ( $printed >= $limit ) {
+		return 0;
+	}
+
+	return ++$printed;
+}
+
 function safestore_perf_attachment_image_attributes( $attr, $attachment, $size ) {
 	unset( $attachment, $size );
 
