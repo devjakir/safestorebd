@@ -157,6 +157,14 @@ select {
   object-fit: contain;
 }
 
+/* Below-the-fold / interaction-only sheets load async (inc/performance.php):
+   keep their elements invisible until they arrive. */
+.pswp,
+.sft-btt,
+.sft-sticky-atc {
+  display: none;
+}
+
 /* Search */
 .sft-header-search {
   justify-self: center;

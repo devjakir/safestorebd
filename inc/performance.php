@@ -121,6 +121,16 @@ function safestore_perf_async_style_handles() {
 		'safestore-cart-toast',
 		'safestore-copy-to-clipboard',
 		'safestore-product-compare',
+		// Nothing in the first screen needs these: the footer slab is below the
+		// fold, the back-to-top button and the mobile sticky bar start hidden
+		// (aria-hidden / [hidden] + style.css guards), the lightbox and the
+		// desktop hover zoom only matter on interaction.
+		'safestore-minimal-footer',
+		'safestore-back-to-top',
+		'safestore-pdp-sticky-bar',
+		'safestore-minimal-pdp-zoom',
+		'photoswipe',
+		'photoswipe-default-skin',
 		'wc-blocks-style',
 		'wc-blocks-vendors-style',
 		'woocommerce-blocktheme',
