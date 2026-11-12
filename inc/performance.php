@@ -63,6 +63,58 @@ function safestore_perf_maybe_dequeue_woocommerce_styles() {
 }
 add_action( 'wp_enqueue_scripts', 'safestore_perf_maybe_dequeue_woocommerce_styles', 99 );
 
+/**
+ * Serve the minified twin of a theme asset when it exists and is at least as
+ * new as its source: css/foo.css -> css/foo.min.css (style.css -> style.min.css).
+ * Built by `cd tools && npm install && npm run minify-css`. An older .min file
+ * is ignored, so a CSS edit without a rebuild still ships (unminified) rather
+ * than stale. SCRIPT_DEBUG always serves the source.
+ */
+function safestore_perf_min_asset_src( $src, $ext ) {
+	if ( ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) || ! is_string( $src ) || '' === $src ) {
+		return $src;
+	}
+
+	static $theme_uri = null, $theme_dir = null;
+	if ( null === $theme_uri ) {
+		$theme_uri = trailingslashit( get_template_directory_uri() );
+		$theme_dir = trailingslashit( get_template_directory() );
+	}
+
+	// Compare without scheme so http/https (or Cloudflare rewrites) never matter.
+	$bare_uri = preg_replace( '#^https?:#i', '', $theme_uri );
+	$bare_src = preg_replace( '#^https?:#i', '', $src );
+	if ( 0 !== strpos( $bare_src, $bare_uri ) ) {
+		return $src;
+	}
+
+	$path_q = substr( $bare_src, strlen( $bare_uri ) );
+	$parts  = explode( '?', $path_q, 2 );
+	$rel    = $parts[0];
+	$query  = isset( $parts[1] ) ? $parts[1] : '';
+
+	if ( substr( $rel, - strlen( '.' . $ext ) ) !== '.' . $ext || substr( $rel, - strlen( '.min.' . $ext ) ) === '.min.' . $ext ) {
+		return $src;
+	}
+
+	$min_rel = substr( $rel, 0, - strlen( '.' . $ext ) ) . '.min.' . $ext;
+	$min     = $theme_dir . $min_rel;
+	$source  = $theme_dir . $rel;
+	if ( ! is_readable( $min ) || ! is_readable( $source ) || filemtime( $min ) < filemtime( $source ) ) {
+		return $src;
+	}
+
+	parse_str( $query, $args );
+	$args['ver'] = (string) filemtime( $min );
+
+	return add_query_arg( $args, $theme_uri . $min_rel );
+}
+
+function safestore_perf_style_loader_src( $src ) {
+	return is_admin() ? $src : safestore_perf_min_asset_src( $src, 'css' );
+}
+add_filter( 'style_loader_src', 'safestore_perf_style_loader_src', 20 );
+
 function safestore_perf_async_style_handles() {
 	$handles = array(
 		'safestore-whatsapp-chat',
