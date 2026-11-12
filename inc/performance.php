@@ -74,8 +74,14 @@ function safestore_perf_async_style_handles() {
 		'woocommerce-blocktheme',
 	);
 
+	// WooCommerce's own sheets lay out the product gallery/summary columns and
+	// the archive grid; loading them async there re-flowed the whole product
+	// block once they arrived (PSI desktop CLS 0.283 on single product pages).
 	$needs_sync_wc = class_exists( 'WooCommerce' )
-		&& ( is_cart() || is_checkout() || is_account_page() );
+		&& ( is_cart() || is_checkout() || is_account_page()
+			|| ( function_exists( 'is_product' ) && is_product() )
+			|| ( function_exists( 'is_shop' ) && is_shop() )
+			|| ( function_exists( 'is_product_taxonomy' ) && is_product_taxonomy() ) );
 
 	if ( ! $needs_sync_wc ) {
 		$handles = array_merge(

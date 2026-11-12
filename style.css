@@ -148,6 +148,9 @@ select {
   flex-shrink: 0;
   height: 44px;
   width: auto;
+  /* 180×44 SVG (inc/brand.php): with width:auto the box has no width until the
+     file arrives, so reserve it and avoid the header shifting (Lighthouse "unsized image"). */
+  aspect-ratio: 180 / 44;
   max-width: none;
   max-height: 44px;
   min-height: 44px;
