@@ -414,10 +414,26 @@ function safestore_perf_is_delayed_third_party_src( $src ) {
 	);
 }
 
-function safestore_perf_delay_third_party_script_tag( $tag, $handle, $src ) {
-	unset( $handle );
+/**
+ * PixelYourSite handles that may wait for the first interaction. PYS injects
+ * fbevents.js (+ config) and gtag/js itself from public.js, so the only way to
+ * keep ~400 KB of pixel code out of the initial load is to delay PYS. Not on
+ * cart, checkout and the thank-you page: InitiateCheckout / Purchase must fire
+ * even for a visitor who leaves at once.
+ */
+function safestore_perf_delayed_pys_handles() {
+	$delay = ! ( function_exists( 'is_cart' ) && ( is_cart() || is_checkout() ) );
+	$delay = (bool) apply_filters( 'safestore_perf_delay_pys', $delay );
 
-	if ( is_admin() || ! safestore_perf_is_delayed_third_party_src( $src ) ) {
+	return $delay ? array( 'jquery-bind-first', 'js-sha256', 'pys' ) : array();
+}
+
+function safestore_perf_delay_third_party_script_tag( $tag, $handle, $src ) {
+	if ( is_admin() ) {
+		return $tag;
+	}
+
+	if ( ! safestore_perf_is_delayed_third_party_src( $src ) && ! in_array( $handle, safestore_perf_delayed_pys_handles(), true ) ) {
 		return $tag;
 	}
 
@@ -425,10 +441,11 @@ function safestore_perf_delay_third_party_script_tag( $tag, $handle, $src ) {
 		return $tag;
 	}
 
-	return sprintf(
-		'<script type="text/plain" data-sft-delay data-src="%s"></script>' . "\n",
-		esc_url( $src )
-	);
+	// Keep WordPress' inline before/after data (e.g. pysOptions) around the stub.
+	$stub = sprintf( '<script type="text/plain" data-sft-delay data-src="%s"></script>', esc_url( $src ) );
+	$out  = preg_replace( '#<script\b[^>]*\ssrc=[^>]*>\s*</script>#i', $stub, $tag, 1, $count );
+
+	return ( is_string( $out ) && $count ) ? $out : $stub . "\n";
 }
 add_filter( 'script_loader_tag', 'safestore_perf_delay_third_party_script_tag', 40, 3 );
 
@@ -439,28 +456,59 @@ function safestore_perf_delay_third_party_boot() {
 	?>
 <script id="sft-delay-third-party">
 (function(){
-	var loaded=false;
-	function boot(){
-		if(loaded){return;}
-		loaded=true;
+	var loaded=false, queue=[];
+	/* Theme code tracks through this: queued until fbq/gtag exist, then flushed. */
+	window.sftTrack=function(fb,ga,params){
+		params=params||{};
+		if((typeof window.fbq==='function'&&window.fbq.loaded)||typeof window.gtag==='function'){
+			try{if(fb){window.fbq('track',fb,params);}}catch(e){}
+			try{if(ga){window.gtag('event',ga,params);}}catch(e){}
+			return;
+		}
+		queue.push([fb,ga,params]);boot();poll();
+	};
+	var polling=false;
+	function poll(){if(!polling){polling=true;flush(40);}}
+	function flush(tries){
+		if(!queue.length){polling=false;return;}
+		var hasFb=typeof window.fbq==='function'&&window.fbq.loaded, hasGa=typeof window.gtag==='function';
+		if(!(hasFb||hasGa)){
+			if(tries>0){setTimeout(function(){flush(tries-1);},250);}else{polling=false;}
+			return;
+		}
+		polling=false;
+		var q=queue;queue=[];
+		for(var i=0;i<q.length;i++){
+			try{if(q[i][0]&&typeof window.fbq==='function'){window.fbq('track',q[i][0],q[i][2]);}}catch(e){}
+			try{if(q[i][1]&&typeof window.gtag==='function'){window.gtag('event',q[i][1],q[i][2]);}}catch(e){}
+		}
+	}
+	function inject(){
 		var nodes=document.querySelectorAll('script[type="text/plain"][data-sft-delay]');
 		for(var i=0;i<nodes.length;i++){
 			var s=nodes[i], n=document.createElement('script');
-			n.async=true;
+			/* async=false keeps document order for dynamically added scripts (PYS needs its deps first). */
+			n.async=false;
 			if(s.getAttribute('data-src')){n.src=s.getAttribute('data-src');}
 			else{n.text=s.textContent;}
 			document.body.appendChild(n);
 		}
+		poll();
+	}
+	function boot(){
+		if(loaded){return;}
+		loaded=true;
+		/* Deferred scripts (jQuery, js-cookie) have run once DOMContentLoaded fired. */
+		if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',inject);}
+		else{inject();}
 	}
 	var events=['scroll','pointerdown','keydown','touchstart'];
 	for(var e=0;e<events.length;e++){
 		window.addEventListener(events[e],boot,{once:true,passive:true});
 	}
-	if('requestIdleCallback' in window){
-		requestIdleCallback(boot,{timeout:4500});
-	}else{
-		setTimeout(boot,4500);
-	}
+	/* Nobody interacted: load ~3 s after the page finished loading, so quick ad visitors still send PageView. */
+	function later(){setTimeout(boot,3000);}
+	if(document.readyState==='complete'){later();}else{window.addEventListener('load',later);}
 })();
 </script>
 	<?php

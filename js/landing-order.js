@@ -44,16 +44,21 @@
 
 	function track(fbName, gaName, params) {
 		params = params || {};
-		try {
-			if (typeof w.fbq === 'function') {
-				w.fbq('track', fbName, params);
-			}
-		} catch (e) {}
-		try {
-			if (typeof w.gtag === 'function') {
-				w.gtag('event', gaName, params);
-			}
-		} catch (e) {}
+		if (typeof w.sftTrack === 'function') {
+			// Pixel / gtag are delayed (inc/performance.php): queued until they exist.
+			w.sftTrack(fbName, gaName, params);
+		} else {
+			try {
+				if (typeof w.fbq === 'function') {
+					w.fbq('track', fbName, params);
+				}
+			} catch (e) {}
+			try {
+				if (typeof w.gtag === 'function') {
+					w.gtag('event', gaName, params);
+				}
+			} catch (e) {}
+		}
 		try {
 			w.dataLayer = w.dataLayer || [];
 			var push = { event: gaName };

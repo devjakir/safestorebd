@@ -21,16 +21,21 @@
 			return;
 		}
 		params = params || {};
-		try {
-			if (typeof window.fbq === 'function') {
-				window.fbq('track', ev.fb, params);
-			}
-		} catch (e) {}
-		try {
-			if (typeof window.gtag === 'function') {
-				window.gtag('event', ev.ga, params);
-			}
-		} catch (e) {}
+		if (typeof window.sftTrack === 'function') {
+			// Pixel / gtag are delayed (inc/performance.php): queued until they exist.
+			window.sftTrack(ev.fb, ev.ga, params);
+		} else {
+			try {
+				if (typeof window.fbq === 'function') {
+					window.fbq('track', ev.fb, params);
+				}
+			} catch (e) {}
+			try {
+				if (typeof window.gtag === 'function') {
+					window.gtag('event', ev.ga, params);
+				}
+			} catch (e) {}
+		}
 		try {
 			window.dataLayer = window.dataLayer || [];
 			var push = { event: ev.ga };
