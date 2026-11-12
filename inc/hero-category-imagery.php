@@ -8,6 +8,79 @@ const SAFESTORE_HERO_PRODUCT_META = '_sft_hero_product_id';
 const SAFESTORE_HERO_OVERLAY_TTL  = 10 * MINUTE_IN_SECONDS;
 const SAFESTORE_HERO_OVERLAY_CACHE = 'sft_hero_overlay_v4_';
 
+/**
+ * Rendered width of the hero product stage (css/page-home.css):
+ * phones min(50vw,180px), ≤900px min(68vw,260px), desktop a ~432px container box.
+ */
+const SAFESTORE_HERO_IMAGE_SIZES = '(max-width: 480px) 180px, (max-width: 900px) 260px, 432px';
+
+/**
+ * Config of the first hero slide. The template and the LCP preload both read
+ * it from here so the preloaded file can never differ from the rendered one.
+ */
+function safestore_hero_first_slide_config() {
+	return array(
+		'category_key'  => 'helmet',
+		'category_slug' => function_exists( 'safestore_home_category_slug' ) ? safestore_home_category_slug( 'helmet' ) : 'helmet',
+		'image_base'    => 'sf-helmet-category',
+		'alt'           => 'Safety helmets and hard hats with protective eyewear on a bright surface',
+	);
+}
+
+/**
+ * Theme-shipped hero image for a slide (assets/images/{base}-480w|-720w|.webp).
+ */
+function safestore_hero_theme_slide_image( $image_base, $alt ) {
+	$assets_url = get_template_directory_uri() . '/assets/images/';
+	$src        = static function ( $filename ) use ( $assets_url ) {
+		return $assets_url . rawurlencode( $filename );
+	};
+
+	return array(
+		'src'    => $src( $image_base . '.webp' ),
+		'srcset' => $src( $image_base . '-480w.webp' ) . ' 480w, ' . $src( $image_base . '-720w.webp' ) . ' 720w, ' . $src( $image_base . '.webp' ) . ' 900w',
+		'sizes'  => SAFESTORE_HERO_IMAGE_SIZES,
+		'alt'    => (string) $alt,
+		'width'  => 900,
+		'height' => 900,
+		'cutout' => true,
+		'is_overlay' => false,
+	);
+}
+
+/**
+ * The image a hero slide renders: the category's overlay product image when
+ * one exists, else the theme-shipped category artwork. Always carries the
+ * theme hero `sizes` (WordPress' default sizes was far wider than the stage).
+ */
+function safestore_hero_slide_image( $category_slug, $image_base, $alt ) {
+	$overlay = ( '' !== (string) $category_slug && function_exists( 'safestore_hero_overlay_for_category' ) )
+		? safestore_hero_overlay_for_category( $category_slug )
+		: array();
+
+	$product_image = ( ! empty( $overlay['image'] ) && is_array( $overlay['image'] ) ) ? $overlay['image'] : null;
+	if ( ! $product_image ) {
+		return safestore_hero_theme_slide_image( $image_base, $alt );
+	}
+
+	return array(
+		'src'        => (string) $product_image['src'],
+		'srcset'     => isset( $product_image['srcset'] ) ? (string) $product_image['srcset'] : '',
+		'sizes'      => SAFESTORE_HERO_IMAGE_SIZES,
+		'alt'        => ! empty( $product_image['alt'] ) ? (string) $product_image['alt'] : (string) $alt,
+		'width'      => ! empty( $product_image['width'] ) ? (int) $product_image['width'] : 900,
+		'height'     => ! empty( $product_image['height'] ) ? (int) $product_image['height'] : 900,
+		'cutout'     => ! empty( $product_image['cutout'] ),
+		'is_overlay' => true,
+	);
+}
+
+/** Image of the first (LCP) hero slide — used by the template and by the preload. */
+function safestore_hero_first_slide_image() {
+	$cfg = safestore_hero_first_slide_config();
+	return safestore_hero_slide_image( $cfg['category_slug'], $cfg['image_base'], $cfg['alt'] );
+}
+
 function safestore_hero_overlay_cache_key( $category_slug ) {
 	return SAFESTORE_HERO_OVERLAY_CACHE . sanitize_title( (string) $category_slug );
 }
@@ -232,7 +305,7 @@ function safestore_hero_product_image_payload( $product ) {
 			'width'  => $theme_cutout['width'],
 			'height' => $theme_cutout['height'],
 			'srcset' => '',
-			'sizes'  => '(max-width: 900px) 70vw, 464px',
+			'sizes'  => SAFESTORE_HERO_IMAGE_SIZES,
 			'alt'    => $product->get_name(),
 			'cutout' => true,
 		);
@@ -259,14 +332,13 @@ function safestore_hero_product_image_payload( $product ) {
 	}
 
 	$srcset = wp_get_attachment_image_srcset( $image_id, 'woocommerce_single' );
-	$sizes  = wp_get_attachment_image_sizes( $image_id, 'woocommerce_single' );
 
 	return array(
 		'src'    => $src[0],
 		'width'  => (int) $src[1],
 		'height' => (int) $src[2],
 		'srcset' => is_string( $srcset ) ? $srcset : '',
-		'sizes'  => is_string( $sizes ) && '' !== $sizes ? $sizes : '(max-width: 900px) 70vw, 464px',
+		'sizes'  => SAFESTORE_HERO_IMAGE_SIZES,
 		'alt'    => $alt,
 		'cutout' => $cutout_id > 0,
 	);

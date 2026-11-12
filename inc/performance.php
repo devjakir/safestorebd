@@ -215,27 +215,18 @@ function safestore_perf_preload_lcp() {
 	}
 
 	if ( is_page_template( 'page-home.php' ) || is_front_page() ) {
-		$hero = get_template_directory_uri() . '/assets/images/' . rawurlencode( 'sf-helmet-category-720w.webp' );
-		$images_dir = get_template_directory() . '/assets/images/';
-		if ( ! file_exists( $images_dir . 'sf-helmet-category-720w.webp' ) ) {
-			$hero = get_template_directory_uri() . '/assets/images/' . rawurlencode( 'sf-helmet-category.webp' );
+		// Exactly the image slide 1 renders (overlay product or theme artwork) —
+		// templates/home/hero-slider.php reads the same helper.
+		$hero = function_exists( 'safestore_hero_first_slide_image' ) ? safestore_hero_first_slide_image() : null;
+		if ( is_array( $hero ) && ! empty( $hero['src'] ) ) {
+			printf(
+				'<link rel="preload" as="image" href="%1$s" fetchpriority="high"%2$s%3$s />' . "\n",
+				esc_url( $hero['src'] ),
+				! empty( $hero['srcset'] ) ? ' imagesrcset="' . esc_attr( $hero['srcset'] ) . '"' : '',
+				( ! empty( $hero['srcset'] ) && ! empty( $hero['sizes'] ) ) ? ' imagesizes="' . esc_attr( $hero['sizes'] ) . '"' : ''
+			);
+			return;
 		}
-		printf(
-			'<link rel="preload" as="image" href="%s" type="image/webp" fetchpriority="high" imagesrcset="%s" imagesizes="%s" />' . "\n",
-			esc_url( $hero ),
-			esc_attr(
-				implode(
-					', ',
-					array(
-						get_template_directory_uri() . '/assets/images/' . rawurlencode( 'sf-helmet-category-480w.webp' ) . ' 480w',
-						get_template_directory_uri() . '/assets/images/' . rawurlencode( 'sf-helmet-category-720w.webp' ) . ' 720w',
-						get_template_directory_uri() . '/assets/images/' . rawurlencode( 'sf-helmet-category.webp' ) . ' 900w',
-					)
-				)
-			),
-			esc_attr( '(max-width: 900px) 62vw, 42vw' )
-		);
-		return;
 	}
 
 	// Product pages: the main gallery image is the LCP element, not the logo.

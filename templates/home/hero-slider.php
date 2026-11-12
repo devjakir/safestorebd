@@ -1,22 +1,6 @@
 <?php
 
-$shop_url   = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
-$assets_url = get_template_directory_uri() . '/assets/images';
-
-$safestore_hero_product_src = static function ( string $filename ) use ( $assets_url ): string {
-	return $assets_url . '/' . rawurlencode( $filename );
-};
-
-$safestore_hero_srcset = static function ( string $base ) use ( $safestore_hero_product_src ): string {
-	return implode(
-		', ',
-		array(
-			$safestore_hero_product_src( $base . '-480w.webp' ) . ' 480w',
-			$safestore_hero_product_src( $base . '-720w.webp' ) . ' 720w',
-			$safestore_hero_product_src( $base . '.webp' ) . ' 900w',
-		)
-	);
-};
+$shop_url = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
 
 /** UTF-8 narrow no-break space — keeps two-line headline layout stable */
 $nbsp = "\xC2\xA0";
@@ -25,6 +9,9 @@ $helmet_cat    = safestore_home_category_url( 'helmet' );
 $vest_cat      = safestore_home_category_url( 'vest' );
 $shoe_cat      = safestore_home_category_url( 'shoe' );
 $browse_anchor = home_url( '/#browse-categories' );
+
+// First slide = LCP image; inc/hero-category-imagery.php owns its config so the <head> preload matches.
+$hero_first = safestore_hero_first_slide_config();
 
 $hero_slides = array(
 	array(
@@ -36,9 +23,9 @@ $hero_slides = array(
 		'url'           => $helmet_cat,
 		'cta_secondary' => 'Browse categories',
 		'url_secondary' => $browse_anchor,
-		'category_slug' => safestore_home_category_slug( 'helmet' ),
-		'image_base'    => 'sf-helmet-category',
-		'alt'           => 'Safety helmets and hard hats with protective eyewear on a bright surface',
+		'category_slug' => $hero_first['category_slug'],
+		'image_base'    => $hero_first['image_base'],
+		'alt'           => $hero_first['alt'],
 	),
 	array(
 		'badge'         => 'High visibility',
@@ -67,8 +54,6 @@ $hero_slides = array(
 		'alt'           => 'Industrial safety shoes and leather work boots on a construction-site surface',
 	),
 );
-
-$hero_sizes = '(max-width: 900px) 70vw, 464px';
 
 $hero_proof = array(
 	array(
@@ -112,25 +97,17 @@ $safestore_hero_proof_icon = static function ( string $name ): string {
 				? safestore_hero_overlay_markup( $overlay )
 				: '';
 
-			$product_image = ( ! empty( $overlay['image'] ) && is_array( $overlay['image'] ) ) ? $overlay['image'] : null;
+			// Same resolver the LCP preload uses (inc/hero-category-imagery.php).
+			$image      = safestore_hero_slide_image( (string) $slide['category_slug'], $slide['image_base'], $slide['alt'] );
 			// Opaque product photos get framed as a white card; cutouts float on the dark slide.
-			$stage_class = ( $product_image && empty( $product_image['cutout'] ) ) ? ' hero-slide-stage--photo' : '';
-			if ( $product_image ) {
-				$img_src    = $product_image['src'];
-				$img_srcset = isset( $product_image['srcset'] ) ? (string) $product_image['srcset'] : '';
-				$img_sizes  = ! empty( $product_image['sizes'] ) ? (string) $product_image['sizes'] : $hero_sizes;
-				$img_alt    = ! empty( $product_image['alt'] ) ? (string) $product_image['alt'] : $slide['alt'];
-				$img_w      = ! empty( $product_image['width'] ) ? (int) $product_image['width'] : 900;
-				$img_h      = ! empty( $product_image['height'] ) ? (int) $product_image['height'] : 900;
-			} else {
-				$img_src    = $safestore_hero_product_src( $slide['image_base'] . '.webp' );
-				$img_srcset = $safestore_hero_srcset( $slide['image_base'] );
-				$img_sizes  = $hero_sizes;
-				$img_alt    = $slide['alt'];
-				$img_w      = 900;
-				$img_h      = 900;
-			}
-			$is_first = ( 0 === $index );
+			$stage_class = ( $image['is_overlay'] && empty( $image['cutout'] ) ) ? ' hero-slide-stage--photo' : '';
+			$img_src    = $image['src'];
+			$img_srcset = $image['srcset'];
+			$img_sizes  = $image['sizes'];
+			$img_alt    = $image['alt'];
+			$img_w      = $image['width'];
+			$img_h      = $image['height'];
+			$is_first   = ( 0 === $index );
 			?>
 			<div class="hero-slide<?php echo $is_first ? ' is-active' : ''; ?>"
 				role="group"
