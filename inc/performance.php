@@ -66,7 +66,7 @@ add_action( 'wp_enqueue_scripts', 'safestore_perf_maybe_dequeue_woocommerce_styl
 /**
  * Serve the minified twin of a theme asset when it exists and is at least as
  * new as its source: css/foo.css -> css/foo.min.css (style.css -> style.min.css).
- * Built by `cd tools && npm install && npm run minify-css`. An older .min file
+ * Same for js/foo.js -> js/foo.min.js. Built by `cd tools && npm install && npm run minify`. An older .min file
  * is ignored, so a CSS edit without a rebuild still ships (unminified) rather
  * than stale. SCRIPT_DEBUG always serves the source.
  */
@@ -114,6 +114,11 @@ function safestore_perf_style_loader_src( $src ) {
 	return is_admin() ? $src : safestore_perf_min_asset_src( $src, 'css' );
 }
 add_filter( 'style_loader_src', 'safestore_perf_style_loader_src', 20 );
+
+function safestore_perf_script_loader_src( $src ) {
+	return is_admin() ? $src : safestore_perf_min_asset_src( $src, 'js' );
+}
+add_filter( 'script_loader_src', 'safestore_perf_script_loader_src', 20 );
 
 function safestore_perf_async_style_handles() {
 	$handles = array(

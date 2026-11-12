@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "minify-css": "node minify-css.mjs",
-    "optimize-images": "node optimize-images.mjs"
+    "optimize-images": "node optimize-images.mjs",
+    "minify-js": "node minify-js.mjs",
+    "minify": "node minify-css.mjs && node minify-js.mjs"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +17,7 @@
     "sharp": "^0.34.2"
   },
   "devDependencies": {
-    "csso": "^5.0.5"
+    "csso": "^5.0.5",
+    "terser": "^5.36.0"
   }
 }
