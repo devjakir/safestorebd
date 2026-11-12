@@ -152,8 +152,12 @@ function safestore_perf_jquery_loading() {
 	wp_dequeue_script( 'jquery-migrate' );
 	wp_deregister_script( 'jquery-migrate' );
 
-	// HUSKY prints its chosen / ion.rangeSlider scripts without a jquery dependency, so a deferred jQuery leaves the price slider dead on filter pages.
-	if ( function_exists( 'safestore_minimal_shop_filter_enabled' ) && safestore_minimal_shop_filter_enabled() && shortcode_exists( 'woof' ) ) {
+	// Filter pages: HUSKY's ~20 scripts are jQuery plugins printed blocking. They
+	// cannot simply be deferred — front.js binds on jQuery ready, which can fire
+	// between deferred scripts (before checkbox.js / radio.js define their
+	// helpers) — so jQuery stays blocking there. Everywhere else HUSKY is
+	// dequeued (inc/shop-filter.php) and jQuery really defers.
+	if ( function_exists( 'safestore_minimal_husky_assets_needed' ) && safestore_minimal_husky_assets_needed() && shortcode_exists( 'woof' ) ) {
 		return;
 	}
 
@@ -309,6 +313,27 @@ function safestore_perf_dedupe_js_cookie() {
 	$pys->deps = array_values( array_unique( array_merge( array( 'wc-js-cookie' ), (array) $pys->deps ) ) );
 }
 add_action( 'wp_enqueue_scripts', 'safestore_perf_dedupe_js_cookie', 999 );
+
+/**
+ * PixelYourSite registers its scripts without a loading strategy. A single
+ * blocking dependent makes WordPress print jQuery (and wc-js-cookie) blocking
+ * in <head> for the whole page, so defer PYS too: public.js only binds on
+ * DOM ready / jQuery events, and its pysOptions inline data is printed before
+ * the tag regardless of strategy.
+ */
+function safestore_perf_defer_pys_scripts() {
+	if ( is_admin() || version_compare( get_bloginfo( 'version' ), '6.3', '<' ) ) {
+		return;
+	}
+	$scripts = wp_scripts();
+	foreach ( array( 'pys', 'jquery-bind-first', 'js-sha256' ) as $handle ) {
+		if ( wp_script_is( $handle, 'registered' ) && ! empty( $scripts->registered[ $handle ]->src ) ) {
+			wp_script_add_data( $handle, 'strategy', 'defer' );
+		}
+	}
+}
+add_action( 'wp_enqueue_scripts', 'safestore_perf_defer_pys_scripts', 100 );
+
 
 function safestore_perf_is_delayed_third_party_src( $src ) {
 	if ( ! is_string( $src ) || '' === $src ) {

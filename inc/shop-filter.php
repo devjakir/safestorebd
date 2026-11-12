@@ -50,6 +50,37 @@ function safestore_minimal_husky_assets_needed() {
 	return $post instanceof WP_Post && has_shortcode( $post->post_content, 'woof' );
 }
 
+// Really dequeue HUSKY where no filter renders. Blanking the tags at print
+// time (below) was not enough: WordPress still saw ~20 blocking HUSKY scripts
+// as dependents of jQuery and therefore downgraded jQuery's own "defer" to a
+// render-blocking <script> in <head> on every page (home, PDP, landing).
+function safestore_minimal_is_husky_src( $src ) {
+	return is_string( $src ) && false !== strpos( $src, '/plugins/woocommerce-products-filter/' );
+}
+
+function safestore_minimal_dequeue_husky_assets() {
+	if ( is_admin() || safestore_minimal_husky_assets_needed() ) {
+		return;
+	}
+
+	$scripts = wp_scripts();
+	foreach ( $scripts->queue as $handle ) {
+		if ( isset( $scripts->registered[ $handle ] ) && safestore_minimal_is_husky_src( $scripts->registered[ $handle ]->src ) ) {
+			wp_dequeue_script( $handle );
+		}
+	}
+
+	$styles = wp_styles();
+	foreach ( $styles->queue as $handle ) {
+		if ( isset( $styles->registered[ $handle ] ) && safestore_minimal_is_husky_src( $styles->registered[ $handle ]->src ) ) {
+			wp_dequeue_style( $handle );
+		}
+	}
+}
+// Late, after HUSKY's own enqueues; again right before the footer prints for anything enqueued during the page body.
+add_action( 'wp_enqueue_scripts', 'safestore_minimal_dequeue_husky_assets', 998 );
+add_action( 'wp_print_footer_scripts', 'safestore_minimal_dequeue_husky_assets', 1 );
+
 // Drop HUSKY's script/style tags where no filter renders (tags are filtered at print time, so late enqueues are caught too).
 function safestore_minimal_strip_husky_tag( $tag, $handle, $src ) {
 	unset( $handle );
