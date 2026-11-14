@@ -28,9 +28,44 @@ function safestore_minimal_woof_display_settings( $settings ) {
 		$settings['by_price']['show_text_input'] = 1;
 	}
 
+	// Performance (2026-11-14 audit): the sidebar renders checkboxes, radios,
+	// the price slider, in-stock / on-sale switches and the (hidden) text
+	// search — nothing else. HUSKY still shipped ~17 render-blocking files for
+	// features that never appear here, so switch them off at the source:
+	// - no <select> anywhere → no chosen.js/css (select_design 'default');
+	// - no .woof_tooltip_header → no tooltipster (use_tooltip 0);
+	// - extensions whose markup never renders → force_ext_disable (HUSKY's own
+	//   kill switch; by_instock/by_onsales/by_text/url_request stay on).
+	// All reversible here; wp-admin → Products Filter settings are untouched.
+	$settings['select_design']     = 'default';
+	$settings['use_tooltip']       = 0;
+	$settings['force_ext_disable'] = implode(
+		',',
+		(array) apply_filters(
+			'safestore_woof_disabled_extensions',
+			array( 'by_author', 'label', 'select_radio_check', 'sections', 'slideout', 'smart_designer', 'front_builder' )
+		)
+	);
+
 	return $settings;
 }
 add_filter( 'option_woof_settings', 'safestore_minimal_woof_display_settings' );
+
+// HUSKY enqueues all three iCheck skins; the sidebar only uses square-blue
+// (css/shop-filter.css). Drop the other two on filter pages as well.
+function safestore_minimal_trim_husky_styles() {
+	if ( is_admin() || ! safestore_minimal_husky_assets_needed() ) {
+		return;
+	}
+	$styles = wp_styles();
+	foreach ( $styles->queue as $handle ) {
+		$src = isset( $styles->registered[ $handle ] ) ? $styles->registered[ $handle ]->src : '';
+		if ( safestore_minimal_is_husky_src( $src ) && preg_match( '#/icheck/skins/(flat|minimal)/#', (string) $src ) ) {
+			wp_dequeue_style( $handle );
+		}
+	}
+}
+add_action( 'wp_enqueue_scripts', 'safestore_minimal_trim_husky_styles', 998 );
 
 // HUSKY caches woof_settings in its constructor (before the theme loads), so patch the cached copy too — before its own init (priority 1).
 function safestore_minimal_woof_patch_cached_settings() {
