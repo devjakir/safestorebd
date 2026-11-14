@@ -55,16 +55,32 @@
 		}
 	}
 
+	// Document height is re-measured on resize / content changes, not on every
+	// scroll frame: reading scrollHeight right after toggling the button's class
+	// forced a synchronous layout on each frame (PSI "forced reflow").
+	var scrollMax = 1;
+	function measure() {
+		scrollMax = Math.max(1, root.scrollHeight - window.innerHeight);
+	}
+	if ('ResizeObserver' in window) {
+		new ResizeObserver(function () {
+			measure();
+			requestUpdate();
+		}).observe(document.body);
+	}
+	window.addEventListener('load', measure);
+
 	function update() {
 		ticking = false;
+		// All reads first, then the class write.
 		var y = scrollY();
-		setVisible(y > threshold());
+		var show = y > threshold();
+		setVisible(show);
 
 		if (!visible || !progress) {
 			return;
 		}
-		var max = Math.max(1, root.scrollHeight - window.innerHeight);
-		var ratio = Math.min(1, Math.max(0, y / max));
+		var ratio = Math.min(1, Math.max(0, y / scrollMax));
 		var offset = Math.round(CIRC * (1 - ratio) * 100) / 100;
 		if (offset !== lastOffset) {
 			lastOffset = offset;
@@ -206,8 +222,7 @@
 		}
 		// detail === 0 → activated from the keyboard (Enter / Space).
 		var fromKeyboard = event.detail === 0;
-		var max = Math.max(1, root.scrollHeight - window.innerHeight);
-		track(Math.round(Math.min(1, scrollY() / max) * 100));
+		track(Math.round(Math.min(1, scrollY() / scrollMax) * 100));
 
 		glideToTop(function () {
 			if (fromKeyboard) {
@@ -218,7 +233,14 @@
 	});
 
 	window.addEventListener('scroll', requestUpdate, { passive: true });
-	window.addEventListener('resize', requestUpdate, { passive: true });
-	window.addEventListener('pageshow', requestUpdate);
+	window.addEventListener('resize', function () {
+		measure();
+		requestUpdate();
+	}, { passive: true });
+	window.addEventListener('pageshow', function () {
+		measure();
+		requestUpdate();
+	});
+	measure();
 	update();
 })();

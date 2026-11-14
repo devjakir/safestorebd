@@ -259,15 +259,19 @@
 }
 
 /* Breadcrumb on shop & category archives (matches PDP breadcrumb) */
-.sft-shop-breadcrumb {
+/* `.woocommerce .woocommerce-breadcrumb` (WooCommerce CSS, #767676 = 3.9:1 on the
+   grey band) out-specifies a single class, so match it. */
+.sft-shop-breadcrumb,
+.woocommerce .sft-shop-breadcrumb {
   margin: 0 0 18px;
   padding: 0;
   font-size: var(--ss-text-sm);
-  color: var(--ss-muted);
+  color: var(--ss-c-4b5563);
   line-height: 1.5;
 }
 
-.sft-shop-breadcrumb a {
+.sft-shop-breadcrumb a,
+.woocommerce .sft-shop-breadcrumb a {
   color: var(--ss-c-4b5563);
   text-decoration: none;
 }

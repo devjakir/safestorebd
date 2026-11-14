@@ -10,6 +10,14 @@ function safestore_cart_toast_enabled() {
     return (bool) apply_filters('safestore_cart_toast_enabled', $enabled);
 }
 
+function safestore_cart_fragments_needed() {
+    $needed = ! empty( $_COOKIE['woocommerce_items_in_cart'] ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        || is_user_logged_in()
+        || ( function_exists( 'is_cart' ) && ( is_cart() || is_checkout() || is_account_page() ) );
+
+    return (bool) apply_filters( 'safestore_cart_fragments_needed', $needed );
+}
+
 function safestore_cart_toast_enqueue() {
     if (!safestore_cart_toast_enabled()) {
         return;
@@ -28,15 +36,22 @@ function safestore_cart_toast_enqueue() {
         );
     }
 
-    // Ensure WooCommerce's fragment infrastructure is present so the header cart
-    // updates (and caches across pages) without a refresh.
-    if (wp_script_is('wc-cart-fragments', 'registered')) {
+    // WooCommerce's fragment infrastructure keeps the header cart in sync
+    // across pages — but cart-fragments.js fires an uncached
+    // ?wc-ajax=get_refreshed_fragments request on EVERY page view, even for a
+    // visitor with an empty cart. Only load it once there is a cart to sync
+    // (WooCommerce sets woocommerce_items_in_cart on the first add; LiteSpeed
+    // serves those visitors their own cache copy via its woo_cart vary), for
+    // logged-in users, and on cart / checkout / account. On the empty-cart
+    // pages the AJAX add-to-cart response itself carries the fragments
+    // (add-to-cart-toast.js applies them), so the count still updates at once.
+    if (safestore_cart_fragments_needed() && wp_script_is('wc-cart-fragments', 'registered')) {
         wp_enqueue_script('wc-cart-fragments');
     }
 
     $deps = array('jquery');
     foreach (array('wc-add-to-cart', 'wc-cart-fragments') as $handle) {
-        if (wp_script_is($handle, 'registered')) {
+        if (wp_script_is($handle, 'enqueued') || ('wc-add-to-cart' === $handle && wp_script_is($handle, 'registered'))) {
             $deps[] = $handle;
         }
     }

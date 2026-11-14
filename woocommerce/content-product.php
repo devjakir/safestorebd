@@ -51,15 +51,25 @@ $category_text = function_exists('safestore_get_product_category_label')
 
         <a class="sft-product-card__media-link" href="<?php echo esc_url($permalink); ?>" aria-label="<?php echo esc_attr($product->get_name()); ?>">
             <?php
-            echo $product->get_image(
-                'woocommerce_thumbnail',
-                array(
-                    'class'    => 'sft-product-card__img',
-                    'loading'  => 'lazy',
-                    'decoding' => 'async',
-                    'sizes'    => '(max-width: 820px) 48vw, (max-width: 1080px) 30vw, 280px', // 2-up on phones (shop + home)
-                )
+            $sft_img_attrs = array(
+                'class'    => 'sft-product-card__img',
+                'loading'  => 'lazy',
+                'decoding' => 'async',
+                'sizes'    => '(max-width: 820px) 48vw, (max-width: 1080px) 30vw, 280px', // 2-up on phones (shop + home)
             );
+            // Shop / category main loop: the first card image is the page's LCP
+            // element, so the first two load eagerly (the first with high priority)
+            // instead of waiting for the lazy-load observer (PSI: 1.5 s load delay).
+            if ( function_exists( 'safestore_minimal_eager_card_slot' ) ) {
+                $sft_slot = safestore_minimal_eager_card_slot();
+                if ( $sft_slot > 0 ) {
+                    $sft_img_attrs['loading'] = 'eager';
+                    if ( 1 === $sft_slot ) {
+                        $sft_img_attrs['fetchpriority'] = 'high';
+                    }
+                }
+            }
+            echo $product->get_image( 'woocommerce_thumbnail', $sft_img_attrs );
             ?>
         </a>
     </div>

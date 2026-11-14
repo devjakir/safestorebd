@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "minify-css": "node minify-css.mjs",
+    "optimize-images": "node optimize-images.mjs",
+    "minify-js": "node minify-js.mjs",
+    "minify": "node minify-css.mjs && node minify-js.mjs"
   },
   "keywords": [],
   "author": "",
@@ -12,5 +15,9 @@
   "type": "commonjs",
   "dependencies": {
     "sharp": "^0.34.2"
+  },
+  "devDependencies": {
+    "csso": "^5.0.5",
+    "terser": "^5.36.0"
   }
 }

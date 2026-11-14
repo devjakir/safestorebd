@@ -604,6 +604,16 @@
   color: #991b1b;
 }
 
+/* Out of stock: no cart form follows the trust strip, so close its box. */
+.sft-pdp-trust:has(+ .stock.out-of-stock) {
+  border-bottom: 1px solid var(--sft-pdp-border);
+  border-radius: var(--ss-radius);
+}
+
+.sft-pdp-trust + .stock.out-of-stock {
+  margin-top: 12px;
+}
+
 .sft-pdp-trust+form.cart,
 .sft-pdp-trust+.variations_form,
 .sft-pdp-trust+.variations_form form.cart {

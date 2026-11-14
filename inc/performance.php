@@ -63,19 +63,93 @@ function safestore_perf_maybe_dequeue_woocommerce_styles() {
 }
 add_action( 'wp_enqueue_scripts', 'safestore_perf_maybe_dequeue_woocommerce_styles', 99 );
 
+/**
+ * Serve the minified twin of a theme asset when it exists and is at least as
+ * new as its source: css/foo.css -> css/foo.min.css (style.css -> style.min.css).
+ * Same for js/foo.js -> js/foo.min.js. Built by `cd tools && npm install && npm run minify`. An older .min file
+ * is ignored, so a CSS edit without a rebuild still ships (unminified) rather
+ * than stale. SCRIPT_DEBUG always serves the source.
+ */
+function safestore_perf_min_asset_src( $src, $ext ) {
+	if ( ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) || ! is_string( $src ) || '' === $src ) {
+		return $src;
+	}
+
+	static $theme_uri = null, $theme_dir = null;
+	if ( null === $theme_uri ) {
+		$theme_uri = trailingslashit( get_template_directory_uri() );
+		$theme_dir = trailingslashit( get_template_directory() );
+	}
+
+	// Compare without scheme so http/https (or Cloudflare rewrites) never matter.
+	$bare_uri = preg_replace( '#^https?:#i', '', $theme_uri );
+	$bare_src = preg_replace( '#^https?:#i', '', $src );
+	if ( 0 !== strpos( $bare_src, $bare_uri ) ) {
+		return $src;
+	}
+
+	$path_q = substr( $bare_src, strlen( $bare_uri ) );
+	$parts  = explode( '?', $path_q, 2 );
+	$rel    = $parts[0];
+	$query  = isset( $parts[1] ) ? $parts[1] : '';
+
+	if ( substr( $rel, - strlen( '.' . $ext ) ) !== '.' . $ext || substr( $rel, - strlen( '.min.' . $ext ) ) === '.min.' . $ext ) {
+		return $src;
+	}
+
+	$min_rel = substr( $rel, 0, - strlen( '.' . $ext ) ) . '.min.' . $ext;
+	$min     = $theme_dir . $min_rel;
+	$source  = $theme_dir . $rel;
+	if ( ! is_readable( $min ) || ! is_readable( $source ) || filemtime( $min ) < filemtime( $source ) ) {
+		return $src;
+	}
+
+	parse_str( $query, $args );
+	$args['ver'] = (string) filemtime( $min );
+
+	return add_query_arg( $args, $theme_uri . $min_rel );
+}
+
+function safestore_perf_style_loader_src( $src ) {
+	return is_admin() ? $src : safestore_perf_min_asset_src( $src, 'css' );
+}
+add_filter( 'style_loader_src', 'safestore_perf_style_loader_src', 20 );
+
+function safestore_perf_script_loader_src( $src ) {
+	return is_admin() ? $src : safestore_perf_min_asset_src( $src, 'js' );
+}
+add_filter( 'script_loader_src', 'safestore_perf_script_loader_src', 20 );
+
 function safestore_perf_async_style_handles() {
 	$handles = array(
 		'safestore-whatsapp-chat',
 		'safestore-cart-toast',
 		'safestore-copy-to-clipboard',
 		'safestore-product-compare',
+		// Nothing in the first screen needs these: the back-to-top button and the
+		// mobile sticky bar start hidden (aria-hidden / [hidden] + style.css
+		// guards), the lightbox and the desktop hover zoom only matter on
+		// interaction. footer.css stays blocking on purpose: on short pages
+		// (account, wishlist, 404) the footer is inside the first screen and
+		// loading it async measured CLS 0.17-0.68 there.
+		'safestore-back-to-top',
+		'safestore-pdp-sticky-bar',
+		'safestore-minimal-pdp-zoom',
+		'photoswipe',
+		'photoswipe-default-skin',
 		'wc-blocks-style',
 		'wc-blocks-vendors-style',
 		'woocommerce-blocktheme',
 	);
 
+	// WooCommerce's own sheets lay out the product gallery/summary columns and
+	// the archive grid; loading them async there re-flowed the whole product
+	// block once they arrived (PSI desktop CLS 0.283 on single product pages).
 	$needs_sync_wc = class_exists( 'WooCommerce' )
-		&& ( is_cart() || is_checkout() || is_account_page() );
+		&& ( is_cart() || is_checkout() || is_account_page()
+			|| ( function_exists( 'is_product' ) && is_product() )
+			|| ( function_exists( 'is_shop' ) && is_shop() )
+			|| ( function_exists( 'is_product_taxonomy' ) && is_product_taxonomy() ) );
 
 	if ( ! $needs_sync_wc ) {
 		$handles = array_merge(
@@ -152,8 +226,12 @@ function safestore_perf_jquery_loading() {
 	wp_dequeue_script( 'jquery-migrate' );
 	wp_deregister_script( 'jquery-migrate' );
 
-	// HUSKY prints its chosen / ion.rangeSlider scripts without a jquery dependency, so a deferred jQuery leaves the price slider dead on filter pages.
-	if ( function_exists( 'safestore_minimal_shop_filter_enabled' ) && safestore_minimal_shop_filter_enabled() && shortcode_exists( 'woof' ) ) {
+	// Filter pages: HUSKY's ~20 scripts are jQuery plugins printed blocking. They
+	// cannot simply be deferred — front.js binds on jQuery ready, which can fire
+	// between deferred scripts (before checkbox.js / radio.js define their
+	// helpers) — so jQuery stays blocking there. Everywhere else HUSKY is
+	// dequeued (inc/shop-filter.php) and jQuery really defers.
+	if ( function_exists( 'safestore_minimal_husky_assets_needed' ) && safestore_minimal_husky_assets_needed() && shortcode_exists( 'woof' ) ) {
 		return;
 	}
 
@@ -215,27 +293,18 @@ function safestore_perf_preload_lcp() {
 	}
 
 	if ( is_page_template( 'page-home.php' ) || is_front_page() ) {
-		$hero = get_template_directory_uri() . '/assets/images/' . rawurlencode( 'sf-helmet-category-720w.webp' );
-		$images_dir = get_template_directory() . '/assets/images/';
-		if ( ! file_exists( $images_dir . 'sf-helmet-category-720w.webp' ) ) {
-			$hero = get_template_directory_uri() . '/assets/images/' . rawurlencode( 'sf-helmet-category.webp' );
+		// Exactly the image slide 1 renders (overlay product or theme artwork) —
+		// templates/home/hero-slider.php reads the same helper.
+		$hero = function_exists( 'safestore_hero_first_slide_image' ) ? safestore_hero_first_slide_image() : null;
+		if ( is_array( $hero ) && ! empty( $hero['src'] ) ) {
+			printf(
+				'<link rel="preload" as="image" href="%1$s" fetchpriority="high"%2$s%3$s />' . "\n",
+				esc_url( $hero['src'] ),
+				! empty( $hero['srcset'] ) ? ' imagesrcset="' . esc_attr( $hero['srcset'] ) . '"' : '',
+				( ! empty( $hero['srcset'] ) && ! empty( $hero['sizes'] ) ) ? ' imagesizes="' . esc_attr( $hero['sizes'] ) . '"' : ''
+			);
+			return;
 		}
-		printf(
-			'<link rel="preload" as="image" href="%s" type="image/webp" fetchpriority="high" imagesrcset="%s" imagesizes="%s" />' . "\n",
-			esc_url( $hero ),
-			esc_attr(
-				implode(
-					', ',
-					array(
-						get_template_directory_uri() . '/assets/images/' . rawurlencode( 'sf-helmet-category-480w.webp' ) . ' 480w',
-						get_template_directory_uri() . '/assets/images/' . rawurlencode( 'sf-helmet-category-720w.webp' ) . ' 720w',
-						get_template_directory_uri() . '/assets/images/' . rawurlencode( 'sf-helmet-category.webp' ) . ' 900w',
-					)
-				)
-			),
-			esc_attr( '(max-width: 900px) 62vw, 42vw' )
-		);
-		return;
 	}
 
 	// Product pages: the main gallery image is the LCP element, not the logo.
@@ -319,6 +388,27 @@ function safestore_perf_dedupe_js_cookie() {
 }
 add_action( 'wp_enqueue_scripts', 'safestore_perf_dedupe_js_cookie', 999 );
 
+/**
+ * PixelYourSite registers its scripts without a loading strategy. A single
+ * blocking dependent makes WordPress print jQuery (and wc-js-cookie) blocking
+ * in <head> for the whole page, so defer PYS too: public.js only binds on
+ * DOM ready / jQuery events, and its pysOptions inline data is printed before
+ * the tag regardless of strategy.
+ */
+function safestore_perf_defer_pys_scripts() {
+	if ( is_admin() || version_compare( get_bloginfo( 'version' ), '6.3', '<' ) ) {
+		return;
+	}
+	$scripts = wp_scripts();
+	foreach ( array( 'pys', 'jquery-bind-first', 'js-sha256' ) as $handle ) {
+		if ( wp_script_is( $handle, 'registered' ) && ! empty( $scripts->registered[ $handle ]->src ) ) {
+			wp_script_add_data( $handle, 'strategy', 'defer' );
+		}
+	}
+}
+add_action( 'wp_enqueue_scripts', 'safestore_perf_defer_pys_scripts', 100 );
+
+
 function safestore_perf_is_delayed_third_party_src( $src ) {
 	if ( ! is_string( $src ) || '' === $src ) {
 		return false;
@@ -330,10 +420,26 @@ function safestore_perf_is_delayed_third_party_src( $src ) {
 	);
 }
 
-function safestore_perf_delay_third_party_script_tag( $tag, $handle, $src ) {
-	unset( $handle );
+/**
+ * PixelYourSite handles that may wait for the first interaction. PYS injects
+ * fbevents.js (+ config) and gtag/js itself from public.js, so the only way to
+ * keep ~400 KB of pixel code out of the initial load is to delay PYS. Not on
+ * cart, checkout and the thank-you page: InitiateCheckout / Purchase must fire
+ * even for a visitor who leaves at once.
+ */
+function safestore_perf_delayed_pys_handles() {
+	$delay = ! ( function_exists( 'is_cart' ) && ( is_cart() || is_checkout() ) );
+	$delay = (bool) apply_filters( 'safestore_perf_delay_pys', $delay );
 
-	if ( is_admin() || ! safestore_perf_is_delayed_third_party_src( $src ) ) {
+	return $delay ? array( 'jquery-bind-first', 'js-sha256', 'pys' ) : array();
+}
+
+function safestore_perf_delay_third_party_script_tag( $tag, $handle, $src ) {
+	if ( is_admin() ) {
+		return $tag;
+	}
+
+	if ( ! safestore_perf_is_delayed_third_party_src( $src ) && ! in_array( $handle, safestore_perf_delayed_pys_handles(), true ) ) {
 		return $tag;
 	}
 
@@ -341,10 +447,11 @@ function safestore_perf_delay_third_party_script_tag( $tag, $handle, $src ) {
 		return $tag;
 	}
 
-	return sprintf(
-		'<script type="text/plain" data-sft-delay data-src="%s"></script>' . "\n",
-		esc_url( $src )
-	);
+	// Keep WordPress' inline before/after data (e.g. pysOptions) around the stub.
+	$stub = sprintf( '<script type="text/plain" data-sft-delay data-src="%s"></script>', esc_url( $src ) );
+	$out  = preg_replace( '#<script\b[^>]*\ssrc=[^>]*>\s*</script>#i', $stub, $tag, 1, $count );
+
+	return ( is_string( $out ) && $count ) ? $out : $stub . "\n";
 }
 add_filter( 'script_loader_tag', 'safestore_perf_delay_third_party_script_tag', 40, 3 );
 
@@ -355,33 +462,87 @@ function safestore_perf_delay_third_party_boot() {
 	?>
 <script id="sft-delay-third-party">
 (function(){
-	var loaded=false;
-	function boot(){
-		if(loaded){return;}
-		loaded=true;
+	var loaded=false, queue=[];
+	/* Theme code tracks through this: queued until fbq/gtag exist, then flushed. */
+	window.sftTrack=function(fb,ga,params){
+		params=params||{};
+		if((typeof window.fbq==='function'&&window.fbq.loaded)||typeof window.gtag==='function'){
+			try{if(fb){window.fbq('track',fb,params);}}catch(e){}
+			try{if(ga){window.gtag('event',ga,params);}}catch(e){}
+			return;
+		}
+		queue.push([fb,ga,params]);boot();poll();
+	};
+	var polling=false;
+	function poll(){if(!polling){polling=true;flush(40);}}
+	function flush(tries){
+		if(!queue.length){polling=false;return;}
+		var hasFb=typeof window.fbq==='function'&&window.fbq.loaded, hasGa=typeof window.gtag==='function';
+		if(!(hasFb||hasGa)){
+			if(tries>0){setTimeout(function(){flush(tries-1);},250);}else{polling=false;}
+			return;
+		}
+		polling=false;
+		var q=queue;queue=[];
+		for(var i=0;i<q.length;i++){
+			try{if(q[i][0]&&typeof window.fbq==='function'){window.fbq('track',q[i][0],q[i][2]);}}catch(e){}
+			try{if(q[i][1]&&typeof window.gtag==='function'){window.gtag('event',q[i][1],q[i][2]);}}catch(e){}
+		}
+	}
+	function inject(){
 		var nodes=document.querySelectorAll('script[type="text/plain"][data-sft-delay]');
 		for(var i=0;i<nodes.length;i++){
 			var s=nodes[i], n=document.createElement('script');
-			n.async=true;
+			/* async=false keeps document order for dynamically added scripts (PYS needs its deps first). */
+			n.async=false;
 			if(s.getAttribute('data-src')){n.src=s.getAttribute('data-src');}
 			else{n.text=s.textContent;}
 			document.body.appendChild(n);
 		}
+		poll();
+	}
+	function boot(){
+		if(loaded){return;}
+		loaded=true;
+		/* Deferred scripts (jQuery, js-cookie) have run once DOMContentLoaded fired. */
+		if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',inject);}
+		else{inject();}
 	}
 	var events=['scroll','pointerdown','keydown','touchstart'];
 	for(var e=0;e<events.length;e++){
 		window.addEventListener(events[e],boot,{once:true,passive:true});
 	}
-	if('requestIdleCallback' in window){
-		requestIdleCallback(boot,{timeout:4500});
-	}else{
-		setTimeout(boot,4500);
-	}
+	/* Nobody interacted: load ~3 s after the page finished loading, so quick ad visitors still send PageView. */
+	function later(){setTimeout(boot,3000);}
+	if(document.readyState==='complete'){later();}else{window.addEventListener('load',later);}
 })();
 </script>
 	<?php
 }
 add_action( 'wp_footer', 'safestore_perf_delay_third_party_boot', 1 );
+
+/**
+ * 1-based slot of the current product card inside the MAIN shop/category loop
+ * while it is one of the first SAFESTORE_EAGER_CARDS cards, else 0. Related,
+ * upsell and shortcode loops (wc loop name / is_shortcode) never count.
+ */
+function safestore_minimal_eager_card_slot() {
+	static $printed = 0;
+
+	if ( ! function_exists( 'wc_get_loop_prop' ) || ! ( is_shop() || is_product_taxonomy() ) || is_search() ) {
+		return 0;
+	}
+	if ( wc_get_loop_prop( 'is_shortcode' ) || '' !== (string) wc_get_loop_prop( 'name' ) ) {
+		return 0;
+	}
+
+	$limit = (int) apply_filters( 'safestore_eager_card_images', 2 );
+	if ( $printed >= $limit ) {
+		return 0;
+	}
+
+	return ++$printed;
+}
 
 function safestore_perf_attachment_image_attributes( $attr, $attachment, $size ) {
 	unset( $attachment, $size );

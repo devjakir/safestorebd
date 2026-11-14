@@ -58,12 +58,27 @@ function safestore_sticky_atc_markup() {
 		return;
 	}
 	$is_variable = $product->is_type( 'variable' );
+
+	// js/pdp-sticky-bar.js reports the size select, else the first attribute: label it to match (e.g. "Color").
+	$prefix       = __( 'Size:', 'safestore-minimal' );
+	$select_label = __( 'Select a size', 'safestore-minimal' );
+	if ( $is_variable ) {
+		$attr_names = array_keys( $product->get_variation_attributes() );
+		$has_size   = (bool) array_intersect( array_map( 'sanitize_title', $attr_names ), array( 'pa_size', 'size' ) );
+		if ( ! $has_size && ! empty( $attr_names ) ) {
+			$attr_label = wc_attribute_label( $attr_names[0], $product );
+			/* translators: %s: attribute label, e.g. Color. */
+			$prefix = sprintf( __( '%s:', 'safestore-minimal' ), $attr_label );
+			/* translators: %s: attribute label, e.g. color. */
+			$select_label = sprintf( __( 'Select a %s', 'safestore-minimal' ), strtolower( $attr_label ) );
+		}
+	}
 	?>
-	<div class="sft-sticky-atc" data-sft-sticky-atc data-variable="<?php echo $is_variable ? '1' : '0'; ?>" data-size-prefix="<?php esc_attr_e( 'Size:', 'safestore-minimal' ); ?>" data-select-label="<?php esc_attr_e( 'Select a size', 'safestore-minimal' ); ?>" role="region" aria-label="<?php esc_attr_e( 'Quick buy', 'safestore-minimal' ); ?>" hidden>
+	<div class="sft-sticky-atc" data-sft-sticky-atc data-variable="<?php echo $is_variable ? '1' : '0'; ?>" data-size-prefix="<?php echo esc_attr( $prefix ); ?>" data-select-label="<?php echo esc_attr( $select_label ); ?>" role="region" aria-label="<?php esc_attr_e( 'Quick buy', 'safestore-minimal' ); ?>" hidden>
 		<div class="sft-sticky-atc__info">
 			<span class="sft-sticky-atc__price" data-sft-sticky-price><?php echo wp_kses_post( $product->get_price_html() ); ?></span>
 			<?php if ( $is_variable ) : ?>
-				<span class="sft-sticky-atc__size" data-sft-sticky-size><?php esc_html_e( 'Select a size', 'safestore-minimal' ); ?></span>
+				<span class="sft-sticky-atc__size" data-sft-sticky-size><?php echo esc_html( $select_label ); ?></span>
 			<?php endif; ?>
 		</div>
 		<div class="sft-sticky-atc__actions">

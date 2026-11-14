@@ -20,7 +20,7 @@ Tags: custom-logo, custom-menu, featured-images, translation-ready, responsive-l
   --ss-muted: #64748b; /* 17 uses */
   --ss-ink-soft: #374151; /* 14 uses */
   --ss-border: #e7eaef; /* 12 uses */
-  --ss-brand-alt: #e52e04; /* 11 uses */
+  --ss-brand-alt: #d92b04; /* 11 uses; was #e52e04 — white text on it was 4.45:1, now 4.9:1 (WCAG AA) */
   --ss-border-warm: #e5e7eb; /* 9 uses */
   --ss-border-cool: #e2e8f0; /* 9 uses */
   --ss-brand-dark: #b91c1c; /* 8 uses */
@@ -148,10 +148,21 @@ select {
   flex-shrink: 0;
   height: 44px;
   width: auto;
+  /* 180×44 SVG (inc/brand.php): with width:auto the box has no width until the
+     file arrives, so reserve it and avoid the header shifting (Lighthouse "unsized image"). */
+  aspect-ratio: 180 / 44;
   max-width: none;
   max-height: 44px;
   min-height: 44px;
   object-fit: contain;
+}
+
+/* Below-the-fold / interaction-only sheets load async (inc/performance.php):
+   keep their elements invisible until they arrive. */
+.pswp,
+.sft-btt,
+.sft-sticky-atc {
+  display: none;
 }
 
 /* Search */
@@ -1706,8 +1717,9 @@ a.sft-contact-item:focus-visible {
   appearance: none;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
-  background: #ef4a23 !important;
-  background-color: #ef4a23 !important;
+  /* Was #ef4a23: white 12.5px label on it was 3.7:1; #d93916 gives 4.6:1 (WCAG AA). */
+  background: #d93916 !important;
+  background-color: #d93916 !important;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
   opacity: 1;
   transition:

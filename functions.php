@@ -21,6 +21,8 @@ require get_template_directory() . '/inc/size-variations-setup.php';
 
 require get_template_directory() . '/inc/footwear-sizing.php';
 
+require get_template_directory() . '/inc/color-swatches.php';
+
 require get_template_directory() . '/inc/pdp-social.php';
 
 require get_template_directory() . '/inc/product-compare.php';
