@@ -7,9 +7,10 @@
  * Meta → Local SEO); both are overridden here so a logo change ships with a
  * deploy instead of needing a manual admin step on every environment.
  *
- * Source files: safestorebd-logo-transparent_3 pack. The logo is
- * safestorebd-logo-no-tagline-transparent.svg with its viewBox cropped to the
- * artwork; the favicons are rendered from safestorebd-icon-transparent(-1080).
+ * Source files: the 2026-11 "S-cart" logo. safestorebd-logo.svg is the inline
+ * (one-line) version — S-cart mark + "afe" dark, "Store" orange, "bd" dark — with
+ * its viewBox cropped to the artwork; favicon.svg and the PNG icons are the S-cart
+ * mark alone.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -31,8 +32,8 @@ function safestore_brand_asset_url( $relative ) {
 function safestore_brand_logo_svg() {
 	return array(
 		'url'    => safestore_brand_asset_url( 'logo/safestorebd-logo.svg' ),
-		'width'  => 180,
-		'height' => 44,
+		'width'  => 226,
+		'height' => 40,
 	);
 }
 
@@ -43,7 +44,7 @@ function safestore_brand_logo_png() {
 	return array(
 		'url'    => safestore_brand_asset_url( 'logo/safestorebd-logo.png' ),
 		'width'  => 1200,
-		'height' => 293,
+		'height' => 213,
 	);
 }
 

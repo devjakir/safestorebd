@@ -142,18 +142,18 @@ select {
   color: var(--ss-ink);
 }
 
-/* Horizontal SVG logo (~4.1:1): size it by height only, width follows. */
+/* Horizontal SVG logo (~5.6:1): size it by height only, width follows. */
 .sft-header .sft-header-brand-logo {
   display: block;
   flex-shrink: 0;
-  height: 44px;
+  height: 40px;
   width: auto;
-  /* 180×44 SVG (inc/brand.php): with width:auto the box has no width until the
+  /* 226×40 SVG (inc/brand.php): with width:auto the box has no width until the
      file arrives, so reserve it and avoid the header shifting (Lighthouse "unsized image"). */
-  aspect-ratio: 180 / 44;
+  aspect-ratio: 226 / 40;
   max-width: none;
-  max-height: 44px;
-  min-height: 44px;
+  max-height: 40px;
+  min-height: 40px;
   object-fit: contain;
 }
 
@@ -557,9 +557,9 @@ select {
   }
 
   .sft-header .sft-header-brand-logo {
-    height: 30px;
-    min-height: 30px;
-    max-height: 30px;
+    height: 28px;
+    min-height: 28px;
+    max-height: 28px;
   }
 
   .sft-header-nav-inner {
