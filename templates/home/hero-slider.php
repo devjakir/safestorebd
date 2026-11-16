@@ -11,6 +11,7 @@ $shoe_cat      = safestore_home_category_url( 'shoe' );
 $browse_anchor = home_url( '/#browse-categories' );
 
 // First slide = LCP image; inc/hero-category-imagery.php owns its config so the <head> preload matches.
+// Slides show a theme-shipped group shot only — no product price or rating on the hero.
 $hero_first = safestore_hero_first_slide_config();
 
 $hero_slides = array(
@@ -23,8 +24,7 @@ $hero_slides = array(
 		'url'           => $helmet_cat,
 		'cta_secondary' => 'Browse categories',
 		'url_secondary' => $browse_anchor,
-		'category_slug' => $hero_first['category_slug'],
-		'image_base'    => $hero_first['image_base'],
+		'image'         => $hero_first['image'],
 		'alt'           => $hero_first['alt'],
 	),
 	array(
@@ -36,9 +36,8 @@ $hero_slides = array(
 		'url'           => $vest_cat,
 		'cta_secondary' => 'Explore PPE',
 		'url_secondary' => $browse_anchor,
-		'category_slug' => safestore_home_category_slug( 'vest' ),
-		'image_base'    => 'sf-safety-vest',
-		'alt'           => 'High visibility safety vests in yellow and orange for industrial and warehouse use',
+		'image'         => 'safety-vests',
+		'alt'           => 'Hi-vis reflective safety vests in yellow and orange',
 	),
 	array(
 		'badge'         => 'Foot protection',
@@ -49,9 +48,8 @@ $hero_slides = array(
 		'url'           => $shoe_cat,
 		'cta_secondary' => 'Shop now',
 		'url_secondary' => $shop_url,
-		'category_slug' => safestore_home_category_slug( 'shoe' ),
-		'image_base'    => 'sf-category-shoe',
-		'alt'           => 'Industrial safety shoes and leather work boots on a construction-site surface',
+		'image'         => 'safety-shoes',
+		'alt'           => 'Industrial safety shoes and work sneakers in olive, tan and black',
 	),
 );
 
@@ -90,17 +88,8 @@ $safestore_hero_proof_icon = static function ( string $name ): string {
 	<div class="hero-slider-viewport" aria-roledescription="carousel" aria-label="<?php esc_attr_e( 'Featured safety products', 'safestore-minimal' ); ?>">
 		<?php foreach ( $hero_slides as $index => $slide ) : ?>
 			<?php
-			$overlay    = ( ! empty( $slide['category_slug'] ) && function_exists( 'safestore_hero_overlay_for_category' ) )
-				? safestore_hero_overlay_for_category( $slide['category_slug'] )
-				: array();
-			$overlay_html = function_exists( 'safestore_hero_overlay_markup' )
-				? safestore_hero_overlay_markup( $overlay )
-				: '';
-
-			// Same resolver the LCP preload uses (inc/hero-category-imagery.php).
-			$image      = safestore_hero_slide_image( (string) $slide['category_slug'], $slide['image_base'], $slide['alt'] );
-			// Opaque product photos get framed as a white card; cutouts float on the dark slide.
-			$stage_class = ( $image['is_overlay'] && empty( $image['cutout'] ) ) ? ' hero-slide-stage--photo' : '';
+			// Same helper the LCP preload uses (inc/hero-category-imagery.php).
+			$image      = safestore_hero_slide_image( $slide['image'], $slide['alt'] );
 			$img_src    = $image['src'];
 			$img_srcset = $image['srcset'];
 			$img_sizes  = $image['sizes'];
@@ -148,7 +137,7 @@ $safestore_hero_proof_icon = static function ( string $name ): string {
 					</ul>
 				</div>
 				<div class="hero-slide-media">
-					<div class="hero-slide-stage<?php echo esc_attr( $stage_class ); ?>">
+					<div class="hero-slide-stage">
 						<?php if ( $is_first ) : ?>
 							<img class="hero-slide-product"
 								src="<?php echo esc_url( $img_src ); ?>"
@@ -172,7 +161,6 @@ $safestore_hero_proof_icon = static function ( string $name ): string {
 								loading="lazy"
 								decoding="async">
 						<?php endif; ?>
-						<?php echo $overlay_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					</div>
 				</div>
 			</div>
