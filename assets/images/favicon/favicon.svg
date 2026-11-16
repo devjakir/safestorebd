@@ -1,1 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><g transform="translate(32 32) scale(0.93) translate(-32 -31.2)"><path d="M13 25 H51 Q53 25 53 27 V41.0 C53 53.1 44 59.2 32 63 C20 59.2 11 53.1 11 41.0 V27 Q11 25 13 25 Z" fill="#0F172A"/><g transform="translate(13.30 27.10) scale(0.58)"><path d="M45 16.5 C42.5 11 37.5 8.5 31.5 8.5 C24 8.5 18.5 13 18.5 19.5 C18.5 26.5 25 29 32 31.5 C40 34.3 46 37.5 46 44 C46 49 42 51 36 51 C28 51 23 49 19.5 45.5" fill="none" stroke="#FFFFFF" stroke-width="10.00" stroke-linecap="round" stroke-linejoin="round"/></g><g transform="translate(5.120000000000001 -7.739999999999998) scale(0.84)"><path d="M13 33 C13 21 21 13.5 32 13.5 C43 13.5 51 21 51 33 Z" fill="#F59E0B"/><rect x="25.5" y="8.5" width="13" height="12" rx="3" fill="#F59E0B"/><rect x="7" y="30.5" width="50" height="5.5" rx="2.75" fill="#F59E0B"/></g></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-11 13.5 110 110" role="img" aria-label="SafeStoreBD">
+  <title>Safe StoreBD</title>
+  <defs>
+    <linearGradient id="ssb-text" gradientUnits="userSpaceOnUse" x1="0" y1="103" x2="0" y2="122.5">
+      <stop offset="0" stop-color="#C64C0C"/><stop offset="1" stop-color="#EC8B1D"/>
+    </linearGradient>
+    <linearGradient id="ssb-e" gradientUnits="userSpaceOnUse" x1="192" y1="80" x2="230" y2="86">
+      <stop offset="0" stop-color="#C64C0C"/><stop offset="1" stop-color="#EC8B1D"/>
+    </linearGradient>
+    <linearGradient id="ssb-wheel" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#E07521"/><stop offset=".6" stop-color="#C64C0C"/>
+    </linearGradient>
+    <linearGradient id="ssb-speed" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#E07521" stop-opacity=".15"/><stop offset=".4" stop-color="#E07521"/><stop offset="1" stop-color="#D2600F"/>
+    </linearGradient>
+    <mask id="ssb-cut" maskUnits="userSpaceOnUse" x="0" y="0" width="240" height="128">
+      <rect width="240" height="128" fill="#fff"/>
+      <rect x="54.5" y="23.72" width="34" height="10" fill="#000"/>
+      <circle cx="30.3" cy="115.2" r="11.4" fill="#000"/>
+      <circle cx="61.2" cy="115.2" r="11.4" fill="#000"/>
+    </mask>
+    <clipPath id="ssb-e-top"><rect x="170" y="0" width="70" height="70"/></clipPath>
+    <clipPath id="ssb-e-bot"><rect x="170" y="72" width="70" height="40"/></clipPath>
+  </defs>
+  <!-- cart / S mark -->
+  <path d="M74.5 28 C70 22 63 19 54.5 19 C43.5 19 36.6 27 36.6 37.5 C36.6 45.8 39.8 50 45 54 L64.2 68.2 C73 74.5 79 79.5 79 88 C79 98 72 104.6 62 104.6 L23 104.6 C15.5 104.6 9.4 98.5 9.4 90.5 L9.4 84" fill="none" stroke="#2D3A4A" stroke-width="9.4" stroke-linecap="round" stroke-linejoin="round" mask="url(#ssb-cut)"/>
+  <g fill="url(#ssb-speed)">
+    <path d="M13.5 117.4 L27 116.2 L27 118.6 Z"/><path d="M11 121 L29 119.8 L29 122.2 Z"/>
+    <path d="M44 117.4 L58 116.2 L58 118.6 Z"/><path d="M41.5 121 L60 119.8 L60 122.2 Z"/>
+  </g>
+  <circle cx="30.3" cy="115.2" r="7.5" fill="url(#ssb-wheel)"/>
+  <circle cx="61.2" cy="115.2" r="7.5" fill="url(#ssb-wheel)"/>
+  </svg>
