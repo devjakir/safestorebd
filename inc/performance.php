@@ -293,7 +293,7 @@ function safestore_perf_preload_lcp() {
 	}
 
 	if ( is_page_template( 'page-home.php' ) || is_front_page() ) {
-		// Exactly the image slide 1 renders (overlay product or theme artwork) —
+		// Exactly the image slide 1 renders (theme hero artwork) —
 		// templates/home/hero-slider.php reads the same helper.
 		$hero = function_exists( 'safestore_hero_first_slide_image' ) ? safestore_hero_first_slide_image() : null;
 		if ( is_array( $hero ) && ! empty( $hero['src'] ) ) {

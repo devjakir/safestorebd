@@ -86,25 +86,23 @@
   container-type: size;
 }
 
-/* Locked 1:1 product stage — every slide uses the same box regardless of photo ratio */
+/* Locked 5:3 stage — the hero artwork (assets/images/hero/) is a 5:3 group
+   shot, so every slide fills the same box at the largest size that fits. */
 .home .hero-slide-stage {
   position: relative;
   z-index: 1;
   flex: 0 0 auto;
-  width: min(100cqw, 100cqh);
-  height: min(100cqw, 80cqh);
+  width: min(100cqw, calc(100cqh * 5 / 3));
+  height: auto;
   max-width: 100%;
   max-height: 100%;
-  aspect-ratio: 1 / 1;
-  border-radius: var(--ss-radius);
+  aspect-ratio: 5 / 3;
 }
 
 @supports not (width: 1cqh) {
 
   .home .hero-slide-stage {
-    width: min(100%, 432px);
-    height: auto;
-    max-height: 100%;
+    width: min(100%, 620px);
   }
 }
 
@@ -117,121 +115,6 @@
   height: 100%;
   object-fit: contain;
   object-position: center;
-  padding: 18px;
-  box-sizing: border-box;
-  border-radius: 0;
-}
-
-/* Opaque product photo (no cutout): frame it as a white card instead of a bare rectangle */
-.home .hero-slide-stage--photo {
-  background: var(--ss-white);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
-}
-
-.home .hero-slide-stage--photo .hero-slide-product {
-  padding: 6%;
-  border-radius: var(--ss-radius);
-}
-
-.home .hero-slide-card {
-  position: absolute;
-  z-index: 3;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-  border-radius: var(--ss-radius);
-  background: var(--ss-white);
-  color: var(--ss-ink);
-  font-family: inherit;
-  font-size: var(--ss-text-sm);
-  line-height: 1.2;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
-  white-space: nowrap;
-}
-
-.home .hero-slide-card--price {
-  top: 12px;
-  right: 12px;
-  flex-wrap: wrap;
-  max-width: calc(100% - 24px);
-}
-
-.home .hero-slide-card--reviews {
-  bottom: 12px;
-  left: 12px;
-}
-
-.home .hero-slide-card__old,
-.home .hero-slide-card__old .amount,
-.home .hero-slide-card__old .woocommerce-Price-amount {
-  color: #94a3b8;
-  font-weight: 500;
-  font-size: var(--ss-text-sm);
-  text-decoration: line-through;
-}
-
-.home .hero-slide-card__now {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 4px;
-  color: var(--ss-ink);
-  font-weight: 700;
-  font-size: 18px;
-  letter-spacing: -0.02em;
-}
-
-.home .hero-slide-card__now .amount,
-.home .hero-slide-card__now .woocommerce-Price-amount {
-  color: inherit;
-  font-weight: inherit;
-  font-size: inherit;
-}
-
-.home .hero-slide-card__save {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: #dcfce7;
-  color: var(--ss-success);
-  font-size: var(--ss-text-2xs);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.home .hero-slide-card__stars {
-  position: relative;
-  display: inline-block;
-  font-size: var(--ss-text-sm);
-  line-height: 1;
-  letter-spacing: 0.04em;
-  color: var(--ss-border-cool);
-}
-
-.home .hero-slide-card__stars-bg,
-.home .hero-slide-card__stars-fill {
-  display: block;
-}
-
-.home .hero-slide-card__stars-fill {
-  position: absolute;
-  left: 0;
-  top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  color: var(--ss-warning);
-}
-
-.home .hero-slide-card__rating {
-  font-weight: 700;
-  color: var(--ss-ink);
-}
-
-.home .hero-slide-card__count {
-  color: var(--ss-muted);
-  font-weight: 500;
 }
 
 /* Starts right under the pinned H1 rather than centring, so the badge can
@@ -579,54 +462,8 @@
   }
 
   .home .hero-slide-stage {
-    width: min(68vw, 260px);
-    height: auto;
-    aspect-ratio: 1 / 1;
+    width: min(76vw, 460px);
     max-height: none;
-  }
-
-  .home .hero-slide-product {
-    padding: 10px;
-  }
-
-  .home .hero-slide-card {
-    font-size: var(--ss-text-xs);
-    padding: 7px 9px;
-    gap: 6px;
-  }
-
-  /* One-line price pill centred on the stage; it may run wider than the narrow stage */
-  .home .hero-slide-card--price {
-    top: 4px;
-    left: 50%;
-    right: auto;
-    transform: translateX(-50%);
-    flex-wrap: nowrap;
-    gap: 6px;
-    padding: 5px 8px;
-    max-width: calc(100vw - 48px);
-    line-height: 1;
-  }
-
-  .home .hero-slide-card--reviews {
-    bottom: 8px;
-    left: 8px;
-  }
-
-  .home .hero-slide-card__old,
-  .home .hero-slide-card__old .amount,
-  .home .hero-slide-card__old .woocommerce-Price-amount {
-    font-size: var(--ss-text-2xs);
-  }
-
-  .home .hero-slide-card__now {
-    font-size: var(--ss-text-base);
-  }
-
-  .home .hero-slide-card__save {
-    padding: 2px 5px;
-    font-size: 12px;
-    letter-spacing: 0.03em;
   }
 
   .home .hero-slider-dots {
@@ -681,9 +518,9 @@
     min-height: 0;
   }
 
-  /* Smaller product shot on phones so headline + CTA stay above the fold. */
+  /* Product shot capped on phones so headline + CTA stay above the fold. */
   .home .hero-slide-stage {
-    width: min(50vw, 180px);
+    width: min(88vw, 360px);
   }
 
   .home .hero-slide-badge {
