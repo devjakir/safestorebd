@@ -127,6 +127,9 @@ $sft_hot_disp = safestore_ty_format_phone( $sft_hotline );
 	// --------------------------------------------------------------- steps
 	$sft_steps = array();
 
+	// Bulk Cash on delivery order with an advance (inc/bulk-tier-pricing.php).
+	$sft_bulk_adv = ( 'cod' === $sft_pay_type && function_exists( 'safestore_bulk_order_advance' ) ) ? safestore_bulk_order_advance( $order ) : null;
+
 	if ( 'mobile' === $sft_pay_type && $sft_trx_sent ) {
 		$sft_steps = array(
 			array(
@@ -181,6 +184,9 @@ $sft_hot_disp = safestore_ty_format_phone( $sft_hotline );
 				'text'  => __( 'Once the payment is confirmed, we pack it and hand it to the courier.', 'safestore-minimal' ),
 			),
 		);
+	} elseif ( 'cod' === $sft_pay_type && $sft_bulk_adv ) {
+		// Bulk order: advance sent, rest on delivery (inc/bulk-tier-pricing.php).
+		$sft_steps = safestore_bulk_thankyou_steps( $order, $sft_phone );
 	} elseif ( 'cod' === $sft_pay_type ) {
 		$sft_steps = array(
 			array(
@@ -207,7 +213,9 @@ $sft_hot_disp = safestore_ty_format_phone( $sft_hotline );
 		'mobile' => $sft_trx_sent
 			? __( 'We received your Transaction ID. We will verify the payment and ship your order.', 'safestore-minimal' )
 			: __( 'One more step: Send Money with bKash or Nagad so we can ship it.', 'safestore-minimal' ),
-		'cod'    => __( 'We will contact you shortly to confirm it. You pay when it arrives.', 'safestore-minimal' ),
+		'cod'    => $sft_bulk_adv
+			? __( 'We will verify your advance and contact you to confirm it. You pay the rest when it arrives.', 'safestore-minimal' )
+			: __( 'We will contact you shortly to confirm it. You pay when it arrives.', 'safestore-minimal' ),
 		'paid'   => __( 'Your payment is confirmed. We are getting your order ready.', 'safestore-minimal' ),
 		'other'  => __( 'We will contact you shortly to confirm it.', 'safestore-minimal' ),
 	);
@@ -290,7 +298,7 @@ $sft_hot_disp = safestore_ty_format_phone( $sft_hotline );
 								<span class="sft-ty-due__label">
 									<?php 'cod' === $sft_pay_type ? esc_html_e( 'Pay on delivery', 'safestore-minimal' ) : esc_html_e( 'Amount to pay', 'safestore-minimal' ); ?>
 								</span>
-								<span class="sft-ty-due__amount"><?php echo esc_html( $sft_total_txt ); ?></span>
+								<span class="sft-ty-due__amount"><?php echo esc_html( $sft_bulk_adv ? safestore_bulk_plain_price( $sft_bulk_adv['rest'] ) : $sft_total_txt ); ?></span>
 							</div>
 						<?php endif; ?>
 					</header>

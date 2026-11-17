@@ -5,6 +5,7 @@
  * Same as WooCommerce's template, except the bKash / Nagad gateway
  * (safestore_mfs_gateway_id(), the renamed "Check payments") renders the
  * Send Money box from inc/mfs-payment.php: numbers, amount, TrxID fields.
+ * Cash on delivery adds the bulk advance box (50+ pcs, inc/bulk-tier-pricing.php).
  * Every other gateway is untouched.
  *
  * Based on WooCommerce templates/checkout/payment-method.php.
@@ -18,6 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $sft_is_mfs = function_exists( 'safestore_mfs_gateway_id' ) && safestore_mfs_gateway_id() === $gateway->id;
+// Cash on delivery for 50+ pcs: advance box (inc/bulk-tier-pricing.php).
+$sft_is_bulk_cod = 'cod' === $gateway->id && function_exists( 'safestore_bulk_cart_needs_advance' ) && safestore_bulk_cart_needs_advance();
 ?>
 <li class="wc_payment_method payment_method_<?php echo esc_attr( $gateway->id ); ?>">
 	<input id="payment_method_<?php echo esc_attr( $gateway->id ); ?>" type="radio" class="input-radio" name="payment_method" value="<?php echo esc_attr( $gateway->id ); ?>" <?php checked( $gateway->chosen, true ); ?> data-order_button_text="<?php echo esc_attr( $gateway->order_button_text ); ?>" />
@@ -32,6 +35,9 @@ $sft_is_mfs = function_exists( 'safestore_mfs_gateway_id' ) && safestore_mfs_gat
 				safestore_mfs_payment_box();
 			} else {
 				$gateway->payment_fields();
+				if ( $sft_is_bulk_cod ) {
+					safestore_bulk_advance_box();
+				}
 			}
 			?>
 		</div>

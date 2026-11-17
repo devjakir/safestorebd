@@ -87,6 +87,7 @@ $category_text = function_exists('safestore_get_product_category_label')
         <div class="sft-product-card__price">
             <?php echo $product->get_price_html(); ?>
         </div>
+        <?php do_action('safestore_product_card_after_price', $product); // Bulk price chip (inc/bulk-tier-pricing.php). ?>
 
         <?php
         // Star rating when reviews exist — BD buyers treat stars as a legitimacy check.

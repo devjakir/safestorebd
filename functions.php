@@ -65,6 +65,9 @@ require get_template_directory() . '/inc/order-received.php';
 // bKash / Nagad Send Money: numbers + TrxID at checkout and on the thank-you page.
 require get_template_directory() . '/inc/mfs-payment.php';
 
+// Bulk price tiers (Product data → General) + 50% advance for 50+ pcs Cash on delivery orders.
+require get_template_directory() . '/inc/bulk-tier-pricing.php';
+
 // Steadfast Courier shipping method: weight-based, Inside / Outside Dhaka City (see SHIPPING-SETUP.md).
 require get_template_directory() . '/inc/shipping-courier.php';
 
