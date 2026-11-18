@@ -53,9 +53,15 @@ function safestore_bulk_clean_tiers( $rows ) {
 		if ( ! is_array( $row ) ) {
 			continue;
 		}
-		$min   = isset( $row['min'] ) ? (int) preg_replace( '/[^\d]/', '', (string) $row['min'] ) : 0;
+		$raw_min = isset( $row['min'] ) ? trim( (string) $row['min'] ) : '';
+		// Negative or empty quantities are typos, not tiers ("1,000" is fine).
+		if ( '' === $raw_min || 0 === strpos( $raw_min, '-' ) ) {
+			continue;
+		}
+		$min   = (int) preg_replace( '/[^\d]/', '', $raw_min );
 		$price = isset( $row['price'] ) ? (float) wc_format_decimal( $row['price'] ) : 0.0;
-		if ( $min < 2 || $price <= 0 ) {
+		// One row per quantity: the first one entered wins.
+		if ( $min < 2 || $price <= 0 || isset( $out[ $min ] ) ) {
 			continue;
 		}
 		$out[ $min ] = array(
