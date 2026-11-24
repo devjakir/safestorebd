@@ -511,14 +511,17 @@ function safestore_bulk_pdp_table() {
 
 		<ul class="sft-bulk__tiers" role="list">
 			<li class="sft-bulk__tier is-active" data-min="1">
-				<span class="sft-bulk__qty">
-					<?php
-					/* translators: %d: last quantity before the first tier */
-					printf( esc_html__( '1–%d pcs', 'safestore-minimal' ), (int) $rows[0]['min'] - 1 );
-					?>
-				</span>
-				<span class="sft-bulk__price"><span data-sft-bulk-base><?php echo esc_html( safestore_bulk_plain_price( $base ) ); ?></span><small>/<?php esc_html_e( 'pc', 'safestore-minimal' ); ?></small></span>
-				<span class="sft-bulk__off"><?php esc_html_e( 'Regular', 'safestore-minimal' ); ?></span>
+				<?php // A button like the tier rows, so a shopper who tried a tier can go back to 1 pc. ?>
+				<button type="button" class="sft-bulk__pick" data-sft-bulk-pick="1" aria-pressed="true">
+					<span class="sft-bulk__qty">
+						<?php
+						/* translators: %d: last quantity before the first tier */
+						printf( esc_html__( '1–%d pcs', 'safestore-minimal' ), (int) $rows[0]['min'] - 1 );
+						?>
+					</span>
+					<span class="sft-bulk__price"><span data-sft-bulk-base><?php echo esc_html( safestore_bulk_plain_price( $base ) ); ?></span><small>/<?php esc_html_e( 'pc', 'safestore-minimal' ); ?></small></span>
+					<span class="sft-bulk__off"><?php esc_html_e( 'Regular', 'safestore-minimal' ); ?></span>
+				</button>
 			</li>
 			<?php foreach ( $rows as $i => $tier ) : ?>
 				<?php $to = isset( $rows[ $i + 1 ] ) ? (int) $rows[ $i + 1 ]['min'] - 1 : 0; ?>

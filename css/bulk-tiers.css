@@ -48,8 +48,7 @@
   display: none;
 }
 
-/* Base row and tier buttons share one 3-column layout. */
-.sft-bulk__tier[data-min="1"],
+/* Every row (base "1–N pcs" included) is a button with one 3-column layout. */
 .sft-bulk__pick {
   display: grid;
   grid-template-columns: minmax(84px, 1fr) auto minmax(80px, auto);
@@ -178,7 +177,6 @@
     padding: 12px;
   }
 
-  .sft-bulk__tier[data-min="1"],
   .sft-bulk__pick {
     grid-template-columns: 1fr auto;
     gap: 2px 10px;
