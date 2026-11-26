@@ -3,7 +3,7 @@
  * Bulk (quantity) tier pricing + advance payment for large orders.
  *
  * Pricing
- *   Product data → General → "Bulk price tiers": up to six rows of
+ *   Product data → General → "Bulk price tiers": up to eight rows of
  *   "from N pieces → ৳X per piece" (meta `_sft_bulk_tiers`, set on the parent
  *   product, so every colour / size of a variable product shares the tiers).
  *   In the cart, all lines of the same product count together (30 Red + 20 Lime
@@ -31,7 +31,7 @@
 defined( 'ABSPATH' ) || exit;
 
 const SAFESTORE_BULK_META = '_sft_bulk_tiers';
-const SAFESTORE_BULK_ROWS = 6;
+const SAFESTORE_BULK_ROWS = 8;
 
 /* =========================================================================
  * Tiers: read, clean, look up.
